@@ -1,0 +1,24 @@
+{
+  "eval_date": "2026-10-30",
+  "model": "claude-opus-4-7",
+  "prompt_version": 9,
+  "planned_items": 120,
+  "completed_items": 79,
+  "stopped_for_budget": true,
+  "budget_usd": 10,
+  "spent_usd": 8.773594500000002,
+  "concurrency": 3,
+  "pricing_per_mtok": {
+    "in": 15,
+    "out": 75
+  },
+  "cache_write_mult": 1.25,
+  "cache_read_mult": 0.1,
+  "timeout_ms": 30000,
+  "max_tokens": {
+    "pass1": 800,
+    "pass2": 700,
+    "pass3": 800
+  },
+  "finished_at": "2026-10-30T16:44:51.043Z"
+}

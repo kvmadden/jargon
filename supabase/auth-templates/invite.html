@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{{ .Data.sender_display }} invited you to jargon</title>
+</head>
+<!--
+  jargon — gift invite email template (B+1.10).
+  Used by the Supabase Auth "Invite User" flow that send-gift-invite triggers.
+  Interpolated tokens (must match send-gift-invite/index.ts inviteUserByEmail data):
+    {{ .Data.sender_display }}            — the jargon team
+    {{ .Data.recipient_display_name }}    — what we call the recipient
+    {{ .Data.gift_invite_id }}            — UUID for the invite row
+    {{ .Data.jargon_site_url }}           — site root (no trailing slash)
+    {{ .ConfirmationURL }}                — Supabase-generated magic link
+                                            (already includes redirectTo)
+
+  Design constraints:
+    - Table-based layout (Outlook + Gmail rendering safety)
+    - Inline styles only (most email clients strip <style>)
+    - Single signature violet (#7C5CFF) for the CTA button
+    - IBM Plex Mono for the wordmark, system stack for body
+    - Dark-mode-aware where possible (Apple Mail respects @media)
+    - 600px max-width container, 480px CTA, 16pt-equivalent body type
+-->
+<body style="margin:0;padding:0;background:#18181b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#fafafa;">
+  <!-- preheader: shows in the inbox preview line, hidden in the body -->
+  <div style="display:none;max-height:0;overflow:hidden;visibility:hidden;mso-hide:all;">
+    {{ .Data.sender_display }} set up a jargon account for you. one tap to start.
+  </div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#18181b;">
+    <tr>
+      <td align="center" style="padding:32px 16px;">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;width:100%;">
+
+          <!-- wordmark -->
+          <tr>
+            <td align="center" style="padding-bottom:32px;">
+              <span style="font-family:'IBM Plex Mono','SFMono-Regular',Menlo,Consolas,monospace;font-size:28px;font-weight:600;letter-spacing:-0.02em;color:#fafafa;">
+                //&nbsp;jargon
+              </span>
+              <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#7C5CFF;margin-left:8px;vertical-align:middle;"></span>
+            </td>
+          </tr>
+
+          <!-- card -->
+          <tr>
+            <td style="background:#27272a;border:1px solid #3f3f46;border-radius:12px;padding:32px 24px;">
+
+              <p style="margin:0 0 8px 0;font-size:11px;line-height:1;letter-spacing:0.08em;text-transform:uppercase;color:#9D80FF;font-family:'IBM Plex Mono','SFMono-Regular',Menlo,Consolas,monospace;">
+                a gift from {{ .Data.sender_display }}
+              </p>
+
+              <h1 style="margin:0 0 16px 0;font-size:24px;line-height:1.25;font-weight:600;color:#fafafa;">
+                hi {{ .Data.recipient_display_name }},
+              </h1>
+
+              <p style="margin:0 0 16px 0;font-size:16px;line-height:1.55;color:#fafafa;">
+                {{ .Data.sender_display }} set up a jargon account for you — and tailored
+                it to you specifically.
+              </p>
+
+              <p style="margin:0 0 24px 0;font-size:14px;line-height:1.6;color:#a1a1aa;">
+                jargon is a 5-minute-a-day vocabulary game for the words your people
+                drop mid-conversation. every term gets translated through
+                <span style="color:#fafafa;">your world</span> — not abstract
+                textbook stuff. you nod along less. you actually know what's going on
+                more.
+              </p>
+
+              <!-- CTA button — table-based for Outlook compatibility -->
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 auto;">
+                <tr>
+                  <td align="center" style="border-radius:8px;background:#7C5CFF;">
+                    <a href="{{ .ConfirmationURL }}" target="_blank"
+                       style="display:inline-block;padding:16px 40px;font-size:16px;line-height:1;font-weight:600;color:#fafafa;text-decoration:none;border-radius:8px;background:#7C5CFF;min-width:200px;text-align:center;">
+                      open my jargon
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin:24px 0 0 0;font-size:12px;line-height:1.5;color:#71717a;text-align:center;">
+                this link signs you in. one tap. no password.
+              </p>
+
+            </td>
+          </tr>
+
+          <!-- secondary card: what to expect -->
+          <tr>
+            <td style="padding-top:16px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#27272a;border:1px solid #3f3f46;border-radius:12px;">
+                <tr>
+                  <td style="padding:20px 24px;">
+                    <p style="margin:0 0 8px 0;font-size:11px;line-height:1;letter-spacing:0.08em;text-transform:uppercase;color:#9D80FF;font-family:'IBM Plex Mono','SFMono-Regular',Menlo,Consolas,monospace;">
+                      what happens next
+                    </p>
+                    <p style="margin:0;font-size:14px;line-height:1.55;color:#a1a1aa;">
+                      you'll see a quick preview of what {{ .Data.sender_display }} put
+                      down for you, and you can accept it as-is or edit anything before
+                      you start.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- footer -->
+          <tr>
+            <td align="center" style="padding:32px 16px 8px 16px;">
+              <p style="margin:0;font-size:11px;line-height:1.5;color:#71717a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+                a <span style="text-transform:lowercase;">side reaction</span> by the jargon team
+              </p>
+              <p style="margin:8px 0 0 0;font-size:11px;line-height:1.5;color:#52525b;">
+                if this wasn't expected, you can ignore the email — nothing happens
+                until you tap the button.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

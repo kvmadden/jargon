@@ -1,0 +1,120 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+
+    /* CSS-var mirrors of the Tailwind accent tokens. Used by inline `style`
+       blocks (gradient fills, box-shadow glows) where Tailwind's class-based
+       color system can't reach. Keeping them in globals.css means components
+       NEVER carry raw hex strings — they reference --accent-jargon instead.
+
+       v0.1 brand: signature violet #7C5CFF replaced periwinkle #7C9CFF. The
+       full token table + WCAG notes live in tailwind.config.js. */
+    --accent-jargon: #7C5CFF;
+    --accent-jargon-hi: #9D80FF;
+    --accent-jargon-lo: #5B3DE8;
+    /* 12% tint — matches Tailwind's accent-jargon/[0.12] (#7C5CFF = rgb(124, 92, 255)) */
+    --accent-jargon-tint: rgba(124, 92, 255, 0.12);
+    /* Derived stops for inset glows / hero badge halo (Layer 4 polish) */
+    --accent-jargon-hi-20: rgba(157, 128, 255, 0.20);
+    --accent-jargon-30: rgba(124, 92, 255, 0.30);
+    --accent-jargon-60: rgba(124, 92, 255, 0.60);
+    /* Border default mirror, used as the heatmap "0" cell color */
+    --border-default: #3f3f46;
+    /* --text-primary lives here no longer. It is GENERATED into :root by the
+       addBase plugin in tailwind.config.js, straight off
+       colors.text.primary.dark, because this file is plain CSS and cannot
+       import the token package — which is exactly why the retired zinc literal
+       survived here after the class itself was fixed. Confetti still reads
+       `--text-primary` off :root at fire time; only the source moved. */
+  }
+
+  html, body, #root {
+    height: 100%;
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior: none;
+  }
+
+  /* Prevent iOS double-tap zoom on buttons + signal "clickable" on desktop.
+     Browser defaults give <button> a `cursor: default` arrow, which fails
+     desktop affordance — every button in the app should read as tappable.
+     `:not(:disabled)` keeps disabled controls showing the not-allowed cursor. */
+  button, [role="button"] {
+    touch-action: manipulation;
+  }
+
+  /* Global cursor rule: default arrow everywhere, hand pointer on clickables,
+     and text I-beam ONLY in actual text inputs/editable areas. Set on `html`
+     (not `*`) so descendants of clickables still INHERIT their pointer — an
+     explicit `* { cursor }` would override the button's pointer on its child
+     icon/label. */
+  html {
+    cursor: default;
+  }
+  * {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  *::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  a,
+  label[for],
+  summary,
+  select {
+    cursor: pointer;
+  }
+
+  input,
+  textarea,
+  [contenteditable="true"] {
+    cursor: text;
+  }
+
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  input[type="checkbox"],
+  input[type="radio"] {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [role="button"][aria-disabled="true"],
+  input:disabled,
+  textarea:disabled {
+    cursor: not-allowed;
+  }
+
+  /* Stage B3 sweep: dropped the custom `.tabular` class. All consumers now use
+     Tailwind's built-in `tabular-nums` utility, which compiles to the same
+     `font-variant-numeric: tabular-nums` rule but ships through the framework
+     and avoids the class-name collision risk. */
+}
+
+@layer utilities {
+  /* Safe-area utilities. Each falls back to a sensible minimum so content
+     never kisses the viewport edge on desktop or non-iOS browsers (where
+     env(safe-area-inset-*) returns 0). The min values match the shared
+     spacing scale: 12px (0.75rem) for top/bottom, 16px (1rem) for sides. */
+  .safe-top { padding-top: max(env(safe-area-inset-top, 0px), 0.75rem); }
+  .safe-bottom { padding-bottom: max(env(safe-area-inset-bottom, 0px), 0.75rem); }
+  .safe-x {
+    padding-left: max(env(safe-area-inset-left, 0px), 1rem);
+    padding-right: max(env(safe-area-inset-right, 0px), 1rem);
+  }
+}

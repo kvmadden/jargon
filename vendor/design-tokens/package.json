@@ -1,0 +1,7 @@
+{
+  "name": "design-tokens",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": { "./design": { "types": "./src/design.d.ts", "default": "./src/design.js" } }
+}

@@ -1,0 +1,39 @@
+-- jargon Stage B+1.18 — weekly self-portrait dismissal timestamp
+-- https://supabase.com/dashboard/project/jargon-local/sql/new
+--
+-- Adds: settings.last_seen_self_portrait_at (timestamptz, nullable)
+-- Depends on: cloud-init.sql (settings table) — additive, no other deps.
+--
+-- WHY THIS EXISTS:
+--   /home now surfaces an end-of-week "self-portrait" panel on Sundays
+--   (America/New_York) — a factual recap of the week's personalized
+--   renderings (X new terms, Y used analogies, Z plain english). The
+--   panel is dismissible via a "// next week →" footer button. To keep
+--   the panel from re-appearing on every visit, we persist the dismissal
+--   timestamp here. The home route then shows the panel only when one of:
+--     - last_seen_self_portrait_at is null AND today is Sunday
+--     - now() >= last_seen_self_portrait_at + 7 days
+--
+--   Without this column, dismissal is per-session (lost on reload) — the
+--   user would re-see and re-dismiss the same panel every navigation.
+--
+-- WHY NULLABLE:
+--   Existing users have no row history for this column. NULL = "never seen
+--   the panel," which is exactly the right starting state — the first
+--   Sunday with non-zero personalize_log rows shows the panel; non-Sundays
+--   do nothing. Backfilling a default would require choosing between "now"
+--   (suppresses the panel for 7 days unnecessarily) and "epoch" (forces
+--   the panel on next load even mid-week). Nullable lets the home route
+--   read the column literally.
+--
+-- WHAT'S DELIBERATELY NOT STORED:
+--   The panel content itself. The aggregates are recomputed from
+--   personalize_log on each home mount — cheap (one user-scoped query
+--   over ~7d worth of rows) and always reflects the latest state. Caching
+--   a snapshot would surface stale numbers if the user opened more terms
+--   between dismissal and the next Sunday.
+--
+-- IDEMPOTENT: `add column if not exists` makes re-application safe.
+
+alter table settings
+  add column if not exists last_seen_self_portrait_at timestamptz;

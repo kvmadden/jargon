@@ -1,0 +1,37 @@
+-- jargon Stage B+1.18 — first-time personalization reveal card flag
+-- https://supabase.com/dashboard/project/jargon-local/sql/new
+--
+-- Adds: `settings.first_personalization_seen_at` (nullable timestamptz)
+-- Depends on: cloud-init.sql (settings table)
+--
+-- WHY THIS EXISTS:
+--   Stage B+1's personalize-term Edge Function silently rewrites every term
+--   through the user's lived domains (job, education, interests, heritage,
+--   roles). The work is invisible — a pharmacy-grounded analogy can land in
+--   front of a pharmacist with zero acknowledgement that their profile is
+--   being used to teach them. That risks two failure modes:
+--     - the user thinks the rendering is generic when it's actually crafted
+--       for them, so they don't trust the toggle exists or matters
+--     - if a domain is wrong (a stretched analogy), the user can't tell
+--       whether jargon "knows them" or just guessed
+--
+--   Adding a one-time reveal card on the first /term/:id open with a non-
+--   fallback rendering closes that gap. The card frames the personalization
+--   honestly: "this one was explained in your world. each term gets a
+--   different lens — sometimes pharmacy, sometimes ecology, sometimes plain
+--   english when an analogy would just get in the way."
+--
+--   `first_personalization_seen_at` records the timestamp the user dismissed
+--   the card. Null = "never seen" (show the card on the next qualifying
+--   open). Non-null = "they've seen it" (never show again, ever).
+--
+-- IDEMPOTENT: `add column if not exists` makes this safe to re-run.
+--   The column is nullable with no default — existing settings rows stay
+--   un-flagged (they'll see the card on their next personalized term),
+--   which is the operationally-correct behavior. We do NOT back-fill with
+--   now() because that would silently swallow the reveal for every existing
+--   user who has ever opened a term — most of whom have never seen the
+--   card explanation at all.
+
+alter table settings
+  add column if not exists first_personalization_seen_at timestamptz;

@@ -1,0 +1,35 @@
+-- jargon Stage B+1.5 — home_domain (the second axis of the translator badge)
+-- https://supabase.com/dashboard/project/jargon-local/sql/new
+--
+-- Adds: user_profile.home_domain (default 'coding')
+-- Depends on: cloud-migration-018 (active_domain already added)
+--
+-- WHY THIS EXISTS:
+--   The personalized translator has TWO domains in play, not one. Until
+--   B+1.5 we only tracked `active_domain` (which dictionary the user is
+--   learning). For the translator badge — `[learning] → [living]` — we
+--   also need to know which domain's vocabulary should GROUND the
+--   analogies. That's the user's "home" domain: their day job, their
+--   lived experience, the place where analogies land naturally.
+--
+--   Today both default to 'coding'. When the owner pivots to multi-domain
+--   and adds a 'pharmacy' domain, his home_domain becomes 'pharmacy'
+--   (lived) and his active_domain stays 'coding' (learning). The
+--   translator badge then renders the bridge.
+--
+-- WHAT'S DELIBERATELY *NOT* IN THIS MIGRATION:
+--   - No CHECK constraint on home_domain (application enforces via the
+--     Domain TS type, same as active_domain)
+--   - No migration of existing rows beyond the column default. Both
+--     active_domain and home_domain default to 'coding' for the single
+--     existing user (the owner).
+--
+-- TRIGGER NOTE:
+--   The `bump_profile_version_if_changed` trigger originally didn't
+--   watch home_domain. UPDATE (B+1.5.1): cloud-migration-020 extends
+--   the trigger to watch active_domain + home_domain. No follow-up
+--   needed at second-domain ship time — apply 020 alongside this and
+--   the trigger is correct. See MULTI-DOMAIN-EXTENSION.md §4.
+
+alter table user_profile
+  add column if not exists home_domain text not null default 'coding';

@@ -1,0 +1,12 @@
+<!-- jargon · compact mark · // j
+     Font: IBM Plex Mono Medium (500)
+     For production: outline text via Figma/Illustrator -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50" role="img" aria-label="jargon mark">
+  <text x="50" y="38"
+        text-anchor="middle"
+        font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, monospace"
+        font-weight="500"
+        font-size="40"
+        letter-spacing="-0.02em"
+        fill="currentColor">// j</text>
+</svg>
