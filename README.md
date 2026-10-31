@@ -137,12 +137,16 @@ To exercise the AI features, set `ANTHROPIC_API_KEY` (and optionally `OPENAI_API
 
 ## Content
 
-The term corpus is generic. It covers public software, AI, and enterprise-tooling vocabulary, written for a general working audience. It contains no proprietary or employer-specific material. Example sentences use made-up people and scenarios.
+The term corpus is generic. It covers public software, AI, and enterprise-tooling vocabulary, written for a general working audience. It contains no proprietary material. Example sentences use made-up people and scenarios.
 
 ## Project notes
 
 - Sign-in is invite-only by design (an allowlist plus magic-link auth), so a public deployment shows the landing page and the concept atlas to visitors without an invite.
 - Some comments reference earlier internal stage names (for example "Stage B+1"). They are release labels from the project's history.
+
+## Development history
+
+Built May to October 2026 over 296 commits in a private repository. The full history includes personal notes and private configuration, so this repository is a cleaned public snapshot. The evaluation and the changes described above were added for this release in October 2026.
 
 ## Author
 
