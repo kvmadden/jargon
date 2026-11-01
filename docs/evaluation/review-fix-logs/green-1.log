@@ -1,0 +1,12 @@
+
+> jargon@0.5.3 test
+> vitest run src/lib/streak-freeze.test.ts src/App.test.tsx src/lib/personalize-claim-check.test.ts src/lib/prompt-version-sync.test.ts
+
+
+ RUN  v4.1.12 /Volumes/HubData/work/worktrees/jargon-verifier-upgrade
+
+
+ Test Files  4 passed (4)
+      Tests  16 passed (16)
+   Start at  02:46:05
+   Duration  10.20s (transform 5.87s, setup 1.53s, import 7.20s, tests 1.16s, environment 11.02s)

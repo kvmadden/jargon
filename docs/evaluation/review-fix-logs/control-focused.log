@@ -1,0 +1,12 @@
+
+> jargon@0.5.3 test
+> vitest run src/App.test.tsx src/lib/prompt-version-sync.test.ts
+
+
+ RUN  v4.1.12 /private/tmp/jargon-review-control-20261101
+
+
+ Test Files  2 passed (2)
+      Tests  5 passed (5)
+   Start at  02:49:40
+   Duration  5.37s (transform 2.13s, setup 579ms, import 2.83s, tests 108ms, environment 3.85s)
