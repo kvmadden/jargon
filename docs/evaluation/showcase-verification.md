@@ -102,3 +102,11 @@ Focused checks pass 20/20. Replay output is unchanged. Installed Pillow in the o
 Current logs are in [review-fix-logs](review-fix-logs). Raw logs and refreshed screenshots, GIF and geometry are in `/Volumes/HubData/evidence/jargon-review-fixes/capture-2`. The evidence root follows the dispatcher's storage allocation recorded in the shared verification. No new expert labels, paid API call, hosted inference, deployment or merge occurred. No Deno deployment or head-matched hosted preview is certified. Hosted checks are currently absent. The original saved outputs and frozen challenge set remain unchanged.
 
 The complete browser command `env -u MFW_UMBRELLA_ROOT -u OPERATOR_ECOSYSTEM_ROOT JARGON_E2E_PORT=5283 npm run test:e2e -- --reporter=line` exited 1, with 96 passed and two failed. Both failures exactly match untouched main and corrected PR #1: `tests/e2e/routes-flow.spec.ts:277`, spotted paste-mode navigation, on iphone-14 and iphone-16-pro-max. The missing heading assertion is at line 281. Candidate-only failures: none. [Failure identity comparison](review-fix-logs/browser-failure-comparison.json). The browser suite remains red despite the green repository gate. No browser project was skipped or assertion weakened.
+
+## November 1 expert labels and local comparison
+
+Merged PR #1 at `9ab082c` into this branch. Kevin Madden, PharmD judged all seven additional historical holds correct on 2026-11-01. The review UI now reads `eval/data/expert-adjudication-2026-11-01.json` beside the five confirmed misses. Those seven show a Correct expert label and, in policy replay, a "False hold" note. Agreement filters now include the seven, because the historical verifier accepted them. Expert labels and policy decisions remain separate fields.
+
+`npx vitest run` exits 0 with 1134 passed across 99 files. `npm run build` exits 0. A headless Chromium check of the policy-holds view at 1440x900 and 390x844 showed seven false-hold notes, no horizontal overflow and no page errors. The committed screenshots and GIF in `docs/media/` predate these labels and still show the seven as not reviewed. They have not been regenerated. The full pre-deploy gate, browser suite and ACL check were not rerun for this change.
+
+Gate 2 remains open. The free local-model comparison script is ready but not run. See [local model comparison](local-model-comparison.md).

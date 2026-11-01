@@ -35,11 +35,11 @@ No paid API was called. These results measure the added deterministic policy. Th
 | Historical accepted-output replay | Before | With added policy |
 | --- | ---: | ---: |
 | Saved accepted outputs examined | 78 | 78 |
-| Expert-confirmed wrong outputs allowed through | 5 | 0 |
-| Additional outputs held, without expert adjudication | 0 | 7 |
-| Confirmed false rejections | Unknown | Unknown |
+| Expert-confirmed wrong outputs allowed through, out of 5 | 5 | 0 |
+| Expert-confirmed correct outputs held (false holds), out of 7 | 0 | 7 |
+| Holds that were real errors | n/a | 5 of 12 |
 
-Twelve of 78 saved accepted outputs are held. The seven additional holds must be adjudicated before calling this an improvement in overall quality. They may include useful explanations lost to a conservative rule. Zero known misses remaining is not zero actual errors. This replay stops at the decision to hold and cannot predict whether regeneration will succeed.
+Twelve of 78 saved accepted outputs are held. On November 1, 2026 Kevin Madden, PharmD judged the seven additional holds correct (see [release decisions](release-decisions.md)). The policy therefore held seven correct explanations for five caught errors in this run. Those seven are lost useful personalization unless regeneration recovers them, which this replay cannot show. The 66 outputs the policy leaves alone have no expert label, so zero known misses remaining is not zero actual errors. Row-level labels and outcomes are in [the adjudicated results](../../eval/results/claim-check-adjudicated-2026-11-01.json). The replay file itself is unchanged and still shows these seven as unadjudicated, because it predates the review.
 
 | Frozen synthetic challenge, added-policy ablation | Policy absent | Policy present |
 | --- | ---: | ---: |
@@ -64,9 +64,9 @@ These errors are outside the rule's scope. The original LLM might reject them, b
 - `heldout-22`: a toy pharmacy application gives each patient a login to a fictional chart.
 - `heldout-19`: do not assume a hospital system only shows charts from your unit.
 
-### Additional historical holds needing expert review
+### Additional historical holds, all judged correct by the expert
 
-Punctuation is normalized below for readability. The replay artifact retains the exact original strings.
+These seven were unadjudicated when the policy was evaluated. Kevin Madden, PharmD judged all seven correct on 2026-11-01, so each is a false hold. Punctuation is normalized below for readability. The replay artifact retains the exact original strings.
 
 - `excel-pivot-table::nurse`: a PivotTable takes a big spreadsheet of raw data and lets you summarize it by dragging field names into row, column, value, and filter boxes. you pick what to group by and what to count, sum, or average, and Excel builds the summary table for you without you writing any formulas. when you have thousands of rows , think a year of patient admissions or medication scans , and someone in a meeting asks "how many falls per unit per month," a PivotTable gets you the answer in a few clicks instead of counting by hand or writing a formula for every cell. it is the fastest way to turn a data dump into something you can actually talk about. the quality nurse pulled the fall data into a PivotTable to show rates by unit and shift at the staff meeting.
 - `sec-mfa::pharmacist`: MFA stands for multi-factor authentication. logging in takes two or more kinds of proof, like a password plus a code from an authenticator app, a tap on your phone, a hardware key, or a fingerprint. if someone steals one piece, they still can't get in without the other. it's the same reason a C-II dispense needs more than one check , one safeguard isn't enough on something that matters. when the help desk says they're enabling MFA on the pharmacy system, they mean your password alone will no longer get you in, and that's on purpose. after the last software update, signing into the pharmacy system uses MFA, so i enter my password and then approve a prompt on my phone.
@@ -86,7 +86,8 @@ Use Node 24 and the checked-in lockfile.
 npm ci
 node eval/build-heldout.mjs
 node eval/replay-claim-check.ts
-npm test -- src/lib/personalize-claim-check.test.ts src/lib/prompt-version-sync.test.ts
+node eval/apply-expert-adjudication.ts
+npm test -- src/lib/personalize-claim-check.test.ts src/lib/expert-adjudication.test.ts src/lib/prompt-version-sync.test.ts
 npm run pre-deploy
 ```
 
@@ -96,11 +97,11 @@ The replay enforces the frozen set hash. Do not alter that set to improve result
 
 The transferable practice is to retain the source and output, collect expert labels, classify errors, separate development cases from frozen challenges, and measure false acceptance alongside false rejection. A clinical summary checker would need source-grounded checks for omissions, negation, dose, timing and unsupported conclusions. A fluent explanation of a verdict cannot substitute for evidence in the source record.
 
-This experiment has five pharmacist-confirmed negative labels, not a full clinical gold set. All new examples are fictional. A credible next evaluation needs blinded domain-expert adjudication of every accepted and rejected item, a new independently authored challenge set, and both verifier versions run against identical frozen candidates. Measure reviewer workload and lost useful summaries as well as caught errors. Canonical content also needs review because a checker anchored to a wrong source can endorse that error. The two previously noted seed errors remain out of scope.
+This experiment has twelve pharmacist labels, five incorrect and seven correct, not a full clinical gold set. All new examples are fictional. A credible next evaluation needs blinded domain-expert adjudication of every accepted and rejected item, a new independently authored challenge set, and both verifier versions run against identical frozen candidates. Measure reviewer workload and lost useful summaries as well as caught errors. Canonical content also needs review because a checker anchored to a wrong source can endorse that error. The two previously noted seed errors remain out of scope.
 
 ## Release decision
 
-Reviewable implementation and offline evidence are available. This is not evidence to deploy or advertise an accuracy gain. Release remains blocked on faithful model before/after runs and domain-expert review of the seven additional historical holds. No deployment or merge was performed.
+Reviewable implementation and offline evidence are available. This is not evidence to deploy or advertise an accuracy gain. Domain-expert review of the seven additional historical holds is complete and found all seven correct. That result is a cost of the policy, not support for it. Release remains blocked on a model before/after run. A free local-model comparison script is ready but has not been run (see [local model comparison](local-model-comparison.md)). No deployment or merge was performed.
 
 ## November 1 review follow-up
 

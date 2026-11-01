@@ -24,11 +24,11 @@ Synthetic fixture, with capture-only light tokens. The app currently ships a dar
 
 ## Verifier follow-up
 
-The original verifier accepted five explanations that Kevin Madden, PharmD, confirmed were wrong. A new deterministic check holds unsupported clinical access and credential claims and a staging contradiction for rewriting. Replaying the 78 saved acceptances holds all five known errors and seven additional outputs that still need expert review.
+The original verifier accepted five explanations that Kevin Madden, PharmD, confirmed were wrong. A new deterministic check holds unsupported clinical access and credential claims and a staging contradiction for rewriting. Replaying the 78 saved acceptances holds all five known errors and seven additional outputs. Kevin reviewed those seven on November 1, 2026 and judged all seven correct. So the check held seven correct explanations for every five errors it caught, and that lost personalization is the price of the rule.
 
 On a new frozen 24-item synthetic challenge, the added rule misses four of twelve incorrect examples and rejects four of twelve correct ones. That comparison tests the rule alone. No fresh LLM before/after run was performed because this job prohibits paid API calls. The historical result is unchanged, and these numbers are not an overall accuracy claim.
 
-Read the [method, all misses, false rejections and clinical-summary implications](docs/evaluation/verifier-upgrade.md). The implementation is pending model evaluation and expert review before release.
+Read the [method, all misses, false rejections and clinical-summary implications](docs/evaluation/verifier-upgrade.md). Expert review is complete. The implementation is still pending a model comparison before release. A [free local-model comparison](docs/evaluation/local-model-comparison.md) is ready to run but has not been run, and its results will be indicative only.
 
 ## Evaluation
 
