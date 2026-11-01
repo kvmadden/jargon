@@ -1,4 +1,3 @@
-import { claimCheckedParser } from './claim-check.ts'
 // Jargon Stage B+1.3 — server-side personalized translator (multi-pass).
 //
 // Per-(user, term) Opus 4.7 rendering of a canonical term entry through the
@@ -28,6 +27,7 @@ import { claimCheckedParser } from './claim-check.ts'
 // §7. If they drift, spec wins — update code to match.
 
 // deno-lint-ignore-file no-explicit-any
+import { claimCheckedParser } from './claim-check.ts'
 import Anthropic from 'https://esm.sh/@anthropic-ai/sdk@0.32.1';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
 import { getUserFromJWT } from '../_shared/auth.ts';
@@ -100,6 +100,8 @@ import type {
 //   - Pass 2 verifier gains an 8th criterion `vocabulary_within_reach` that
 //     pass/fails the candidate against this rule.
 // Cached B+1.6 v7 renderings re-render lazily under v8.
+// v10 adds a deterministic claim check to both verifier passes.
+// Prior cached renderings are rechecked lazily through the existing version gate.
 const PROMPT_VERSION = 10;
 
 // ─── Shape contracts ────────────────────────────────────────────────────────────

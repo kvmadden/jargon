@@ -1,0 +1,13 @@
+
+> jargon@0.5.3 test
+> vitest run src/lib/personalize-claim-check.test.ts src/lib/prompt-version-sync.test.ts
+
+
+ RUN  v4.1.12 /Volumes/HubData/work/worktrees/jargon-verifier-upgrade
+
+
+ Test Files  2 passed (2)
+      Tests  9 passed (9)
+   Start at  18:59:50
+   Duration  9.67s (transform 3.02s, setup 1.04s, import 3.33s, tests 47ms, environment 7.74s)
+

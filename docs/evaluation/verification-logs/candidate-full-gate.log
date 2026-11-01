@@ -1,0 +1,199 @@
+
+> jargon@0.5.3 pre-deploy
+> npm run test:pre-deploy-auth-gate && node scripts/pre-deploy.mjs
+
+
+> jargon@0.5.3 test:pre-deploy-auth-gate
+> node --test scripts/pre-deploy-auth-gate.test.mjs
+
+✔ delete-account is allowlist-exempt but remains JWT-gated (118.978625ms)
+✔ the delete-account exemption never excuses a missing JWT check (0.4025ms)
+✔ ordinary user-facing functions still require both JWT and allowlist checks (0.198583ms)
+✔ JWT-exempt functions must retain service-role bearer authentication (181.640084ms)
+✔ the real ingest function has a fail-closed exact service-role guard (479.43175ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5199.082209
+
+→ build (tsc + vite)
+  ✓ build clean
+
+→ vitest
+
+→ PROMPT_VERSION sync (client ↔ Edge Function)
+  ✓ both at 10
+
+→ cloud-migration numbering (no gaps)
+  ✓ 2…87 (86 migrations, no gaps)
+
+→ banned patterns (Promise.race in Anthropic call paths, hardcoded email)
+  ✓ Edge Functions scanned
+
+→ auth gate (JWT + isAllowlisted) in every Edge Function
+  ✓ 16 Edge Functions checked
+
+→ domain registry sync (TS ↔ Deno: vocabulary, goals, paths)
+  ✓ 2 domain(s) keyed in all 4 Deno lookups (vocab + goals + paths + groups)
+  ✓ content drift gated upstream by gate-2 (vitest)
+
+→ console.log scan (production src/ + Edge Functions)
+  ✓ no console.log in src/ or supabase/functions/
+
+
+✗ 1 blocker(s):
+   - vitest failed:
+
+> jargon@0.5.3 test
+> vitest run --run
+
+
+ RUN  v4.1.12 /Volumes/HubData/work/worktrees/jargon-verifier-upgrade
+
+ ❯ src/App.test.tsx (4 tests | 1 failed) 1209ms
+     × does not refill when already in the same calendar month 3ms
+
+ Test Files  1 failed | 94 passed (95)
+      Tests  1 failed | 1110 passed (1111)
+   Start at  19:00:39
+   Duration  97.55s (transform 28.15s, setup 46.60s, import 90.95s, tests 119.18s, environment 359.85s)
+
+
+Error: Not implemented: HTMLCanvasElement.prototype.getContext (without installing the canvas npm package)
+    at module.exports (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLCanvasElementImpl.getContext (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/nodes/HTMLCanvasElement-impl.js:42:5)
+    at HTMLCanvasElement.getContext (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/generated/HTMLCanvasElement.js:131:58)
+    at /Volumes/HubData/work/worktrees/jargon-verifier-upgrade/src/components/confetti.tsx:62:24
+    at commitHookEffectListMount (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:24917:7)
+    at commitPassiveMountEffects (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:24905:3)
+    at flushPassiveEffectsImpl (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:27078:3) undefined
+Error: Not implemented: HTMLCanvasElement.prototype.getContext (without installing the canvas npm package)
+    at module.exports (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLCanvasElementImpl.getContext (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/nodes/HTMLCanvasElement-impl.js:42:5)
+    at HTMLCanvasElement.getContext (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/generated/HTMLCanvasElement.js:131:58)
+    at /Volumes/HubData/work/worktrees/jargon-verifier-upgrade/src/components/confetti.tsx:62:24
+    at commitHookEffectListMount (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:24917:7)
+    at commitPassiveMountEffects (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:24905:3)
+    at flushPassiveEffectsImpl (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:27078:3) undefined
+stderr | src/App.test.tsx
+[supabase] missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY — copy .env.example to .env
+
+Error: Uncaught [Error: Test rendering crash]
+    at reportException (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: Test rendering crash
+    at ProblematicComponent (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/src/routes/error-boundary.test.tsx:7:11)
+    at renderWithHooks (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+Error: Uncaught [Error: Test rendering crash]
+    at reportException (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: Test rendering crash
+    at ProblematicComponent (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/src/routes/error-boundary.test.tsx:7:11)
+    at renderWithHooks (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+Error: Uncaught [Error: Test rendering crash]
+    at reportException (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: Test rendering crash
+    at ProblematicComponent (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/src/routes/error-boundary.test.tsx:7:11)
+    at renderWithHooks (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+Error: Uncaught [Error: Test rendering crash]
+    at reportException (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: Test rendering crash
+    at ProblematicComponent (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/src/routes/error-boundary.test.tsx:7:11)
+    at renderWithHooks (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Volumes/HubData/work/worktrees/jargon-verifier-upgrade/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/App.test.tsx > checkAndRefillStreakFreezes > does not refill when already in the same calendar month
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/App.test.tsx:83:22
+     81|
+     82|     const refilled = await checkAndRefillStreakFreezes('user-1', setti…
+     83|     expect(refilled).toBe(false);
+       |                      ^
+     84|     expect(updateSettings).not.toHaveBeenCalled();
+     85|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+
+Fix blockers and re-run before deploy.
