@@ -1,6 +1,6 @@
 # Verification record
 
-Evidence home: `/Volumes/HubData/evidence/jargon-verifier-upgrade`, under the evidence allocation recorded in the dispatcher's storage-plan receipt. Logs remain there. This document carries the portable commands and key assertions for PR review.
+Evidence home: `/Volumes/HubData/evidence/jargon-verifier-upgrade`, under the evidence allocation recorded in the dispatcher's storage-plan receipt. Logs remain there. Committed log copies trim trailing blank lines only. This document carries the portable commands and key assertions for PR review.
 
 ## Scope and provenance
 
