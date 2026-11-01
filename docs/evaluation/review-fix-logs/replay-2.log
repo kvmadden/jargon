@@ -1,0 +1,21 @@
+{
+  "historical": {
+    "accepted_before": 78,
+    "expert_confirmed_misses_before": 5,
+    "expert_confirmed_misses_remaining": 0,
+    "additional_unadjudicated_holds": 7,
+    "confirmed_false_rejections": null
+  },
+  "heldout": {
+    "count": 24,
+    "incorrect": 12,
+    "correct": 12,
+    "policy_absent_missed_errors": 12,
+    "policy_present_missed_errors": 4,
+    "policy_absent_false_rejections": 0,
+    "policy_present_false_rejections": 4,
+    "label_source": "Synthetic author labels, not expert adjudication",
+    "llm_before": null,
+    "llm_after": null
+  }
+}

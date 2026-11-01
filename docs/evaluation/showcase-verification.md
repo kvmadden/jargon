@@ -79,3 +79,26 @@ All exited 0. The script deletes its frame scratch directory in `finally`. The c
 ## Limits
 
 No new LLM run, regeneration, deployment, database test or full Playwright suite was performed. The upgrade remains an open dependency, not a landed accuracy result. Seven additional historical policy holds remain unadjudicated. The five confirmations do not establish correctness of the other outputs. The historical review notes are displayed verbatim, including their original uncertainty, alongside the later expert confirmation.
+
+## November 1 review follow-up
+
+The PR #1 review fix is integrated with merge commits, retaining #1 then #2 ancestry and main as the PR base. Both PRs remain HOLD and draft. The production policy dependency was retained rather than silently released through the offline UI. The missing expert adjudication and authorized inference decisions are listed in [release decisions](release-decisions.md) and `~/dev/state/AT-DESK.md`.
+
+The shared local-month refill defect is fixed with frozen RED-first regression tests. The current full `pre-deploy` gate passes 1118/1118 unit tests, build and source checks, exit 0. Untouched fresh main passes 1103/1103, exit 0. PostgreSQL 17.6 ACL regression passes on both, exit 0. Identical Node, lockfile, enabled install lifecycle scripts, estate-free environment and control details are in [the shared verification](review-fixes.md). Historical red records above are retained.
+
+These exact candidate commands exited 0 after `npm ci`:
+
+```sh
+env -u MFW_UMBRELLA_ROOT -u OPERATOR_ECOSYSTEM_ROOT npm test -- src/lib/streak-freeze.test.ts src/App.test.tsx src/lib/personalize-claim-check.test.ts src/lib/prompt-version-sync.test.ts src/lib/evaluation-review.test.ts src/evaluation/review.test.tsx
+env -u MFW_UMBRELLA_ROOT -u OPERATOR_ECOSYSTEM_ROOT npm run pre-deploy
+env -u MFW_UMBRELLA_ROOT -u OPERATOR_ECOSYSTEM_ROOT PG_BIN=/Users/kevin/dev/toolchains/postgresql-17/bin npm run test:ai-spend-acl
+node eval/replay-claim-check.ts
+GIF_PYTHON=/tmp/jargon-review-gif-20261101/bin/python node scripts/capture-evaluation.mjs
+git diff --check
+```
+
+Focused checks pass 20/20. Replay output is unchanged. Installed Pillow in the owned disposable venv using `python3 -m venv /tmp/jargon-review-gif-20261101` and `/tmp/jargon-review-gif-20261101/bin/pip install Pillow`, both exit 0. Capture checks pass with all 79 rows, five disagreements, policy replay, search, empty agreements and keyboard dialogs. Light and dark captures were visually inspected at 1440x900, 430x932 and 390x844. Minimum measured target is 44 pixels at every size, with no overflow or page errors. Product visuals were unchanged, so refreshed captures are preserved in the evidence home instead of replacing existing repository media.
+
+Current logs are in [review-fix-logs](review-fix-logs). Raw logs and refreshed screenshots, GIF and geometry are in `/Volumes/HubData/evidence/jargon-review-fixes/capture-2`. The evidence root follows the dispatcher's storage allocation recorded in the shared verification. No new expert labels, paid API call, hosted inference, deployment or merge occurred. No Deno deployment or head-matched hosted preview is certified. Hosted checks are currently absent. The original saved outputs and frozen challenge set remain unchanged.
+
+The complete browser command `env -u MFW_UMBRELLA_ROOT -u OPERATOR_ECOSYSTEM_ROOT JARGON_E2E_PORT=5283 npm run test:e2e -- --reporter=line` exited 1, with 96 passed and two failed. Both failures exactly match untouched main and corrected PR #1: `tests/e2e/routes-flow.spec.ts:277`, spotted paste-mode navigation, on iphone-14 and iphone-16-pro-max. The missing heading assertion is at line 281. Candidate-only failures: none. [Failure identity comparison](review-fix-logs/browser-failure-comparison.json). The browser suite remains red despite the green repository gate. No browser project was skipped or assertion weakened.
