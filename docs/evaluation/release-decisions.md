@@ -1,22 +1,40 @@
 # Outstanding release decisions after the October 31 review
 
-Both PR #1 and dependent PR #2 remain HOLD. The offline UI includes the production verifier change. Keep the stack together and do not merge either PR until the following gates are met. This preserves the requested branch order rather than splitting the UI into a new experiment.
+Both PR #1 and dependent PR #2 remain HOLD. The offline UI includes the production verifier change. Keep the stack together and do not merge either PR until both gates below are met. Gate 1, expert adjudication, was met on November 1, 2026. Gate 2, the faithful model comparison, is still open. This preserves the requested branch order rather than splitting the UI into a new experiment.
 
-## Expert adjudication
+## Expert adjudication: met on November 1, 2026
 
-Kevin or another domain expert must review these seven additional historical holds. No new expert labels were supplied during this fix. All seven remain unadjudicated. The candidates and policy reasons are preserved in [the unchanged replay](../../eval/results/claim-check-replay-v1.json), keyed by these IDs.
+Kevin Madden, PharmD reviewed the seven additional historical holds on 2026-11-01 against their saved text and judged all seven correct. The labels are recorded in [`eval/data/expert-adjudication-2026-11-01.json`](../../eval/data/expert-adjudication-2026-11-01.json) with reviewer, date and provenance. The judgment was supplied in the task assignment for this change. That file records it and is not a new review session. No per-claim notes were supplied beyond the overall judgment for each saved explanation.
 
-| Saved candidate ID | Expert decision | Required evidence |
-| --- | --- | --- |
-| `excel-pivot-table::nurse` | Pending | Reviewer, date, correctness of each claim, rationale and whether the hold loses useful personalization |
-| `sec-mfa::pharmacist` | Pending | Reviewer, date, correctness of each claim, rationale and whether the hold loses useful personalization |
-| `sec-mfa::nurse` | Pending | Reviewer, date, correctness of each claim, rationale and whether the hold loses useful personalization |
-| `fabric-data-pipeline::pharmacist` | Pending | Reviewer, date, correctness of each claim, rationale and whether the hold loses useful personalization |
-| `sec-oauth::nurse` | Pending | Reviewer, date, correctness of each claim, rationale and whether the hold loses useful personalization |
-| `sec-rbac::nurse` | Pending | Reviewer, date, correctness of each claim, rationale and whether the hold loses useful personalization |
-| `data-join::nurse` | Pending | Reviewer, date, correctness of each claim, rationale and whether the hold loses useful personalization |
+The expert label and the policy decision are separate columns. The policy held each output automatically. The expert label says whether the output was right.
 
-Review the full candidate against its original source and fictional learner profile. Record whether the candidate is correct, incorrect or uncertain separately from whether the abstention policy should hold it. An automated policy decision is not an expert truth label. Do not infer positive labels for the other outputs.
+| Saved candidate ID | Expert label | Reviewer | Date | Policy decision | Outcome |
+| --- | --- | --- | --- | --- | --- |
+| `excel-pivot-table::nurse` | Correct | Kevin Madden, PharmD | 2026-11-01 | Hold | False hold |
+| `sec-mfa::pharmacist` | Correct | Kevin Madden, PharmD | 2026-11-01 | Hold | False hold |
+| `sec-mfa::nurse` | Correct | Kevin Madden, PharmD | 2026-11-01 | Hold | False hold |
+| `fabric-data-pipeline::pharmacist` | Correct | Kevin Madden, PharmD | 2026-11-01 | Hold | False hold |
+| `sec-oauth::nurse` | Correct | Kevin Madden, PharmD | 2026-11-01 | Hold | False hold |
+| `sec-rbac::nurse` | Correct | Kevin Madden, PharmD | 2026-11-01 | Hold | False hold |
+| `data-join::nurse` | Correct | Kevin Madden, PharmD | 2026-11-01 | Hold | False hold |
+
+All seven held explanations were correct, so the added policy held seven correct explanations. These are false holds. Each one is useful personalization that the policy would have sent to regeneration and, if the retry was also held, to canonical text.
+
+### Recomputed historical tradeoff
+
+Source: [`eval/results/claim-check-adjudicated-2026-11-01.json`](../../eval/results/claim-check-adjudicated-2026-11-01.json), produced by `node eval/apply-expert-adjudication.ts` from the unchanged replay.
+
+| 78 saved accepted outputs | Original pipeline | With added policy |
+| --- | ---: | ---: |
+| Expert-confirmed wrong outputs accepted, out of 5 | 5 | 0 |
+| Expert-confirmed correct outputs held, out of 7 | 0 | 7 |
+| Total holds | 0 | 12 |
+| Holds that were real errors | n/a | 5 of 12 |
+| Accepted outputs with no expert label | 73 | 66 |
+
+On this run the policy held more correct explanations (7) than wrong ones (5). Every hold now has an expert label, so 5 of 12 is the measured share of holds that caught a real error in this run. The 66 outputs the policy leaves alone are still unlabeled, so errors among them are unknown. Whether regeneration would have recovered useful text for the seven false holds is not measured. The frozen synthetic set shows the same pattern, with 4 of 12 correct items rejected.
+
+This gate is about evidence, not approval. Whether the cost of seven false holds is worth five caught errors is a product decision for Kevin. It has not been made here.
 
 ## Faithful model comparison
 
