@@ -40,7 +40,12 @@ export async function checkAndRefillStreakFreezes(
     (settings as Record<string, unknown>).last_freeze_refill_at ?? storedRefill;
   const now = new Date();
   const currentMonth = todayLocalDate(now).slice(0, 7);
-  const lastMonth = lastRefill ? String(lastRefill).slice(0, 7) : null;
+  const lastRefillText = lastRefill ? String(lastRefill) : null
+  // Timestamp markers and the current month must use the same local timezone.
+  // Keep date-only markers as calendar dates rather than interpreting them as UTC.
+  const lastMonth = lastRefillText?.includes('T')
+    ? todayLocalDate(new Date(lastRefillText)).slice(0, 7)
+    : lastRefillText?.slice(0, 7) ?? null
 
   if (lastMonth && lastMonth === currentMonth) {
     return false;
