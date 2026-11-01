@@ -1,0 +1,56 @@
+
+> jargon@0.5.3 test
+> vitest run src/lib/evaluation-review.test.ts
+
+
+ RUN  v4.1.12 /Volumes/HubData/work/worktrees/jargon-eval-showcase-ui
+
+ ❯ src/lib/evaluation-review.test.ts (2 tests | 2 failed) 7ms
+     × retains all runs and never invents expert agreement 5ms
+     × replays the runtime policy and retains pharmacist notes 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/lib/evaluation-review.test.ts > evaluation review from real artifacts > retains all runs and never invents expert agreement
+AssertionError: expected [] to have a length of 79 but got +0
+
+- Expected
++ Received
+
+- 79
++ 0
+
+ ❯ src/lib/evaluation-review.test.ts:7:18
+      5|   it('retains all runs and never invents expert agreement', async () =…
+      6|     const rows = await loadEvaluation()
+      7|     expect(rows).toHaveLength(79)
+       |                  ^
+      8|     expect(rows.filter(row => row.gold === 'incorrect')).toHaveLength(…
+      9|     expect(rows.filter(row => row.gold === 'not reviewed')).toHaveLeng…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/lib/evaluation-review.test.ts > evaluation review from real artifacts > replays the runtime policy and retains pharmacist notes
+AssertionError: expected [] to have a length of 12 but got +0
+
+- Expected
++ Received
+
+- 12
++ 0
+
+ ❯ src/lib/evaluation-review.test.ts:17:42
+     15|     const misses = rows.filter(row => row.gold === 'incorrect')
+     16|     expect(misses.every(row => row.held && row.note.length > 0)).toBe(…
+     17|     expect(rows.filter(row => row.held)).toHaveLength(12)
+       |                                          ^
+     18|     expect(selectRows(rows, 'all', 'JWT')).toHaveLength(3)
+     19|     expect(rows.find(row => row.status === 'fallback_canonical')?.verd…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  19:25:13
+   Duration  357ms (transform 20ms, setup 43ms, import 11ms, tests 7ms, environment 199ms)

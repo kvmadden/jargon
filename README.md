@@ -115,6 +115,36 @@ flowchart TD
     F --> L
 ```
 
+## Evaluation review screen
+
+After `npm install`, launch the offline review with one command:
+
+```sh
+npm run dev:evaluation
+```
+
+Open <http://localhost:5182/evaluation.html>. No environment file, sign-in,
+backend or model key is needed. The page reads the committed 79-run JSONL,
+expert-confirmation IDs and source review notes. It runs the actual supplemental
+`checkCandidateClaims` library on the saved synthetic learner outputs.
+
+Search by term or learner, filter historical agreements and disagreements, and
+open any row for the full rewrite and review. The five expert-confirmed misses
+appear first. Every other output says **Not reviewed**, including those with AI
+review notes. The agreement filter has an explicit empty state because no expert
+correctness labels are recorded for successful outputs.
+
+**Replay current policy** compares historical verdicts with deterministic holds
+from the upgrade branch. This does not run an LLM or regenerate a rewrite. It
+holds all five confirmed misses and seven additional unadjudicated acceptances.
+The upgrade is a dependency pending independent review, not a landed model
+accuracy improvement. The light and dark themes use the imported design tokens.
+`npm run build` includes the standalone page in the static output.
+
+Portfolio captures and the core-flow GIF are in [docs/media](docs/media).
+[Verification evidence](docs/evaluation/showcase-verification.md) records tests,
+control failures and capture reproduction.
+
 ## Stack
 
 - React 18, TypeScript, Vite, React Router, Zustand, Tailwind CSS

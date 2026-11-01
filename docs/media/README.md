@@ -7,3 +7,9 @@ The application currently ships a dark palette. These are explicitly **light pre
 Reproduce from the repository root with `node scripts/capture-portfolio.mjs`. It opens a visible Chromium browser, starts an isolated local dev server, uses mocked local data, blocks other network traffic and closes its browser and server. Fonts come from the existing E2E fixtures. The Phosphor `plugs-connected` icon fixture comes from `https://api.iconify.design/ph/plugs-connected.svg`, MIT licensed by Phosphor Icons. The fixture avoids broken icons when the capture blocks outbound traffic.
 
 The primary portfolio image is `learner-flow-light-1440x900.png`. Smaller captures preserve the responsive screen for inspection. The screenshots illustrate the flow, not a new model result or proof of verifier accuracy.
+
+## Evaluation review
+
+`evaluation-light-*` and `evaluation-dark-*` capture the working standalone review page at 1440x900, 430x932 and 390x844. `evaluation-set-light-*` shows the evaluation rows. `evaluation-review-flow.gif` shows the core flow using the real saved synthetic outputs and shared runtime policy. These are rendered UI captures, without mocked verdicts or network model calls.
+
+Reproduce with `node scripts/capture-evaluation.mjs` after installing dependencies and Python Pillow. Use `GIF_PYTHON` to select a Python environment with Pillow. The browser runs visibly and closes on completion. Geometry and interaction assertions are in `evaluation-capture-checks.json`.
