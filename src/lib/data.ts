@@ -171,7 +171,7 @@ export function validatePrefilledProfile(profile: unknown): PrefilledProfile {
  * before the user has ever seen 'branch'" gap. v7 cached renderings
  * re-render lazily on next encounter under v8.
  */
-export const CURRENT_PROMPT_VERSION = 9;
+export const CURRENT_PROMPT_VERSION = 10;
 
 /** Must match the model name written by the Edge Function. */
 export const PERSONALIZE_MODEL = 'claude-opus-4-7';

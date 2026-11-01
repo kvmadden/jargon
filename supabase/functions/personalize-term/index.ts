@@ -1,3 +1,4 @@
+import { claimCheckedParser } from './claim-check.ts'
 // Jargon Stage B+1.3 — server-side personalized translator (multi-pass).
 //
 // Per-(user, term) Opus 4.7 rendering of a canonical term entry through the
@@ -99,7 +100,7 @@ import type {
 //   - Pass 2 verifier gains an 8th criterion `vocabulary_within_reach` that
 //     pass/fails the candidate against this rule.
 // Cached B+1.6 v7 renderings re-render lazily under v8.
-const PROMPT_VERSION = 9;
+const PROMPT_VERSION = 10;
 
 // ─── Shape contracts ────────────────────────────────────────────────────────────
 
@@ -507,7 +508,7 @@ Deno.serve(async (req) => {
         user: buildPass2UserMessage(typedTerm, pass1Candidate, typedProfile, knownVocabulary),
         maxTokens: PERSONALIZE_MAX_TOKENS_PASS2,
       },
-      parseVerdict,
+      claimCheckedParser(pass1Candidate, parseVerdict),
     );
   } catch (err: any) {
     const isAbort = err?.name === 'AbortError' || /abort/i.test(String(err?.message ?? ''));
@@ -618,7 +619,7 @@ Deno.serve(async (req) => {
         user: buildPass2UserMessage(typedTerm, pass3Candidate, typedProfile, knownVocabulary),
         maxTokens: PERSONALIZE_MAX_TOKENS_PASS2,
       },
-      parseVerdict,
+      claimCheckedParser(pass3Candidate, parseVerdict),
     );
   } catch (err: any) {
     const isAbort = err?.name === 'AbortError' || /abort/i.test(String(err?.message ?? ''));
