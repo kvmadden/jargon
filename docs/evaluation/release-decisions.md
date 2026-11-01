@@ -36,9 +36,11 @@ On this run the policy held more correct explanations (7) than wrong ones (5). E
 
 This gate is about evidence, not approval. Whether the cost of seven false holds is worth five caught errors is a product decision for Kevin. It has not been made here.
 
-## Faithful model comparison
+## Faithful model comparison: open
 
-Kevin must authorize an inference path for the unchanged original verifier and the candidate verifier, or provide authorized results. The current instruction forbids spending. No API request, credential lookup or substitute-model evaluation was performed.
+Kevin authorized free local models only. No paid API is authorized. This environment cannot run a local model, so no comparison has been run and no model results exist.
+
+A reproducible script is ready: `node eval/compare-verifiers-ollama.ts`, documented in [local model comparison](local-model-comparison.md). It runs the unchanged original verifier and the candidate verifier on identical frozen inputs through an Ollama endpoint and records every verdict, false acceptance, false rejection, regeneration and fallback in `eval/results/`. The model is a local substitute, not the shipped hosted model, so its results are indicative only. Whether indicative local results are enough to close this gate is Kevin's decision.
 
 Use identical frozen inputs and candidates for both paths, preserving the original verifier prompt and settings. Retain the 24-item set and its labels unchanged. Publish each verdict, false acceptance, false rejection, regeneration result and retry or canonical-fallback outcome, including failures and unknowns. Separate historical replay from newly generated model evidence. Do not describe the deterministic holds as measured model improvement.
 

@@ -101,7 +101,7 @@ This experiment has twelve pharmacist labels, five incorrect and seven correct, 
 
 ## Release decision
 
-Reviewable implementation and offline evidence are available. This is not evidence to deploy or advertise an accuracy gain. Domain-expert review of the seven additional historical holds is complete and found all seven correct. That result is a cost of the policy, not support for it. Release remains blocked on a faithful model before/after run. No deployment or merge was performed.
+Reviewable implementation and offline evidence are available. This is not evidence to deploy or advertise an accuracy gain. Domain-expert review of the seven additional historical holds is complete and found all seven correct. That result is a cost of the policy, not support for it. Release remains blocked on a model before/after run. A free local-model comparison script is ready but has not been run (see [local model comparison](local-model-comparison.md)). No deployment or merge was performed.
 
 ## November 1 review follow-up
 

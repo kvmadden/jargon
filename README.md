@@ -28,7 +28,7 @@ The original verifier accepted five explanations that Kevin Madden, PharmD, conf
 
 On a new frozen 24-item synthetic challenge, the added rule misses four of twelve incorrect examples and rejects four of twelve correct ones. That comparison tests the rule alone. No fresh LLM before/after run was performed because this job prohibits paid API calls. The historical result is unchanged, and these numbers are not an overall accuracy claim.
 
-Read the [method, all misses, false rejections and clinical-summary implications](docs/evaluation/verifier-upgrade.md). Expert review is complete. The implementation is still pending a faithful model comparison before release.
+Read the [method, all misses, false rejections and clinical-summary implications](docs/evaluation/verifier-upgrade.md). Expert review is complete. The implementation is still pending a model comparison before release. A [free local-model comparison](docs/evaluation/local-model-comparison.md) is ready to run but has not been run, and its results will be indicative only.
 
 ## Evaluation
 
