@@ -1,0 +1,46 @@
+
+> jargon@0.5.3 test:ai-spend-acl
+> bash scripts/test-ai-spend-acl.sh
+
+CREATE ROLE
+CREATE ROLE
+CREATE ROLE
+CREATE SCHEMA
+CREATE FUNCTION
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+INSERT 0 1
+CREATE VIEW
+CREATE FUNCTION
+REVOKE
+GRANT
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+ALTER TABLE
+psql:supabase/migrations/20260722000200_lesson_question_log.sql:19: NOTICE:  policy "service role only" for relation "lesson_question_log" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:supabase/migrations/20260722000200_lesson_question_log.sql:21: NOTICE:  policy "users see own lesson_question_log" for relation "lesson_question_log" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+CREATE VIEW
+GRANT
+GRANT
+ALTER VIEW
+REVOKE
+GRANT
+CREATE FUNCTION
+REVOKE
+GRANT
+DO
+DO
+SET
+RESET
+ai spend ACL regression: ok

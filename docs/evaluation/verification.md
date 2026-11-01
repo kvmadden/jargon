@@ -76,3 +76,7 @@ No whole-suite Playwright run or Deno deployment test was performed. The capture
 ## Remaining gates
 
 Faithful LLM before/after runs on both datasets remain unmeasured under the no-paid-API constraint. Seven additional historical holds need expert adjudication. Four synthetic false rejections and four misses are published without tuning the frozen set. This is a draft for review, not a release recommendation.
+
+## November 1 review follow-up
+
+The calendar refill defect is fixed with frozen local-month regression tests. PostgreSQL 17 ACL checks were rerun using the available local toolchain. The original verification record above remains historical. See [review-fix verification](review-fixes.md) for current commands and results, and [release decisions](release-decisions.md) for the unresolved expert review and authorized inference gates. Both PRs remain HOLD.

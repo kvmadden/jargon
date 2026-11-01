@@ -101,3 +101,7 @@ This experiment has five pharmacist-confirmed negative labels, not a full clinic
 ## Release decision
 
 Reviewable implementation and offline evidence are available. This is not evidence to deploy or advertise an accuracy gain. Release remains blocked on faithful model before/after runs and domain-expert review of the seven additional historical holds. No deployment or merge was performed.
+
+## November 1 review follow-up
+
+The calendar refill defect is fixed with frozen local-month regression tests. PostgreSQL 17 ACL checks were rerun using the available local toolchain. The original verification record above remains historical. See [review-fix verification](review-fixes.md) for current commands and results, and [release decisions](release-decisions.md) for the unresolved expert review and authorized inference gates. Both PRs remain HOLD.

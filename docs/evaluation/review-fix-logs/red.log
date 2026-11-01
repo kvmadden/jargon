@@ -1,0 +1,38 @@
+
+> jargon@0.5.3 test
+> vitest run src/lib/streak-freeze.test.ts
+
+
+ RUN  v4.1.12 /Volumes/HubData/work/worktrees/jargon-verifier-upgrade
+
+ ❯ src/lib/streak-freeze.test.ts (3 tests | 2 failed) 22ms
+     × does not refill twice in the same local month in America/Los_Angeles 19ms
+     × does not refill twice in the same local month in Asia/Tokyo 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/lib/streak-freeze.test.ts > monthly freeze refill at UTC month boundaries > does not refill twice in the same local month in America/Los_Angeles
+ FAIL  src/lib/streak-freeze.test.ts > monthly freeze refill at UTC month boundaries > does not refill twice in the same local month in Asia/Tokyo
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/lib/streak-freeze.test.ts:28:84
+     26|
+     27|     expect(await checkAndRefillStreakFreezes('synthetic-user', setting…
+     28|     expect(await checkAndRefillStreakFreezes('synthetic-user', setting…
+       |                                                                                    ^
+     29|     expect(persist).toHaveBeenCalledTimes(1)
+     30|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 1 passed (3)
+   Start at  02:45:12
+   Duration  1.04s (transform 46ms, setup 121ms, import 36ms, tests 22ms, environment 726ms)

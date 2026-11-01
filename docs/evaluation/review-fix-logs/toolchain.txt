@@ -1,0 +1,5 @@
+v24.14.1
+11.11.0
+2cd285d0c457aba21001488a2d78877fa07f8baecca648fa006745403d082322  package-lock.json
+vitest/4.1.12 darwin-arm64 node-v24.14.1
+Version 1.64.1
