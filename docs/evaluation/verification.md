@@ -1,11 +1,11 @@
 # Verification record
 
-Evidence home: `/Volumes/HubData/evidence/jargon-verifier-upgrade`, under the evidence allocation recorded in the dispatcher's storage-plan receipt. Logs remain there. Committed log copies trim trailing blank lines only. This document carries the portable commands and key assertions for PR review.
+Full logs are kept in a local evidence home outside the repository. Committed log copies trim trailing blank lines, and show `<repo>` and `<tmp>` in place of local checkout and temporary folder paths. This document carries the portable commands and key assertions for PR review.
 
 ## Scope and provenance
 
-- Worktree belongs to `/Users/kevin/dev/repos/jargon` and began exactly at `origin/main` commit `2db6bcffb674c13df67a0c7926f5784541fd584c`.
-- Fetched `origin/main`, inspected `git ls-tree` and `git grep` for verifier and evaluation capability, and searched umbrella source, parked capabilities, archived templates and state briefs. Open PRs were empty. Queue and recent run evidence showed this dispatched job and separate portfolio work, without a competing verifier implementation. No work ledger row was changed.
+- Worktree began exactly at `origin/main` commit `2db6bcffb674c13df67a0c7926f5784541fd584c`.
+- Fetched `origin/main` and inspected `git ls-tree` and `git grep` for verifier and evaluation capability. Open PRs were empty. No competing verifier implementation was found.
 - Frozen synthetic generation commit: `46d879b`. Runtime implementation commit before held-out evaluation: `62925e1`. Subsequent edits to that module's handler import position and version comment are explanatory only. The policy was not tuned after the held-out evaluation.
 - Original dated results, metadata, summary and review have no diff against the control. No paid API, hosted backend, deployment or merge was used.
 
@@ -40,7 +40,7 @@ Exit 0, nine passed in two files. Tests exercise the saved five misses, unchange
 Created a fresh clone outside the estate, without sibling repositories:
 
 ```sh
-git clone --no-local --branch main /Users/kevin/dev/repos/jargon /tmp/jargon-control-yvy4toto
+git clone --no-local --branch main <local-clone> /tmp/jargon-control-yvy4toto
 npm ci --ignore-scripts=false
 ```
 

@@ -3,7 +3,7 @@
 > vitest run src/lib/evaluation-review.test.ts src/evaluation/review.test.tsx
 
 
- RUN  v4.1.12 /Volumes/HubData/work/worktrees/jargon-eval-showcase-ui
+ RUN  v4.1.12 <repo>
 
 
  Test Files  2 passed (2)

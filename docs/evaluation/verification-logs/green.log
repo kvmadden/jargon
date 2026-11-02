@@ -3,7 +3,7 @@
 > vitest run src/lib/personalize-claim-check.test.ts src/lib/prompt-version-sync.test.ts
 
 
- RUN  v4.1.12 /Volumes/HubData/work/worktrees/jargon-verifier-upgrade
+ RUN  v4.1.12 <repo>
 
 
  Test Files  2 passed (2)
