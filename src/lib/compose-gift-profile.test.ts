@@ -48,12 +48,12 @@ describe('composeGiftProfile', () => {
         heritage: 'Liverpool, England',
         roles: ['parent'],
         background_text: 'lifelong birder, lived in Tampa for 20 years.',
-        display_name: 'Peter',
+        display_name: 'Avery',
         relationship: 'father-in-law',
         lived_icons: ['leaf', 'soccer-ball', 'binoculars'],
       },
-      custom_message_draft: 'peter — wanted you to have this one. love, kev.',
-      private_reasoning_draft: 'peter keeps asking what i do. want him to ask better questions.',
+      custom_message_draft: 'avery — wanted you to have this one. love, kev.',
+      private_reasoning_draft: 'avery keeps asking what i do. want him to ask better questions.',
       lived_icons: ['leaf', 'soccer-ball', 'binoculars'],
       confidence: 'high',
     };
@@ -62,8 +62,8 @@ describe('composeGiftProfile', () => {
       json: async () => happyResponse,
     }) as unknown as typeof fetch;
     const result = await composeGiftProfile({
-      recipient_name: 'Peter',
-      recipient_email: 'peter@example.com',
+      recipient_name: 'Avery',
+      recipient_email: 'avery@example.com',
       freeform_describe: "father-in-law's a retired biology prof",
       sender_name: 'Kevin',
     });
@@ -81,8 +81,8 @@ describe('composeGiftProfile', () => {
       text: async () => 'server boom',
     }) as unknown as typeof fetch;
     const result = await composeGiftProfile({
-      recipient_name: 'Peter',
-      recipient_email: 'peter@example.com',
+      recipient_name: 'Avery',
+      recipient_email: 'avery@example.com',
       freeform_describe: 'whatever',
       sender_name: 'Kevin',
     });
@@ -99,8 +99,8 @@ describe('composeGiftProfile', () => {
       json: async () => ({ confidence: 'medium', lived_icons: 'not-an-array' }),
     }) as unknown as typeof fetch;
     const result = await composeGiftProfile({
-      recipient_name: 'Peter',
-      recipient_email: 'peter@example.com',
+      recipient_name: 'Avery',
+      recipient_email: 'avery@example.com',
       freeform_describe: 'whatever',
       sender_name: 'Kevin',
     });
@@ -112,8 +112,8 @@ describe('composeGiftProfile', () => {
       new Error('NetworkError when attempting to fetch resource'),
     ) as unknown as typeof fetch;
     const result = await composeGiftProfile({
-      recipient_name: 'Peter',
-      recipient_email: 'peter@example.com',
+      recipient_name: 'Avery',
+      recipient_email: 'avery@example.com',
       freeform_describe: 'whatever',
       sender_name: 'Kevin',
     });
@@ -129,8 +129,8 @@ describe('composeGiftProfile', () => {
       throw new Error('fetch should NOT have been called');
     }) as unknown as typeof fetch;
     const result = await composeGiftProfile({
-      recipient_name: 'Peter',
-      recipient_email: 'peter@example.com',
+      recipient_name: 'Avery',
+      recipient_email: 'avery@example.com',
       freeform_describe: 'whatever',
       sender_name: 'Kevin',
     });

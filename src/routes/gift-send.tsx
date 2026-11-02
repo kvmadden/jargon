@@ -481,7 +481,7 @@ function WizardView({
       // routes the upload to a gift-namespace storage path
       // (`gift/<hash(email)>.png`) so the sender's own badge isn't
       // overwritten. Slow path (~10-20s) but worth it — the badge IS the
-      // first thing Peter sees on his accept splash.
+      // first thing the recipient sees on their accept splash.
       const recipientEmail = answers.recipient_email.trim().toLowerCase();
       const [livedIcons, badgeResult] = await Promise.all([
         pickLivedIcons(baseProfile),
@@ -1582,7 +1582,7 @@ function StepPrivateReasoning({
             onChange(e.target.value);
           }
         }}
-        placeholder="e.g. peter keeps asking what i do all day and i want him to be able to ask better questions · my mom watches me code and gets quiet — she shouldn't have to feel locked out"
+        placeholder="e.g. avery keeps asking what i do all day and i want him to be able to ask better questions · my mom watches me code and gets quiet — she shouldn't have to feel locked out"
         rows={5}
         autoFocus
         className="w-full bg-surface-card border border-border-default rounded-lg px-3 py-3 text-base text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent-jargon resize-none"

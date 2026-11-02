@@ -18,19 +18,19 @@
 --             cloud-migration-031 (latest atomic + upsert + trigger)
 --
 -- WHY THIS EXISTS:
---   the owner is shipping the gift wizard for his father-in-law (Peter). The current
+--   the owner is shipping the gift wizard for its first recipient. The current
 --   "compose a gift" flow captures recipient + display_name + a 7-step profile
 --   guess + an optional public custom_message. It does NOT capture two things
 --   that real-life gift-giving leans on heavily:
 --
 --     1) RELATIONSHIP — "father-in-law" / "mentor" / "adult child" — the single
---        most useful framing fact for the personalization prompt. Knowing Peter
---        is the owner's father-in-law (not a colleague, not a sibling) lets Opus
+--        most useful framing fact for the personalization prompt. Knowing the
+--        recipient is the sender's father-in-law (not a colleague, not a sibling) lets Opus
 --        reach for the right register, examples, and emotional distance.
 --
 --     2) PRIVATE_REASONING — "in your own words, why are you giving this to
 --        them?" — a freeform textarea the recipient never sees. This is the
---        unfiltered intent: "Peter keeps asking what I do for work and I want
+--        unfiltered intent: "Avery keeps asking what I do for work and I want
 --        him to be able to ask better questions." That signal is gold for the
 --        translator's voice; the public custom_message is too short and too
 --        public to carry it.

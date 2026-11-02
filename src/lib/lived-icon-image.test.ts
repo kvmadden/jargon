@@ -64,12 +64,12 @@ describe('generateLivedIconImage', () => {
       }),
     );
     await generateLivedIconImage(SAMPLE_PROFILE, {
-      forRecipientEmail: 'PETER@Example.com  ',
+      forRecipientEmail: 'AVERY@Example.com  ',
     });
     expect(mockFetch).toHaveBeenCalledTimes(1);
     const [, init] = mockFetch.mock.calls[0];
     const body = JSON.parse((init as RequestInit).body as string);
-    expect(body.for_recipient_email).toBe('peter@example.com');
+    expect(body.for_recipient_email).toBe('avery@example.com');
     expect(body.profile).toEqual(SAMPLE_PROFILE);
   });
 

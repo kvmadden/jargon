@@ -383,7 +383,7 @@ function SplashView({ preview, onAcceptAsIs, onOpenWizard, onDecline }: SplashVi
   const activeDomain = (preview.prefilled_profile.active_domain ?? '').trim();
   // Prefer display_name over recipient_name in the greeting. display_name
   // is what the sender said to call them ("Pop"); recipient_name is often
-  // the formal email-derived form ("Peter Jonathan Smith"). Capitalization
+  // the formal email-derived full name. Capitalization
   // is preserved verbatim — only the literal "hi" stays lowercase via
   // a span wrapper.
   const greetingName =
@@ -401,7 +401,7 @@ function SplashView({ preview, onAcceptAsIs, onOpenWizard, onDecline }: SplashVi
   const senderFirstName =
     preview.sender_display === 'Someone' ? 'they' : preview.sender_display.split(' ')[0];
   // B+1.11 — surface the sender's relationship label subtly under the
-  // attribution line ("you're kevin's father-in-law"). Only renders when
+  // attribution line ("you're {sender}'s {relationship}"). Only renders when
   // BOTH the relationship is set AND the sender_display is known (otherwise
   // the line reads as a strange floating fact). Uses the sender first name
   // for the same readability reason as the preview-card eyebrow above.
@@ -413,7 +413,7 @@ function SplashView({ preview, onAcceptAsIs, onOpenWizard, onDecline }: SplashVi
 
   // Transparency card-list — surface EVERY non-empty field the sender
   // pre-filled, each as its own row, with a tap-to-remove button.
-  // Design call (B+1.11): "show Peter exactly what we know about him.
+  // Design call (B+1.11): "show the recipient exactly what we know about them.
   // each row tappable to remove. casual privacy copy at the bottom."
   // private_reasoning is INTENTIONALLY excluded — sender's note to
   // themselves, never flows to the recipient (gift_invites column only).
