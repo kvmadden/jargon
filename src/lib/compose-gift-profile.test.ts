@@ -41,15 +41,15 @@ describe('composeGiftProfile', () => {
     const happyResponse = {
       proposed_profile: {
         goals_extended: [],
-        goals_freeform: 'they want to follow what their daughter does',
-        job: 'retired biology professor',
+        goals_freeform: 'they want to follow what their nephew does',
+        job: 'retired chemistry teacher',
         encounter_contexts: ['family / friends'],
         interests: ['nature', 'soccer'],
-        heritage: 'Liverpool, England',
+        heritage: 'Glasgow, Scotland',
         roles: ['parent'],
-        background_text: 'lifelong birder, lived in Tampa for 20 years.',
+        background_text: 'lifelong birder, lived in Denver for 20 years.',
         display_name: 'Avery',
-        relationship: 'father-in-law',
+        relationship: 'uncle',
         lived_icons: ['leaf', 'soccer-ball', 'binoculars'],
       },
       custom_message_draft: 'avery — wanted you to have this one. love, kev.',
@@ -64,11 +64,11 @@ describe('composeGiftProfile', () => {
     const result = await composeGiftProfile({
       recipient_name: 'Avery',
       recipient_email: 'avery@example.com',
-      freeform_describe: "father-in-law's a retired biology prof",
+      freeform_describe: "uncle's a retired chemistry teacher",
       sender_name: 'Kevin',
     });
     expect(result.confidence).toBe('high');
-    expect(result.proposed_profile.job).toBe('retired biology professor');
+    expect(result.proposed_profile.job).toBe('retired chemistry teacher');
     expect(result.lived_icons).toEqual(['leaf', 'soccer-ball', 'binoculars']);
     expect(result.isFallback).toBeUndefined();
   });

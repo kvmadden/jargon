@@ -183,14 +183,14 @@ function TestSplashView({
 
 const FULL_PROFILE: PrefilledProfile = {
   display_name: 'Pop',
-  job: 'retired biology professor',
-  heritage: 'Liverpool, England',
+  job: 'retired chemistry teacher',
+  heritage: 'Glasgow, Scotland',
   interests: ['nature', 'soccer'],
   roles: ['parent', 'grandparent'],
   goals_freeform: 'wants to follow what his daughters do',
-  background_text: 'lives in Tampa. obsessed with birds.',
+  background_text: 'lives in Denver. obsessed with birds.',
   active_domain: null,
-  relationship: 'father-in-law',
+  relationship: 'uncle',
   lived_icons: [],
   lived_icon_url: null,
 };

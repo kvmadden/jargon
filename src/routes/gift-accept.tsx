@@ -1128,7 +1128,7 @@ function StepEditor({ step, answers, onPatch }: StepEditorProps) {
         <SingleTextField
           value={answers.heritage ?? ''}
           maxLength={MAX_HERITAGE_CHARS}
-          placeholder="e.g. liverpool, england · tampa, FL · mexico → texas"
+          placeholder="e.g. glasgow, scotland · denver, CO · mexico → texas"
           onChange={(v) => onPatch('heritage', v.trim() ? v : null)}
         />
       );

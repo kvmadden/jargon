@@ -220,7 +220,7 @@ function withName(template: string, recipientName: string): string {
 type GiftSendMode = 'compose' | 'review' | 'wizard';
 
 const COMPOSE_PLACEHOLDER =
-  "your father-in-law's a retired biology professor in tampa, originally from england. loves nature, soccer, red dead redemption. gets confused when his daughters drop monorepo and rebase…";
+  "your uncle's a retired chemistry teacher in denver, originally from scotland. loves birding, soccer, old westerns. gets confused when his kids drop monorepo and rebase…";
 
 const COMPOSE_LOADING_MESSAGES = [
   'reading…',
@@ -1337,7 +1337,7 @@ function StepHeritage({ recipientName, value, onChange }: StepHeritageProps) {
           setLocal(e.target.value);
           onChange(e.target.value);
         }}
-        placeholder="e.g. liverpool, england · tampa, FL · mexico → texas"
+        placeholder="e.g. glasgow, scotland · denver, CO · mexico → texas"
         maxLength={MAX_HERITAGE_CHARS}
         autoComplete="off"
         autoFocus

@@ -1210,7 +1210,7 @@ function StepHeritage({ value, onChange }: StepHeritageProps) {
           setLocal(e.target.value);
           onChange(e.target.value);
         }}
-        placeholder="e.g. Liverpool, England · Tampa, FL · Mexico → Texas"
+        placeholder="e.g. Glasgow, Scotland · Denver, CO · Mexico → Texas"
         maxLength={MAX_HERITAGE_CHARS}
         autoComplete="off"
         autoFocus

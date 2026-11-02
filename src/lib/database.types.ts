@@ -220,7 +220,7 @@ export interface UserProfileRow {
   encounter_contexts: string[];
   /**
    * Stage B+1.2 — free-form geography/culture/lineage line (e.g.
-   * "Liverpool, England", "Mexico → Texas"). Null = not provided. Widens the
+   * "Glasgow, Scotland", "Mexico → Texas"). Null = not provided. Widens the
    * analogy domain for the personalize prompt without overloading
    * background_text.
    */

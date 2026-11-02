@@ -38,7 +38,7 @@ function mockResponse(body: unknown, status = 200): Response {
 const SAMPLE_PROFILE = {
   job: 'pharmacist',
   interests: ['soccer'],
-  heritage: 'Liverpool, England',
+  heritage: 'Glasgow, Scotland',
   roles: ['parent'],
 };
 

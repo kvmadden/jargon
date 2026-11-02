@@ -177,7 +177,7 @@ interface LogState {
 function pass1SystemPrompt(): string {
   return `You are jargon's gift-profile composer. The sender is setting up a personalized jargon account for someone they love (a family member, mentor, partner, friend, colleague). They've described that person in their own words; your job is to draft the recipient's complete starter profile from that description.
 
-jargon's voice is "translator, not professor." The profile you draft will drive Opus's per-term analogies for this recipient. Lean toward concrete, specific signals over abstract ones — "retired biology professor" beats "academic," "watches Tampa Bay Buccaneers" beats "follows football."
+jargon's voice is "translator, not professor." The profile you draft will drive Opus's per-term analogies for this recipient. Lean toward concrete, specific signals over abstract ones — "retired chemistry teacher" beats "educator," "watches the Denver Broncos" beats "follows football."
 
 INPUT:
 - The sender's name + their freeform description of the recipient
@@ -187,7 +187,7 @@ OUTPUT (single JSON object, no markdown, no commentary):
 {
   "display_name": "what to call them in greetings (first name, nickname). Capitalization preserved verbatim. Null if the description doesn't reveal it.",
   "job": "their work, with subspecialty if mentioned. Null if not mentioned.",
-  "heritage": "country/region/origin if mentioned (e.g. 'Liverpool, England' or 'Cuban-American'). Null if not.",
+  "heritage": "country/region/origin if mentioned (e.g. 'Glasgow, Scotland' or 'Cuban-American'). Null if not.",
   "interests": ["array of 3-8 specific hobbies, sports, shows, fandoms — concrete nouns only. Empty array if none mentioned."],
   "roles": ["array of 0-4 from this fixed set: parent, grandparent, partner, manager, mentor, student, immigrant, veteran, caretaker, freelancer, entrepreneur, other. Match what the description supports. Empty array if none apply."],
   "encounter_contexts": ["array of 0-4 from this fixed set: tech podcasts, family / friends, news articles, job listings, slack at work, nowhere yet — fresh start. Pick what fits where they'd hear coding/AI terms. Empty array if unknown."],
@@ -206,7 +206,7 @@ RULES:
 - Capitalization in all freeform text fields (display_name, job, heritage, interests items, background_text, etc.) is preserved as the sender wrote it. Don't force lowercase, don't force titlecase.
 - Don't invent facts the description doesn't support. If they didn't say where the recipient is from, leave heritage null. Better to under-fill than to fabricate.
 - "Other" is a valid roles value — use it when the description names a role outside the fixed set ("retired professor", "stay-at-home dad before kids grew up").
-- interests should be specific NOUNS the recipient actually engages with, not abstractions. "soccer" yes, "sports" no. "Red Dead Redemption" yes, "video games" only if no specific game named.
+- interests should be specific NOUNS the recipient actually engages with, not abstractions. "soccer" yes, "sports" no. "Stardew Valley" yes, "video games" only if no specific game named.
 - The custom_message_draft is what the recipient SEES first when they open the gift. Make it land.
 - The private_reasoning_draft is what the SENDER would say if asked "why this person, why now?" — the unfiltered version they'd never say to the recipient's face.
 - lived_icons MUST be exactly 3 slugs, ALL from the allowlist. If you can only confidently pick 1-2, still return 3 — pad with the most generic fits ('briefcase', 'house', 'star', etc.).
@@ -239,13 +239,13 @@ You receive:
 Verify on these four pass/fail criteria. Return ONE JSON object on one line.
 
 1. faithful_to_input
-   Every claim in the draft profile is anchored in the sender's description. The draft can rephrase or paraphrase, but it CAN'T invent facts the sender didn't provide. (E.g. if the sender said "my dad's a retired biology professor in Tampa," it's fine for the draft to say job="retired biology professor in Tampa, FL" but NOT fine to say heritage="Cuban-American" if Cuban heritage wasn't mentioned.)
+   Every claim in the draft profile is anchored in the sender's description. The draft can rephrase or paraphrase, but it CAN'T invent facts the sender didn't provide. (E.g. if the sender said "my uncle's a retired chemistry teacher in Denver," it's fine for the draft to say job="retired chemistry teacher in Denver, CO" but NOT fine to say heritage="Cuban-American" if Cuban heritage wasn't mentioned.)
 
 2. no_invented_facts
    Specifically check the heritage / roles / interests fields for fabrication. If the sender didn't mention where the recipient is from, heritage should be null. If the sender didn't mention specific hobbies, interests should be empty or only contain things directly named. Pass = no fabrication. Fail = at least one invented fact.
 
 3. icons_match_input
-   The 3 lived_icons should each have a clear connection to something the sender mentioned. ("soccer-ball" if the sender mentioned soccer; "leaf" or "tree" if biology professor; "guitar" only if music was mentioned.) Pass = all 3 icons are defensible. Fail = at least one icon is decorative-only / unsupported.
+   The 3 lived_icons should each have a clear connection to something the sender mentioned. ("soccer-ball" if the sender mentioned soccer; "leaf" or "tree" if the sender mentioned nature; "guitar" only if music was mentioned.) Pass = all 3 icons are defensible. Fail = at least one icon is decorative-only / unsupported.
 
 4. drafts_read_natural
    The custom_message_draft and private_reasoning_draft should sound like a real human said them, not a template. Lowercase except proper nouns. No formal openings. References specific facts from the input. Pass = both drafts feel personal. Fail = either draft reads generic/template.

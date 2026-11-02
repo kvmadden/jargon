@@ -104,14 +104,14 @@ const HAPPY_COMPOSE_RESPONSE = {
   proposed_profile: {
     goals_extended: [],
     goals_freeform: 'wants to follow what his daughters do',
-    job: 'retired biology professor',
+    job: 'retired chemistry teacher',
     encounter_contexts: ['family / friends'],
     interests: ['nature', 'soccer'],
-    heritage: 'Liverpool, England',
+    heritage: 'Glasgow, Scotland',
     roles: ['parent'],
-    background_text: 'lives in Tampa.',
+    background_text: 'lives in Denver.',
     display_name: 'Pop',
-    relationship: 'father-in-law',
+    relationship: 'uncle',
     lived_icons: [],
     lived_icon_url: null,
   },
@@ -231,8 +231,8 @@ describe('GiftSend — compose mode (B+1.12)', () => {
     const nameInput = screen.getByPlaceholderText(/mom · dad · jesse/i);
     fireEvent.change(nameInput, { target: { value: 'Pop' } });
 
-    const describeTextarea = screen.getByPlaceholderText(/your father-in-law/i);
-    fireEvent.change(describeTextarea, { target: { value: 'biology professor' } });
+    const describeTextarea = screen.getByPlaceholderText(/your uncle/i);
+    fireEvent.change(describeTextarea, { target: { value: 'chemistry teacher' } });
 
     const cta = screen.getByRole('button', { name: /compose with AI/i });
     expect(cta).toBeDisabled();
@@ -244,8 +244,8 @@ describe('GiftSend — compose mode (B+1.12)', () => {
     const emailInput = screen.getByPlaceholderText(/name@example.com/i);
     fireEvent.change(emailInput, { target: { value: 'pop@example.com' } });
 
-    const describeTextarea = screen.getByPlaceholderText(/your father-in-law/i);
-    fireEvent.change(describeTextarea, { target: { value: 'biology professor' } });
+    const describeTextarea = screen.getByPlaceholderText(/your uncle/i);
+    fireEvent.change(describeTextarea, { target: { value: 'chemistry teacher' } });
 
     const cta = screen.getByRole('button', { name: /compose with AI/i });
     expect(cta).toBeDisabled();
@@ -282,8 +282,8 @@ describe('GiftSend — compose mode (B+1.12)', () => {
     fireEvent.change(screen.getByPlaceholderText(/name@example.com/i), {
       target: { value: 'pop@example.com' },
     });
-    fireEvent.change(screen.getByPlaceholderText(/your father-in-law/i), {
-      target: { value: 'retired biology professor, loves birds' },
+    fireEvent.change(screen.getByPlaceholderText(/your uncle/i), {
+      target: { value: 'retired chemistry teacher, loves birds' },
     });
 
     fireEvent.click(screen.getByRole('button', { name: /compose with AI/i }));
@@ -310,8 +310,8 @@ describe('GiftSend — compose mode (B+1.12)', () => {
     fireEvent.change(screen.getByPlaceholderText(/name@example.com/i), {
       target: { value: 'pop@example.com' },
     });
-    fireEvent.change(screen.getByPlaceholderText(/your father-in-law/i), {
-      target: { value: 'retired biology professor' },
+    fireEvent.change(screen.getByPlaceholderText(/your uncle/i), {
+      target: { value: 'retired chemistry teacher' },
     });
 
     fireEvent.click(screen.getByRole('button', { name: /compose with AI/i }));
@@ -323,7 +323,7 @@ describe('GiftSend — compose mode (B+1.12)', () => {
     });
 
     // Compose textarea placeholder should be gone
-    expect(screen.queryByPlaceholderText(/your father-in-law/i)).not.toBeInTheDocument();
+    expect(screen.queryByPlaceholderText(/your uncle/i)).not.toBeInTheDocument();
   });
 
   it('on fallback response transitions to wizard mode', async () => {
@@ -337,7 +337,7 @@ describe('GiftSend — compose mode (B+1.12)', () => {
     fireEvent.change(screen.getByPlaceholderText(/name@example.com/i), {
       target: { value: 'pop@example.com' },
     });
-    fireEvent.change(screen.getByPlaceholderText(/your father-in-law/i), {
+    fireEvent.change(screen.getByPlaceholderText(/your uncle/i), {
       target: { value: 'something' },
     });
 
