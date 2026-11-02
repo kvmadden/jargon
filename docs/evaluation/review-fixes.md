@@ -1,14 +1,14 @@
 # Review fixes verified November 1, 2026
 
-PR #1 remains HOLD. PR #2 contains this production-policy dependency and must remain held with it. No paid inference, deployment or merge was performed. No work ledger was changed.
+PR #1 remains HOLD. PR #2 contains this production-policy dependency and must remain held with it. No paid inference, deployment or merge was performed.
 
 ## Changes and review routing
 
 The refill guard compared the current local month with the UTC month prefix of a saved timestamp. Converting the timestamp through the existing local-date helper fixes repeat refills near UTC month boundaries. Date-only calendar markers retain their existing representation. The frozen tests cover Los Angeles, Tokyo and a local-month transition before the UTC transition.
 
-The seven additional historical holds remain unadjudicated. [The release decision packet](release-decisions.md) lists every candidate ID and the required expert evidence. Kevin must authorize an inference path or supply authorized original-versus-candidate results using identical frozen inputs and candidates, including false acceptance, false rejection and retry/fallback outcomes. The no-spending instruction remains in force. These requirements are also recorded in `~/dev/state/AT-DESK.md`. Local gates do not establish model accuracy or regeneration quality.
+The seven additional historical holds remain unadjudicated. [The release decision packet](release-decisions.md) lists every candidate ID and the required expert evidence. Kevin must authorize an inference path or supply authorized original-versus-candidate results using identical frozen inputs and candidates, including false acceptance, false rejection and retry/fallback outcomes. The no-spending instruction remains in force. Local gates do not establish model accuracy or regeneration quality.
 
-Fetched origin before editing. Current main is `2db6bcffb674c13df67a0c7926f5784541fd584c`. Both remote PR heads still matched the reviewed heads, and both target main. Rechecked tree inventory, source and evaluation searches, umbrella parked/archive material, state briefs, queue and recent jargon run evidence. Only the original jobs and this dispatched review fix covered this scope. No newer fix PR was open. No repository guidance file was found in jargon or its applicable parent directories beyond the supplied user instructions.
+Fetched origin before editing. Current main is `2db6bcffb674c13df67a0c7926f5784541fd584c`. Both remote PR heads still matched the reviewed heads, and both target main. Rechecked tree inventory and source and evaluation searches. Only the two original PRs and this review fix covered this scope. No newer fix PR was open. No repository guidance file was found in jargon or its applicable parent directories beyond the supplied user instructions.
 
 ## RED and GREEN
 
@@ -27,7 +27,7 @@ The focused command was rerun after `npm ci`. Untouched main's existing App and 
 Created the owned clone outside the estate without sibling repos:
 
 ```sh
-git clone --no-local --branch main /Users/kevin/dev/repos/jargon /tmp/jargon-review-control-20261101
+git clone --no-local --branch main <local-clone> /tmp/jargon-review-control-20261101
 env -u MFW_UMBRELLA_ROOT -u OPERATOR_ECOSYSTEM_ROOT npm ci
 ```
 
@@ -36,7 +36,7 @@ Both exited 0. Installed candidate dependencies with the same `npm ci` command, 
 | Command | Untouched main | PR #1 |
 | --- | --- | --- |
 | `env -u MFW_UMBRELLA_ROOT -u OPERATOR_ECOSYSTEM_ROOT npm run pre-deploy` | Exit 0, 1103/1103 unit tests, build and source checks pass | Exit 0, 1114/1114 unit tests, build and source checks pass |
-| `env -u MFW_UMBRELLA_ROOT -u OPERATOR_ECOSYSTEM_ROOT PG_BIN=/Users/kevin/dev/toolchains/postgresql-17/bin npm run test:ai-spend-acl` | Exit 0, ACL regression ok | Exit 0, ACL regression ok |
+| `env -u MFW_UMBRELLA_ROOT -u OPERATOR_ECOSYSTEM_ROOT PG_BIN=<postgresql-17>/bin npm run test:ai-spend-acl` | Exit 0, ACL regression ok | Exit 0, ACL regression ok |
 | `env -u MFW_UMBRELLA_ROOT -u OPERATOR_ECOSYSTEM_ROOT JARGON_E2E_PORT=5281 npm run test:e2e -- --reporter=line` | Exit 1, 96 passed and 2 failed | Same command with port 5282, exit 1, 96 passed and 2 failed |
 
 The earlier calendar failure does not reproduce at today's wall-clock instant on main. The new frozen regression tests reproduce it independently of that instant. The full repository `pre-deploy` gate is green. The broader browser suite is red on both trees. Both browser failures are `tests/e2e/routes-flow.spec.ts:277`, navigation from home to spotted paste mode, on iphone-14 and iphone-16-pro-max. Each expects the missing `spotted in the wild` heading at line 281. Candidate-only failure identities: none. This unrelated baseline browser contract was preserved, not waived or called green.
@@ -55,4 +55,4 @@ git diff --check
 
 Original dated evaluation artifacts, expert labels, frozen challenge set and replay artifact remain unchanged. No policy retuning occurred. No Deno executable was available and no Deno deployment or live inference was attempted. Hosted GitHub checks are absent in the current PR metadata, not certified green. No head-matched hosted preview is certified.
 
-Portable logs are in [review-fix-logs](review-fix-logs). Raw logs, interrupted browser attempts, installation logs and failure traces are preserved in `/Volumes/HubData/evidence/jargon-review-fixes`, using the evidence allocation in the dispatcher's `storage-plan-jargon-review-fixes-4d6c53d1-3b3e-49db-9f5a-3643feca307e.json` receipt. Committed copies remove terminal escape codes and trailing whitespace only. The owned control clone and GIF encoding venv are removed after preserving evidence.
+Portable logs are in [review-fix-logs](review-fix-logs). Raw logs, interrupted browser attempts, installation logs and failure traces are kept in a local evidence home outside the repository. Committed copies remove terminal escape codes and trailing whitespace, and show `<repo>` and `<tmp>` in place of local checkout and temporary folder paths. The owned control clone and GIF encoding venv are removed after preserving evidence.

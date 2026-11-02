@@ -3,7 +3,7 @@
 > vitest run src/lib/streak-freeze.test.ts
 
 
- RUN  v4.1.12 /Volumes/HubData/work/worktrees/jargon-verifier-upgrade
+ RUN  v4.1.12 <repo>
 
  ❯ src/lib/streak-freeze.test.ts (3 tests | 2 failed) 22ms
      × does not refill twice in the same local month in America/Los_Angeles 19ms

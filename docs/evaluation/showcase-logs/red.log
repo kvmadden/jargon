@@ -3,7 +3,7 @@
 > vitest run src/lib/evaluation-review.test.ts
 
 
- RUN  v4.1.12 /Volumes/HubData/work/worktrees/jargon-eval-showcase-ui
+ RUN  v4.1.12 <repo>
 
  ❯ src/lib/evaluation-review.test.ts (2 tests | 2 failed) 7ms
      × retains all runs and never invents expert agreement 5ms

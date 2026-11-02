@@ -3,7 +3,7 @@
 > vitest run src/lib/streak-freeze.test.ts src/App.test.tsx src/lib/personalize-claim-check.test.ts src/lib/prompt-version-sync.test.ts src/lib/evaluation-review.test.ts src/evaluation/review.test.tsx
 
 
- RUN  v4.1.12 /Volumes/HubData/work/worktrees/jargon-eval-showcase-ui
+ RUN  v4.1.12 <repo>
 
 
  Test Files  6 passed (6)
