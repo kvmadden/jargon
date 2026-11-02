@@ -220,7 +220,7 @@ function withName(template: string, recipientName: string): string {
 type GiftSendMode = 'compose' | 'review' | 'wizard';
 
 const COMPOSE_PLACEHOLDER =
-  "your father-in-law's a retired biology professor in tampa, originally from england. loves nature, soccer, red dead redemption. gets confused when his daughters drop monorepo and rebase…";
+  "your uncle's a retired chemistry teacher in denver, originally from scotland. loves birding, soccer, old westerns. gets confused when his kids drop monorepo and rebase…";
 
 const COMPOSE_LOADING_MESSAGES = [
   'reading…',
@@ -481,7 +481,7 @@ function WizardView({
       // routes the upload to a gift-namespace storage path
       // (`gift/<hash(email)>.png`) so the sender's own badge isn't
       // overwritten. Slow path (~10-20s) but worth it — the badge IS the
-      // first thing Peter sees on his accept splash.
+      // first thing the recipient sees on their accept splash.
       const recipientEmail = answers.recipient_email.trim().toLowerCase();
       const [livedIcons, badgeResult] = await Promise.all([
         pickLivedIcons(baseProfile),
@@ -1337,7 +1337,7 @@ function StepHeritage({ recipientName, value, onChange }: StepHeritageProps) {
           setLocal(e.target.value);
           onChange(e.target.value);
         }}
-        placeholder="e.g. liverpool, england · tampa, FL · mexico → texas"
+        placeholder="e.g. glasgow, scotland · denver, CO · mexico → texas"
         maxLength={MAX_HERITAGE_CHARS}
         autoComplete="off"
         autoFocus
@@ -1582,7 +1582,7 @@ function StepPrivateReasoning({
             onChange(e.target.value);
           }
         }}
-        placeholder="e.g. peter keeps asking what i do all day and i want him to be able to ask better questions · my mom watches me code and gets quiet — she shouldn't have to feel locked out"
+        placeholder="e.g. avery keeps asking what i do all day and i want him to be able to ask better questions · my mom watches me code and gets quiet — she shouldn't have to feel locked out"
         rows={5}
         autoFocus
         className="w-full bg-surface-card border border-border-default rounded-lg px-3 py-3 text-base text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent-jargon resize-none"

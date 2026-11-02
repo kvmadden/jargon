@@ -183,14 +183,14 @@ function TestSplashView({
 
 const FULL_PROFILE: PrefilledProfile = {
   display_name: 'Pop',
-  job: 'retired biology professor',
-  heritage: 'Liverpool, England',
+  job: 'retired chemistry teacher',
+  heritage: 'Glasgow, Scotland',
   interests: ['nature', 'soccer'],
   roles: ['parent', 'grandparent'],
   goals_freeform: 'wants to follow what his daughters do',
-  background_text: 'lives in Tampa. obsessed with birds.',
+  background_text: 'lives in Denver. obsessed with birds.',
   active_domain: null,
-  relationship: 'father-in-law',
+  relationship: 'uncle',
   lived_icons: [],
   lived_icon_url: null,
 };
@@ -201,7 +201,7 @@ describe('SplashView transparency card-list (B+1.11)', () => {
   it('renders all non-empty profile fields as rows', () => {
     render(
       <TestSplashView
-        recipientName="Peter Jonathan Smith"
+        recipientName="Avery Quinn Example"
         displayName="Pop"
         senderDisplay="Ada Example"
         profile={FULL_PROFILE}
@@ -229,7 +229,7 @@ describe('SplashView transparency card-list (B+1.11)', () => {
 
     render(
       <TestSplashView
-        recipientName="Peter"
+        recipientName="Avery"
         displayName="Pop"
         senderDisplay="Kevin"
         profile={sparseProfile}
@@ -258,7 +258,7 @@ describe('SplashView transparency card-list (B+1.11)', () => {
 
     render(
       <TestSplashView
-        recipientName="Peter"
+        recipientName="Avery"
         displayName="Pop"
         senderDisplay="Kevin"
         profile={profileWithPrivate}
@@ -274,7 +274,7 @@ describe('SplashView transparency card-list (B+1.11)', () => {
   it('tapping "remove" toggles the button label to "keep"', () => {
     render(
       <TestSplashView
-        recipientName="Peter"
+        recipientName="Avery"
         displayName="Pop"
         senderDisplay="Kevin"
         profile={FULL_PROFILE}
@@ -292,7 +292,7 @@ describe('SplashView transparency card-list (B+1.11)', () => {
   it('tapping "remove" adds line-through class to the value', () => {
     render(
       <TestSplashView
-        recipientName="Peter"
+        recipientName="Avery"
         displayName="Pop"
         senderDisplay="Kevin"
         profile={FULL_PROFILE}
@@ -309,7 +309,7 @@ describe('SplashView transparency card-list (B+1.11)', () => {
   it('tapping "keep" un-removes (restores "remove" button label)', () => {
     render(
       <TestSplashView
-        recipientName="Peter"
+        recipientName="Avery"
         displayName="Pop"
         senderDisplay="Kevin"
         profile={FULL_PROFILE}
@@ -326,7 +326,7 @@ describe('SplashView transparency card-list (B+1.11)', () => {
   it('tapping "keep" removes the line-through class', () => {
     render(
       <TestSplashView
-        recipientName="Peter"
+        recipientName="Avery"
         displayName="Pop"
         senderDisplay="Kevin"
         profile={FULL_PROFILE}
@@ -344,7 +344,7 @@ describe('SplashView transparency card-list (B+1.11)', () => {
   it('privacy line renders with senderFirstName (first token of sender_display)', () => {
     render(
       <TestSplashView
-        recipientName="Peter"
+        recipientName="Avery"
         displayName="Pop"
         senderDisplay="Ada Example"
         profile={FULL_PROFILE}
@@ -360,7 +360,7 @@ describe('SplashView transparency card-list (B+1.11)', () => {
   it('privacy line uses "they" when sender_display is "Someone"', () => {
     render(
       <TestSplashView
-        recipientName="Peter"
+        recipientName="Avery"
         displayName="Pop"
         senderDisplay="Someone"
         profile={FULL_PROFILE}
@@ -375,7 +375,7 @@ describe('SplashView transparency card-list (B+1.11)', () => {
   it('greeting prefers display_name over recipient_name', () => {
     render(
       <TestSplashView
-        recipientName="Peter Jonathan Smith"
+        recipientName="Avery Quinn Example"
         displayName="Pop"
         senderDisplay="Kevin"
         profile={FULL_PROFILE}
@@ -385,13 +385,13 @@ describe('SplashView transparency card-list (B+1.11)', () => {
 
     const heading = screen.getByRole('heading', { level: 1 });
     expect(heading.textContent).toContain('Pop');
-    expect(heading.textContent).not.toContain('Peter Jonathan Smith');
+    expect(heading.textContent).not.toContain('Avery Quinn Example');
   });
 
   it('greeting falls back to recipient_name when display_name is null', () => {
     render(
       <TestSplashView
-        recipientName="Peter Jonathan Smith"
+        recipientName="Avery Quinn Example"
         displayName={null}
         senderDisplay="Kevin"
         profile={{ ...FULL_PROFILE, display_name: null }}
@@ -400,13 +400,13 @@ describe('SplashView transparency card-list (B+1.11)', () => {
     );
 
     const heading = screen.getByRole('heading', { level: 1 });
-    expect(heading.textContent).toContain('Peter Jonathan Smith');
+    expect(heading.textContent).toContain('Avery Quinn Example');
   });
 
   it('greeting falls back to recipient_name when display_name is empty string', () => {
     render(
       <TestSplashView
-        recipientName="Peter Jonathan Smith"
+        recipientName="Avery Quinn Example"
         displayName=""
         senderDisplay="Kevin"
         profile={{ ...FULL_PROFILE, display_name: '' }}
@@ -415,13 +415,13 @@ describe('SplashView transparency card-list (B+1.11)', () => {
     );
 
     const heading = screen.getByRole('heading', { level: 1 });
-    expect(heading.textContent).toContain('Peter Jonathan Smith');
+    expect(heading.textContent).toContain('Avery Quinn Example');
   });
 
   it('"lowercase" class is on the "hi" span, NOT on the greeting name', () => {
     render(
       <TestSplashView
-        recipientName="Peter"
+        recipientName="Avery"
         displayName="Pop"
         senderDisplay="Kevin"
         profile={FULL_PROFILE}
@@ -442,7 +442,7 @@ describe('SplashView transparency card-list (B+1.11)', () => {
     const spy = vi.fn();
     render(
       <TestSplashView
-        recipientName="Peter"
+        recipientName="Avery"
         displayName="Pop"
         senderDisplay="Kevin"
         profile={FULL_PROFILE}
@@ -463,7 +463,7 @@ describe('SplashView transparency card-list (B+1.11)', () => {
     const spy = vi.fn();
     render(
       <TestSplashView
-        recipientName="Peter"
+        recipientName="Avery"
         displayName="Pop"
         senderDisplay="Kevin"
         profile={FULL_PROFILE}
@@ -482,7 +482,7 @@ describe('SplashView transparency card-list (B+1.11)', () => {
     const spy = vi.fn();
     render(
       <TestSplashView
-        recipientName="Peter"
+        recipientName="Avery"
         displayName="Pop"
         senderDisplay="Kevin"
         profile={FULL_PROFILE}
@@ -504,7 +504,7 @@ describe('SplashView transparency card-list (B+1.11)', () => {
     const spy = vi.fn();
     render(
       <TestSplashView
-        recipientName="Peter"
+        recipientName="Avery"
         displayName="Pop"
         senderDisplay="Kevin"
         profile={FULL_PROFILE}

@@ -658,7 +658,7 @@ export function ProfileForm({
             value={heritage}
             aria-label="where are you from? heritage"
             onChange={(e) => setHeritage(e.target.value)}
-            placeholder="e.g. Liverpool, England · Tampa, FL · Mexico → Texas"
+            placeholder="e.g. Glasgow, Scotland · Denver, CO · Mexico → Texas"
             className="w-full bg-surface-card border border-border-default rounded-lg px-3 py-3 text-base text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent-jargon focus:ring-2 focus:ring-accent-jargon/30 min-h-[44px]"
             maxLength={MAX_HERITAGE_CHARS}
             autoComplete="off"
