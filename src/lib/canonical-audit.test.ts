@@ -7,6 +7,10 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 // @ts-expect-error plain .mjs module without type declarations
 import { auditSeed, auditTerm } from '../../scripts/audit-canonical.mjs';
+// @ts-expect-error plain .mjs module without type declarations
+import { fkGrade, median } from '../../scripts/lib/readability.mjs';
+// @ts-expect-error plain .mjs module without type declarations
+import { parseTermInserts, uniqueById } from '../../scripts/lib/seed-terms.mjs';
 
 const ROOT = resolve(__dirname, '../..');
 const seed = readFileSync(resolve(ROOT, 'supabase/seed.sql'), 'utf8');
@@ -43,6 +47,24 @@ describe('canonical corrections', () => {
   it('no longer states parameter counts for Claude or GPT-5', () => {
     expect(seed).not.toMatch(/frontier models \(Claude, GPT-5\) are both in the hundreds of billions/);
     expect(seed).not.toMatch(/smaller than Claude/);
+  });
+
+  it('keeps each corrected field as short and plain as a typical entry (Kevin, 2026-11-03)', () => {
+    const rows = [...uniqueById(parseTermInserts(seed)).values()] as Array<Record<string, string>>;
+    for (const c of corrections.filter((x) => x.field !== 'fill_in_blank_sentence')) {
+      const lengths = rows.map((r) => (r[c.field] ?? '').length).sort((a, b) => a - b);
+      const p75 = lengths[Math.floor(lengths.length * 0.75)];
+      const medianGrade = median(rows.map((r) => fkGrade(r[c.field] ?? '')));
+      expect(c.next.length, `${c.id}.${c.field} length`).toBeLessThanOrEqual(p75);
+      expect(fkGrade(c.next), `${c.id}.${c.field} grade`).toBeLessThanOrEqual(medianGrade);
+    }
+  });
+
+  it('writes the corrected text in sentence case with end punctuation', () => {
+    for (const c of corrections) {
+      expect(c.next[0], `${c.id}.${c.field}`).toMatch(/[A-Z"]/);
+      expect(c.next.trim(), `${c.id}.${c.field}`).toMatch(/[.!?]$/);
+    }
   });
 
   it('removes renderings written from the old text', () => {

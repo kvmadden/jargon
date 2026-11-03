@@ -24,15 +24,15 @@ do $$
 declare n int;
 begin
 
-  select count(*) into n from terms where id = 'cloud-environment' and example_in_sentence = 'the bug shows up in the staging environment but not in production, because staging points at the payment provider''s sandbox instead of the live account.';
+  select count(*) into n from terms where id = 'cloud-environment' and example_in_sentence = 'The bug shows up in staging but not in production, since staging uses a test payment account.';
   if n <> 1 then raise exception 'not corrected: cloud-environment.example_in_sentence'; end if;
-  select count(*) into n from terms where id = 'cloud-environment' and fill_in_blank_sentence = 'the bug shows up in the staging ___ but not in production, because staging points at the payment provider''s sandbox instead of the live account.';
+  select count(*) into n from terms where id = 'cloud-environment' and fill_in_blank_sentence = 'The bug shows up in the staging ___ but not in production, since staging uses a test payment account.';
   if n <> 1 then raise exception 'not corrected: cloud-environment.fill_in_blank_sentence'; end if;
-  select count(*) into n from terms where id = 'aid-parameters' and long_definition = 'When you see a model described as "70B" or "405B," that "B" means billion parameters. Parameters are the internal numbers a model learns during training, billions of tiny adjustments that together encode what it knows. More parameters generally mean better answers but slower responses and higher cost per request. Open-weight models publish their size (Llama 3.1 405B has 405 billion parameters), while Anthropic and OpenAI do not publish parameter counts for Claude or GPT-5.';
+  select count(*) into n from terms where id = 'aid-parameters' and long_definition = 'When a model is called "70B" or "405B," the "B" means billions of parameters. Parameters are the numbers a model learns in training. More parameters usually mean better answers but slower, costlier responses. Anthropic and OpenAI do not publish counts for Claude or GPT-5.';
   if n <> 1 then raise exception 'not corrected: aid-parameters.long_definition'; end if;
-  select count(*) into n from terms where id = 'aid-parameters' and example_in_sentence = 'Llama 3 70B has 70 billion parameters, so running it yourself takes a machine with a lot of memory, even after it is compressed (quantized).';
+  select count(*) into n from terms where id = 'aid-parameters' and example_in_sentence = 'Llama 3 70B has 70 billion parameters, so it needs a machine with a lot of memory.';
   if n <> 1 then raise exception 'not corrected: aid-parameters.example_in_sentence'; end if;
-  select count(*) into n from terms where id = 'aid-parameters' and why_it_matters = 'Open-weight model names like "Llama 3 70B" or "Llama 3.1 405B" make more sense once you know that the "B" is billions of parameters. Names like "GPT-5" or "Claude Opus 4.7" carry no size, because those companies do not publish it. Size is the simplest rough comparison of model heft, even though parameters alone do not tell you everything about quality.';
+  select count(*) into n from terms where id = 'aid-parameters' and why_it_matters = 'Names like "Llama 3 70B" make sense once you know the "B" means billions of parameters. Size gives a rough sense of a model''s power and cost, but it does not tell you everything about quality.';
   if n <> 1 then raise exception 'not corrected: aid-parameters.why_it_matters'; end if;
   select count(*) into n from terms where long_definition = 'unchanged' or example_in_sentence = 'unchanged';
   if n < 1 then raise exception 'fixture lost its untouched fields'; end if;
@@ -48,7 +48,7 @@ do $$
 declare n int;
 begin
   select count(*) into n from terms where id = 'bi-calculated-column'
-    and why_it_matters like 'a calculated column is figured out once per row and stored in the table%';
+    and why_it_matters like 'A calculated column is worked out once per row and stored.%';
   if n <> 1 then raise exception 'not corrected: bi-calculated-column.why_it_matters'; end if;
 end $$;
 

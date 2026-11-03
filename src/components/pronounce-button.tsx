@@ -72,8 +72,8 @@ export function PronounceButton({ text, label, className = '' }: PronounceButton
       title={ariaLabel}
     >
       <svg
-        width={18}
-        height={18}
+        width={24}
+        height={24}
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"

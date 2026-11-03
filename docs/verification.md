@@ -6,6 +6,10 @@ This page describes prompt version 10. The code is in `supabase/functions/person
 
 On the 2026-10-30 run the verifier accepted 78 of 79 rewrites. Four accepted rewrites carried errors the rewrite itself introduced, and the verifier caught 0 of 4. All four were analogies that made a claim about the learner's own field, such as "you can only open charts for patients on your unit". The verifier compares the rewrite with the canonical entry, so a claim about nursing or pharmacy that the canonical entry never mentions has nothing to be checked against. Its own `uses_analogy` flag also waived the analogy checks when it said no, and it read only the definition field.
 
+## Before any model call (prompt version 11)
+
+The function first reads the learner's field from the profile. It offers a personalized lesson only for nurses, pharmacists, pharmacy technicians and teachers, and only for a term with a comparison a person has vetted for that field. Otherwise it makes no model call, logs `skipped-unsupported-field` or `skipped-no-analogy`, and returns the standard lesson with the reason. With a vetted comparison, the rewrite must use it word for word. A sentence that is exactly the vetted comparison skips the field rules, and a rewrite without it is held (`missing_vetted_analogy`).
+
 ## The sequence
 
 1. **Pass 1** writes a candidate from the canonical entry and the profile. The profile is sent as a JSON data block, so text in a profile cannot pose as a prompt section. The learned vocabulary goes to every pass, and a failed vocabulary lookup is sent as "unknown", not as "no vocabulary yet".

@@ -40,6 +40,8 @@ import {
 } from './cache-policy.ts';
 import type { CachedRenderingRow } from './cache-policy.ts';
 import { APPROVED_ANALOGIES } from './approved-analogies.ts';
+import { learnerFieldFor, type LearnerFieldId } from '../_shared/learner-fields.ts';
+import { vettedAnalogyFor } from '../_shared/analogy-bank.ts';
 
 // Cache key for user_term_renderings. Mirror in src/lib/data.ts
 // (CURRENT_PROMPT_VERSION); src/lib/prompt-version-sync.test.ts enforces it.
@@ -50,7 +52,7 @@ import { APPROVED_ANALOGIES } from './approved-analogies.ts';
 // the canonical entry. Every v9 rendering is stale under v10 and is never
 // shown again. It is replaced on the next accepted rewrite or deleted when the
 // rewrite is held.
-const PROMPT_VERSION = 10;
+const PROMPT_VERSION = 11;
 
 interface PersonalizeResponse {
   long_definition: string;
@@ -235,7 +237,7 @@ Deno.serve(async (req) => {
   // ─── Canonical term, profile, cached rendering ───────────────────────────────
   const { data: term, error: termErr } = await supabase
     .from('terms')
-    .select('id, term, one_line_definition, long_definition, example_in_sentence, why_it_matters, domain')
+    .select('id, term, expansion, one_line_definition, long_definition, example_in_sentence, why_it_matters, domain')
     .eq('id', body.termId)
     .maybeSingle();
   if (termErr || !term) return jsonResponse(req, { error: 'term not found' }, 404);
@@ -259,6 +261,19 @@ Deno.serve(async (req) => {
   }
   const typedProfile = profile as UserProfileRow;
   log.profile_version = typedProfile.profile_version;
+
+  // ─── Supported field and vetted comparison (Kevin's ruling, 2026-11-03) ──────
+  // A personalized lesson needs a supported learner field and a comparison a
+  // person vetted for this term and field. Without one, no model call is made
+  // and the learner gets the canonical lesson with the reason.
+  const learnerField: LearnerFieldId | null = learnerFieldFor(typedProfile);
+  const vetted = vettedAnalogyFor(typedTerm.id, learnerField);
+  if (!learnerField || !vetted) {
+    const reason = !learnerField ? 'unsupported_field' : 'no_vetted_analogy';
+    log.error_text = reason;
+    await writeLog(serviceClient, log, !learnerField ? 'skipped-unsupported-field' : 'skipped-no-analogy');
+    return jsonResponse(req, { ...canonicalResponse(typedTerm), unavailableReason: reason, learnerField }, 200);
+  }
 
   const { data: cachedRow } = await supabase
     .from('user_term_renderings')
@@ -336,7 +351,7 @@ Deno.serve(async (req) => {
   // ─── The pass sequence ───────────────────────────────────────────────────────
   const knownVocabulary = knownVocabularyForBudget;
   const outcome = await runPersonalization(
-    { term: typedTerm, profile: typedProfile, knownVocabulary, approvedAnalogies: APPROVED_ANALOGIES },
+    { term: typedTerm, profile: typedProfile, knownVocabulary, approvedAnalogies: APPROVED_ANALOGIES, vettedAnalogy: vetted.comparison },
     sdkCallModel(anthropic),
   );
   log.outcome = outcome;

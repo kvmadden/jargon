@@ -60,7 +60,9 @@ RULES:
 - Heritage + roles + interests widen the set of domains you may draw from (an English grandmother who likes antiques has different reference points than an American MBA into fitness — both have multiple domains; pick the one that maps cleanest per term).
 - Match the canonical's length within ±20%. A rewrite under 0.4 times or over 2 times the canonical length is rejected. Do not pad. Do not professor-mode.
 - Preserve every technical fact in the canonical entry. The user is learning the real meaning; analogy is the on-ramp, not the destination.
-- Tone: lowercase except proper nouns and acronyms. No exclamation points. No "Imagine if…" / "Picture this…" preamble. Drop the reader straight into the analogy.
+- Style: sentence case with full punctuation. Capitalize the first word of every sentence, and end every sentence with a period. Keep the term's own name exactly as the canonical entry writes it, even if it is lowercase. Use short sentences. In long_definition, open with one plain sentence that says what the term is, then two or three short sentences, because the app shows each sentence after the first as a bullet. No exclamation points. No "Imagine if…" / "Picture this…" preamble.
+- EXPANSION: when the user message gives one, the app shows it above the lesson exactly as written. Never contradict it, reword it, or give the letters a different meaning.
+- REQUIRED COMPARISON: the user message gives one comparison a person reviewed for this term and the learner's field. Use it word for word as one sentence of long_definition. Do not add any other analogy, metaphor or comparison.
 - example_in_sentence MUST be one sentence that uses the term naturally in a context the user would actually encounter or recognize. Not a textbook example.
 - If the user profile is sparse (e.g. only education level filled in), lean on education-appropriate plain-English analogies and keep close to the canonical structure.
 - VOCABULARY DISCIPLINE: The user message will include "VOCABULARY THE USER HAS LEARNED" — the in-domain terms they've already been taught. You may freely use those terms, the term being taught right now, and plain English. If you must reach for any OTHER in-domain technical term to teach this concept, you MUST define it inline parenthetically the first time you use it (e.g. "merging combines two branches (a branch is a separate line of work)"). Better still: rephrase to avoid the unfamiliar term, since inline definitions cost the reader an extra cognitive step. Do not assume the user knows in-domain jargon they haven't been taught — that breaks the on-ramp. Plain English is always allowed; common nouns + workplace vocabulary + the analogy domain's vocabulary are not "in-domain" for this rule.
@@ -122,7 +124,7 @@ Verify on these eight pass/fail criteria. For each, return "pass" or "fail" plus
    IF an analogy is used, the chosen analogy domain has a real structural mapping to the term's mechanism. ("API = spec sheet between divisions" works — that's structurally what an API is.) ("API = cashier and deli counter talking through receipts" fails — receipts aren't a communication channel between systems, they're a record of one transaction.) Ask: does the analogy explain HOW the term works, not just WHAT category it's in? IF NO ANALOGY is used, automatically pass with reasoning "no analogy used."
 
 4. example_reads_natural
-   example_in_sentence is something a person in the user's role would actually say, not a textbook contrivance. No "Imagine if…" preamble. Uses the term in a real working context, not a definition disguised as a sentence. Capitalization is checked in code, not here: do not fail this criterion for a capital letter.
+   example_in_sentence is something a person in the user's role would actually say, not a textbook contrivance. No "Imagine if…" preamble. Uses the term in a real working context, not a definition disguised as a sentence. The text should be in sentence case with full punctuation: do not fail a candidate for capital letters or periods.
 
 5. analogy_target_accurate
    IF an analogy is used, every claim the candidate makes about the analogy DOMAIN must be factually correct, not just structurally aligned. If the candidate says "in pharmacy daily reconciliation, the pharmacist counts both the controlled substances and..." that pharmacy claim must be a real fact about pharmacy daily reconciliation, not an invented detail to make the structure fit. The user lives in the analogy domain — they will catch wrong claims instantly. Use your general knowledge of the analogy domain to verify the rendering's claims about it. IF NO ANALOGY is used, automatically pass with reasoning "no analogy used."
@@ -168,6 +170,8 @@ export const pass3SystemPrompt = pass1SystemPrompt;
 export interface TermRow {
   id: string;
   term: string;
+  /** What the term's abbreviation stands for (terms.expansion, 2026-11-03). */
+  expansion?: { parts?: Array<{ abbr: string; expansion: string; kind: string }>; not_abbreviation?: boolean } | null;
   one_line_definition: string;
   long_definition: string;
   example_in_sentence: string;
@@ -360,8 +364,17 @@ export function formatKnownVocabulary(names: KnownVocabulary): string {
 
 // Canonical fields are flattened to one line each, so a stored line break in a
 // term cannot start a forged prompt section.
+/** "RLS stands for row-level security." lines from the term's expansion data, or ''. */
+export function expansionSentences(term: TermRow): string {
+  const parts = term.expansion && !term.expansion.not_abbreviation ? term.expansion.parts ?? [] : [];
+  return parts
+    .map((p) => (p.kind === 'clipped' ? `${oneLine(p.abbr, 40)} is short for ${oneLine(p.expansion, 120)}.` : `${oneLine(p.abbr, 40)} stands for ${oneLine(p.expansion, 120)}.`))
+    .join(' ');
+}
+
 function canonicalBlock(term: TermRow): string {
-  return `TERM: ${oneLine(term.term, 200)}
+  const expansion = expansionSentences(term);
+  return `TERM: ${oneLine(term.term, 200)}${expansion ? `\nEXPANSION (shown to the learner above the lesson, word for word): ${expansion}` : ''}
 ONE-LINE DEFINITION: ${oneLine(term.one_line_definition, 1000)}
 
 CANONICAL LONG DEFINITION:
@@ -375,17 +388,24 @@ ${oneLine(term.example_in_sentence, RENDERING_FIELD_MAX_CHARS)}`;
 }
 
 /** Pass 1 user message: canonical entry, profile data block, learned vocabulary. */
+/** The reviewed comparison the rewrite must use word for word, as a JSON string. */
+function requiredComparisonBlock(comparison: string | null | undefined): string {
+  if (!comparison) return '';
+  return `\n\nREQUIRED COMPARISON (reviewed by a person, JSON string, use it word for word as one sentence of long_definition):\n${JSON.stringify(oneLine(comparison, 400))}`;
+}
+
 export function buildPass1UserMessage(
   term: TermRow,
   profile: UserProfileRow,
   knownVocabulary: KnownVocabulary,
+  requiredComparison?: string | null,
 ): string {
   return `${canonicalBlock(term)}
 
 ${formatProfileBlock(profile)}
 
 VOCABULARY THE USER HAS LEARNED:
-${formatKnownVocabulary(knownVocabulary)}
+${formatKnownVocabulary(knownVocabulary)}${requiredComparisonBlock(requiredComparison)}
 
 Rewrite long_definition, why_it_matters, and example_in_sentence for this user. Return JSON only.`;
 }
@@ -442,13 +462,14 @@ export function buildPass3UserMessage(
   prior: ParsedRendering,
   feedbackBlock: string,
   knownVocabulary: KnownVocabulary,
+  requiredComparison?: string | null,
 ): string {
   return `${canonicalBlock(term)}
 
 ${formatProfileBlock(profile)}
 
 VOCABULARY THE USER HAS LEARNED:
-${formatKnownVocabulary(knownVocabulary)}
+${formatKnownVocabulary(knownVocabulary)}${requiredComparisonBlock(requiredComparison)}
 
 YOUR PREVIOUS ATTEMPT (rejected; JSON):
 ${JSON.stringify(prior)}

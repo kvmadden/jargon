@@ -29,6 +29,14 @@ A paid format check of the v10 prompts, approved by Kevin with a $3 budget: 6 it
 
 Six items show the format works. They say nothing about accuracy.
 
+### Prompt check, 2026-11-03 (prompt version 11)
+
+A second paid check, for the v11 prompts (sentence case, a required comparison per lesson): 6 items, $2 budget, results in `eval/results/check-v11-2026-11-03/`. It cost $0.42. No comparison in the bank is vetted yet, so draft comparisons stood in (`--use-draft-analogies`), which production never does.
+
+- All 6 rewrites used the required comparison word for word, in sentence case.
+- 3 of 6 were accepted. One regeneration was failed by the verifier for a real inaccuracy ("the same underlying report" instead of the semantic model). One was held for a claim the verifier marked unsupported. One failed because the verifier judged the draft comparison itself misleading (sorting labels into bins suggests the data is split, when RLS filters one shared dataset). That draft was rewritten for review.
+- First drafts often added a second, unvetted field comparison, which the gate held. The regenerations mostly dropped it.
+
 ### Corrections to earlier claims
 
 - "5 of 78 accepted outputs were wrong (6.4%)" counted only the 5 expert-confirmed outputs. One of them copied its error from the canonical entry, and 4 more outputs repeated canonical errors. At least 9 of 78 showed a learner a claim judged wrong.

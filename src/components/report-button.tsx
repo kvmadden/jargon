@@ -36,11 +36,11 @@ export function ReportButton({ termId, quizMode, className = '' }: Props) {
     setSubmitting(true);
     try {
       await submitReport({ userId: user.id, termId, reason, quizMode });
-      pushToast('flagged — thanks', 'success');
+      pushToast('flagged, thanks', 'success');
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('[report] submit failed', err);
-      pushToast('couldn’t flag — try again', 'error');
+      pushToast('couldn’t flag. try again', 'error');
     } finally {
       setSubmitting(false);
       setOpen(false);
@@ -52,13 +52,13 @@ export function ReportButton({ termId, quizMode, className = '' }: Props) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className={`w-12 h-12 min-w-[44px] min-h-[44px] rounded-md flex items-center justify-center text-text-muted active:bg-surface-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-jargon transition-colors ${className}`}
+        className={`w-12 h-12 min-w-[44px] min-h-[44px] rounded-md flex items-center justify-center text-text-secondary active:bg-surface-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-jargon transition-colors ${className}`}
         aria-label="report this term"
       >
         {/* Outline flag glyph — single 1.5pt path, currentColor. */}
         <svg
-          width={20}
-          height={20}
+          width={24}
+          height={24}
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"

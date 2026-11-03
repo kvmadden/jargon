@@ -134,7 +134,7 @@ export function QuizCardMatch({ primaryTerm, pool, onAnswer, onUseInSentence }: 
         <ReportButton termId={primaryTerm.id} quizMode="match" />
       </div>
       <div className="pr-12">
-        <p className="text-xs uppercase tracking-wider text-text-muted">
+        <p className="text-sm text-text-muted">
           {PATH_META[primaryTerm.path].label}
         </p>
         <h2 className="text-3xl font-semibold text-text-primary mt-2">match the pairs</h2>
@@ -182,7 +182,7 @@ export function QuizCardMatch({ primaryTerm, pool, onAnswer, onUseInSentence }: 
           <button
             type="button"
             onClick={onUseInSentence}
-            className="now-use-it text-xs font-medium text-accent-jargon-hi bg-surface-card border border-accent-jargon rounded-md min-h-[44px] px-4 inline-flex items-center gap-2 active:bg-accent-jargon/[0.12] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-jargon transition-colors"
+            className="now-use-it text-sm font-medium text-accent-jargon-hi bg-surface-card border border-accent-jargon rounded-md min-h-[44px] px-4 inline-flex items-center gap-2 active:bg-accent-jargon/[0.12] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-jargon transition-colors"
           >
             now use it
             <span aria-hidden="true">→</span>
@@ -217,7 +217,7 @@ export function QuizCardMatch({ primaryTerm, pool, onAnswer, onUseInSentence }: 
               onClick={() => tapDef(t.id)}
               disabled={isUsed || done}
               aria-expanded={isExpanded}
-              className={`rounded-lg p-3 min-h-[88px] text-xs leading-snug text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-jargon ${cls}`}
+              className={`rounded-lg p-3 min-h-[88px] text-sm leading-snug text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-jargon ${cls}`}
             >
               <span className={isExpanded ? '' : 'line-clamp-3'}>
                 {t.one_line_definition}

@@ -9,7 +9,7 @@ import { checkAndRefillStreakFreezes, DEFAULT_FREEZE_CAP } from './lib/streak-fr
 import { useToastStore, ToastHost } from './components/toast';
 import { StreakFreezeSheet } from './components/streak-freeze-sheet';
 import { CommandPaletteHost } from './components/command-palette-host';
-import { VersionPill } from './components/version-pill';
+import { AppBar } from './components/app-bar';
 import { FeedbackLauncher } from './features/feedback/feedback-launcher';
 import { ErrorBoundary } from './routes/error-boundary';
 
@@ -236,6 +236,7 @@ export default function App() {
     <>
       <ErrorBoundary>
         <Suspense fallback={<RouteFallback />}>
+          <AppBar />
           <Routes>
             <Route path="/" element={<Splash />} />
             {/* Backwards-compat alias — Stage A's /welcome (the "let's go" shim) now
@@ -469,7 +470,6 @@ export default function App() {
       <CommandPaletteHost />
       <FeedbackLauncher />
       {/* 2026-05-31: floating version / changelog pill. */}
-      <VersionPill />
     </>
   );
 }

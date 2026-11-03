@@ -22,6 +22,7 @@
 // max-w-md mobile-first sheet width.
 
 import { useEffect, useState } from 'react';
+import { plainLessonFields } from '../lib/lesson-text';
 import { supabase } from '../lib/supabase';
 import { PATH_META, type PathId, type TermRow } from '../lib/database.types';
 import { PathGlyph } from './path-glyph';
@@ -70,7 +71,7 @@ export function TermQuickPeek({ termId, onClose, onSeeFull }: Props) {
           setError('term not found');
           return;
         }
-        setTerm(data as TermRow);
+        setTerm(plainLessonFields(data as TermRow));
       } catch (err: unknown) {
         if (cancelled) return;
         const msg = err instanceof Error ? err.message : 'lookup failed';
@@ -119,7 +120,7 @@ export function TermQuickPeek({ termId, onClose, onSeeFull }: Props) {
 
         {error && !loading && (
           <p role="alert" aria-live="assertive" className="text-sm text-text-secondary text-center py-6">
-            couldn't load that term — {error}
+            couldn't load that term: {error}
           </p>
         )}
 
