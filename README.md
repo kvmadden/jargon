@@ -139,7 +139,7 @@ Requirements: Node 24, which CI uses (the eval and audit scripts run `.ts` files
 ```sh
 npm install
 cp .env.example .env.local      # then fill in values
-npm run dev                     # http://localhost:5182 (allowed by the dev CORS origins)
+npm run dev                     # prints a local address, which the dev CORS origins allow
 npm test                        # unit and component tests
 npm run build                   # type-check and production build
 npm run typecheck:functions     # strict type check of the Edge Functions
