@@ -119,7 +119,7 @@ Requirements: Node 20+, and the Supabase CLI plus Docker if you want a local bac
 ```sh
 npm install
 cp .env.example .env.local      # then fill in values
-npm run dev                     # http://localhost:5182
+npm run dev                     # prints a local address, open it
 npm test                        # unit tests
 npm run build                   # type-check and production build
 ```
