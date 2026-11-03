@@ -11,7 +11,7 @@
     "preview": "vite preview",
     "cap:sync": "cap sync",
     "cap:open:ios": "cap open ios",
-    "lint": "echo 'no lint configured'",
+    "lint": "tsc -b && npm run typecheck:functions",
     "supabase:start": "supabase start",
     "supabase:reset": "supabase db reset",
     "test:ai-spend-acl": "bash scripts/test-ai-spend-acl.sh",
