@@ -229,11 +229,14 @@ function GuidedProgramContent() {
     <div className="min-h-screen bg-bg-base safe-top safe-bottom">
       <header className="sticky top-0 z-20 bg-bg-base/95 px-4 py-3 backdrop-blur">
         <div className="mx-auto flex max-w-2xl items-center justify-between">
-          <Wordmark size={18} showDot />
+          {/* On desktop the app bar carries the wordmark. */}
+          <span className="lg:hidden">
+            <Wordmark size={18} showDot />
+          </span>
           <button
             type="button"
             onClick={() => navigate('/home')}
-            className="min-h-[44px] px-2 text-sm lowercase text-text-secondary"
+            className="ml-auto min-h-[44px] px-2 text-sm lowercase text-text-secondary"
           >
             home
           </button>

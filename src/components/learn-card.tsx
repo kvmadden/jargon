@@ -65,14 +65,14 @@ export function LearnCard({ term, onReady }: Props) {
           "Pharmacy → Engineering" depending on the user's room). For v1 it stays
           single-domain — see CLAUDE.md voice section. */}
       <div className="sticky top-0 z-10 bg-bg-base px-4 pt-6 pb-3">
-        <p className="font-mono text-2xs uppercase tracking-[0.08em] text-text-muted">
+        <p className="font-mono text-xs lowercase text-text-muted">
           <span>meet</span>
           <span className="text-text-muted" aria-hidden="true"> · </span>
           <span className="text-text-secondary">{meta.label}</span>
           <span className="text-text-muted" aria-hidden="true"> · </span>
-          <span className="text-accent-jargon-hi">{difficulty}</span>
+          <span className="text-text-secondary">{difficulty}</span>
         </p>
-        <h2 className="text-text-primary font-sans text-display font-semibold mt-3">
+        <h2 className="text-text-primary font-mono text-display lg:text-5xl font-medium tracking-tight lowercase mt-3">
           {term.term}
         </h2>
         {term.pronunciation && (
@@ -86,23 +86,23 @@ export function LearnCard({ term, onReady }: Props) {
       <div className="flex-1 overflow-y-auto px-4 pb-6">
         <div className="border-t border-border-default mt-3 mb-6" />
 
-        <p className="text-text-primary font-sans text-lg leading-relaxed">
+        <p className="text-text-primary font-sans text-lg lg:text-xl leading-relaxed">
           {toSentenceCase(term.one_line_definition)}
         </p>
 
-        <p className="text-text-muted font-mono text-2xs uppercase tracking-[0.08em] mt-6 mb-2">
-          ▸ what it really means
+        <p className="text-text-muted text-sm mt-6 mb-2">
+          what it really means
         </p>
         {/* A lead sentence plus bullets, in sentence case (Kevin's ruling, 2026-11-03). */}
-        <LessonBody text={term.long_definition} leadClassName="text-text-secondary font-sans text-body leading-relaxed" />
+        <LessonBody text={term.long_definition} leadClassName="text-text-secondary font-sans text-body lg:text-lg leading-relaxed" />
         {illustrationFor(term.id) && (
           <div className="mt-4">
             <ConceptIllustration illustration={illustrationFor(term.id)!} />
           </div>
         )}
 
-        <p className="text-text-muted font-mono text-2xs uppercase tracking-[0.08em] mt-6 mb-2">
-          ▸ in the wild
+        <p className="text-text-muted text-sm mt-6 mb-2">
+          in the wild
         </p>
         <p className="italic text-text-secondary font-sans text-body leading-relaxed">
           "{toSentenceCase(term.example_in_sentence)}"
@@ -110,8 +110,8 @@ export function LearnCard({ term, onReady }: Props) {
 
         {hasWhyItMatters && (
           <>
-            <p className="text-text-muted font-mono text-2xs uppercase tracking-[0.08em] mt-6 mb-2">
-              ▸ why it matters
+            <p className="text-text-muted text-sm mt-6 mb-2">
+              why it matters
             </p>
             <LessonBody text={term.why_it_matters} leadClassName="text-text-secondary font-sans text-body leading-relaxed" />
           </>

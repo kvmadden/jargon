@@ -12,7 +12,8 @@
 // store-agnostic so it's easy to test.
 
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { floatingButtonDesktopClass } from '../lib/desktop-chrome';
 import { useUserStore } from '../stores/user-store';
 import { fetchAllTerms } from '../lib/data';
 import type { TermRow } from '../lib/database.types';
@@ -39,6 +40,7 @@ const ACTIONS: Command[] = [
 
 export function CommandPaletteHost() {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const user = useUserStore((s) => s.user);
   const signOut = useUserStore((s) => s.signOut);
   const [open, setOpen] = useState(false);
@@ -88,7 +90,13 @@ export function CommandPaletteHost() {
       // Future actions land here as new `if` branches.
     }
     window.addEventListener('jargon:command', onCommand as EventListener);
-    return () => window.removeEventListener('jargon:command', onCommand as EventListener);
+    // The desktop app bar's search button.
+    const onOpenSearch = () => setOpen(true);
+    window.addEventListener('jargon:open-search', onOpenSearch);
+    return () => {
+      window.removeEventListener('jargon:command', onCommand as EventListener);
+      window.removeEventListener('jargon:open-search', onOpenSearch);
+    };
   }, [navigate, signOut]);
 
   const commands = useMemo<Command[]>(() => {
@@ -113,7 +121,7 @@ export function CommandPaletteHost() {
         type="button"
         onClick={() => setOpen(true)}
         aria-label="open command palette"
-        className="fixed bottom-16 right-4 z-40 flex items-center justify-center w-12 h-12 min-w-[44px] min-h-[44px] rounded-full bg-surface-card border border-border-default text-text-primary shadow-lg hover:border-accent-jargon active:bg-surface-card-hi focus:outline-none cursor-pointer select-none transition-colors"
+        className={`fixed bottom-16 right-4 z-40 flex ${floatingButtonDesktopClass(pathname)} items-center justify-center w-12 h-12 min-w-[44px] min-h-[44px] rounded-full bg-surface-card border border-border-default text-text-primary shadow-lg hover:border-accent-jargon active:bg-surface-card-hi focus:outline-none cursor-pointer select-none transition-colors`}
       >
         <svg
           className="w-6 h-6 text-accent-jargon-hi"

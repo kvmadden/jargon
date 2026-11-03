@@ -24,7 +24,7 @@ export function ExpansionLine({ term, expansion }: { term: string; expansion: Te
               <span>
                 {marks.map((w, i) => (
                   <span key={i}>
-                    <strong className="font-semibold text-accent-jargon-hi underline decoration-2 underline-offset-4">
+                    <strong className="font-semibold text-accent-jargon-hi">
                       {w.text[0].toUpperCase()}
                     </strong>
                     <span className="text-text-primary">{w.text.slice(1)}</span>

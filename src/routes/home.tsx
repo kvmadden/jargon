@@ -598,7 +598,10 @@ function HomeContent() {
             chrome bg stays full-bleed for the sticky-blur effect. */}
         <div className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center min-w-0">
-            <Wordmark size={18} showDot />
+            {/* On desktop the app bar carries the wordmark. */}
+            <span className="lg:hidden">
+              <Wordmark size={18} showDot />
+            </span>
             <LivedIconBadge
               url={profile?.lived_icon_url ?? null}
               fallbackSlugs={profile?.lived_icons ?? []}

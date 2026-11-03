@@ -288,7 +288,10 @@ describe('lesson layout and why a lesson is not personalized (v11)', () => {
       unavailableReason: 'no_vetted_analogy', learnerField: 'pharmacy_technician',
     } as any);
     renderTerm();
-    expect(await screen.findByRole('note')).toHaveTextContent('not personalized for pharmacy technicians yet');
+    // The note shows in the hero on phones and in the side panel on desktop.
+    const notes = await screen.findAllByRole('note');
+    expect(notes).toHaveLength(2);
+    for (const note of notes) expect(note).toHaveTextContent('not personalized for pharmacy technicians yet');
   });
 
   it('lists the supported fields when the profile matches none', async () => {
@@ -298,7 +301,8 @@ describe('lesson layout and why a lesson is not personalized (v11)', () => {
       unavailableReason: 'unsupported_field', learnerField: null,
     } as any);
     renderTerm();
-    expect(await screen.findByRole('note')).toHaveTextContent('nurses, pharmacists, pharmacy technicians and teachers');
+    const notes = await screen.findAllByRole('note');
+    for (const note of notes) expect(note).toHaveTextContent('nurses, pharmacists, pharmacy technicians and teachers');
   });
 });
 

@@ -34,7 +34,7 @@ function Arrow({ down }: { down?: boolean }) {
       width={down ? 12 : 16}
       height={down ? 16 : 12}
       viewBox={down ? '0 0 12 16' : '0 0 16 12'}
-      className="shrink-0 text-accent-jargon-hi"
+      className="shrink-0 text-text-muted"
       aria-hidden="true"
     >
       {down ? (

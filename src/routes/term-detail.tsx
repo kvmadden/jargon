@@ -14,7 +14,6 @@ import { PathGlyph } from '../components/path-glyph';
 import { ReportButton } from '../components/report-button';
 import { PronounceButton } from '../components/pronounce-button';
 import { ReportAnalogyButton } from '../components/report-analogy-button';
-import { JargonTerm } from '../components/jargon-term';
 import { GlossaryText } from '../components/glossary-text';
 import { LessonBody } from '../components/lesson-body';
 import { ExpansionLine } from '../components/expansion-line';
@@ -449,6 +448,12 @@ function TermDetailContent() {
   // by definition. When showOriginal is true OR there's no personalized
   // rendering, we render the canonical fields directly off the term.
   const usingPersonalized = personalized !== null && !showOriginal;
+  // Why this is the standard lesson, when the server said so (v11).
+  const unavailableNote = unavailable
+    ? unavailable.reason === 'unsupported_field'
+      ? `Personalized lessons are offered for ${supportedFieldsSentence()}. Your profile does not match one of these yet, so this is the standard lesson.`
+      : `This lesson is not personalized for ${learnerFieldPlural(unavailable.field) ?? 'your field'} yet, because no comparison for this term has been reviewed. This is the standard lesson.`
+    : null;
   const longDef = usingPersonalized ? personalized!.long_definition : term?.long_definition ?? '';
   const whyMatters = usingPersonalized ? personalized!.why_it_matters : term?.why_it_matters ?? '';
   // 2026-05-31: curated "say it back" conversation guide for this term (null when none).
@@ -492,21 +497,21 @@ function TermDetailContent() {
 
   return (
     <div className="min-h-screen flex flex-col bg-bg-base safe-top safe-bottom pb-12">
-      <header className="sticky top-0 z-20 bg-bg-base/95 backdrop-blur px-4 py-3">
+      <header className="sticky top-0 z-20 bg-bg-base/95 backdrop-blur px-4 py-3 lg:px-0">
         {/* Inner wrapper matches main's max-w so back chevron + path eyebrow
             + report button align with the term body below on tablet/desktop. */}
-        <div className="max-w-md mx-auto flex items-center gap-3">
+        <div className="max-w-md lg:max-w-6xl mx-auto flex items-center gap-3 lg:px-8">
           <button
             type="button"
             onClick={() => handleBack(navigate, location, '/home')}
-            className="w-12 h-12 min-w-[44px] min-h-[44px] rounded-md flex items-center justify-center text-text-secondary text-lg active:bg-surface-card transition-colors"
+            className="w-12 h-12 min-w-[44px] min-h-[44px] rounded-md flex items-center justify-center lg:justify-start text-text-secondary text-lg active:bg-surface-card transition-colors"
             aria-label="back"
           >
             ‹
           </button>
           <div className="flex-1 flex items-center gap-2 min-w-0">
             <PathGlyph path={term.path} active={false} size="sm" className="w-4 h-4 shrink-0" />
-            <span className="text-xs uppercase tracking-wider text-text-muted truncate">
+            <span className="text-sm lowercase text-text-muted truncate">
               {pathMeta.label}
             </span>
           </div>
@@ -514,7 +519,12 @@ function TermDetailContent() {
         </div>
       </header>
 
-      <main className="flex-1 px-4 py-6 max-w-md mx-auto w-full flex flex-col gap-6">
+      <main className="flex-1 px-4 py-6 lg:px-8 lg:py-12 max-w-md lg:max-w-6xl mx-auto w-full lg:grid lg:grid-cols-[minmax(0,1fr)_20rem] xl:grid-cols-[minmax(0,1fr)_22rem] lg:gap-x-12 lg:items-start">
+        {/* Desktop (lg and up): the lesson in a readable column of about 65
+            characters, beside a side panel with the diagram, the field note,
+            related terms and the next step. Phones keep one column, with the
+            panel after the lesson. */}
+        <div className="flex flex-col gap-6 min-w-0 lg:max-w-[65ch]">
         {/* Hero block — always canonical (term name, pronunciation, one-liner) */}
         <section>
           {/* B+1.18 — per-term translator-state badge. Renders ONLY when:
@@ -536,7 +546,7 @@ function TermDetailContent() {
                 : "// plain english — this term didn't need an analogy"}
             </p>
           )}
-          <h1 className="text-3xl font-semibold text-text-primary leading-tight lowercase">
+          <h1 className="font-mono text-4xl lg:text-6xl font-medium tracking-tight text-text-primary leading-tight lowercase">
             {term.term}
           </h1>
           <div className="mt-2 flex items-center gap-2">
@@ -548,14 +558,13 @@ function TermDetailContent() {
             <PronounceButton text={term.term} />
           </div>
           <ExpansionLine term={term.term} expansion={term.expansion} />
-          <p className="text-base text-text-primary mt-4 leading-relaxed">
+          <p className="text-lg lg:text-xl text-text-primary mt-4 leading-relaxed">
             {toSentenceCase(term.one_line_definition)}
           </p>
-          {unavailable && (
-            <p role="note" className="text-xs text-text-muted leading-relaxed mt-3">
-              {unavailable.reason === 'unsupported_field'
-                ? `Personalized lessons are offered for ${supportedFieldsSentence()}. Your profile does not match one of these yet, so this is the standard lesson.`
-                : `This lesson is not personalized for ${learnerFieldPlural(unavailable.field) ?? 'your field'} yet, because no comparison for this term has been reviewed. This is the standard lesson.`}
+          {unavailableNote && (
+            // Phones read it here. On a laptop it moves to the side panel.
+            <p role="note" className="text-xs text-text-muted leading-relaxed mt-3 lg:hidden">
+              {unavailableNote}
             </p>
           )}
         </section>
@@ -579,7 +588,7 @@ function TermDetailContent() {
             aria-label="translator working"
             className="bg-surface-card border border-border-default rounded-lg p-4"
           >
-            <p className="text-2xs uppercase tracking-wider font-mono text-accent-jargon-hi">
+            <p className="text-xs font-mono text-accent-jargon-hi">
               // your translator
             </p>
             <p className="text-sm text-text-secondary leading-relaxed mt-3">
@@ -621,7 +630,11 @@ function TermDetailContent() {
             />
           </Section>
 
-          {illustrationFor(term.id) && <ConceptIllustration illustration={illustrationFor(term.id)!} />}
+          {illustrationFor(term.id) && (
+            <div className="lg:hidden">
+              <ConceptIllustration illustration={illustrationFor(term.id)!} />
+            </div>
+          )}
 
           <Section label="in the wild">
             <p className="text-sm italic text-text-secondary leading-relaxed">
@@ -641,7 +654,7 @@ function TermDetailContent() {
               for consistency. Hidden entirely when null — no placeholder. */}
           {term.etymology && (
             <section>
-              <h2 className="text-xs uppercase tracking-wider font-mono text-accent-jargon-hi mb-2">
+              <h2 className="text-sm text-text-muted mb-2">
                 why it's called that
               </h2>
               <p className="text-sm text-text-secondary leading-relaxed">{term.etymology}</p>
@@ -708,7 +721,7 @@ function TermDetailContent() {
               </GlossaryText>
             </p>
             <div className="mt-3 pt-3 border-t border-border-default">
-              <p className="text-2xs uppercase tracking-wider font-mono text-text-muted mb-1">
+              <p className="text-sm text-text-muted mb-1">
                 don't mix up
               </p>
               <p className="text-sm text-text-secondary leading-relaxed">
@@ -720,44 +733,70 @@ function TermDetailContent() {
           </Section>
         )}
 
+        </div>
+
+        <aside aria-label="about this term" className="mt-8 flex flex-col gap-8 lg:mt-0 lg:sticky lg:top-24 lg:border-l lg:border-border-default lg:pl-8">
+          {illustrationFor(term.id) && (
+            <div className="hidden lg:block">
+              <ConceptIllustration illustration={illustrationFor(term.id)!} />
+            </div>
+          )}
+          {unavailableNote && (
+            <section aria-label="your field" className="hidden lg:block">
+              <h2 className="text-sm text-text-muted">your field</h2>
+              <p role="note" className="mt-2 text-sm text-text-secondary leading-relaxed">
+                {unavailableNote}
+              </p>
+            </section>
+          )}
+          <section>
+            <h2 className="text-sm text-text-muted">next step</h2>
+            <p className="mt-2 text-sm text-text-secondary leading-relaxed">
+              Practice {term.term} with the other {pathMeta.label.toLowerCase()} terms.
+            </p>
+            <button
+              type="button"
+              onClick={() => navigate(`/path/${term.path}`)}
+              className="mt-3 inline-flex min-h-[44px] items-center rounded-md border border-border-default px-4 text-sm font-medium text-text-primary transition-colors hover:border-accent-jargon active:bg-surface-card focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-jargon-hi"
+            >
+              start a lesson
+            </button>
+          </section>
         {related.length > 0 && (
           <Section label="related">
-            <div className="flex flex-wrap gap-2">
+            {/* A quiet list of names (Kevin, 2026-11-03: calm, few boxes). Each
+                row keeps a 44pt touch target. */}
+            <ul className="flex flex-col">
               {related.map((r) => (
-                // v0.1 brand: related term names render as JargonTerm chips so they
-                // read as code. Wrapper button preserves the 44pt touch target.
-                <button
-                  key={r.id}
-                  type="button"
-                  onClick={() => navigate(`/term/${r.id}`)}
-                  // B+1.16: chip lift + brightness on hover. The chip is a
-                  // term-as-code mark; lifting it 1pt + nudging opacity to
-                  // 100 reads as "this is a portal." Smooth 180ms ease-out.
-                  className="rounded-md min-h-[44px] inline-flex items-center px-2 transition-all duration-200 hover:-translate-y-[2px] hover:opacity-100 opacity-90 active:opacity-70 active:translate-y-0"
-                  aria-label={`open ${r.term}`}
-                >
-                  <JargonTerm className="text-sm">{r.term}</JargonTerm>
-                </button>
+                <li key={r.id}>
+                  <button
+                    type="button"
+                    onClick={() => navigate(`/term/${r.id}`)}
+                    className="min-h-[44px] inline-flex items-center font-mono text-sm text-text-secondary transition-colors hover:text-accent-jargon-hi active:opacity-70"
+                    aria-label={`open ${r.term}`}
+                  >
+                    {r.term}
+                  </button>
+                </li>
               ))}
-            </div>
+            </ul>
           </Section>
         )}
 
         {stretch && (
           <Section label="stretch">
-            {/* Stretch term: JargonTerm chip + arrow affordance, all inside a 44pt
-                touch target. The chip itself uses the brand-locked code styling. */}
             <button
               type="button"
               onClick={() => navigate(`/term/${stretch.id}`)}
-              className="rounded-md min-h-[44px] inline-flex items-center gap-2 px-2 active:opacity-70 transition-opacity"
+              className="min-h-[44px] inline-flex items-center gap-2 font-mono text-sm text-text-secondary transition-colors hover:text-accent-jargon-hi active:opacity-70"
               aria-label={`open stretch term ${stretch.term}`}
             >
-              <JargonTerm className="text-sm">{stretch.term}</JargonTerm>
-              <span aria-hidden="true" className="text-accent-jargon-hi text-sm">→</span>
+              {stretch.term}
+              <span aria-hidden="true">→</span>
             </button>
           </Section>
         )}
+        </aside>
       </main>
 
       {/* B+1.16: glossary chip → quick-peek bottom sheet. Lives at the
@@ -778,14 +817,8 @@ function TermDetailContent() {
 
 function Divider() {
   return (
-    <div
-      className="h-px"
-      style={{
-        backgroundImage:
-          'linear-gradient(90deg, transparent, var(--accent-jargon-hi-20), transparent)',
-      }}
-      aria-hidden="true"
-    />
+    // A plain hairline (Kevin, 2026-11-03: calm, one accent at most).
+    <div className="h-px bg-border-default" aria-hidden="true" />
   );
 }
 
@@ -797,7 +830,7 @@ interface SectionProps {
 function Section({ label, children }: SectionProps) {
   return (
     <section>
-      <h2 className="text-xs uppercase tracking-wider text-text-muted mb-2">{label}</h2>
+      <h2 className="text-sm text-text-muted mb-2">{label}</h2>
       {children}
     </section>
   );

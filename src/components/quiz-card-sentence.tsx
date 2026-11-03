@@ -94,8 +94,8 @@ export function QuizCardSentence({ term, onAnswer }: Props) {
         <ReportButton termId={term.id} quizMode="sentence" />
       </div>
       <div className="pr-12">
-        <p className="text-xs uppercase tracking-wider text-text-muted">{PATH_META[term.path].label}</p>
-        <h2 className="text-3xl font-semibold text-text-primary mt-2">{term.term}</h2>
+        <p className="text-sm lowercase text-text-muted">{PATH_META[term.path].label}</p>
+        <h2 className="font-mono text-3xl lg:text-4xl font-medium tracking-tight lowercase text-text-primary mt-2">{term.term}</h2>
         {term.pronunciation && (
           <p className="text-sm font-mono text-text-secondary mt-1">/ {term.pronunciation} /</p>
         )}

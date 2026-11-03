@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BottomSheet } from '../../components/bottom-sheet';
+import { floatingButtonDesktopClass } from '../../lib/desktop-chrome';
 import { useToastStore } from '../../components/toast';
 import { useUserStore } from '../../stores/user-store';
 import { captureFeedbackScreenshot } from './capture';
@@ -12,6 +13,7 @@ import {
 } from './data';
 import { CameraIcon, FeedbackBubbleIcon, MicrophoneIcon } from './icons';
 import { createFeedbackSpeech } from './speech';
+import { feedbackButtonLabel, useFeedbackUnread } from './unread-store';
 import {
   clearFeedbackDraft,
   enqueueFeedback,
@@ -52,7 +54,8 @@ export function FeedbackLauncher() {
   const [capturing, setCapturing] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [listening, setListening] = useState(false);
-  const [unread, setUnread] = useState(0);
+  const unread = useFeedbackUnread((state) => state.unread);
+  const setUnread = useFeedbackUnread((state) => state.setUnread);
   const [error, setError] = useState('');
   const [draft, setDraft] = useState<FeedbackDraft>(() => freshDraft(location.pathname));
 
@@ -75,7 +78,7 @@ export function FeedbackLauncher() {
     } catch {
       // The launcher remains usable if the badge query is temporarily offline.
     }
-  }, [user]);
+  }, [setUnread, user]);
 
   useEffect(() => {
     if (!user) return;
@@ -123,6 +126,15 @@ export function FeedbackLauncher() {
 
   useEffect(() => () => speech.stop(), [speech]);
 
+  // The desktop app bar's feedback button. The ref is filled in below, after
+  // the signed-out early return, so every hook here runs on every render.
+  const beginFeedbackRef = useRef<() => Promise<void>>(async () => {});
+  useEffect(() => {
+    const onOpen = () => void beginFeedbackRef.current();
+    window.addEventListener('jargon:open-feedback', onOpen);
+    return () => window.removeEventListener('jargon:open-feedback', onOpen);
+  }, []);
+
   if (!user) return null;
   const userId = user.id;
 
@@ -149,6 +161,7 @@ export function FeedbackLauncher() {
     setCapturing(false);
     setOpen(true);
   }
+  beginFeedbackRef.current = beginFeedback;
 
   function close() {
     speech.stop();
@@ -201,8 +214,8 @@ export function FeedbackLauncher() {
         data-feedback-ui="true"
         onClick={() => void beginFeedback()}
         disabled={capturing}
-        className="fixed bottom-16 right-4 z-40 flex h-12 w-12 min-h-[48px] min-w-[48px] -translate-y-16 items-center justify-center gap-2 rounded-full border border-accent-jargon/50 bg-surface-card-hi text-sm font-semibold text-text-primary shadow-xl shadow-black/30 transition-colors hover:border-accent-jargon hover:bg-surface-card focus:outline-none focus:ring-2 focus:ring-accent-jargon disabled:opacity-60 sm:w-auto sm:px-4"
-        aria-label={unread > 0 ? `field notes, ${unread} waiting` : 'send field note'}
+        className={`fixed bottom-16 right-4 z-40 flex ${floatingButtonDesktopClass(location.pathname)} h-12 w-12 min-h-[48px] min-w-[48px] -translate-y-16 items-center justify-center gap-2 rounded-full border border-accent-jargon/50 bg-surface-card-hi text-sm font-semibold text-text-primary shadow-xl shadow-black/30 transition-colors hover:border-accent-jargon hover:bg-surface-card focus:outline-none focus:ring-2 focus:ring-accent-jargon disabled:opacity-60 sm:w-auto sm:px-4`}
+        aria-label={feedbackButtonLabel(unread, 'send field note')}
       >
         <FeedbackBubbleIcon />
         <span className="hidden sm:inline">{capturing ? 'capturing…' : 'feedback'}</span>
