@@ -1,0 +1,432 @@
+{
+  "status": "development data",
+  "written": "2026-11-03",
+  "note": "Hard cases for the personalize-term claim gate. Every case was chosen after reading the 2026-10-30 run, so results on these cases are development results and cannot support a headline claim. A headline result needs the fresh blind set described in docs/evaluation.md. Saved cases point at rows in eval/results/2026-10-30.jsonl by run_id. Written cases carry their own text. 'expected' is what the gate does today. 'ideal' differs only where the gate has a known gap, and docs/verification.md lists those gaps.",
+  "failure_kinds": {
+    "invented_access_rule": "the analogy presents an access restriction as how the learner's workplace works",
+    "conflated_scope": "the analogy maps a scope (store, unit) onto something that is shared in practice",
+    "invented_artifact": "the analogy relies on an object or feature that does not exist in the learner's field",
+    "false_contrast": "the analogy's point depends on a contrast that does not exist in the learner's field",
+    "inherited_canonical_error": "the rewrite repeats an error that is in the canonical entry"
+  },
+  "cases": [
+    {
+      "id": "saved-rls-nurse",
+      "kind": "invented_access_rule",
+      "source": {
+        "run_id": "bi-rls::nurse"
+      },
+      "expected": {
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field"
+        ]
+      }
+    },
+    {
+      "id": "written-rls-nurse-paraphrase",
+      "kind": "invented_access_rule",
+      "term_id": "bi-rls",
+      "profile_id": "nurse",
+      "rendering": {
+        "long_definition": "RLS stands for row-level security. it filters which rows of a report each viewer can see. it works the way your hospital's EHR keeps you out of charts for patients on other floors.",
+        "why_it_matters": "RLS decides whether a dashboard shows each person the right slice of data.",
+        "example_in_sentence": "the vendor said RLS will limit each manager to their own unit's quality numbers."
+      },
+      "verdict": {
+        "uses_analogy": true
+      },
+      "expected": {
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field"
+        ]
+      }
+    },
+    {
+      "id": "saved-rls-pharmacist",
+      "kind": "conflated_scope",
+      "source": {
+        "run_id": "bi-rls::pharmacist"
+      },
+      "expected": {
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field"
+        ]
+      }
+    },
+    {
+      "id": "written-rls-pharmacist-paraphrase",
+      "kind": "conflated_scope",
+      "term_id": "bi-rls",
+      "profile_id": "pharmacist",
+      "rendering": {
+        "long_definition": "RLS stands for row-level security. in a report, it filters the rows each viewer is allowed to see, so one report serves many people.",
+        "why_it_matters": "row-level security is similar to a pharmacy chain where each location sees just the profiles of patients who filled there.",
+        "example_in_sentence": "with RLS set up, each district manager opens one sales report and sees their own district."
+      },
+      "verdict": {
+        "uses_analogy": true
+      },
+      "expected": {
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field"
+        ]
+      }
+    },
+    {
+      "id": "saved-jwt-pharmacist",
+      "kind": "invented_artifact",
+      "source": {
+        "run_id": "sys-jwt::pharmacist"
+      },
+      "expected": {
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field"
+        ]
+      }
+    },
+    {
+      "id": "written-jwt-pharmacist-paraphrase",
+      "kind": "invented_artifact",
+      "term_id": "sys-jwt",
+      "profile_id": "pharmacist",
+      "rendering": {
+        "long_definition": "a JWT is a short signed string that carries claims about a user. the server checks the signature to detect tampering. a JWT is the digital version of the signed verification stamp a pharmacist puts on each vial label.",
+        "why_it_matters": "JWTs show up in login logs and release notes, and encoding is not the same as security.",
+        "example_in_sentence": "the help desk said the app rejected the request because the JWT had expired."
+      },
+      "verdict": {
+        "uses_analogy": true
+      },
+      "expected": {
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field"
+        ]
+      }
+    },
+    {
+      "id": "saved-oauth-pharmacist",
+      "kind": "false_contrast",
+      "source": {
+        "run_id": "sec-oauth::pharmacist"
+      },
+      "expected": {
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field"
+        ]
+      }
+    },
+    {
+      "id": "written-oauth-pharmacist-paraphrase",
+      "kind": "false_contrast",
+      "term_id": "sec-oauth",
+      "profile_id": "pharmacist",
+      "rendering": {
+        "long_definition": "OAuth lets one app get limited access to another service without seeing your password. the app sends you to a sign-in provider, you approve, and the app gets a token.",
+        "why_it_matters": "OAuth is like a patient letting a new pharmacy pull their fill history without ever sharing the password to their pharmacy chart.",
+        "example_in_sentence": "the new CE portal uses OAuth, so you sign in with an account you already have."
+      },
+      "verdict": {
+        "uses_analogy": true
+      },
+      "expected": {
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field"
+        ]
+      }
+    },
+    {
+      "id": "saved-environment-pharmacist-old-canonical",
+      "kind": "inherited_canonical_error",
+      "source": {
+        "run_id": "cloud-environment::pharmacist"
+      },
+      "expected": {
+        "decision": "pass",
+        "kinds": []
+      },
+      "ideal": {
+        "decision": "needs_review"
+      },
+      "note": "Known gap. The false claim ('the only place connected to the real insurance claim system') copies the old canonical example, which said staging is 'the only place pointed at the real payment provider'. The gate compares against the canonical, so it cannot see an error the canonical shares. The fix is the corrected canonical (next case)."
+    },
+    {
+      "id": "saved-environment-pharmacist-corrected-canonical",
+      "kind": "inherited_canonical_error",
+      "source": {
+        "run_id": "cloud-environment::pharmacist"
+      },
+      "canonical_override": {
+        "example_in_sentence": "the bug shows up in staging but not in production, because staging points at the payment provider's sandbox instead of the live account."
+      },
+      "expected": {
+        "decision": "needs_review",
+        "kinds": [
+          "restrictive_claim_about_learner_field",
+          "new_exclusive_claim"
+        ]
+      },
+      "note": "Same saved rewrite, checked against the corrected canonical example now in supabase/seed.sql."
+    },
+    {
+      "id": "saved-mfa-nurse",
+      "kind": null,
+      "source": {
+        "run_id": "sec-mfa::nurse"
+      },
+      "expected": {
+        "decision": "pass",
+        "kinds": []
+      },
+      "note": "Judged correct by Kevin Madden, PharmD, on 2026-11-01. PR #1's keyword rule held it."
+    },
+    {
+      "id": "saved-pivot-table-nurse",
+      "kind": null,
+      "source": {
+        "run_id": "excel-pivot-table::nurse"
+      },
+      "expected": {
+        "decision": "pass",
+        "kinds": []
+      },
+      "note": "Judged correct by Kevin Madden, PharmD, on 2026-11-01. PR #1's keyword rule held it."
+    },
+    {
+      "id": "saved-data-pipeline-pharmacist",
+      "kind": null,
+      "source": {
+        "run_id": "fabric-data-pipeline::pharmacist"
+      },
+      "expected": {
+        "decision": "pass",
+        "kinds": []
+      },
+      "note": "Judged correct by Kevin Madden, PharmD, on 2026-11-01. PR #1's keyword rule held it because the store 'opens'."
+    },
+    {
+      "id": "saved-oauth-nurse",
+      "kind": null,
+      "source": {
+        "run_id": "sec-oauth::nurse"
+      },
+      "expected": {
+        "decision": "pass",
+        "kinds": []
+      },
+      "note": "Judged correct by Kevin Madden, PharmD, on 2026-11-01. Its 'never sees your actual hospital password' repeats the canonical's own 'never', so it is not a new restrictive claim."
+    },
+    {
+      "id": "saved-rbac-nurse",
+      "kind": null,
+      "source": {
+        "run_id": "sec-rbac::nurse"
+      },
+      "expected": {
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field"
+        ]
+      },
+      "note": "Judged correct by Kevin Madden, PharmD, on 2026-11-01. Held anyway: it is an analogy into the nurse's EHR, which this pipeline cannot verify. This is the cost of the abstention policy, counted as a false hold."
+    },
+    {
+      "id": "written-corrective-negation",
+      "kind": null,
+      "term_id": "bi-rls",
+      "profile_id": "nurse",
+      "rendering": {
+        "long_definition": "RLS stands for row-level security. it filters which rows each viewer can see in a report.",
+        "why_it_matters": "do not assume your hospital's EHR only shows charts from your unit. RLS is a reporting setting, and EHR access rules are a separate decision.",
+        "example_in_sentence": "the vendor said RLS will give each unit manager their own unit's numbers on the shared dashboard."
+      },
+      "verdict": {
+        "uses_analogy": false
+      },
+      "expected": {
+        "decision": "pass",
+        "kinds": []
+      },
+      "note": "A correction is not the claim it corrects. PR #1's rule held this pattern."
+    },
+    {
+      "id": "written-fictional-demo",
+      "kind": null,
+      "term_id": "bi-rls",
+      "profile_id": "nurse",
+      "rendering": {
+        "long_definition": "RLS stands for row-level security. it filters which rows each viewer can see.",
+        "why_it_matters": "in the vendor's made-up demo hospital, RLS hides every chart outside the assigned test unit.",
+        "example_in_sentence": "the trainer used a demo hospital to show how RLS filters rows."
+      },
+      "verdict": {
+        "uses_analogy": false
+      },
+      "expected": {
+        "decision": "pass",
+        "kinds": []
+      }
+    },
+    {
+      "id": "written-abbreviation-split",
+      "kind": "invented_access_rule",
+      "term_id": "bi-rls",
+      "profile_id": "nurse",
+      "rendering": {
+        "long_definition": "RLS filters which rows each viewer can see in a report.",
+        "why_it_matters": "a nurse (e.g. an RN on nights) cannot open the records of patients outside their unit list.",
+        "example_in_sentence": "the vendor said RLS will give each manager their unit's numbers."
+      },
+      "verdict": {
+        "uses_analogy": false
+      },
+      "expected": {
+        "decision": "needs_review",
+        "kinds": [
+          "restrictive_claim_about_learner_field"
+        ]
+      },
+      "note": "The abbreviation must not split the sentence. PR #1's splitter broke it at 'e.g.' and missed the claim."
+    },
+    {
+      "id": "written-scene-setting",
+      "kind": null,
+      "term_id": "cloud-alert",
+      "profile_id": "nurse",
+      "rendering": {
+        "long_definition": "an alert is a notification a system sends when something crosses a set limit or fails. good alerts point to something you can act on.",
+        "why_it_matters": "too many false alerts teach people to ignore them, including the one that matters.",
+        "example_in_sentence": "the vendor said the new dashboard sends an alert if each unit's fall data stops updating before the morning huddle."
+      },
+      "verdict": {
+        "uses_analogy": false
+      },
+      "expected": {
+        "decision": "pass",
+        "kinds": []
+      }
+    },
+    {
+      "id": "written-restrictive-practice-claim",
+      "kind": null,
+      "term_id": "sec-rbac",
+      "profile_id": "pharmacist",
+      "rendering": {
+        "long_definition": "RBAC stands for role-based access control. permissions attach to roles, and each person gets a role.",
+        "why_it_matters": "in a pharmacy system, a technician cannot complete the final verification, so that step belongs to the pharmacist role.",
+        "example_in_sentence": "the trainer said RBAC is why the new technician account cannot approve a fill."
+      },
+      "verdict": {
+        "uses_analogy": false
+      },
+      "expected": {
+        "decision": "needs_review",
+        "kinds": [
+          "restrictive_claim_about_learner_field"
+        ]
+      },
+      "note": "Probably true, but it is a restrictive claim about how the learner's own workplace runs, which this pipeline cannot verify. Held by policy."
+    },
+    {
+      "id": "written-interest-analogy-gap",
+      "kind": "invented_artifact",
+      "term_id": "cloud-cdn",
+      "profile_id": "teacher",
+      "rendering": {
+        "long_definition": "a CDN keeps copies of files on servers in many places so each visitor downloads from a nearby one.",
+        "why_it_matters": "a CDN is like a network of bird feeders across town, so a songbird never has to fly far for seed.",
+        "example_in_sentence": "the district's new platform uses a CDN, so videos load quickly at every school."
+      },
+      "verdict": {
+        "uses_analogy": true
+      },
+      "expected": {
+        "decision": "pass",
+        "kinds": []
+      },
+      "ideal": {
+        "decision": "needs_review"
+      },
+      "note": "Known gap. The learner's interest is 'birdwatching'. The gate matches interests by the learner's own words, and 'bird feeders' is not one of them, so this interest analogy passes. The LLM verifier's domain_claims list is the backstop."
+    },
+    {
+      "id": "written-verifier-unsure-claim",
+      "kind": null,
+      "term_id": "sys-payload",
+      "profile_id": "nurse",
+      "rendering": {
+        "long_definition": "a payload is the useful data carried inside a larger message.",
+        "why_it_matters": "payload is the short word for the actual data inside the thing.",
+        "example_in_sentence": "the vendor said the payload from the monitor includes the vitals and a timestamp."
+      },
+      "verdict": {
+        "uses_analogy": false,
+        "domain_claims": [
+          {
+            "field": "example_in_sentence",
+            "claim": "bedside monitors send vitals and a timestamp to the chart",
+            "assessment": "unsure"
+          }
+        ],
+        "canonical_concerns": []
+      },
+      "expected": {
+        "decision": "needs_review",
+        "kinds": [
+          "verifier_unsupported_claim"
+        ]
+      }
+    },
+    {
+      "id": "written-canonical-concern",
+      "kind": "inherited_canonical_error",
+      "term_id": "bi-calculated-column",
+      "profile_id": "teacher",
+      "rendering": {
+        "long_definition": "a calculated column stores a DAX result for each row of a table, while a measure recalculates with filters.",
+        "why_it_matters": "mixing them up gives totals that look wrong when someone slices the report.",
+        "example_in_sentence": "we used a calculated column for customer segment because it never changes once the row loads."
+      },
+      "verdict": {
+        "uses_analogy": false,
+        "domain_claims": [],
+        "canonical_concerns": [
+          "the canonical says column totals won't move when you slice, but an aggregated column does respond to slicers"
+        ]
+      },
+      "expected": {
+        "decision": "needs_review",
+        "kinds": [
+          "canonical_concern"
+        ]
+      }
+    },
+    {
+      "id": "written-length-runaway",
+      "kind": null,
+      "term_id": "cloud-cdn",
+      "profile_id": "teacher",
+      "rendering": {
+        "long_definition": "a CDN keeps copies of static files on servers in many places so each visitor downloads from a nearby one instead of the origin server. this repeats for emphasis. a CDN keeps copies of static files on servers in many places so each visitor downloads from a nearby one instead of the origin server. this repeats for emphasis. a CDN keeps copies of static files on servers in many places so each visitor downloads from a nearby one instead of the origin server. this repeats for emphasis. a CDN keeps copies of static files on servers in many places so each visitor downloads from a nearby one instead of the origin server. this repeats for emphasis. a CDN keeps copies of static files on servers in many places so each visitor downloads from a nearby one instead of the origin server. this repeats for emphasis. a CDN keeps copies of static files on servers in many places so each visitor downloads from a nearby one instead of the origin server. this repeats for emphasis.",
+        "why_it_matters": "when a site suddenly feels faster after a redesign, a CDN is often the reason, and it also explains why some people briefly see an old version after an update, because a nearby copy has not refreshed yet. when a site suddenly feels faster after a redesign, a CDN is often the reason. when a site suddenly feels faster after a redesign, a CDN is often the reason, and it also explains why some people briefly see an old version after an update, because a nearby copy has not refreshed yet. when a site suddenly feels faster after a redesign, a CDN is often the reason.",
+        "example_in_sentence": "the district's platform serves videos from a CDN so they load quickly at every school in the county, from the high school to the smallest elementary building, and even on older devices."
+      },
+      "verdict": {
+        "uses_analogy": false
+      },
+      "expected": {
+        "decision": "revise",
+        "kinds": [
+          "length_out_of_range"
+        ]
+      }
+    }
+  ]
+}
