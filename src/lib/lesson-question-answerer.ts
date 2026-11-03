@@ -5,6 +5,15 @@ import type {
   LessonQuestionInput,
 } from './lesson-question-service';
 
+/**
+ * How long the client waits for the answer-lesson-question function. The
+ * function gives the model up to 30 seconds (ANSWER_TIMEOUT_MS there), so the
+ * client allows that plus time for the request itself. It was 300 ms, which
+ * no model answer could meet, so learners almost always got the dictionary
+ * fallback instead of an answer.
+ */
+export const LESSON_QUESTION_CLIENT_TIMEOUT_MS = 35_000;
+
 export function createLessonQuestionAnswerer(
   supabaseClient?: SupabaseClient | null,
   options?: {
@@ -13,6 +22,7 @@ export function createLessonQuestionAnswerer(
 ): LessonQuestionAnswerer {
   return async (input: LessonQuestionInput): Promise<LessonQuestionAnswer | null> => {
     if (supabaseClient) {
+      let timer: ReturnType<typeof setTimeout> | undefined;
       try {
         const result = await Promise.race([
           supabaseClient.functions.invoke('answer-lesson-question', {
@@ -22,9 +32,9 @@ export function createLessonQuestionAnswerer(
               cardMode: input.context.cardMode,
             },
           }),
-          new Promise<{ data: null; error: Error }>((_, reject) =>
-            setTimeout(() => reject(new Error('timeout')), 300),
-          ),
+          new Promise<{ data: null; error: Error }>((_, reject) => {
+            timer = setTimeout(() => reject(new Error('timeout')), LESSON_QUESTION_CLIENT_TIMEOUT_MS);
+          }),
         ]);
 
         const data = result?.data;
@@ -47,6 +57,8 @@ export function createLessonQuestionAnswerer(
         }
       } catch {
         // Fall through to fallback definition
+      } finally {
+        if (timer !== undefined) clearTimeout(timer);
       }
     }
 

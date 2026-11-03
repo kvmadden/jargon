@@ -1,0 +1,1533 @@
+{
+  "status": "development result",
+  "note": "Claim gate replayed over the saved accepted outputs of the 2026-10-30 run, with that run's verifier analogy flag. The gate was built from the 4 introduced errors in this run and then revised after review round 2, so holding them is expected. The v9 verifier listed no claims. as_saved keeps it that way, so no field sentence is vouched for (an upper bound on holds). all_vouched marks every sentence supported (a lower bound: what the rules hold even when the verifier vouches).",
+  "as_saved": {
+    "accepted_outputs": 78,
+    "held_or_revise": 76,
+    "introduced_errors": {
+      "total": 4,
+      "held": 4
+    },
+    "inherited_wrong": {
+      "total": 5,
+      "held": 3
+    },
+    "judged_correct": {
+      "total": 9,
+      "held": 9
+    },
+    "unlabeled": {
+      "total": 55,
+      "held": 55
+    },
+    "rows": [
+      {
+        "run_id": "aid-ai::teacher",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "aid-ai::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "aid-ai::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "bi-calculated-column::teacher",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": "wrong",
+        "origin": "inherited"
+      },
+      {
+        "run_id": "bi-calculated-column::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "restrictive_claim_about_learner_field",
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": "wrong",
+        "origin": "inherited"
+      },
+      {
+        "run_id": "bi-calculated-column::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field",
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": true,
+        "label": "wrong",
+        "origin": "inherited"
+      },
+      {
+        "run_id": "sec-attack-surface::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sec-attack-surface::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sec-attack-surface::teacher",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sys-cookie::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sys-cookie::teacher",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sys-cookie::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "cloud-alert::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field",
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": true,
+        "label": "judged correct",
+        "origin": null
+      },
+      {
+        "run_id": "cloud-alert::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field",
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": true,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "cloud-alert::teacher",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "aid-parameters::pharmacist",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": "wrong",
+        "origin": "inherited"
+      },
+      {
+        "run_id": "aid-parameters::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": "unsupported",
+        "origin": "inherited"
+      },
+      {
+        "run_id": "aid-parameters::teacher",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": "unsupported",
+        "origin": "inherited"
+      },
+      {
+        "run_id": "bi-rls::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field",
+          "restrictive_claim_about_learner_field",
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": true,
+        "label": "wrong",
+        "origin": "introduced"
+      },
+      {
+        "run_id": "bi-rls::teacher",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field",
+          "restrictive_claim_about_learner_field",
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": true,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "bi-rls::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field",
+          "restrictive_claim_about_learner_field",
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": true,
+        "label": "wrong",
+        "origin": "introduced"
+      },
+      {
+        "run_id": "sec-encryption::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sec-encryption::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "restrictive_claim_about_learner_field",
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sec-encryption::teacher",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sys-http-header::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field",
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": true,
+        "label": "debatable",
+        "origin": null
+      },
+      {
+        "run_id": "sys-http-header::teacher",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sys-http-header::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "cloud-autoscaling::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "cloud-autoscaling::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field",
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": true,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "cloud-autoscaling::teacher",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "ai-agent::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "ai-agent::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": "judged correct",
+        "origin": null
+      },
+      {
+        "run_id": "ai-agent::teacher",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "excel-pivot-table::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "excel-pivot-table::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sec-mfa::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field",
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": true,
+        "label": "debatable",
+        "origin": null
+      },
+      {
+        "run_id": "excel-pivot-table::teacher",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sec-mfa::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": "judged correct",
+        "origin": null
+      },
+      {
+        "run_id": "sec-mfa::teacher",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sys-http-response::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sys-http-response::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": "judged correct",
+        "origin": null
+      },
+      {
+        "run_id": "cloud-cdn::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "cloud-cdn::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sys-http-response::teacher",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "cloud-cdn::teacher",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": "judged correct",
+        "origin": null
+      },
+      {
+        "run_id": "ai-llm::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "ai-llm::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "ai-llm::teacher",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "fabric-data-pipeline::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "fabric-data-pipeline::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": "judged correct",
+        "origin": null
+      },
+      {
+        "run_id": "fabric-data-pipeline::teacher",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sec-oauth::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "restrictive_claim_about_learner_field",
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sec-oauth::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field",
+          "restrictive_claim_about_learner_field",
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": true,
+        "label": "wrong",
+        "origin": "introduced"
+      },
+      {
+        "run_id": "sec-oauth::teacher",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sys-jwt::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sys-jwt::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field",
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": true,
+        "label": "wrong",
+        "origin": "introduced"
+      },
+      {
+        "run_id": "cloud-deploy::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "cloud-deploy::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sys-jwt::teacher",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "cloud-deploy::teacher",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "aid-accuracy::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field",
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": true,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "aid-accuracy::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field",
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": true,
+        "label": "judged correct",
+        "origin": null
+      },
+      {
+        "run_id": "data-backfill::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "data-backfill::teacher",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "data-backfill::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field",
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": true,
+        "label": "judged correct",
+        "origin": null
+      },
+      {
+        "run_id": "sec-rbac::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field",
+          "restrictive_claim_about_learner_field",
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": true,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sec-rbac::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "restrictive_claim_about_learner_field",
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sec-rbac::teacher",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": "judged correct",
+        "origin": null
+      },
+      {
+        "run_id": "sys-payload::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field",
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": true,
+        "label": "debatable",
+        "origin": null
+      },
+      {
+        "run_id": "sys-payload::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field",
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": true,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sys-payload::teacher",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "cloud-environment::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "cloud-environment::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "restrictive_claim_about_learner_field",
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": "wrong",
+        "origin": "inherited"
+      },
+      {
+        "run_id": "cloud-environment::teacher",
+        "decision": "needs_review",
+        "kinds": [
+          "restrictive_claim_about_learner_field",
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "aid-hallucination::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "restrictive_claim_about_learner_field",
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "aid-hallucination::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "aid-hallucination::teacher",
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "data-join::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field",
+          "unvouched_field_claim"
+        ],
+        "verifier_said_analogy": true,
+        "label": null,
+        "origin": null
+      }
+    ]
+  },
+  "all_vouched": {
+    "accepted_outputs": 78,
+    "held_or_revise": 25,
+    "introduced_errors": {
+      "total": 4,
+      "held": 4
+    },
+    "inherited_wrong": {
+      "total": 5,
+      "held": 3
+    },
+    "judged_correct": {
+      "total": 9,
+      "held": 3
+    },
+    "unlabeled": {
+      "total": 55,
+      "held": 12
+    },
+    "rows": [
+      {
+        "run_id": "aid-ai::teacher",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "aid-ai::pharmacist",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "aid-ai::nurse",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "bi-calculated-column::teacher",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": "wrong",
+        "origin": "inherited"
+      },
+      {
+        "run_id": "bi-calculated-column::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "restrictive_claim_about_learner_field"
+        ],
+        "verifier_said_analogy": false,
+        "label": "wrong",
+        "origin": "inherited"
+      },
+      {
+        "run_id": "bi-calculated-column::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field"
+        ],
+        "verifier_said_analogy": true,
+        "label": "wrong",
+        "origin": "inherited"
+      },
+      {
+        "run_id": "sec-attack-surface::nurse",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sec-attack-surface::pharmacist",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sec-attack-surface::teacher",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sys-cookie::nurse",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sys-cookie::teacher",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sys-cookie::pharmacist",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "cloud-alert::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field"
+        ],
+        "verifier_said_analogy": true,
+        "label": "judged correct",
+        "origin": null
+      },
+      {
+        "run_id": "cloud-alert::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field"
+        ],
+        "verifier_said_analogy": true,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "cloud-alert::teacher",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "aid-parameters::pharmacist",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": "wrong",
+        "origin": "inherited"
+      },
+      {
+        "run_id": "aid-parameters::nurse",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": "unsupported",
+        "origin": "inherited"
+      },
+      {
+        "run_id": "aid-parameters::teacher",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": "unsupported",
+        "origin": "inherited"
+      },
+      {
+        "run_id": "bi-rls::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field",
+          "restrictive_claim_about_learner_field"
+        ],
+        "verifier_said_analogy": true,
+        "label": "wrong",
+        "origin": "introduced"
+      },
+      {
+        "run_id": "bi-rls::teacher",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field",
+          "restrictive_claim_about_learner_field"
+        ],
+        "verifier_said_analogy": true,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "bi-rls::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field",
+          "restrictive_claim_about_learner_field"
+        ],
+        "verifier_said_analogy": true,
+        "label": "wrong",
+        "origin": "introduced"
+      },
+      {
+        "run_id": "sec-encryption::nurse",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sec-encryption::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "restrictive_claim_about_learner_field"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sec-encryption::teacher",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sys-http-header::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field"
+        ],
+        "verifier_said_analogy": true,
+        "label": "debatable",
+        "origin": null
+      },
+      {
+        "run_id": "sys-http-header::teacher",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sys-http-header::nurse",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "cloud-autoscaling::pharmacist",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "cloud-autoscaling::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field"
+        ],
+        "verifier_said_analogy": true,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "cloud-autoscaling::teacher",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "ai-agent::pharmacist",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "ai-agent::nurse",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": "judged correct",
+        "origin": null
+      },
+      {
+        "run_id": "ai-agent::teacher",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "excel-pivot-table::pharmacist",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "excel-pivot-table::nurse",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sec-mfa::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field"
+        ],
+        "verifier_said_analogy": true,
+        "label": "debatable",
+        "origin": null
+      },
+      {
+        "run_id": "excel-pivot-table::teacher",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sec-mfa::nurse",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": "judged correct",
+        "origin": null
+      },
+      {
+        "run_id": "sec-mfa::teacher",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sys-http-response::nurse",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sys-http-response::pharmacist",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": "judged correct",
+        "origin": null
+      },
+      {
+        "run_id": "cloud-cdn::pharmacist",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "cloud-cdn::nurse",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sys-http-response::teacher",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "cloud-cdn::teacher",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": "judged correct",
+        "origin": null
+      },
+      {
+        "run_id": "ai-llm::nurse",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "ai-llm::pharmacist",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "ai-llm::teacher",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "fabric-data-pipeline::nurse",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "fabric-data-pipeline::pharmacist",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": "judged correct",
+        "origin": null
+      },
+      {
+        "run_id": "fabric-data-pipeline::teacher",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sec-oauth::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "restrictive_claim_about_learner_field"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sec-oauth::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field",
+          "restrictive_claim_about_learner_field"
+        ],
+        "verifier_said_analogy": true,
+        "label": "wrong",
+        "origin": "introduced"
+      },
+      {
+        "run_id": "sec-oauth::teacher",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sys-jwt::nurse",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sys-jwt::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field"
+        ],
+        "verifier_said_analogy": true,
+        "label": "wrong",
+        "origin": "introduced"
+      },
+      {
+        "run_id": "cloud-deploy::nurse",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "cloud-deploy::pharmacist",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sys-jwt::teacher",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "cloud-deploy::teacher",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "aid-accuracy::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field"
+        ],
+        "verifier_said_analogy": true,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "aid-accuracy::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field"
+        ],
+        "verifier_said_analogy": true,
+        "label": "judged correct",
+        "origin": null
+      },
+      {
+        "run_id": "data-backfill::nurse",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "data-backfill::teacher",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "data-backfill::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field"
+        ],
+        "verifier_said_analogy": true,
+        "label": "judged correct",
+        "origin": null
+      },
+      {
+        "run_id": "sec-rbac::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field",
+          "restrictive_claim_about_learner_field"
+        ],
+        "verifier_said_analogy": true,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sec-rbac::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "restrictive_claim_about_learner_field"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sec-rbac::teacher",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": "judged correct",
+        "origin": null
+      },
+      {
+        "run_id": "sys-payload::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field"
+        ],
+        "verifier_said_analogy": true,
+        "label": "debatable",
+        "origin": null
+      },
+      {
+        "run_id": "sys-payload::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field"
+        ],
+        "verifier_said_analogy": true,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "sys-payload::teacher",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "cloud-environment::nurse",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "cloud-environment::pharmacist",
+        "decision": "needs_review",
+        "kinds": [
+          "restrictive_claim_about_learner_field"
+        ],
+        "verifier_said_analogy": false,
+        "label": "wrong",
+        "origin": "inherited"
+      },
+      {
+        "run_id": "cloud-environment::teacher",
+        "decision": "needs_review",
+        "kinds": [
+          "restrictive_claim_about_learner_field"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "aid-hallucination::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "restrictive_claim_about_learner_field"
+        ],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "aid-hallucination::pharmacist",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "aid-hallucination::teacher",
+        "decision": "pass",
+        "kinds": [],
+        "verifier_said_analogy": false,
+        "label": null,
+        "origin": null
+      },
+      {
+        "run_id": "data-join::nurse",
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field"
+        ],
+        "verifier_said_analogy": true,
+        "label": null,
+        "origin": null
+      }
+    ]
+  }
+}

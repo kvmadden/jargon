@@ -6,6 +6,15 @@
 //   Pass 3 — Opus 4.7 verifies relevance to the owner's stated goals.
 //   Pass 4a — Haiku 4.5 blind-regenerates the one-line definition with no context.
 //   Pass 4b — Embedding cosine similarity (OpenAI text-embedding-3-small) ≥ 0.85 to pass.
+//             This is a similarity screen on the one-line definition only, not
+//             proof that two models agree on the term.
+//
+// Every gate fails closed (_shared/verdict-gates.ts): a candidate continues only
+// on an explicit, well-formed pass, and a NaN or undefined similarity fails.
+// The job is exempt from the per-user spend cap, so each cycle has its own
+// budget (INGEST_CYCLE_BUDGET_USD, default $5). Pass 1 and each candidate start
+// only if their worst case at list price fits in what is left. Inserted terms
+// stay hidden from learners until a person sets reviewed_at.
 //
 // Triggers:
 //   - Cron: Vercel weekly cron POSTs here with the service-role key.
@@ -26,6 +35,9 @@ import { vocabularyDescription } from '../_shared/domain-vocabulary.ts';
 import { goalDescription } from '../_shared/domain-goals.ts';
 import { pathsForDomain, pathListPipe } from '../_shared/domain-paths.ts';
 import { checkSpend } from '../_shared/spend-guard.ts';
+import { estimateCostUsd, usageFromResponse } from '../_shared/pricing.ts';
+import { cosineSimilarity, similarityPasses, verdictPasses } from '../_shared/verdict-gates.ts';
+import { RunBudget, budgetFromEnv, worstCaseCallUsd } from '../_shared/cycle-budget.ts';
 
 // ─── Constants ──────────────────────────────────────────────────────────────────
 const PASS1_MODEL = 'claude-sonnet-4-6';
@@ -34,6 +46,14 @@ const PASS3_MODEL = 'claude-opus-4-7';
 const PASS4A_MODEL = 'claude-haiku-4-5-20251001';
 const EMBEDDING_MODEL = 'text-embedding-3-small';
 const COSINE_THRESHOLD = 0.85;
+// Max output tokens per call, shared by the calls and by the worst-case budget.
+const PASS1_MAX_TOKENS = 8192;
+const VERIFY_MAX_TOKENS = 512;
+const PASS4A_MAX_TOKENS = 128;
+// Per-cycle budget in USD (INGEST_CYCLE_BUDGET_USD). The job is exempt from the
+// per-user spend cap, so this is the bound on what one cycle can spend. A
+// candidate starts only if its worst case fits in what is left.
+const DEFAULT_CYCLE_BUDGET_USD = 5;
 const PASS1_TARGET_COUNT = 10; // spec says 5–15 per cycle; 10 is a safe middle.
 // B+1.5.3: ALL_PATHS replaced by per-cycle `pathsForDomain(domain)`. The
 // PathId TYPE was structurally narrow only for the coding-domain world;
@@ -42,14 +62,8 @@ const PASS1_TARGET_COUNT = 10; // spec says 5–15 per cycle; 10 is a safe middl
 // terms.path CHECK constraint.
 type PathId = string;
 
-// Approx unit costs (USD per 1M tokens) for cost estimation in ingestion_log.
-// These are rough — accuracy not critical, used only for the Stage B1 dashboard.
-const COST_PER_M = {
-  'claude-sonnet-4-6': { in: 3.0, out: 15.0 },
-  'claude-opus-4-7': { in: 15.0, out: 75.0 },
-  'claude-haiku-4-5-20251001': { in: 0.8, out: 4.0 },
-  'text-embedding-3-small': { in: 0.02, out: 0 },
-} as const;
+// Costs for ingestion_log come from _shared/pricing.ts (list prices, cache
+// tokens included). ingestion_log feeds the global spend total.
 
 // ─── Shape contracts ────────────────────────────────────────────────────────────
 interface Candidate {
@@ -81,6 +95,9 @@ interface CycleSummary {
   candidatesProcessed: number;
   inserted: number;
   rejected: number;
+  /** Candidates logged with failure_pass 'budget' and never verified. */
+  skippedForBudget: number;
+  stoppedForBudget: boolean;
 }
 
 // ─── Prompts (canonical: SPEC.md §6.3 — must match verbatim) ───────────────────
@@ -206,25 +223,19 @@ Reply with ONLY the definition sentence. No JSON, no markdown, no preamble.`;
 
 // ─── Helpers ────────────────────────────────────────────────────────────────────
 
-function dotProduct(a: number[], b: number[]): number {
-  let s = 0;
-  for (let i = 0; i < a.length; i++) s += a[i] * b[i];
-  return s;
+/**
+ * Budget guard for one call's retries. The cycle budget reserved the first
+ * attempt. A retry is another possibly billed attempt, so it needs its own
+ * room, and an attempt that failed without a response (a network error) may
+ * have been billed, so its worst case is charged.
+ */
+interface RetryGuard {
+  worstCaseUsd: number;
+  canRetry: (usd: number) => boolean;
+  onUnknownBilling: (usd: number) => void;
 }
 
-function magnitude(v: number[]): number {
-  let s = 0;
-  for (const x of v) s += x * x;
-  return Math.sqrt(s);
-}
-
-function cosineSimilarity(a: number[], b: number[]): number {
-  const m = magnitude(a) * magnitude(b);
-  if (m === 0) return 0;
-  return dotProduct(a, b) / m;
-}
-
-async function backoffRetry<T>(fn: () => Promise<T>, label: string, maxAttempts = 3): Promise<T> {
+async function backoffRetry<T>(fn: () => Promise<T>, label: string, guard?: RetryGuard, maxAttempts = 3): Promise<T> {
   let attempt = 0;
   let lastErr: unknown;
   while (attempt < maxAttempts) {
@@ -234,8 +245,12 @@ async function backoffRetry<T>(fn: () => Promise<T>, label: string, maxAttempts 
     } catch (err: any) {
       lastErr = err;
       const status = err?.status ?? err?.response?.status ?? 0;
+      if (status === 0) guard?.onUnknownBilling(guard.worstCaseUsd);
       const retryable = status === 429 || (status >= 500 && status < 600) || status === 0;
       if (!retryable || attempt >= maxAttempts) throw err;
+      if (guard && !guard.canRetry(guard.worstCaseUsd)) {
+        throw new Error(`cycle budget: no room to retry ${label}`);
+      }
       const delay = 1000 * Math.pow(2, attempt - 1);
       console.warn(`[ingest] ${label} retry ${attempt} after ${delay}ms (status ${status})`);
       await new Promise((r) => setTimeout(r, delay));
@@ -253,11 +268,6 @@ function tryParseJson<T>(raw: string): T | null {
   }
 }
 
-function estimateCost(model: keyof typeof COST_PER_M, tokensIn: number, tokensOut: number): number {
-  const rates = COST_PER_M[model];
-  return (tokensIn / 1_000_000) * rates.in + (tokensOut / 1_000_000) * rates.out;
-}
-
 // ─── Anthropic + OpenAI call wrappers ──────────────────────────────────────────
 
 async function callAnthropicJson(
@@ -266,7 +276,7 @@ async function callAnthropicJson(
   system: string,
   user: string,
   maxTokens = 4096,
-): Promise<{ raw: string; tokensIn: number; tokensOut: number }> {
+): Promise<{ raw: string; tokensIn: number; tokensOut: number; costUsd: number }> {
   const res = (await anthropic.messages.create({
     model,
     max_tokens: maxTokens,
@@ -285,6 +295,7 @@ async function callAnthropicJson(
     raw,
     tokensIn: res?.usage?.input_tokens ?? 0,
     tokensOut: res?.usage?.output_tokens ?? 0,
+    costUsd: estimateCostUsd(model, usageFromResponse(res)),
   };
 }
 
@@ -377,20 +388,67 @@ async function runCycle(
   let candidates: Candidate[] = [];
   let pass1TokensIn = 0;
   let pass1TokensOut = 0;
+  // Pass 1 is one call shared by every candidate. Its cost is logged exactly
+  // once, on the first candidate row this cycle writes. (It used to be added to
+  // every early-dedupe row and to no other row, so a cycle could count it many
+  // times or not at all.)
+  let pass1CostUnlogged = 0;
+  const budget = new RunBudget(budgetFromEnv(Deno.env.get('INGEST_CYCLE_BUDGET_USD'), DEFAULT_CYCLE_BUDGET_USD));
+  const pass1SystemText = pass1System(domain, pathCounts, existingTermsByPath);
+  const pass1UserText = 'Generate this cycle\'s candidate terms now.';
+  if (!budget.canAfford(worstCaseCallUsd(PASS1_MODEL, pass1SystemText + pass1UserText, PASS1_MAX_TOKENS))) {
+    console.warn(`[ingest] cycle budget $${budget.limitUsd} cannot cover Pass 1, so no calls were made`);
+    return { cycleId, candidatesProcessed: 0, inserted: 0, rejected: 0, skippedForBudget: 0, stoppedForBudget: true };
+  }
+  const pass1Worst = worstCaseCallUsd(PASS1_MODEL, pass1SystemText + pass1UserText, PASS1_MAX_TOKENS);
+  let pass1Extra = 0;
+  // Logs Pass 1 on its own row when no candidate row will carry its cost (an
+  // unreadable reply, or an empty batch). Without this, a paid Pass 1 call
+  // left no trace in the spend total.
+  const logPass1Only = async (errorText: string) => {
+    if (pass1CostUnlogged <= 0) return;
+    await logRow(supabase, {
+      cycleId,
+      cycleStartedAt,
+      trigger,
+      candidate: { id: '(pass-1)' } as Candidate,
+      pass1Model: PASS1_MODEL,
+      pass1TokensIn,
+      pass1TokensOut,
+      pass2: null,
+      pass3: null,
+      pass4aDef: null,
+      pass4bSim: null,
+      finalStatus: 'rejected',
+      failurePass: 'pass1',
+      totalLatencyMs: 0,
+      totalCostUsd: pass1CostUnlogged,
+      errorText,
+    });
+    pass1CostUnlogged = 0;
+  };
   try {
-    const { raw, tokensIn, tokensOut } = await backoffRetry(
-      () =>
-        callAnthropicJson(
-          anthropic,
-          PASS1_MODEL,
-          pass1System(domain, pathCounts, existingTermsByPath),
-          'Generate this cycle\'s candidate terms now.',
-          8192,
-        ),
+    const { raw, tokensIn, tokensOut, costUsd } = await backoffRetry(
+      () => callAnthropicJson(anthropic, PASS1_MODEL, pass1SystemText, pass1UserText, PASS1_MAX_TOKENS),
       'pass1',
+      {
+        worstCaseUsd: pass1Worst,
+        canRetry: (usd) => {
+          if (!budget.canAfford(pass1Worst + pass1Extra + usd)) return false;
+          pass1Extra += usd;
+          return true;
+        },
+        onUnknownBilling: (usd) => {
+          pass1CostUnlogged += usd;
+          budget.record(usd);
+        },
+      },
     );
     pass1TokensIn = tokensIn;
     pass1TokensOut = tokensOut;
+    // += keeps any worst-case charge for failed attempts that onUnknownBilling added.
+    pass1CostUnlogged += costUsd;
+    budget.record(costUsd);
     const parsed = tryParseJson<{ candidates: Candidate[] }>(raw);
     if (!parsed?.candidates || !Array.isArray(parsed.candidates)) {
       throw new Error('Pass 1 returned no candidates array');
@@ -398,19 +456,27 @@ async function runCycle(
     candidates = parsed.candidates;
   } catch (err: any) {
     console.error('[ingest] pass 1 fatal:', err);
-    return { cycleId, candidatesProcessed: 0, inserted: 0, rejected: 0 };
+    await logPass1Only(`pass 1 failed: ${err?.message ?? String(err)}`);
+    return { cycleId, candidatesProcessed: 0, inserted: 0, rejected: 0, skippedForBudget: 0, stoppedForBudget: false };
   }
+  if (candidates.length === 0) await logPass1Only('pass 1 returned no candidates');
 
   // ─── Per-candidate 4-pass loop ───────────────────────────────────────────────
+  let skippedForBudget = 0;
+  let stoppedForBudget = false;
   for (const candidate of candidates) {
     const candStart = Date.now();
-    let totalCost = 0;
+    let totalCost = pass1CostUnlogged;
+    // Pass 1 is already recorded in the budget. Only this candidate's own
+    // calls are added when it finishes.
+    const pass1Portion = totalCost;
+    pass1CostUnlogged = 0;
     let pass2: VerifierResult | null = null;
     let pass3: VerifierResult | null = null;
     let pass4aDef: string | null = null;
     let pass4bSim: number | null = null;
     let finalStatus: 'inserted' | 'rejected' = 'rejected';
-    let failurePass: 'dedupe' | 'pass2' | 'pass3' | 'pass4b' | 'dedupe-late' | 'insert' | null = null;
+    let failurePass: 'dedupe' | 'pass1' | 'pass2' | 'pass3' | 'pass4b' | 'dedupe-late' | 'insert' | 'budget' | null = null;
     let errorText: string | null = null;
 
     try {
@@ -433,7 +499,7 @@ async function runCycle(
           finalStatus,
           failurePass,
           totalLatencyMs: Date.now() - candStart,
-          totalCostUsd: estimateCost(PASS1_MODEL, pass1TokensIn, pass1TokensOut),
+          totalCostUsd: totalCost,
           errorText,
         });
         continue;
@@ -448,6 +514,54 @@ async function runCycle(
         candidate,
         existing_terms_in_candidate_path: existingTermsByPath[candidate.path] ?? [],
       });
+
+      // Budget: start this candidate only if its worst case fits. Once one
+      // does not fit, this and every later candidate is logged as skipped.
+      const candidateJson = JSON.stringify(candidate);
+      const pass2Worst = worstCaseCallUsd(PASS2_MODEL, pass2System(domain) + pass2UserMessage, VERIFY_MAX_TOKENS);
+      const pass3Worst = worstCaseCallUsd(PASS3_MODEL, pass3System(domain) + candidateJson, VERIFY_MAX_TOKENS);
+      const pass4aWorst = worstCaseCallUsd(PASS4A_MODEL, pass4aSystem(domain) + `term: ${candidate.term}\npath: ${candidate.path}`, PASS4A_MAX_TOKENS);
+      const worstCase =
+        pass2Worst + pass3Worst + pass4aWorst +
+        // Embeddings: the definition plus a 128-token regeneration, bounded generously.
+        worstCaseCallUsd(EMBEDDING_MODEL, candidate.one_line_definition, 0) + (PASS4A_MAX_TOKENS * 8 * 0.02) / 1_000_000;
+      let retryExtra = 0;
+      const guard = (worst: number): RetryGuard => ({
+        worstCaseUsd: worst,
+        canRetry: (usd) => {
+          if (!budget.canAfford(worstCase + retryExtra + usd)) return false;
+          retryExtra += usd;
+          return true;
+        },
+        onUnknownBilling: (usd) => {
+          totalCost += usd;
+        },
+      });
+      if (stoppedForBudget || !budget.canAfford(worstCase)) {
+        stoppedForBudget = true;
+        skippedForBudget++;
+        failurePass = 'budget';
+        errorText = `cycle budget: spent $${budget.spentUsd.toFixed(4)} of $${budget.limitUsd}, next candidate could cost up to $${worstCase.toFixed(4)}`;
+        await logRow(supabase, {
+          cycleId,
+          cycleStartedAt,
+          trigger,
+          candidate,
+          pass1Model: PASS1_MODEL,
+          pass1TokensIn,
+          pass1TokensOut,
+          pass2,
+          pass3,
+          pass4aDef,
+          pass4bSim,
+          finalStatus,
+          failurePass,
+          totalLatencyMs: Date.now() - candStart,
+          totalCostUsd: totalCost,
+          errorText,
+        });
+        continue;
+      }
       const pass2Call = await backoffRetry(
         () =>
           callAnthropicJson(
@@ -455,15 +569,17 @@ async function runCycle(
             PASS2_MODEL,
             pass2System(domain),
             pass2UserMessage,
-            512,
+            VERIFY_MAX_TOKENS,
           ),
         'pass2',
+        guard(pass2Worst),
       );
-      totalCost += estimateCost(PASS2_MODEL, pass2Call.tokensIn, pass2Call.tokensOut);
+      totalCost += pass2Call.costUsd;
       pass2 =
         tryParseJson<VerifierResult>(pass2Call.raw) ??
         { result: 'fail', reasoning: 'unparseable verifier output', failed_criteria: ['parser'] };
-      if (pass2.result === 'fail') {
+      // Continue only on an explicit, well-formed pass (verdict-gates.ts).
+      if (!verdictPasses(pass2)) {
         failurePass = 'pass2';
         rejected++;
         await logRow(supabase, {
@@ -494,16 +610,17 @@ async function runCycle(
             anthropic,
             PASS3_MODEL,
             pass3System(domain),
-            JSON.stringify(candidate),
-            512,
+            candidateJson,
+            VERIFY_MAX_TOKENS,
           ),
         'pass3',
+        guard(pass3Worst),
       );
-      totalCost += estimateCost(PASS3_MODEL, pass3Call.tokensIn, pass3Call.tokensOut);
+      totalCost += pass3Call.costUsd;
       pass3 =
         tryParseJson<VerifierResult>(pass3Call.raw) ??
         { result: 'fail', reasoning: 'unparseable verifier output', failed_criteria: ['parser'] };
-      if (pass3.result === 'fail') {
+      if (!verdictPasses(pass3)) {
         failurePass = 'pass3';
         rejected++;
         await logRow(supabase, {
@@ -535,11 +652,12 @@ async function runCycle(
             PASS4A_MODEL,
             pass4aSystem(domain),
             `term: ${candidate.term}\npath: ${candidate.path}`,
-            128,
+            PASS4A_MAX_TOKENS,
           ),
         'pass4a',
+        guard(pass4aWorst),
       );
-      totalCost += estimateCost(PASS4A_MODEL, pass4aCall.tokensIn, pass4aCall.tokensOut);
+      totalCost += pass4aCall.costUsd;
       pass4aDef = pass4aCall.raw.trim();
 
       // Pass 4b: cosine compare. Embedding-down → reject (per spec §6.4).
@@ -550,8 +668,9 @@ async function runCycle(
         ]);
         pass4bSim = cosineSimilarity(embOriginal, embRegen);
         // Embedding cost is tiny but logged for completeness
-        const embTokens = candidate.one_line_definition.length / 4 + (pass4aDef?.length ?? 0) / 4;
-        totalCost += estimateCost(EMBEDDING_MODEL, Math.ceil(embTokens), 0);
+        // One token per UTF-8 byte bounds the input (the API reply is not read for usage).
+        const embBytes = new TextEncoder().encode(candidate.one_line_definition + (pass4aDef ?? '')).length;
+        totalCost += estimateCostUsd(EMBEDDING_MODEL, { input_tokens: embBytes });
       } catch (err: any) {
         errorText = `embedding failed: ${err?.message ?? err}`;
         failurePass = 'pass4b';
@@ -577,7 +696,10 @@ async function runCycle(
         continue;
       }
 
-      if ((pass4bSim ?? 0) < COSINE_THRESHOLD) {
+      // A similarity screen, not proof of agreement: it compares only the
+      // one-line definitions. NaN, null or a length mismatch fails.
+      if (!similarityPasses(pass4bSim, COSINE_THRESHOLD)) {
+        if (pass4bSim === null) errorText = 'embedding similarity undefined (empty, mismatched or non-finite vectors)';
         failurePass = 'pass4b';
         rejected++;
         await logRow(supabase, {
@@ -692,15 +814,28 @@ async function runCycle(
         totalCostUsd: totalCost,
         errorText,
       });
+    } finally {
+      budget.record(totalCost - pass1Portion);
     }
+  }
+  if (stoppedForBudget) {
+    console.warn(`[ingest] cycle budget reached: ${skippedForBudget} of ${candidates.length} candidates skipped`);
   }
 
   return {
     cycleId,
-    candidatesProcessed: candidates.length,
+    candidatesProcessed: candidates.length - skippedForBudget,
     inserted,
     rejected,
+    skippedForBudget,
+    stoppedForBudget,
   };
+}
+
+/** failed_criteria as a text[] the log column accepts, whatever shape the model sent. */
+function criteriaList(v: VerifierResult | null): string[] | null {
+  const raw = (v as { failed_criteria?: unknown } | null)?.failed_criteria;
+  return Array.isArray(raw) ? raw.filter((c): c is string => typeof c === 'string') : null;
 }
 
 interface LogArgs {
@@ -716,7 +851,7 @@ interface LogArgs {
   pass4aDef: string | null;
   pass4bSim: number | null;
   finalStatus: 'inserted' | 'rejected';
-  failurePass: 'dedupe' | 'pass2' | 'pass3' | 'pass4b' | 'dedupe-late' | null;
+  failurePass: 'dedupe' | 'pass1' | 'pass2' | 'pass3' | 'pass4b' | 'dedupe-late' | 'insert' | 'budget' | null;
   totalLatencyMs: number;
   totalCostUsd: number;
   errorText: string | null;
@@ -732,12 +867,14 @@ async function logRow(supabase: ReturnType<typeof createClient>, args: LogArgs):
     pass1_model: args.pass1Model,
     pass1_tokens_in: args.pass1TokensIn,
     pass1_tokens_out: args.pass1TokensOut,
-    pass2_result: args.pass2 ? args.pass2.result : 'skipped',
+    // The gate's decision, not the raw string: the column allows only pass,
+    // fail and skipped, and a malformed verdict ("PASS", a missing key) failed the gate.
+    pass2_result: args.pass2 ? (verdictPasses(args.pass2) ? 'pass' : 'fail') : 'skipped',
     pass2_reasoning: args.pass2?.reasoning ?? null,
-    pass2_failed_criteria: args.pass2?.failed_criteria ?? null,
-    pass3_result: args.pass3 ? args.pass3.result : 'skipped',
+    pass2_failed_criteria: criteriaList(args.pass2),
+    pass3_result: args.pass3 ? (verdictPasses(args.pass3) ? 'pass' : 'fail') : 'skipped',
     pass3_reasoning: args.pass3?.reasoning ?? null,
-    pass3_failed_criteria: args.pass3?.failed_criteria ?? null,
+    pass3_failed_criteria: criteriaList(args.pass3),
     pass4a_definition: args.pass4aDef,
     pass4b_similarity: args.pass4bSim,
     pass4b_threshold: COSINE_THRESHOLD,

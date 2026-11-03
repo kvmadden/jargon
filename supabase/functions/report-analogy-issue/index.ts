@@ -5,11 +5,12 @@
 //   1) INSERT a row into `analogy_reports` with the rendering snapshot +
 //      the user's free-form complaint. This is the audit trail the owner
 //      reads via the Supabase dashboard.
-//   2) UPDATE user_term_renderings SET reported_at = now() WHERE
-//      (user_id = caller, term_id = body.term_id). The next personalize-
-//      term call treats reported_at IS NOT NULL as a staleness signal
-//      and regenerates under PROMPT_VERSION = 7's stricter rubric.
-//      personalize-term clears reported_at on successful regen.
+//   2) DELETE the caller's cached rendering for that term. The reported text
+//      is kept in the analogy_reports snapshot, so nothing is lost for review,
+//      and no screen can display it again. If the delete fails, the row is
+//      marked with reported_at instead, which every reader treats as stale.
+//      (It used to be marked and kept in every case, and the term page then
+//      showed the reported text again whenever regeneration fell back.)
 //
 // Request body:
 //   {
@@ -38,6 +39,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
 import { getUserFromJWT } from '../_shared/auth.ts';
 import { preflight, jsonResponse } from '../_shared/cors.ts';
 import { isAllowlisted } from '../_shared/allowlist.ts';
+import { dropReportedRendering } from './drop-reported.ts';
 
 interface ReportRequest {
   term_id: string;
@@ -179,23 +181,18 @@ Deno.serve(async (req) => {
     return jsonResponse(req, { error: 'failed to log report' }, 500);
   }
 
-  // ─── Write 2: UPDATE user_term_renderings.reported_at ────────────────────────
-  // Best-effort. If the rendering row doesn't exist (the user reported a
-  // canonical rendering somehow — shouldn't happen because the button is
-  // hidden when there's no personalized rendering, but defensive), the
-  // UPDATE silently affects 0 rows and we still return success — the
-  // audit row is the load-bearing write.
-  const { error: markErr } = await serviceClient
-    .from('user_term_renderings')
-    .update({ reported_at: new Date().toISOString() })
-    .eq('user_id', userId)
-    .eq('term_id', body.term_id);
-
-  if (markErr) {
-    // Don't fail the request — the user complaint is logged and the owner can
-    // see it. The next personalize call will still regenerate eventually
-    // via profile/prompt-version drift; this is just an optimization.
-    console.error('[report-analogy-issue] user_term_renderings update failed:', markErr);
+  // ─── Write 2: DELETE the reported rendering ──────────────────────────────────
+  // The analogy_reports row above holds the reported text, so deleting the
+  // cached rendering loses nothing. If the delete fails, the row is marked
+  // reported instead (see drop-reported.ts). If the row does not exist, the
+  // delete affects 0 rows and the request still succeeds: the report is the
+  // load-bearing write.
+  const drop = await dropReportedRendering(serviceClient, userId, body.term_id);
+  if (drop.outcome !== 'deleted') {
+    console.error(
+      `[report-analogy-issue] user_term_renderings delete failed (${drop.outcome}):`,
+      drop.errors,
+    );
   }
 
   return jsonResponse(req, { logged: true }, 200);

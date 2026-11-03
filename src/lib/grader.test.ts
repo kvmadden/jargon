@@ -250,10 +250,10 @@ describe('grader edge case 9: offensive content', () => {
 describe('grader edge case 10: Edge Function error / timeout', () => {
   const term = makeTerm();
 
-  it('network error → fallback partial, isFallback = true, user never stuck', async () => {
+  it('network error → ungraded, isFallback = true, user never stuck', async () => {
     mockEdgeError(new Error('Network error'));
     const result = await gradeSentence(term, 'I made a commit to save my work in git.');
-    expect(result.tier).toBe('partial');
+    expect(result.tier).toBe('ungraded');
     expect(result.isFallback).toBe(true);
   });
 
@@ -263,24 +263,24 @@ describe('grader edge case 10: Edge Function error / timeout', () => {
     await expect(promise).resolves.toBeDefined();
   });
 
-  it('non-200 status → fallback partial', async () => {
+  it('non-200 status → ungraded', async () => {
     mockEdgeResponse('pass', 90, 'ignored', 500);
     const result = await gradeSentence(term, 'I made a commit to save my work in git.');
-    expect(result.tier).toBe('partial');
+    expect(result.tier).toBe('ungraded');
     expect(result.isFallback).toBe(true);
   });
 
-  it('malformed JSON from Edge Function → fallback partial', async () => {
+  it('malformed JSON from Edge Function → ungraded', async () => {
     mockEdgeResponseRaw('this is not json at all {broken}');
     const result = await gradeSentence(term, 'I made a commit to save my work in git.');
-    expect(result.tier).toBe('partial');
+    expect(result.tier).toBe('ungraded');
     expect(result.isFallback).toBe(true);
   });
 
-  it('Edge Function returns JSON missing required fields → fallback partial', async () => {
+  it('Edge Function returns JSON missing required fields → ungraded', async () => {
     mockEdgeResponseRaw('{"tier":"pass"}');
     const result = await gradeSentence(term, 'I made a commit to save my work in git.');
-    expect(result.tier).toBe('partial');
+    expect(result.tier).toBe('ungraded');
     expect(result.isFallback).toBe(true);
   });
 
@@ -333,13 +333,87 @@ describe('concurrent calls to gradeSentence', () => {
 describe('grader auth gating', () => {
   const term = makeTerm();
 
-  it('missing session JWT → fallback partial without calling fetch', async () => {
+  it('missing session JWT → ungraded without calling fetch', async () => {
     const supabaseMod = await import('./supabase');
     const getSession = vi.mocked(supabaseMod.supabase.auth.getSession);
     getSession.mockResolvedValueOnce({ data: { session: null } } as never);
     const result = await gradeSentence(term, 'I made a commit to save my work.');
-    expect(result.tier).toBe('partial');
+    expect(result.tier).toBe('ungraded');
     expect(result.isFallback).toBe(true);
+    expect(mockFetch).not.toHaveBeenCalled();
+  });
+});
+
+// ─── v10: ungraded, consistency and normalization ─────────────────────────────
+
+describe('grader: no grade is never recorded as a grade', () => {
+  const term = makeTerm();
+
+  it.each([
+    ['pass with score 0', 'pass', 0],
+    ['fail with score 100', 'fail', 100],
+    ['partial with score 95', 'partial', 95],
+  ])('%s is a contradiction, so the answer is ungraded', async (_label, tier, score) => {
+    mockEdgeResponse(tier as string, score as number, 'x');
+    const result = await gradeSentence(term, 'I made a commit to save my work.');
+    expect(result.tier).toBe('ungraded');
+    expect(result.isFallback).toBe(true);
+  });
+
+  it('a server fallback is ungraded whatever tier it carries', async () => {
+    mockFetch.mockResolvedValueOnce(
+      new Response(JSON.stringify({ tier: 'partial', score: 50, feedback: 'old fallback', isFallback: true }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+    const result = await gradeSentence(term, 'I made a commit to save my work.');
+    expect(result.tier).toBe('ungraded');
+  });
+
+  it('a non-finite score is not a grade', async () => {
+    mockEdgeResponseRaw('{"tier":"pass","score":null,"feedback":"x"}');
+    expect((await gradeSentence(term, 'I made a commit to save my work.')).tier).toBe('ungraded');
+  });
+});
+
+describe('grader prechecks normalize text before comparing', () => {
+  const term = makeTerm();
+
+  it('a copy of the example with doubled spaces is still a copy', async () => {
+    const result = await gradeSentence(term, 'I ran  git commit to save my changes   before switching branches.');
+    expect(result.tier).toBe('fail');
+    expect(result.feedback).toContain('own words');
+    expect(mockFetch).not.toHaveBeenCalled();
+  });
+
+  it('a copy with zero-width characters is still a copy', async () => {
+    const result = await gradeSentence(term, 'I ran git\u200b commit to save my changes before switching branches.');
+    expect(result.feedback).toContain('own words');
+  });
+
+  it('an answer of only zero-width characters is empty', async () => {
+    const result = await gradeSentence(term, '\u200b\u200b\u2060');
+    expect(result.tier).toBe('fail');
+    expect(mockFetch).not.toHaveBeenCalled();
+  });
+
+  it('a Japanese sentence without spaces is not rejected as one word', async () => {
+    mockEdgeResponse('pass', 90, 'Correct.');
+    const result = await gradeSentence(term, '作業を保存するためにコミットしました。');
+    expect(result.tier).toBe('pass');
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('a Chinese sentence without spaces is not rejected as one word', async () => {
+    mockEdgeResponse('pass', 85, 'Correct.');
+    const result = await gradeSentence(term, '我在切换分支之前提交了代码。');
+    expect(result.tier).toBe('pass');
+  });
+
+  it('a single word is still one word', async () => {
+    const result = await gradeSentence(term, 'コミット');
+    expect(result.tier).toBe('fail');
     expect(mockFetch).not.toHaveBeenCalled();
   });
 });

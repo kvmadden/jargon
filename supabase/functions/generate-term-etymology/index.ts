@@ -42,6 +42,7 @@ import { getUserFromJWT } from '../_shared/auth.ts';
 import { preflight, jsonResponse } from '../_shared/cors.ts';
 import { isAllowlisted } from '../_shared/allowlist.ts';
 import { checkSpend } from '../_shared/spend-guard.ts';
+import { estimateCostUsd, usageFromResponse } from '../_shared/pricing.ts';
 
 // ─── Constants ──────────────────────────────────────────────────────────────────
 const ETYMOLOGY_MODEL = 'claude-opus-4-7';
@@ -57,9 +58,7 @@ const ETYMOLOGY_MAX_RETRIES = 1;              // hard ceiling; no second retry
 const ETYMOLOGY_MIN_CHARS = 40;
 const ETYMOLOGY_MAX_CHARS = 800;
 
-// Opus 4.7 unit costs (USD per 1M tokens) — used to populate
-// etymology_generation_log.total_cost_usd. $15 input / $75 output per MTok.
-const COST_PER_M_OPUS_4_7 = { in: 15.0, out: 75.0 } as const;
+// Cost per call comes from _shared/pricing.ts (list price, cache tokens included).
 
 // ─── Prompts ────────────────────────────────────────────────────────────────────
 
@@ -207,6 +206,8 @@ interface CallResult<T> {
   rawText: string;
   tokensIn: number;
   tokensOut: number;
+  /** List-price cost of this call, cache tokens included (_shared/pricing.ts). */
+  costUsd: number;
 }
 
 interface LogState {
@@ -273,12 +274,6 @@ function parseVerdict(raw: string): VerifierVerdict | null {
 
 // ─── Helpers ────────────────────────────────────────────────────────────────────
 
-function estimateOpusCost(tokensIn: number, tokensOut: number): number {
-  return (
-    (tokensIn / 1_000_000) * COST_PER_M_OPUS_4_7.in +
-    (tokensOut / 1_000_000) * COST_PER_M_OPUS_4_7.out
-  );
-}
 
 /**
  * Wraps `anthropic.messages.create` with a per-call AbortController. Mirrors
@@ -317,6 +312,7 @@ async function callOpusWithTimeout<T>(
       rawText,
       tokensIn: response?.usage?.input_tokens ?? 0,
       tokensOut: response?.usage?.output_tokens ?? 0,
+      costUsd: estimateCostUsd(ETYMOLOGY_MODEL, usageFromResponse(response)),
     };
   } finally {
     clearTimeout(timeoutId);
@@ -532,7 +528,7 @@ Deno.serve(async (req) => {
   }
   state.pass1_tokens_in = pass1.tokensIn;
   state.pass1_tokens_out = pass1.tokensOut;
-  state.total_cost_usd += estimateOpusCost(pass1.tokensIn, pass1.tokensOut);
+  state.total_cost_usd += pass1.costUsd;
   state.pass1_etymology = pass1.parsed;
   if (!pass1.parsed) {
     state.error_text = `pass1 unparseable (length or empty): ${pass1.rawText.slice(0, 200)}`;
@@ -570,7 +566,7 @@ Deno.serve(async (req) => {
   }
   state.pass2_tokens_in = pass2.tokensIn;
   state.pass2_tokens_out = pass2.tokensOut;
-  state.total_cost_usd += estimateOpusCost(pass2.tokensIn, pass2.tokensOut);
+  state.total_cost_usd += pass2.costUsd;
   state.pass2_verdict = pass2.parsed;
   if (!pass2.parsed) {
     state.error_text = `pass2 unparseable: ${pass2.rawText.slice(0, 200)}`;
@@ -641,7 +637,7 @@ Deno.serve(async (req) => {
   }
   state.pass3_tokens_in = pass3.tokensIn;
   state.pass3_tokens_out = pass3.tokensOut;
-  state.total_cost_usd += estimateOpusCost(pass3.tokensIn, pass3.tokensOut);
+  state.total_cost_usd += pass3.costUsd;
   state.pass3_etymology = pass3.parsed;
   if (!pass3.parsed) {
     state.error_text = `pass3 unparseable: ${pass3.rawText.slice(0, 200)}`;
@@ -682,7 +678,7 @@ Deno.serve(async (req) => {
   }
   state.pass2_retry_tokens_in = pass2Retry.tokensIn;
   state.pass2_retry_tokens_out = pass2Retry.tokensOut;
-  state.total_cost_usd += estimateOpusCost(pass2Retry.tokensIn, pass2Retry.tokensOut);
+  state.total_cost_usd += pass2Retry.costUsd;
   state.pass2_retry_verdict = pass2Retry.parsed;
   if (!pass2Retry.parsed) {
     state.error_text = `pass2-retry unparseable: ${pass2Retry.rawText.slice(0, 200)}`;

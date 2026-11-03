@@ -80,8 +80,11 @@ const inFlightPersonalizations = new Map<
   Promise<Awaited<ReturnType<typeof requestPersonalization>>>
 >();
 
-export function dedupedRequestPersonalization(termId: string) {
-  const existing = inFlightPersonalizations.get(termId);
+export function dedupedRequestPersonalization(termId: string, userId = '') {
+  // Keyed by learner and term, so a request started under one account is never
+  // handed to another account that signs in on the same device.
+  const key = `${userId}::${termId}`;
+  const existing = inFlightPersonalizations.get(key);
   if (existing) {
     return existing;
   }
@@ -90,11 +93,11 @@ export function dedupedRequestPersonalization(termId: string) {
     try {
       return await requestPersonalization(termId);
     } finally {
-      inFlightPersonalizations.delete(termId);
+      inFlightPersonalizations.delete(key);
     }
   })();
 
-  inFlightPersonalizations.set(termId, promise);
+  inFlightPersonalizations.set(key, promise);
   return promise;
 }
 
@@ -303,24 +306,17 @@ function TermDetailContent() {
         return;
       }
 
-      if (result.status === 'stale') {
-        // Show cached personalized immediately (no canonical flash), then re-fire.
-        setPersonalized({
-          long_definition: result.rendering.long_definition,
-          why_it_matters: result.rendering.why_it_matters,
-          example_in_sentence: result.rendering.example_in_sentence,
-        });
-        // Fall through to background regen.
-      }
-
-      // Background generation: fires for both `missing` and `stale`. Failures
-      // leave whatever was on screen (canonical for missing, stale for stale).
+      // `stale` (older prompt, profile or model, or reported by the learner)
+      // and `missing` both show the canonical text and regenerate in the
+      // background. A stale rendering is never displayed: it was accepted by an
+      // older check or the learner flagged it, and a fallback must leave the
+      // canonical text on screen, not that rendering.
       try {
-        const fresh = await dedupedRequestPersonalization(termId);
+        const fresh = await dedupedRequestPersonalization(termId, user?.id ?? '');
         if (cancelled) return;
         if (fresh.isFallback) {
-          // Server couldn't personalize (no profile / Anthropic error / parser miss).
-          // For `missing` we stay canonical; for `stale` we keep the stale rendering.
+          // Server returned the canonical entry (held for review, error, cap, parse
+          // miss). The canonical text is already on screen, so nothing changes.
           return;
         }
         // Crossfade in the new rendering (200ms opacity per spec §5.1).
@@ -352,7 +348,7 @@ function TermDetailContent() {
         crossfadeTimer = null;
       }
     };
-  }, [termId, term?.id]);
+  }, [termId, term?.id, user?.id]);
 
   // ─── Stage B+1.18 — per-term translator-state badge ─────────────────────────
   // When a personalized rendering is on screen, fetch the latest verifier

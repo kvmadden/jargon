@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Unit and component tests
+        run: npm test
+
+      - name: App type check and build
+        run: npm run build
+
+      - name: Edge Function type check
+        run: npm run typecheck:functions
+
+      - name: Pre-deploy auth gate test
+        run: npm run test:pre-deploy-auth-gate
+
+      - name: Generated eval results are current (offline, no model calls)
+        run: |
+          node eval/replay-gate.ts --check
+          node eval/report.ts --check
+
+      - name: Canonical audit summary
+        run: node scripts/audit-canonical.mjs
+
+      - name: Install PostgreSQL 17
+        run: |
+          sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+          sudo apt-get install -y --no-install-recommends postgresql-17
+
+      - name: SQL tests against the real migrations
+        run: npm run test:sql
+        env:
+          PG_BIN: /usr/lib/postgresql/17/bin
