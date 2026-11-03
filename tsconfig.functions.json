@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noImplicitAny": false,
+    "types": [],
+    "baseUrl": ".",
+    "paths": {
+      "https://esm.sh/@supabase/supabase-js@2.45.4": [
+        "./typecheck/edge-functions/supabase-shim.d.ts"
+      ],
+      "https://esm.sh/@anthropic-ai/sdk@0.32.1": [
+        "./typecheck/edge-functions/anthropic-shim.d.ts"
+      ]
+    }
+  },
+  "include": [
+    "supabase/functions/**/*.ts",
+    "typecheck/edge-functions/*.d.ts"
+  ]
+}

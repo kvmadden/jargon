@@ -16,6 +16,7 @@
     "supabase:reset": "supabase db reset",
     "test:ai-spend-acl": "bash scripts/test-ai-spend-acl.sh",
     "test:sql": "bash scripts/test-sql.sh",
+    "typecheck:functions": "tsc -p tsconfig.functions.json",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
