@@ -223,7 +223,19 @@ Reply with ONLY the definition sentence. No JSON, no markdown, no preamble.`;
 
 // ─── Helpers ────────────────────────────────────────────────────────────────────
 
-async function backoffRetry<T>(fn: () => Promise<T>, label: string, maxAttempts = 3): Promise<T> {
+/**
+ * Budget guard for one call's retries. The cycle budget reserved the first
+ * attempt. A retry is another possibly billed attempt, so it needs its own
+ * room, and an attempt that failed without a response (a network error) may
+ * have been billed, so its worst case is charged.
+ */
+interface RetryGuard {
+  worstCaseUsd: number;
+  canRetry: (usd: number) => boolean;
+  onUnknownBilling: (usd: number) => void;
+}
+
+async function backoffRetry<T>(fn: () => Promise<T>, label: string, guard?: RetryGuard, maxAttempts = 3): Promise<T> {
   let attempt = 0;
   let lastErr: unknown;
   while (attempt < maxAttempts) {
@@ -233,8 +245,12 @@ async function backoffRetry<T>(fn: () => Promise<T>, label: string, maxAttempts 
     } catch (err: any) {
       lastErr = err;
       const status = err?.status ?? err?.response?.status ?? 0;
+      if (status === 0) guard?.onUnknownBilling(guard.worstCaseUsd);
       const retryable = status === 429 || (status >= 500 && status < 600) || status === 0;
       if (!retryable || attempt >= maxAttempts) throw err;
+      if (guard && !guard.canRetry(guard.worstCaseUsd)) {
+        throw new Error(`cycle budget: no room to retry ${label}`);
+      }
       const delay = 1000 * Math.pow(2, attempt - 1);
       console.warn(`[ingest] ${label} retry ${attempt} after ${delay}ms (status ${status})`);
       await new Promise((r) => setTimeout(r, delay));
@@ -251,7 +267,6 @@ function tryParseJson<T>(raw: string): T | null {
     return null;
   }
 }
-
 
 // ─── Anthropic + OpenAI call wrappers ──────────────────────────────────────────
 
@@ -385,14 +400,54 @@ async function runCycle(
     console.warn(`[ingest] cycle budget $${budget.limitUsd} cannot cover Pass 1, so no calls were made`);
     return { cycleId, candidatesProcessed: 0, inserted: 0, rejected: 0, skippedForBudget: 0, stoppedForBudget: true };
   }
+  const pass1Worst = worstCaseCallUsd(PASS1_MODEL, pass1SystemText + pass1UserText, PASS1_MAX_TOKENS);
+  let pass1Extra = 0;
+  // Logs Pass 1 on its own row when no candidate row will carry its cost (an
+  // unreadable reply, or an empty batch). Without this, a paid Pass 1 call
+  // left no trace in the spend total.
+  const logPass1Only = async (errorText: string) => {
+    if (pass1CostUnlogged <= 0) return;
+    await logRow(supabase, {
+      cycleId,
+      cycleStartedAt,
+      trigger,
+      candidate: { id: '(pass-1)' } as Candidate,
+      pass1Model: PASS1_MODEL,
+      pass1TokensIn,
+      pass1TokensOut,
+      pass2: null,
+      pass3: null,
+      pass4aDef: null,
+      pass4bSim: null,
+      finalStatus: 'rejected',
+      failurePass: 'pass1',
+      totalLatencyMs: 0,
+      totalCostUsd: pass1CostUnlogged,
+      errorText,
+    });
+    pass1CostUnlogged = 0;
+  };
   try {
     const { raw, tokensIn, tokensOut, costUsd } = await backoffRetry(
       () => callAnthropicJson(anthropic, PASS1_MODEL, pass1SystemText, pass1UserText, PASS1_MAX_TOKENS),
       'pass1',
+      {
+        worstCaseUsd: pass1Worst,
+        canRetry: (usd) => {
+          if (!budget.canAfford(pass1Worst + pass1Extra + usd)) return false;
+          pass1Extra += usd;
+          return true;
+        },
+        onUnknownBilling: (usd) => {
+          pass1CostUnlogged += usd;
+          budget.record(usd);
+        },
+      },
     );
     pass1TokensIn = tokensIn;
     pass1TokensOut = tokensOut;
-    pass1CostUnlogged = costUsd;
+    // += keeps any worst-case charge for failed attempts that onUnknownBilling added.
+    pass1CostUnlogged += costUsd;
     budget.record(costUsd);
     const parsed = tryParseJson<{ candidates: Candidate[] }>(raw);
     if (!parsed?.candidates || !Array.isArray(parsed.candidates)) {
@@ -401,8 +456,10 @@ async function runCycle(
     candidates = parsed.candidates;
   } catch (err: any) {
     console.error('[ingest] pass 1 fatal:', err);
+    await logPass1Only(`pass 1 failed: ${err?.message ?? String(err)}`);
     return { cycleId, candidatesProcessed: 0, inserted: 0, rejected: 0, skippedForBudget: 0, stoppedForBudget: false };
   }
+  if (candidates.length === 0) await logPass1Only('pass 1 returned no candidates');
 
   // ─── Per-candidate 4-pass loop ───────────────────────────────────────────────
   let skippedForBudget = 0;
@@ -419,7 +476,7 @@ async function runCycle(
     let pass4aDef: string | null = null;
     let pass4bSim: number | null = null;
     let finalStatus: 'inserted' | 'rejected' = 'rejected';
-    let failurePass: 'dedupe' | 'pass2' | 'pass3' | 'pass4b' | 'dedupe-late' | 'insert' | 'budget' | null = null;
+    let failurePass: 'dedupe' | 'pass1' | 'pass2' | 'pass3' | 'pass4b' | 'dedupe-late' | 'insert' | 'budget' | null = null;
     let errorText: string | null = null;
 
     try {
@@ -461,12 +518,25 @@ async function runCycle(
       // Budget: start this candidate only if its worst case fits. Once one
       // does not fit, this and every later candidate is logged as skipped.
       const candidateJson = JSON.stringify(candidate);
+      const pass2Worst = worstCaseCallUsd(PASS2_MODEL, pass2System(domain) + pass2UserMessage, VERIFY_MAX_TOKENS);
+      const pass3Worst = worstCaseCallUsd(PASS3_MODEL, pass3System(domain) + candidateJson, VERIFY_MAX_TOKENS);
+      const pass4aWorst = worstCaseCallUsd(PASS4A_MODEL, pass4aSystem(domain) + `term: ${candidate.term}\npath: ${candidate.path}`, PASS4A_MAX_TOKENS);
       const worstCase =
-        worstCaseCallUsd(PASS2_MODEL, pass2System(domain) + pass2UserMessage, VERIFY_MAX_TOKENS) +
-        worstCaseCallUsd(PASS3_MODEL, pass3System(domain) + candidateJson, VERIFY_MAX_TOKENS) +
-        worstCaseCallUsd(PASS4A_MODEL, pass4aSystem(domain) + `term: ${candidate.term}\npath: ${candidate.path}`, PASS4A_MAX_TOKENS) +
+        pass2Worst + pass3Worst + pass4aWorst +
         // Embeddings: the definition plus a 128-token regeneration, bounded generously.
         worstCaseCallUsd(EMBEDDING_MODEL, candidate.one_line_definition, 0) + (PASS4A_MAX_TOKENS * 8 * 0.02) / 1_000_000;
+      let retryExtra = 0;
+      const guard = (worst: number): RetryGuard => ({
+        worstCaseUsd: worst,
+        canRetry: (usd) => {
+          if (!budget.canAfford(worstCase + retryExtra + usd)) return false;
+          retryExtra += usd;
+          return true;
+        },
+        onUnknownBilling: (usd) => {
+          totalCost += usd;
+        },
+      });
       if (stoppedForBudget || !budget.canAfford(worstCase)) {
         stoppedForBudget = true;
         skippedForBudget++;
@@ -502,6 +572,7 @@ async function runCycle(
             VERIFY_MAX_TOKENS,
           ),
         'pass2',
+        guard(pass2Worst),
       );
       totalCost += pass2Call.costUsd;
       pass2 =
@@ -543,6 +614,7 @@ async function runCycle(
             VERIFY_MAX_TOKENS,
           ),
         'pass3',
+        guard(pass3Worst),
       );
       totalCost += pass3Call.costUsd;
       pass3 =
@@ -583,6 +655,7 @@ async function runCycle(
             PASS4A_MAX_TOKENS,
           ),
         'pass4a',
+        guard(pass4aWorst),
       );
       totalCost += pass4aCall.costUsd;
       pass4aDef = pass4aCall.raw.trim();
@@ -595,8 +668,9 @@ async function runCycle(
         ]);
         pass4bSim = cosineSimilarity(embOriginal, embRegen);
         // Embedding cost is tiny but logged for completeness
-        const embTokens = candidate.one_line_definition.length / 4 + (pass4aDef?.length ?? 0) / 4;
-        totalCost += estimateCostUsd(EMBEDDING_MODEL, { input_tokens: Math.ceil(embTokens) });
+        // One token per UTF-8 byte bounds the input (the API reply is not read for usage).
+        const embBytes = new TextEncoder().encode(candidate.one_line_definition + (pass4aDef ?? '')).length;
+        totalCost += estimateCostUsd(EMBEDDING_MODEL, { input_tokens: embBytes });
       } catch (err: any) {
         errorText = `embedding failed: ${err?.message ?? err}`;
         failurePass = 'pass4b';
@@ -777,7 +851,7 @@ interface LogArgs {
   pass4aDef: string | null;
   pass4bSim: number | null;
   finalStatus: 'inserted' | 'rejected';
-  failurePass: 'dedupe' | 'pass2' | 'pass3' | 'pass4b' | 'dedupe-late' | 'insert' | 'budget' | null;
+  failurePass: 'dedupe' | 'pass1' | 'pass2' | 'pass3' | 'pass4b' | 'dedupe-late' | 'insert' | 'budget' | null;
   totalLatencyMs: number;
   totalCostUsd: number;
   errorText: string | null;

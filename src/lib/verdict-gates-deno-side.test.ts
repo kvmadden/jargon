@@ -120,4 +120,16 @@ describe('ingest-terms wiring', () => {
     expect(src).toMatch(/budget\.canAfford\(worstCaseCallUsd\(PASS1_MODEL/);
     expect(src).toMatch(/!budget\.canAfford\(worstCase\)/);
   });
+
+  it('checks the budget before every retry and charges attempts that ended without a response', () => {
+    for (const pass of ['pass2', 'pass3', 'pass4a']) expect(src).toMatch(new RegExp(`'${pass}',\\s*guard\\(${pass}Worst\\)`));
+    expect(src).toMatch(/if \(guard && !guard\.canRetry\(guard\.worstCaseUsd\)\)/);
+    expect(src).toMatch(/if \(status === 0\) guard\?\.onUnknownBilling\(guard\.worstCaseUsd\)/);
+  });
+
+  it('logs a paid Pass 1 even when it returns no usable candidates', () => {
+    expect(src).toMatch(/if \(candidates\.length === 0\) await logPass1Only\(/);
+    expect(src).toMatch(/await logPass1Only\(`pass 1 failed/);
+    expect(src).toMatch(/failurePass: 'pass1'/);
+  });
 });
