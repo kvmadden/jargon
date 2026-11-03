@@ -16,23 +16,23 @@ Software and AI vocabulary moves faster than anyone can look it up. People in ad
 - **Spotted in the wild.** Paste a meeting transcript and see which known terms appeared.
 - **Gift mode.** An invited user can set up a pre-filled profile for someone else and send a magic-link invite.
 - **Guided programs.** A multi-module course (currently an eight-module agentic-era track) layered on the same term engine.
-- **Feedback loop.** Learners can report a bad analogy or ask a question inside a lesson; reports are stored for review.
+- **Feedback loop.** Learners can report a bad analogy or ask a question inside a lesson, and reports are stored for review.
 
 ## How the AI parts work
 
-All model calls run server-side in Supabase Edge Functions (`supabase/functions/`). The browser never holds an API key. Every function checks the caller's Supabase JWT and an `allowed_users` table before it spends anything. Monthly per-user and global spend ceilings are enforced from logged costs, and when a cap is hit or a call fails, the app returns a canonical (non-personalized) answer instead of an error.
+All model calls run server-side in Supabase Edge Functions (`supabase/functions/`). The browser never holds an API key. Every function checks the caller's Supabase JWT and an `allowed_users` table before it spends anything. Monthly per-user and global spend ceilings are enforced from logged costs, priced at list price from one table (`supabase/functions/_shared/pricing.ts`). When a cap is hit or a call fails, the app returns the canonical text instead of an error, and a sentence the grader could not grade is recorded as ungraded, not as a grade.
 
-- **`personalize-term`** writes a personalized version of a term for one user. Pass 1 generates a candidate with Claude from the canonical entry plus the user's profile. Pass 2 is a separate verifier call that checks the candidate against pass/fail criteria, including that the technical fact is preserved and that any analogy is accurate on both sides. On failure it regenerates once with the verifier's objection, re-verifies, and otherwise falls back to the canonical text. Passing results are cached per user and term.
-- **`grade-sentence`** grades a learner's sentence as pass, partial, or fail with feedback. It has a defined fallback if the model call fails.
-- **`ingest-terms`** is a weekly cron-triggered pipeline that proposes new terms. Claude Sonnet drafts candidates weighted toward under-covered paths. Claude Opus verifies accuracy, then relevance to the domain goals. Claude Haiku independently rewrites the one-line definition with no context, and an OpenAI embedding comparison (cosine similarity at or above 0.85) confirms it agrees with the drafted definition before a term is accepted.
+- **`personalize-term`** writes a personalized version of a term for one user (prompt version 10). Pass 1 generates a candidate with Claude from the canonical entry plus the user's profile, sent as a JSON data block. Pass 2 is a verifier call that grades 8 criteria and lists any claim about the learner's own field it cannot support, and any canonical statement it doubts. The accept decision is computed in code from the criteria, not taken from the model's own summary. A deterministic claim gate then reads every sentence. It holds a rewrite for review when an analogy reaches into the learner's field, when a restrictive claim about that field is not in the canonical entry, or when the verifier flagged a claim. A held or failed rewrite gets one regeneration with the objections, and otherwise the learner sees the canonical text and the log row is marked `needs_review`. Accepted results are cached per user and term. A stale or reported rendering is never shown. See `docs/verification.md`.
+- **`grade-sentence`** grades a learner's sentence as pass, partial, or fail with feedback. A timeout, an error, the spend cap, an unreadable reply or a tier that disagrees with its score returns `ungraded`, which writes no progress and earns no XP.
+- **`ingest-terms`** is a weekly cron-triggered pipeline that proposes new terms. Claude Sonnet drafts candidates weighted toward under-covered paths. Claude Opus verifies accuracy, then relevance to the domain goals. Claude Haiku independently rewrites the one-line definition with no context, and an OpenAI embedding similarity screen (cosine at or above 0.85, one-line definitions only) compares the two. Every gate fails closed, each cycle has its own budget, and learners do not see a generated term until a person reviews it.
 - **`generate-term-etymology`** writes the "why it's called that" note with the same generate, verify, retry-once pattern.
 - **`compose-gift-profile`** turns a free-text description of a person into a draft profile with a self-check pass. The sender reviews and edits everything.
 - **`generate-job-followup`** asks one clarifying question with a few chip options after a user types their job.
 - **`answer-lesson-question`** answers questions asked during a lesson.
 - **`pick-lived-icons`** and **`generate-lived-icon-image`** choose motifs from a profile and generate a badge image (Claude for motifs, Gemini for the image), capped per user per day.
-- **`report-analogy-issue`** stores a learner's complaint about an analogy and clears the cached rendering.
+- **`report-analogy-issue`** stores a learner's complaint about an analogy, with the reported text, and deletes the cached rendering so it is never shown again.
 
-Two design rules recur: bounded retries (at most one regeneration, each call wrapped in an `AbortController` timeout), and degrade-to-canonical on any failure. Prompts and pricing constants live in the function files, so the behavior is auditable in one place. For `personalize-term` they are in `supabase/functions/personalize-term/prompts.ts`, which the offline eval imports directly.
+Two design rules recur: bounded retries (at most one regeneration, each call wrapped in an `AbortController` timeout), and degrade-to-canonical on any failure. For `personalize-term` the prompts are in `prompts.ts` and the pass sequence is in `pipeline.ts`. The Edge Function and the offline eval both run that pipeline, so the eval measures the code learners get.
 
 The `personalize-term` pipeline:
 
@@ -44,85 +44,83 @@ flowchart TD
     C --> D{"Profile on and<br/>under spend cap?"}
     D -- no --> F["Return canonical text"]
     D -- yes --> P1["Pass 1: generate candidate"]
-    P1 --> V1{"Pass 2: verifier,<br/>8 pass/fail criteria"}
-    V1 -- all pass --> S["Cache per user and term,<br/>return personalized text"]
-    V1 -- any fail --> P3["Pass 3: regenerate with<br/>the failed criteria"]
-    P3 --> V2{"Pass 2 again"}
-    V2 -- all pass --> S
-    V2 -- any fail --> F
+    P1 --> V1{"Pass 2: verifier,<br/>8 criteria + claim lists"}
+    V1 --> G1{"Claim gate:<br/>every sentence"}
+    G1 -- pass --> S["Cache per user and term,<br/>return personalized text"]
+    V1 -- any criterion fails --> P3["Pass 3: regenerate with<br/>the objections"]
+    G1 -- hold or revise --> P3
+    P3 --> V2{"Pass 2 again,<br/>then the gate"}
+    V2 -- pass --> S
+    V2 -- fail --> F
+    V2 -- hold --> H["Canonical text,<br/>row marked needs_review"]
     P1 -. "error, timeout,<br/>unparseable" .-> F
     V1 -.-> F
     P3 -.-> F
     S --> L[("personalize_log row")]
     F --> L
+    H --> L
 ```
 
 ## Evaluation
 
-The function's `personalize_log` table has too few rows to measure anything, so the verifier was tested offline.
+**Honest headline.** One development run on 2026-10-30 covered 79 of 120 planned items: 27 of 40 terms, no hard term, and 3 profiles written by the author, all with an empty learned vocabulary. The same model family generated and verified, and the verifier accepted 78 of 79. Of the 4 errors the rewrites introduced, the verifier caught **0 of 4** (95% CI 0-49%), and all 4 sat in outputs that used an analogy. Counting errors copied from wrong canonical entries, at least **9 of 78** accepted outputs (12%, 95% CI 6-20%) showed a learner a claim judged wrong. Only 5 of those 9 were confirmed by a person, after an AI screen flagged them, and 73 of the 78 accepted outputs never had an expert read. There was no baseline. There is no measured learning benefit.
 
-**Method (run 2026-10-30).** `eval/run-personalize-eval.ts` calls the Anthropic API directly. It imports the prompts, model ID, token limits, JSON parsers and cost formula from `supabase/functions/personalize-term/prompts.ts`, the same module the Edge Function uses. The pass sequence and the HTTP request shape are copied from the handler, and the file header lists what is copied. A parity check against the pre-refactor file confirmed that all 747 prompt strings, builder outputs, parser results and constants tested were byte-identical. The inputs are 40 terms from `supabase/seed.sql` (8 each from AI/LLM, data, security, APIs and cloud paths, picked deterministically by `eval/build-dataset.mjs`) crossed with 3 synthetic learner profiles: a hospital nurse, a retail pharmacist and a high-school teacher (`eval/data/`). Every profile has an empty learned-vocabulary list (a new user). Every pass used `claude-opus-4-7` at default temperature, with concurrency 3. A $10 budget guard stopped the run after **79 of the 120 planned items**. Runs were interleaved by category and profile, so each category has 15 to 18 runs and each profile 26 or 27.
+The published figure "5 of 78 wrong (6.4%)" counted the 5 expert-confirmed outputs only. One of those 5 copied its error from the canonical text, and 4 more inherited errors were left out. The run cost **$2.92** at list price, about $0.037 per item. It logged $8.77 because the pricing constants were three times list price, and the budget guard stopped the run at 79 items on that inflated figure. All 120 items would have cost about $4.44.
 
-| outcome (n = 79) | count | rate |
-|---|---|---|
-| accepted first try | 76 | 96.2% |
-| accepted after one retry | 2 | 2.5% |
-| fell back to canonical | 1 | 1.3% |
-| pass-1 verifier verdict = pass | 76 of 79 | 96.2% |
-| retry verdict = pass | 2 of 2 | |
-| accepted outputs that used an analogy | 18 of 78 | 23% |
+| Set | Status | Used for |
+| --- | --- | --- |
+| `eval/results/2026-10-30.jsonl` (79 items) | Development data | The numbers above. The claim gate, the labels and the dev cases were all written after reading it. |
+| `eval/data/dev-cases-v1.json` (25 cases) | Development data | Gate tests: each of the four failure kinds, a reworded version of each, false-hold guards and two documented gaps. |
+| A blind, locked test set | Not built yet | The only set a headline can come from. `docs/evaluation.md` says what it needs. |
 
-The single fallback was a Pass 1 JSON parse failure, not a verifier rejection. Across 78 parsed first-pass verdicts, `technical_accuracy_preserved` and `analogy_target_accurate` never failed. The two rejections were for an inaccurate SBAR analogy, which was a correct catch, and for a capitalized example sentence.
+**What changed since that run.** The claim gate, replayed over the saved outputs, holds all 4 introduced errors and 19 of 78 outputs in total. That is a development result: the gate was built after reading those errors. It holds 0 of the 5 inherited errors, because it compares against the canonical text. Those three canonical entries are corrected (`docs/canonical-review.md`), and that correction still needs a person's review. How the new pipeline does on outputs it has never seen is unmeasured.
 
-| cost and latency | value |
-|---|---|
-| total spend, 79 runs | $8.77 (function formula: $8.20) |
-| mean cost per item | $0.111 (accepted first try $0.109, after retry $0.225) |
-| latency p50 / p95 / max | 10.9 s / 16.9 s / 24.1 s |
+The full corrected report, generated from the saved rows, is `eval/results/2026-10-30-report.md`. The published summary, `eval/results/2026-10-30-summary.md`, stays as it was written, with its inflated costs, and `eval/frozen-artifacts.json` pins it and the run's inputs.
 
-Costs use the pricing constants in the function ($15 / $75 per million input / output tokens). These were not checked against current list prices, so the dollar figures may run high. The function's cost formula ignores prompt-cache tokens. The verifier's 3,731-token system prompt is cached, so `personalize_log.total_cost_usd`, which the spend guard reads, came out about 7% below the cache-inclusive figure in this run. Latency is the sum of the model calls in a run and leaves out Supabase round trips.
+**What a fair evaluation needs** (details in `docs/evaluation.md`):
 
-**Verifier misses: 5 of 78 accepted outputs (6.4%).** All 79 outputs were read after the run by an AI model (Claude), which flagged five accepted outputs as wrong or probably wrong. Kevin Madden, PharmD, then reviewed those five and confirmed all five are wrong. The other accepted outputs were read by the AI model only, so 6.4% is a floor, not a full domain-expert audit. The five:
+- A blind test set written by people or models that did not see this run, locked by hash before any scoring, and scored once.
+- A baseline: the canonical text alone, and a plain rewrite with no personalization, judged the same way.
+- A verifier from a different model family than the generator, compared against the current one.
+- Expert review of a random sample of accepted outputs, not only the ones an AI screen flagged, done blind to the verifier's verdict.
+- Hard terms, more profiles than the author's three, and learners with real learned vocabulary.
 
-- An RLS analogy told the nurse that hospital systems only let nurses open charts on their own unit. Typical EHRs allow wider access and police it through audits. The verifier's reasoning stated the wrong claim as fact.
-- An example sentence said staging was the only environment connected to the real insurance-claims system. That is backwards, and it contradicts the output's own definition of production.
-- A pharmacist RLS analogy said a tech only sees patient profiles tied to their store. Chain profiles are shared across stores so transfers and refills work.
-- A JWT analogy described a "signed, tamper-evident script label". No such label exists; tamper-resistance rules cover prescription pads, not dispensing labels.
-- An OAuth analogy built on "the patient's login to their chart" at a pharmacy, which patients do not have.
-
-The verifier's accuracy checks failed 0 times across these runs, so it behaves close to a rubber stamp when the same model family writes and checks. Four of the five misses sit in the 18 outputs that used an analogy. Two further errors come from the seed text itself: totals from a calculated column "won't move when you slice", and Claude's parameter count is stated as known. The verifier checks against the canonical entry, so it cannot catch errors there. The full sample, with verbatim text and per-item notes, is in `eval/results/2026-10-30-summary.md`.
-
-**Limits.** n = 79 from one run of a non-deterministic model, with no repeats. The term set and the profiles were written by the author. The verifier is an LLM, the same model as the generator, and the post-hoc review is also an LLM. Cold-start vocabulary only. The run did not touch Supabase, auth, caching or the spend guard. Read the rates above as "the verifier rarely rejects", not as a measured accuracy figure.
-
-Reproduce:
+Reproduce the offline parts (no model calls):
 
 ```sh
-node eval/build-dataset.mjs                      # rebuilds eval/data/terms.json from the seed
-export ANTHROPIC_API_KEY=...                     # read from your secret store; never written to disk
-EVAL_DATE=2026-10-30 node eval/run-personalize-eval.ts   # Node 23.6+; resumes from an existing results file
-node eval/summarize.mjs 2026-10-30               # writes eval/results/2026-10-30-summary.md
+node eval/replay-gate.ts          # claim gate over the saved outputs
+node eval/report.ts               # corrected report
+node eval/check-rendering.ts --term bi-rls --profile nurse --rendering my-rewrite.json --analogy
+node scripts/audit-canonical.mjs  # canonical entries a person should read first
 ```
+
+A new run makes paid model calls and needs an explicit budget. See `eval/README.md`.
 
 ## Stack
 
 - React 18, TypeScript, Vite, React Router, Zustand, Tailwind CSS
 - Supabase: Postgres with row-level security, Auth (magic link, optional Google), Edge Functions (Deno), Storage
 - Anthropic Claude (Opus, Sonnet, Haiku), OpenAI embeddings, Gemini image generation
-- Vitest and Testing Library for unit tests (1,100+), Playwright for end-to-end
+- Vitest and Testing Library for unit and component tests, SQL tests against the real migrations on PostgreSQL 17, Playwright for end-to-end
 - Vercel hosting and a weekly cron route (`api/cron/ingest-terms.ts`)
-- PWA manifest and service worker; Sentry is optional
+- PWA manifest and service worker, with optional Sentry
 
 ## Run it locally
 
-Requirements: Node 20+, and the Supabase CLI plus Docker if you want a local backend.
+Requirements: Node 24, which CI uses (the eval and audit scripts run `.ts` files directly, which needs Node 23.6 or later), and the Supabase CLI plus Docker if you want a local backend. The SQL tests need PostgreSQL 17 (`PG_BIN` points at its `bin` directory).
 
 ```sh
 npm install
 cp .env.example .env.local      # then fill in values
-npm run dev                     # http://localhost:5182
-npm test                        # unit tests
+npm run dev                     # http://localhost:5182 (allowed by the dev CORS origins)
+npm test                        # unit and component tests
 npm run build                   # type-check and production build
+npm run typecheck:functions     # strict type check of the Edge Functions
+npm run test:sql                # SQL tests against the real migrations
+npm run lint                    # both type checks (no ESLint is configured)
 ```
+
+CI (`.github/workflows/ci.yml`) runs all of these on every pull request. No step calls a model or needs a secret.
 
 Local backend:
 
@@ -146,8 +144,8 @@ The term corpus is generic. It covers public software, AI, and enterprise-toolin
 
 ## Development history
 
-Built May to October 2026 over 296 commits in a private repository. The full history includes personal notes and private configuration, so this repository is a cleaned public snapshot. The evaluation and the changes described above were added for this release in October 2026.
+Built May to October 2026 over 296 commits in a private repository. The full history includes personal notes and private configuration, so this repository is a cleaned public snapshot. The evaluation and the changes described above were added for this release in October and November 2026.
 
 ## Author
 
-Built by Kevin Madden as a side project. MIT licensed; see `LICENSE`.
+Built by Kevin Madden as a side project. MIT licensed, see `LICENSE`.
