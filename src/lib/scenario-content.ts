@@ -19,6 +19,8 @@
 // Stage A: source-of-truth is this file. Schema migration comes later when
 // the count justifies a DB-backed approach (B+1.18 or thereabouts).
 
+import { plainPunctuation } from './lesson-text';
+
 export interface Scenario {
   termId: string;
   prompt: string;
@@ -727,8 +729,12 @@ export const SCENARIOS: Scenario[] = [
 ];
 
 // Lookup map — O(1) access by term id. Built once at module load.
+// Shown without em dashes or semicolons (Kevin, 2026-11-03), see plainPunctuation.
 const SCENARIO_BY_TERM_ID: Record<string, Scenario> = Object.fromEntries(
-  SCENARIOS.map((s) => [s.termId, s] as const),
+  SCENARIOS.map((s) => [
+    s.termId,
+    { ...s, prompt: plainPunctuation(s.prompt), options: s.options.map((o) => plainPunctuation(o)) as Scenario['options'] },
+  ] as const),
 );
 
 /** Return the hand-written scenario for a term, or null if none exists. */

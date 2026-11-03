@@ -16,6 +16,7 @@ import type {
   SpottedScanLogRow,
 } from './database.types';
 import type { RecentSpottedScan } from './spotted-recent';
+import { plainLessonFields } from './lesson-text';
 
 export { invalidateTermsCache, fetchTermIndex, type TermIndexItem };
 
@@ -292,9 +293,11 @@ export async function fetchPersonalizedRendering(termId: string): Promise<Render
     typedCache.model_used !== PERSONALIZE_MODEL ||
     typedCache.reported_at !== null;
 
+  // Lesson text is shown without em dashes or semicolons (plainLessonFields).
+  const shown = plainLessonFields(typedCache);
   return isStale
-    ? { status: 'stale', rendering: typedCache }
-    : { status: 'fresh', rendering: typedCache };
+    ? { status: 'stale', rendering: shown }
+    : { status: 'fresh', rendering: shown };
 }
 
 // ────────────────────────────────────────────────────────────
@@ -1221,7 +1224,7 @@ export async function requestPersonalization(termId: string): Promise<Personaliz
   ) {
     throw new DataLayerError('Invalid response shape from requestPersonalization', 'DATABASE_ERROR');
   }
-  return data as PersonalizationResponse;
+  return plainLessonFields(data as PersonalizationResponse);
 }
 
 /**
@@ -1281,7 +1284,7 @@ async function fetchAllTermsFromDb(): Promise<TermRow[]> {
   if (!Array.isArray(rows) || rows.some(row => row == null || typeof row !== 'object' || typeof row.id !== 'string')) {
     throw new DataLayerError('Malformed terms returned from fetchAllTerms', 'DATABASE_ERROR');
   }
-  return rows as TermRow[];
+  return (rows as TermRow[]).map(plainLessonFields);
 }
 
 export async function fetchAllTerms(): Promise<TermRow[]> {
@@ -1303,7 +1306,7 @@ export async function fetchPathTerms(pathId: PathId): Promise<TermRow[]> {
   if (!Array.isArray(rows) || rows.some(row => row == null || typeof row !== 'object' || typeof row.id !== 'string')) {
     throw new DataLayerError('Malformed terms returned from fetchPathTerms', 'DATABASE_ERROR');
   }
-  return rows as TermRow[];
+  return (rows as TermRow[]).map(plainLessonFields);
 }
 
 export async function fetchUserProgress(userId: string): Promise<Record<string, UserProgressRow>> {
@@ -1790,7 +1793,7 @@ export async function fetchNewTermsSince(sinceIso: string): Promise<TermRow[]> {
   if (!Array.isArray(rows) || rows.some(row => row == null || typeof row !== 'object' || typeof row.id !== 'string')) {
     throw new DataLayerError('Malformed terms returned from fetchNewTermsSince', 'DATABASE_ERROR');
   }
-  return rows as TermRow[];
+  return (rows as TermRow[]).map(plainLessonFields);
 }
 
 /** Total XP across all of a user's streak_log rows. */
