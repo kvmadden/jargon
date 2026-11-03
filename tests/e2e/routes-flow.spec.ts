@@ -137,6 +137,13 @@ async function setupAuthenticatedRoutes(page: Page, options: {
     });
   });
 
+  // /spotted waits for the recent scans before it shows the page. Without
+  // this mock the request goes to the unreachable local Supabase host and the
+  // page stays on "loading your dictionary…" (the phone heading failure, #58).
+  await page.route('**/rest/v1/spotted_scan_log**', (route) => {
+    route.fulfill({ status: 200, contentType: 'application/json', body: '[]' });
+  });
+
   await page.addInitScript(() => {
     const session = {
       access_token: 'fake-token',
