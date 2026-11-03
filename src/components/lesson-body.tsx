@@ -18,7 +18,7 @@ export function LessonBody({
     <div className="flex flex-col gap-2">
       {lead && <p className={leadClassName}>{render(lead)}</p>}
       {points.length > 0 && (
-        <ul className="flex flex-col gap-1.5 pl-1">
+        <ul className="flex flex-col gap-2 pl-1">
           {points.map((point, i) => (
             <li key={i} className="flex gap-2 text-sm text-text-secondary leading-relaxed">
               <span aria-hidden="true" className="shrink-0 text-accent-jargon-hi">•</span>

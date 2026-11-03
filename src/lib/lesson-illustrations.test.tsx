@@ -20,7 +20,7 @@ describe('LESSON_ILLUSTRATIONS', () => {
     expect(ill.steps.length).toBeLessThanOrEqual(4);
     for (const step of ill.steps) {
       expect(step[0]).toBe(step[0].toUpperCase());
-      expect(step.length).toBeLessThanOrEqual(32);
+      expect(step.length).toBeLessThanOrEqual(20);
     }
     expect(ill.description).toMatch(/^[A-Z].*\.$/);
   });
@@ -34,7 +34,9 @@ describe('ConceptIllustration and LessonBody', () => {
   it('draws the steps as an image with a description for screen readers', () => {
     render(<ConceptIllustration illustration={LESSON_ILLUSTRATIONS['cloud-environment']} />);
     expect(screen.getByRole('img', { name: /local to preview to staging to production/i })).toBeInTheDocument();
-    expect(screen.getByText('Staging')).toBeInTheDocument();
+    // One visible copy plus one hidden copy that only measures the line width.
+    expect(screen.getAllByText('Staging')).toHaveLength(2);
+    expect(screen.getByRole('img').getAttribute('data-diagram-layout')).toMatch(/^(row|stack)$/);
   });
 
   it('shows a lead sentence and one bullet per later sentence', () => {

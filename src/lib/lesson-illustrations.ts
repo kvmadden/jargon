@@ -6,7 +6,7 @@
 export interface LessonIllustration {
   /** 'flow': steps left to right. 'filter': one source narrowed to what each viewer sees. */
   kind: 'flow' | 'filter';
-  /** Short labels in sentence case, 2 to 4 of them. */
+  /** Short labels in sentence case, 2 to 4 of them, 20 characters or fewer. */
   steps: string[];
   /** Read by screen readers instead of the drawing. */
   description: string;
@@ -15,7 +15,7 @@ export interface LessonIllustration {
 export const LESSON_ILLUSTRATIONS: Readonly<Record<string, LessonIllustration>> = {
   'bi-rls': {
     kind: 'filter',
-    steps: ['One report', 'Rules for each viewer', 'Each viewer sees their rows'],
+    steps: ['One report', 'Rules per viewer', 'Each sees their rows'],
     description: 'One report goes through rules for each viewer, so each viewer sees their own rows.',
   },
   'cloud-environment': {
@@ -30,7 +30,7 @@ export const LESSON_ILLUSTRATIONS: Readonly<Record<string, LessonIllustration>> 
   },
   'sys-jwt': {
     kind: 'flow',
-    steps: ['Sign in', 'Server signs a token', 'App sends the token', 'Server checks the signature'],
+    steps: ['Sign in', 'Token signed', 'Token sent', 'Signature checked'],
     description: 'After sign in, the server signs a token. The app sends it with each request, and the server checks the signature.',
   },
   'sec-mfa': {
@@ -45,7 +45,7 @@ export const LESSON_ILLUSTRATIONS: Readonly<Record<string, LessonIllustration>> 
   },
   'sec-oauth': {
     kind: 'flow',
-    steps: ['App', 'Sign-in provider', 'Token back to app'],
+    steps: ['App', 'Sign-in provider', 'Token to app'],
     description: 'The app sends you to a sign-in provider, which sends a token back to the app. The app never sees your password.',
   },
 };
