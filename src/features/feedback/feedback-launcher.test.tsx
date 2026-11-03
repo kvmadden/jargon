@@ -27,22 +27,21 @@ describe('FeedbackLauncher', () => {
         <FeedbackLauncher />
       </MemoryRouter>,
     );
-    expect(screen.queryByRole('button', { name: /field note/i })).toBeNull();
     act(() => {
       useUserStore.setState({ user: { id: 'user-1' } as never, session: {} as never, loading: false });
     });
-    expect(screen.getByRole('button', { name: 'send field note' })).toBeTruthy();
     expect(errors.mock.calls.join('\n')).not.toMatch(/more hooks|order of Hooks/i);
     errors.mockRestore();
   });
 
-  it('opens from the desktop app bar event', async () => {
+  it('floats nothing over the page: the app bar opens it', async () => {
     useUserStore.setState({ user: { id: 'user-1' } as never, session: {} as never, loading: false });
     render(
       <MemoryRouter>
         <FeedbackLauncher />
       </MemoryRouter>,
     );
+    expect(screen.queryAllByRole('button')).toHaveLength(0);
     await act(async () => {
       window.dispatchEvent(new Event('jargon:open-feedback'));
     });

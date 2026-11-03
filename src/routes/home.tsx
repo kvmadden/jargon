@@ -23,7 +23,6 @@ import { computeCurrentStreak } from '../lib/streak-engine';
 import { computeStartingDifficulty, countReviewDue, selectLessonTerms, isMastered } from '../lib/lesson-engine';
 import { useLessonStore } from '../stores/lesson-store';
 import { BottomRail } from '../components/bottom-rail';
-import { Wordmark } from '../components/wordmark';
 import { PathGlyph } from '../components/path-glyph';
 import { LivedIconBadge } from '../components/lived-icon-badge';
 import { LessonQuestionUpdateNotice } from '../components/lesson-question-update-notice';
@@ -598,16 +597,12 @@ function HomeContent() {
             chrome bg stays full-bleed for the sticky-blur effect. */}
         <div className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center min-w-0">
-            {/* On desktop the app bar carries the wordmark. */}
-            <span className="lg:hidden">
-              <Wordmark size={18} showDot />
-            </span>
+            {/* The app bar above carries the wordmark at every size. */}
             <LivedIconBadge
               url={profile?.lived_icon_url ?? null}
               fallbackSlugs={profile?.lived_icons ?? []}
               size={32}
               fallbackTone="accent-hi"
-              className="ml-3"
             />
           </div>
           <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-surface-card border border-border-default">

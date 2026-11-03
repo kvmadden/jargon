@@ -219,7 +219,7 @@ test.describe('vocabulary deep links and detail views', () => {
 
     await expect(page.getByText('term not found')).toBeVisible();
     await expect(page.getByText('it may have been removed in a recent ingestion cycle.')).toBeVisible();
-    const backBtn = page.getByRole('button', { name: 'back' });
+    const backBtn = page.getByRole('button', { name: 'back', exact: true });
     await expect(backBtn).toBeVisible();
     await backBtn.click();
     await expect(page).toHaveURL('/home');
@@ -230,7 +230,7 @@ test.describe('vocabulary deep links and detail views', () => {
     await page.goto('/path/invalid-path-xyz');
 
     await expect(page.getByText('unknown path')).toBeVisible();
-    const backBtn = page.getByRole('button', { name: 'back' });
+    const backBtn = page.getByRole('button', { name: 'back', exact: true });
     await expect(backBtn).toBeVisible();
     await backBtn.click();
     await expect(page).toHaveURL('/home');
@@ -276,7 +276,7 @@ test.describe('route group navigation', () => {
     await expect(page).toHaveURL('/settings');
     await expect(page.getByRole('heading', { name: 'settings' })).toBeVisible();
 
-    const backBtn = page.getByRole('button', { name: 'back' });
+    const backBtn = page.getByRole('button', { name: 'back', exact: true });
     await expect(backBtn).toBeVisible();
     await backBtn.click();
     await expect(page).toHaveURL('/home');

@@ -88,7 +88,7 @@ describe('Home route', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByLabelText('jargon')).toBeInTheDocument();
+      // The wordmark lives in the app bar now, not in the home header.
       // "coding" active domain by default, so it shows the coding paths like "git + cli"
       expect(screen.getByText('git + cli')).toBeInTheDocument();
     });

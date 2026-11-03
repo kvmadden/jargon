@@ -512,13 +512,13 @@ function LessonRunnerContent() {
               knows whether they're learning or refreshing. */}
           {isReview && (
             <span
-              className="text-2xs font-mono uppercase tracking-wider text-accent-jargon-hi"
+              className="text-sm font-mono text-accent-jargon-hi"
               aria-label="review session"
             >
               // review
             </span>
           )}
-          <span className="text-xs font-mono text-text-secondary tabular-nums">
+          <span className="text-sm font-mono text-text-secondary tabular-nums">
             {cardNumber} / {totalCards}
           </span>
         </div>
@@ -530,14 +530,14 @@ function LessonRunnerContent() {
           {comboCount >= 3 && (
             <span
               key={comboFlashId}
-              className="text-2xs font-mono uppercase tracking-wider text-accent-jargon-hi bg-accent-jargon/[0.18] border border-accent-jargon rounded-full px-2 py-1 leading-none animate-combo-flash motion-reduce:animate-none"
+              className="text-sm font-mono text-accent-jargon-hi bg-accent-jargon/[0.18] border border-accent-jargon rounded-full px-2 py-1 leading-none animate-combo-flash motion-reduce:animate-none"
               aria-label={`${comboCount} correct in a row`}
             >
               <span className="tabular-nums">{comboCount}</span>
               <span className="ml-1">in a row</span>
             </span>
           )}
-          <div className="relative text-xs font-mono text-text-secondary tabular-nums w-10 text-right">
+          <div className="relative text-sm font-mono text-text-secondary tabular-nums min-w-[40px] text-right">
             +{xpSoFar}
             {xpFloater.value > 0 && (
               <XpFloater

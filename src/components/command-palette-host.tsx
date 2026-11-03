@@ -12,8 +12,7 @@
 // store-agnostic so it's easy to test.
 
 import { useEffect, useMemo, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { floatingButtonDesktopClass } from '../lib/desktop-chrome';
+import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../stores/user-store';
 import { fetchAllTerms } from '../lib/data';
 import type { TermRow } from '../lib/database.types';
@@ -40,7 +39,6 @@ const ACTIONS: Command[] = [
 
 export function CommandPaletteHost() {
   const navigate = useNavigate();
-  const { pathname } = useLocation();
   const user = useUserStore((s) => s.user);
   const signOut = useUserStore((s) => s.signOut);
   const [open, setOpen] = useState(false);
@@ -117,27 +115,6 @@ export function CommandPaletteHost() {
 
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        aria-label="open command palette"
-        className={`fixed bottom-16 right-4 z-40 flex ${floatingButtonDesktopClass(pathname)} items-center justify-center w-12 h-12 min-w-[44px] min-h-[44px] rounded-full bg-surface-card border border-border-default text-text-primary shadow-lg hover:border-accent-jargon active:bg-surface-card-hi focus:outline-none cursor-pointer select-none transition-colors`}
-      >
-        <svg
-          className="w-6 h-6 text-accent-jargon-hi"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-          />
-        </svg>
-      </button>
       <CommandPalette
         open={open}
         onClose={() => setOpen(false)}

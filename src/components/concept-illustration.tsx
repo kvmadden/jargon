@@ -2,11 +2,13 @@ import { useLayoutEffect, useRef, useState } from 'react';
 import type { LessonIllustration } from '../lib/lesson-illustrations';
 
 // A small code-drawn diagram: labeled pills joined by arrows (Kevin's ruling,
-// 2026-11-03). Two layout rules:
+// 2026-11-03). Three layout rules:
 //   - A pill has real inner padding (12px across, 5px down) and never lets
-//     its text touch or clip its edge.
+//     its text touch or clip its edge. Its text is 14px, the smallest size
+//     a lesson uses.
 //   - A flow sits on one line when it fits, and otherwise becomes a vertical
 //     stack with down arrows. It never wraps partway.
+//   - The flow is centered in its box, so no side is left empty.
 // A hidden one-line copy measures the flow's natural width, so the choice is
 // made from real text widths in whatever font the page has.
 //
@@ -17,7 +19,7 @@ function Pill({ label, result }: { label: string; result: boolean }) {
   return (
     <span
       data-diagram-pill=""
-      className={`inline-block max-w-full rounded-md px-3 py-[5px] text-[13px] leading-[1.45] ${
+      className={`inline-block max-w-full rounded-md px-3 py-[5px] text-sm leading-[1.45] ${
         result
           ? 'bg-accent-jargon/20 text-text-primary font-medium'
           : 'bg-surface-card-hi text-text-primary border border-border-default'
@@ -88,20 +90,16 @@ export function ConceptIllustration({ illustration }: { illustration: LessonIllu
           ))}
         </div>
         {stacked ? (
-          <ol aria-hidden="true" className="flex flex-col items-start gap-1">
+          <ol aria-hidden="true" className="flex flex-col items-center gap-1">
             {steps.map((step, i) => (
-              <li key={step} className="flex flex-col items-start gap-1">
+              <li key={step} className="flex flex-col items-center gap-1">
                 <Pill label={step} result={isResult(i)} />
-                {i < steps.length - 1 && (
-                  <span className="pl-3">
-                    <Arrow down />
-                  </span>
-                )}
+                {i < steps.length - 1 && <Arrow down />}
               </li>
             ))}
           </ol>
         ) : (
-          <ol aria-hidden="true" className="flex flex-nowrap items-center gap-2 whitespace-nowrap">
+          <ol aria-hidden="true" className="flex flex-nowrap items-center justify-center gap-2 whitespace-nowrap">
             {steps.map((step, i) => (
               <li key={step} className="flex items-center gap-2">
                 <Pill label={step} result={isResult(i)} />

@@ -79,7 +79,7 @@ export function LessonQuestionButton({ userId, context, answerer, className = ''
         <div className="mt-4">
           <label
             htmlFor="lesson-question"
-            className="mb-2 block font-mono text-2xs uppercase tracking-[0.08em] text-text-muted"
+            className="mb-2 block font-mono text-sm tracking-[0.08em] text-text-muted"
           >
             question
           </label>

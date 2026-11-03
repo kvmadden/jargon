@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BottomSheet } from '../../components/bottom-sheet';
-import { floatingButtonDesktopClass } from '../../lib/desktop-chrome';
 import { useToastStore } from '../../components/toast';
 import { useUserStore } from '../../stores/user-store';
 import { captureFeedbackScreenshot } from './capture';
@@ -11,9 +10,9 @@ import {
   submitProductFeedback,
   subscribeToProductFeedback,
 } from './data';
-import { CameraIcon, FeedbackBubbleIcon, MicrophoneIcon } from './icons';
+import { CameraIcon, MicrophoneIcon } from './icons';
 import { createFeedbackSpeech } from './speech';
-import { feedbackButtonLabel, useFeedbackUnread } from './unread-store';
+import { useFeedbackUnread } from './unread-store';
 import {
   clearFeedbackDraft,
   enqueueFeedback,
@@ -51,10 +50,8 @@ export function FeedbackLauncher() {
   const navigate = useNavigate();
   const pushToast = useToastStore((state) => state.push);
   const [open, setOpen] = useState(false);
-  const [capturing, setCapturing] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [listening, setListening] = useState(false);
-  const unread = useFeedbackUnread((state) => state.unread);
   const setUnread = useFeedbackUnread((state) => state.setUnread);
   const [error, setError] = useState('');
   const [draft, setDraft] = useState<FeedbackDraft>(() => freshDraft(location.pathname));
@@ -139,7 +136,6 @@ export function FeedbackLauncher() {
   const userId = user.id;
 
   async function beginFeedback() {
-    setCapturing(true);
     setError('');
     let screenshotData: string | null = null;
     try {
@@ -158,7 +154,6 @@ export function FeedbackLauncher() {
         userAgent: navigator.userAgent,
       },
     }));
-    setCapturing(false);
     setOpen(true);
   }
   beginFeedbackRef.current = beginFeedback;
@@ -209,22 +204,6 @@ export function FeedbackLauncher() {
 
   return (
     <>
-      <button
-        type="button"
-        data-feedback-ui="true"
-        onClick={() => void beginFeedback()}
-        disabled={capturing}
-        className={`fixed bottom-16 right-4 z-40 flex ${floatingButtonDesktopClass(location.pathname)} h-12 w-12 min-h-[48px] min-w-[48px] -translate-y-16 items-center justify-center gap-2 rounded-full border border-accent-jargon/50 bg-surface-card-hi text-sm font-semibold text-text-primary shadow-xl shadow-black/30 transition-colors hover:border-accent-jargon hover:bg-surface-card focus:outline-none focus:ring-2 focus:ring-accent-jargon disabled:opacity-60 sm:w-auto sm:px-4`}
-        aria-label={feedbackButtonLabel(unread, 'send field note')}
-      >
-        <FeedbackBubbleIcon />
-        <span className="hidden sm:inline">{capturing ? 'capturing…' : 'feedback'}</span>
-        {unread > 0 && (
-          <span className="absolute -right-1 -top-1 flex h-6 min-w-6 items-center justify-center rounded-full bg-accent-jargon px-2 font-mono text-xs text-text-primary">
-            {unread}
-          </span>
-        )}
-      </button>
 
       <BottomSheet open={open} onClose={close} ariaLabel="send feedback">
         <div data-feedback-ui="true" className="max-h-[78vh] overflow-y-auto">

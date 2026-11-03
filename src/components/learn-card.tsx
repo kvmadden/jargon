@@ -65,7 +65,7 @@ export function LearnCard({ term, onReady }: Props) {
           "Pharmacy → Engineering" depending on the user's room). For v1 it stays
           single-domain — see CLAUDE.md voice section. */}
       <div className="sticky top-0 z-10 bg-bg-base px-4 pt-6 pb-3">
-        <p className="font-mono text-xs lowercase text-text-muted">
+        <p className="font-mono text-sm lowercase text-text-muted">
           <span>meet</span>
           <span className="text-text-muted" aria-hidden="true"> · </span>
           <span className="text-text-secondary">{meta.label}</span>
@@ -76,7 +76,7 @@ export function LearnCard({ term, onReady }: Props) {
           {term.term}
         </h2>
         {term.pronunciation && (
-          <p className="text-sm font-mono text-text-secondary mt-1">/ {term.pronunciation} /</p>
+          <p className="text-base font-mono text-text-secondary mt-1">/ {term.pronunciation} /</p>
         )}
         <ExpansionLine term={term.term} expansion={term.expansion} />
       </div>
@@ -90,31 +90,31 @@ export function LearnCard({ term, onReady }: Props) {
           {toSentenceCase(term.one_line_definition)}
         </p>
 
-        <p className="text-text-muted text-sm mt-6 mb-2">
-          what it really means
-        </p>
-        {/* A lead sentence plus bullets, in sentence case (Kevin's ruling, 2026-11-03). */}
-        <LessonBody text={term.long_definition} leadClassName="text-text-secondary font-sans text-body lg:text-lg leading-relaxed" />
-        {illustrationFor(term.id) && (
-          <div className="mt-4">
-            <ConceptIllustration illustration={illustrationFor(term.id)!} />
-          </div>
-        )}
+        {/* Sections with clear sentence-case headings and a soft hairline
+            between them (Kevin, 2026-11-03). */}
+        <section className="mt-6 border-t border-border-default pt-6">
+          <h3 className="mb-3 text-base font-semibold text-text-primary">What it really means</h3>
+          {/* A lead sentence plus bullets, in sentence case (Kevin's ruling, 2026-11-03). */}
+          <LessonBody text={term.long_definition} leadClassName="text-text-secondary font-sans text-body lg:text-lg leading-relaxed" />
+          {illustrationFor(term.id) && (
+            <div className="mt-4">
+              <ConceptIllustration illustration={illustrationFor(term.id)!} />
+            </div>
+          )}
+        </section>
 
-        <p className="text-text-muted text-sm mt-6 mb-2">
-          in the wild
-        </p>
-        <p className="italic text-text-secondary font-sans text-body leading-relaxed">
-          "{toSentenceCase(term.example_in_sentence)}"
-        </p>
+        <section className="mt-6 border-t border-border-default pt-6">
+          <h3 className="mb-3 text-base font-semibold text-text-primary">In the wild</h3>
+          <p className="italic text-text-secondary font-sans text-body lg:text-lg leading-relaxed">
+            "{toSentenceCase(term.example_in_sentence)}"
+          </p>
+        </section>
 
         {hasWhyItMatters && (
-          <>
-            <p className="text-text-muted text-sm mt-6 mb-2">
-              why it matters
-            </p>
-            <LessonBody text={term.why_it_matters} leadClassName="text-text-secondary font-sans text-body leading-relaxed" />
-          </>
+          <section className="mt-6 border-t border-border-default pt-6">
+            <h3 className="mb-3 text-base font-semibold text-text-primary">Why it matters</h3>
+            <LessonBody text={term.why_it_matters} leadClassName="text-text-secondary font-sans text-body lg:text-lg leading-relaxed" />
+          </section>
         )}
       </div>
 

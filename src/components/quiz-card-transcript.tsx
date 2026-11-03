@@ -153,7 +153,7 @@ export function QuizCardTranscript({ term, transcript, onAnswer, onUseInSentence
       </div>
 
       <div className="pr-12">
-        <p className="text-2xs uppercase tracking-wider font-mono text-accent-jargon-hi">
+        <p className="text-sm font-mono text-accent-jargon-hi">
           {/* signature eyebrow — ties this card to "spotted in the wild" */}
           ▸ in the wild
         </p>
@@ -168,7 +168,7 @@ export function QuizCardTranscript({ term, transcript, onAnswer, onUseInSentence
       {/* Context label sits ABOVE the snippet block in mono micro-text,
           like a "from:" header on a forwarded message — frames what kind
           of conversation the user is reading before they read it. */}
-      <p className="text-2xs lowercase tracking-wider text-text-muted font-mono mt-4 mb-2">
+      <p className="text-sm lowercase text-text-muted font-mono mt-4 mb-2">
         {transcript.contextLabel}
       </p>
 
@@ -233,7 +233,7 @@ export function QuizCardTranscript({ term, transcript, onAnswer, onUseInSentence
         <button
           type="button"
           onClick={onUseInSentence}
-          className="now-use-it self-end mt-2 text-xs font-medium text-accent-jargon-hi bg-surface-card border border-accent-jargon rounded-md min-h-[44px] px-4 inline-flex items-center gap-2 active:bg-accent-jargon/[0.12] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-jargon transition-colors cursor-pointer"
+          className="now-use-it self-end mt-2 text-sm font-medium text-accent-jargon-hi bg-surface-card border border-accent-jargon rounded-md min-h-[44px] px-4 inline-flex items-center gap-2 active:bg-accent-jargon/[0.12] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-jargon transition-colors cursor-pointer"
         >
           now use it
           <span aria-hidden="true">→</span>

@@ -21,6 +21,7 @@ import { ConceptIllustration } from '../components/concept-illustration';
 import { illustrationFor } from '../lib/lesson-illustrations';
 import { toSentenceCase } from '../lib/lesson-text';
 import { learnerFieldPlural, supportedFieldsSentence } from '../lib/learner-fields';
+import { plainLessonFields } from '../lib/lesson-text';
 import { TermQuickPeek } from '../components/term-quick-peek';
 import { conversationGuideForTermId } from '../lib/conversation-guide-content';
 import { useUserStore } from '../stores/user-store';
@@ -248,7 +249,7 @@ function TermDetailContent() {
           setNotFound(true);
           return;
         }
-        setTerm(data as TermRow);
+        setTerm(plainLessonFields(data as TermRow));
 
         // Fetch related + stretch in one round-trip
         const ids = [...(data.related_terms ?? []), ...(data.stretch_term ? [data.stretch_term] : [])];
@@ -486,7 +487,7 @@ function TermDetailContent() {
         <main className="flex-1 flex items-center justify-center px-4 text-center">
           <div>
             <p className="text-base text-text-primary">term not found</p>
-            <p className="text-xs text-text-muted mt-2">
+            <p className="text-sm text-text-muted mt-2">
               it may have been removed in a recent ingestion cycle.
             </p>
           </div>
@@ -510,8 +511,8 @@ function TermDetailContent() {
             ‹
           </button>
           <div className="flex-1 flex items-center gap-2 min-w-0">
-            <PathGlyph path={term.path} active={false} size="sm" className="w-4 h-4 shrink-0" />
-            <span className="text-sm lowercase text-text-muted truncate">
+            <PathGlyph path={term.path} active={false} size="sm" className="w-6 h-6 shrink-0" />
+            <span className="text-base text-text-secondary truncate">
               {pathMeta.label}
             </span>
           </div>
@@ -540,30 +541,32 @@ function TermDetailContent() {
               for canonical-only mode (no badge tease for users without
               a profile). */}
           {personalized && personalizationStatus && (
-            <p className="text-2xs lowercase tracking-wider font-mono text-accent-jargon-hi mb-2">
+            <p className="text-sm font-mono text-accent-jargon-hi mb-2">
               {personalizationStatus.uses_analogy
                 ? '// grounded in your world'
-                : "// plain english — this term didn't need an analogy"}
+                : "// plain english: this term didn't need an analogy"}
             </p>
           )}
-          <h1 className="font-mono text-4xl lg:text-6xl font-medium tracking-tight text-text-primary leading-tight lowercase">
-            {term.term}
-          </h1>
-          <div className="mt-2 flex items-center gap-2">
-            {term.pronunciation && (
-              <p className="text-sm font-mono italic text-text-secondary">
-                / {term.pronunciation} /
-              </p>
-            )}
-            <PronounceButton text={term.term} />
+          {/* The speaker sits on the title's line, to its right (Kevin,
+              2026-11-03). */}
+          <div className="flex items-center gap-2">
+            <h1 className="min-w-0 break-words font-mono text-4xl lg:text-6xl font-medium tracking-tight text-text-primary leading-tight lowercase">
+              {term.term}
+            </h1>
+            <PronounceButton text={term.term} className="shrink-0" />
           </div>
+          {term.pronunciation && (
+            <p className="mt-1 text-base font-mono italic text-text-secondary">
+              / {term.pronunciation} /
+            </p>
+          )}
           <ExpansionLine term={term.term} expansion={term.expansion} />
           <p className="text-lg lg:text-xl text-text-primary mt-4 leading-relaxed">
             {toSentenceCase(term.one_line_definition)}
           </p>
           {unavailableNote && (
             // Phones read it here. On a laptop it moves to the side panel.
-            <p role="note" className="text-xs text-text-muted leading-relaxed mt-3 lg:hidden">
+            <p role="note" className="text-sm text-text-secondary leading-relaxed mt-3 lg:hidden">
               {unavailableNote}
             </p>
           )}
@@ -588,26 +591,23 @@ function TermDetailContent() {
             aria-label="translator working"
             className="bg-surface-card border border-border-default rounded-lg p-4"
           >
-            <p className="text-xs font-mono text-accent-jargon-hi">
+            <p className="text-sm font-mono text-accent-jargon-hi">
               // your translator
             </p>
-            <p className="text-sm text-text-secondary leading-relaxed mt-3">
-              this one was explained in your world. each term gets a
-              different lens — sometimes pharmacy, sometimes ecology,
-              sometimes plain english when an analogy would just get in
-              the way. tap "show original" any time to compare.
+            <p className="text-base text-text-secondary leading-relaxed mt-3">
+              This one was explained with a comparison from your field.
+              Some terms get one, and some read better in plain English.
+              Tap "show original" any time to compare.
             </p>
             <button
               type="button"
               onClick={handleRevealDismiss}
-              className="mt-3 min-h-[44px] inline-flex items-center text-2xs lowercase font-mono text-accent-jargon-hi underline underline-offset-2 active:opacity-70 transition-opacity"
+              className="mt-3 min-h-[44px] inline-flex items-center text-sm lowercase font-mono text-accent-jargon-hi underline underline-offset-2 active:opacity-70 transition-opacity"
             >
               // got it →
             </button>
           </div>
         )}
-
-        <Divider />
 
         {/* Personalizable body wrapped in a single opacity transition so the
             crossfade hits all three sections together. */}
@@ -616,7 +616,7 @@ function TermDetailContent() {
             bodyVisible ? 'opacity-100' : 'opacity-0'
           }`}
         >
-          <Section label="what it means">
+          <Section label="What it means">
             {/* A lead sentence plus bullets, in sentence case (Kevin's ruling,
                 2026-11-03). Each piece still renders through GlossaryText, so
                 a reference to another known term is a tappable chip. */}
@@ -636,8 +636,8 @@ function TermDetailContent() {
             </div>
           )}
 
-          <Section label="in the wild">
-            <p className="text-sm italic text-text-secondary leading-relaxed">
+          <Section label="In the wild">
+            <p className="text-base italic text-text-secondary leading-relaxed">
               “
               <GlossaryText glossary={glossary} currentTermId={term.id} onChipTap={setPeekTermId}>
                 {toSentenceCase(exampleSentence)}
@@ -653,18 +653,15 @@ function TermDetailContent() {
               distinction; the body matches the other sections' typography
               for consistency. Hidden entirely when null — no placeholder. */}
           {term.etymology && (
-            <section>
-              <h2 className="text-sm text-text-muted mb-2">
-                why it's called that
-              </h2>
-              <p className="text-sm text-text-secondary leading-relaxed">{term.etymology}</p>
-            </section>
+            <Section label="Why it's called that">
+              <p className="text-base text-text-secondary leading-relaxed">{term.etymology}</p>
+            </Section>
           )}
 
-          <Section label="why it matters">
+          <Section label="Why it matters">
             <LessonBody
               text={whyMatters}
-              leadClassName="text-sm text-text-secondary leading-relaxed"
+              leadClassName="text-base text-text-secondary leading-relaxed"
               render={(t) => (
                 <GlossaryText glossary={glossary} currentTermId={term.id} onChipTap={setPeekTermId}>
                   {t}
@@ -682,7 +679,7 @@ function TermDetailContent() {
               <button
                 type="button"
                 onClick={() => setShowOriginal((v) => !v)}
-                className="text-xs text-accent-jargon-hi underline underline-offset-2 min-h-[44px] px-2 active:opacity-70 transition-opacity"
+                className="text-sm text-accent-jargon-hi underline underline-offset-2 min-h-[44px] px-2 active:opacity-70 transition-opacity"
               >
                 {showOriginal ? 'show your version' : 'show original'}
               </button>
@@ -709,22 +706,22 @@ function TermDetailContent() {
             don't-mix-up). Renders only when a guide exists; chip-links via the
             same glossary + quick-peek as the body. */}
         {conversationGuide && (
-          <Section label="say it back">
-            <p className="text-sm font-semibold text-text-primary leading-relaxed">
+          <Section label="Say it back">
+            <p className="text-base font-semibold text-text-primary leading-relaxed">
               <GlossaryText glossary={glossary} currentTermId={term.id} onChipTap={setPeekTermId}>
                 {conversationGuide.sayBack}
               </GlossaryText>
             </p>
-            <p className="mt-3 text-sm text-text-secondary leading-relaxed">
+            <p className="mt-3 text-base text-text-secondary leading-relaxed">
               <GlossaryText glossary={glossary} currentTermId={term.id} onChipTap={setPeekTermId}>
                 {conversationGuide.plainExplanation}
               </GlossaryText>
             </p>
             <div className="mt-3 pt-3 border-t border-border-default">
-              <p className="text-sm text-text-muted mb-1">
-                don't mix up
+              <p className="text-sm font-semibold text-text-secondary mb-1">
+                Don't mix up
               </p>
-              <p className="text-sm text-text-secondary leading-relaxed">
+              <p className="text-base text-text-secondary leading-relaxed">
                 <GlossaryText glossary={glossary} currentTermId={term.id} onChipTap={setPeekTermId}>
                   {conversationGuide.commonConfusion}
                 </GlossaryText>
@@ -742,15 +739,15 @@ function TermDetailContent() {
             </div>
           )}
           {unavailableNote && (
-            <section aria-label="your field" className="hidden lg:block">
-              <h2 className="text-sm text-text-muted">your field</h2>
+            <section aria-label="your field" className="hidden lg:block border-t border-border-default pt-6">
+              <h2 className="text-base font-semibold text-text-primary">Your field</h2>
               <p role="note" className="mt-2 text-sm text-text-secondary leading-relaxed">
                 {unavailableNote}
               </p>
             </section>
           )}
-          <section>
-            <h2 className="text-sm text-text-muted">next step</h2>
+          <section className="border-t border-border-default pt-6">
+            <h2 className="text-base font-semibold text-text-primary">Next step</h2>
             <p className="mt-2 text-sm text-text-secondary leading-relaxed">
               Practice {term.term} with the other {pathMeta.label.toLowerCase()} terms.
             </p>
@@ -763,7 +760,7 @@ function TermDetailContent() {
             </button>
           </section>
         {related.length > 0 && (
-          <Section label="related">
+          <Section label="Related">
             {/* A quiet list of names (Kevin, 2026-11-03: calm, few boxes). Each
                 row keeps a 44pt touch target. */}
             <ul className="flex flex-col">
@@ -784,7 +781,7 @@ function TermDetailContent() {
         )}
 
         {stretch && (
-          <Section label="stretch">
+          <Section label="Stretch">
             <button
               type="button"
               onClick={() => navigate(`/term/${stretch.id}`)}
@@ -815,22 +812,17 @@ function TermDetailContent() {
   );
 }
 
-function Divider() {
-  return (
-    // A plain hairline (Kevin, 2026-11-03: calm, one accent at most).
-    <div className="h-px bg-border-default" aria-hidden="true" />
-  );
-}
-
 interface SectionProps {
   label: string;
   children: React.ReactNode;
 }
 
+// A lesson section: a clear sentence-case heading with a soft hairline above
+// it, so the sections read apart (Kevin, 2026-11-03).
 function Section({ label, children }: SectionProps) {
   return (
-    <section>
-      <h2 className="text-sm text-text-muted mb-2">{label}</h2>
+    <section className="border-t border-border-default pt-6">
+      <h2 className="text-base font-semibold text-text-primary mb-3">{label}</h2>
       {children}
     </section>
   );

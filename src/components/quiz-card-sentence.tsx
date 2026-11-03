@@ -79,9 +79,9 @@ export function QuizCardSentence({ term, onAnswer }: Props) {
   const showSkip = grading && graderElapsedSec >= 30;
   const graderMessage =
     graderElapsedSec >= 30
-      ? 'almost there — tap skip to keep moving.'
+      ? 'almost there. tap skip to keep moving.'
       : graderElapsedSec >= 12
-      ? 'still grading — opus is being thorough.'
+      ? 'still grading. opus is being thorough.'
       : graderElapsedSec >= 6
       ? 'opus is thinking…'
       : 'grading…';
@@ -111,7 +111,7 @@ export function QuizCardSentence({ term, onAnswer }: Props) {
           placeholder="type your sentence…"
           className="w-full flex-1 min-h-[120px] bg-transparent text-text-primary placeholder:text-text-muted text-base resize-none focus:outline-none"
         />
-        <div className="flex items-center justify-between text-xs text-text-muted tabular-nums mt-2">
+        <div className="flex items-center justify-between text-sm text-text-muted tabular-nums mt-2">
           <span>tip: use your own words</span>
           <span>
             {text.length}/{MAX_CHARS}
