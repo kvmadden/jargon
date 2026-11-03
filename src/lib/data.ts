@@ -170,8 +170,13 @@ export function validatePrefilledProfile(profile: unknown): PrefilledProfile {
  * without inline definition. Closes the "uses 'branch' to teach 'merge'
  * before the user has ever seen 'branch'" gap. v7 cached renderings
  * re-render lazily on next encounter under v8.
+ *
+ * v10 (2026-11-03): claim gate, verdict computed in code, profile sent as a
+ * JSON data block, vocabulary on the regeneration pass. Unlike earlier bumps,
+ * a stale rendering is no longer displayed while it regenerates: it was
+ * accepted by an older, weaker check, so the canonical text shows instead.
  */
-export const CURRENT_PROMPT_VERSION = 9;
+export const CURRENT_PROMPT_VERSION = 10;
 
 /** Must match the model name written by the Edge Function. */
 export const PERSONALIZE_MODEL = 'claude-opus-4-7';
@@ -182,7 +187,10 @@ export const PERSONALIZE_MODEL = 'claude-opus-4-7';
  *
  * - `disabled`: no profile row OR personalization_enabled = false. Render canonical, no LLM.
  * - `missing` : profile exists + on, but no cache row yet. Render canonical, fire generation.
- * - `stale`   : cache row exists but version drift. Render cached personalized, fire generation.
+ * - `stale`   : cache row exists but was made under an older prompt, profile or
+ *               model, or the learner reported it. Never display it: render
+ *               canonical and fire generation. `rendering` is kept for callers
+ *               that need to know what was there (it is never shown).
  * - `fresh`   : cache row exists and current. Render personalized immediately.
  */
 export type RenderingResult =
@@ -201,6 +209,18 @@ export interface PersonalizationResponse {
   example_in_sentence: string;
   fromCache: boolean;
   isFallback: boolean;
+  /** True when a rewrite was held for human review and the canonical text was returned instead. */
+  needsReview?: boolean;
+}
+
+/**
+ * The rendering a screen may display, or null. Only a `fresh` rendering is
+ * displayable. A stale rendering was accepted by an older check or reported by
+ * the learner, so showing it while a regeneration runs (or after one falls
+ * back) would show text the current pipeline has not approved.
+ */
+export function displayableRendering(result: RenderingResult): UserTermRenderingRow | null {
+  return result.status === 'fresh' ? result.rendering : null;
 }
 
 /**
@@ -1100,10 +1120,9 @@ export interface ReportAnalogyIssueInput {
 
 /**
  * POST to the report-analogy-issue Edge Function. Logs a row into
- * `analogy_reports` (Kevin's audit trail) AND marks the user's cached
- * rendering as reported (`user_term_renderings.reported_at = now()`)
- * so the next personalize call regenerates it under the stricter B+1.6
- * rubric.
+ * `analogy_reports` (the review trail, with the reported text) AND deletes the
+ * user's cached rendering for the term, so the reported text is never shown
+ * again. The next open shows the canonical text and regenerates.
  *
  * Returns true on a 200 success, false on any non-2xx OR transport error.
  * Never throws — the report-this UX is incidental to learning, not
