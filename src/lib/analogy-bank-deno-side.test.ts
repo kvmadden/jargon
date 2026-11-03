@@ -5,7 +5,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { ANALOGY_BANK, vettedAnalogyFor, type AnalogyEntry } from '../../supabase/functions/_shared/analogy-bank.ts';
-import { SUPPORTED_FIELDS } from '../../supabase/functions/_shared/learner-fields.ts';
+import { SUPPORTED_FIELDS, learnerFieldFor } from '../../supabase/functions/_shared/learner-fields.ts';
 import { checkRendering } from '../../supabase/functions/personalize-term/claim-gate.ts';
 import { hasComparisonMarker, restrictiveMarkers } from '../../supabase/functions/personalize-term/claim-text.ts';
 // @ts-expect-error plain .mjs module without type declarations
@@ -66,8 +66,30 @@ describe('vettedAnalogyFor', () => {
     expect(vettedAnalogyFor('bi-rls', null, [ok])).toBeNull();
   });
 
-  it('finds nothing in the shipped bank today, because no entry is vetted yet', () => {
-    for (const e of ANALOGY_BANK) expect(vettedAnalogyFor(e.termId, e.field)).toBeNull();
+  it('finds the five nurse comparisons Kevin vetted, and nothing for the other fields yet', () => {
+    const vetted = ANALOGY_BANK.filter((e) => vettedAnalogyFor(e.termId, e.field) !== null);
+    expect(vetted.map((e) => `${e.termId}/${e.field}`).sort()).toEqual([
+      'bi-rls/nurse', 'cloud-environment/nurse', 'data-join/nurse', 'sec-mfa/nurse', 'sys-jwt/nurse',
+    ]);
+    for (const e of vetted) {
+      expect(e.vettedBy).toBe('Kevin Madden');
+      expect(e.vettedAt).toBe('2026-11-03');
+    }
+  });
+
+  it('offers the sample nurse learner a personalized lesson for every vetted term, and other learners none yet', () => {
+    // The sample learners are the synthetic eval profiles in eval/data.
+    const nurse = profiles.get('nurse');
+    expect(learnerFieldFor(nurse)).toBe('nurse');
+    for (const termId of ['bi-rls', 'sys-jwt', 'cloud-environment', 'sec-mfa', 'data-join']) {
+      const entry = vettedAnalogyFor(termId, learnerFieldFor(nurse));
+      expect(entry?.comparison, termId).toMatch(/ is like | are like /);
+    }
+    for (const id of ['pharmacist', 'teacher']) {
+      const p = profiles.get(id);
+      if (!p) continue;
+      expect(vettedAnalogyFor('sys-jwt', learnerFieldFor(p)), id).toBeNull();
+    }
   });
 });
 
