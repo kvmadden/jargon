@@ -18,6 +18,17 @@ One run, on 2026-10-30, with prompt version 9. Every number from it is in `eval/
 
 This is development data. The claim gate, the labels file and the dev cases were all written after reading this run, so no result on it can show how the pipeline does on new inputs.
 
+### Smoke run, 2026-11-03 (prompt version 10)
+
+A paid format check of the v10 prompts, approved by Kevin with a $3 budget: 6 items (2 terms, 3 profiles) from `eval/data/terms-2026-11-03.json`, results in `eval/results/smoke-2026-11-03/`. It cost $0.34 at list price.
+
+- All 9 verifier replies (6 first passes, 3 re-checks) parsed with both claim lists, and all 9 rewrites parsed.
+- The gate held 3 of 6 first rewrites. All 3 regenerations passed, so 6 of 6 were accepted. The verifier quoted 15 field sentences and marked all 15 supported.
+- One of the 3 holds was a false hold: "chart" in "summed or averaged row by row in a chart" matched the healthcare word for a patient chart.
+- None of the 6 accepted rewrites used an analogy.
+
+Six items show the format works. They say nothing about accuracy.
+
 ### Corrections to earlier claims
 
 - "5 of 78 accepted outputs were wrong (6.4%)" counted only the 5 expert-confirmed outputs. One of them copied its error from the canonical entry, and 4 more outputs repeated canonical errors. At least 9 of 78 showed a learner a claim judged wrong.
