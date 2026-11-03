@@ -89,7 +89,7 @@ export function LivedIconBadge({
   // ─── Primary path: render the AI badge inside a violet ring ─────────────
   // Padding scales with size to keep the ring proportionally consistent.
   // The ring uses `border-2 border-accent-jargon rounded-full` per brief,
-  // which resolves to the signature orange (#C2410C) via the Tailwind token.
+  // which resolves to the spec violet (#7C5CFF) via the Tailwind token.
   // No inline hex — CLAUDE.md hard rule.
   const padding = size >= 64 ? 8 : 4; // p-2 vs p-1 in tailwind units
   const innerSize = Math.max(16, size - padding * 2 - 4); // -4 for the 2px border on each side

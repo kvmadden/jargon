@@ -4,8 +4,8 @@
   "description": "Speak the room.",
   "start_url": "/",
   "display": "standalone",
-  "theme_color": "#C2410C",
-  "background_color": "#16130f",
+  "theme_color": "#7C5CFF",
+  "background_color": "#18181b",
   "icons": [
     {
       "src": "/icon.svg",

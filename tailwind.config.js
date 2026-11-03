@@ -35,12 +35,12 @@ export default {
         400: '400ms',
       },
       colors: {
-        // dark theme base: warm field-notes paper (2026-11-03, Kevin: jargon should look like itself)
-        'bg-base': '#16130f',
-        'surface-card': '#221e18',
-        'surface-card-hi': '#2b261f',
+        // dark theme base
+        'bg-base': '#18181b',
+        'surface-card': '#27272a',
+        'surface-card-hi': '#2d2d31',
         'surface-deep': '#06080c',
-        'border-default': '#3d372e',
+        'border-default': '#3f3f46',
 
         // 2026-08-24: the last two zinc literals retired. Both were mapped by
         // the token package's own `deprecated` map, which is the estate's
@@ -83,22 +83,20 @@ export default {
         // semantically the token system's "dim" — its dimmest readable text.
         'text-muted': colors.text.dim.dark,
 
-        // Jargon accent family: MARKER ORANGE (Kevin's ruling, 2026-11-03: a look
-        // drawn from the subject, a field notebook with a highlighter, not a
-        // generic dark theme with a purple accent). Contrast below is measured.
-        // - `accent-jargon` (#C2410C) is brand-locked. 3.58:1 on bg-base and 3.20:1
-        //   on surface-card, so it passes the 3:1 UI bar but FAILS the 4.5:1 text bar — use it for icon
+        // Jargon per-app accent family — v0.1 SIGNATURE VIOLET
+        // - `accent-jargon` (#7C5CFF) is brand-locked. Passes WCAG AA UI ≥ 3:1 on
+        //   bg-base/surface-card but FAILS the 4.5:1 text bar — use it for icon
         //   backgrounds, term-as-code chips, focus rings, primary CTA fills, and
         //   the signature dot. Do NOT use it for body text on dark surfaces.
-        // - `accent-jargon-hi` (#FB9A5B) is the brand-safe text/inline-link tone:
-        //   7.79:1 on surface-card, 8.71:1 on bg-base — use this anywhere
-        //   the accent needs to read AS text (term-detail "review →", related
+        // - `accent-jargon-hi` (#9D80FF) is the brand-safe text/inline-link tone:
+        //   ≥ 4.94:1 on surface-card, ≥ 5.88:1 on bg-base — use this anywhere
+        //   the violet needs to read AS text (term-detail "review →", related
         //   chips, etc.).
-        // - `accent-jargon-lo` (#9A3412)
+        // - `accent-jargon-lo` (#5B3DE8 — `--signature-deep` from the brand sheet)
         //   is for active/pressed states under primary CTAs. Pure UI, never text.
-        'accent-jargon': '#C2410C',
-        'accent-jargon-hi': '#FB9A5B',
-        'accent-jargon-lo': '#9A3412',
+        'accent-jargon': '#7C5CFF',
+        'accent-jargon-hi': '#9D80FF',
+        'accent-jargon-lo': '#5B3DE8',
 
         // Re-used tokens for semantic states
         'accent-triage': '#E05252',
@@ -121,9 +119,9 @@ export default {
       },
       keyframes: {
         'pulse-correct': {
-          // accent-jargon @ 0% / 20% (#C2410C = rgb(194, 65, 12))
-          '0%, 100%': { backgroundColor: 'rgba(194, 65, 12, 0)' },
-          '40%': { backgroundColor: 'rgba(194, 65, 12, 0.2)' },
+          // accent-jargon @ 0% / 20% — signature violet (#7C5CFF = rgb(124, 92, 255))
+          '0%, 100%': { backgroundColor: 'rgba(124, 92, 255, 0)' },
+          '40%': { backgroundColor: 'rgba(124, 92, 255, 0.2)' },
         },
         'shake-wrong': {
           '0%, 100%': { transform: 'translateX(0)' },
@@ -193,7 +191,7 @@ export default {
         // pulse via background-color, 700ms ease-in-out, twice.
         'xp-pulse': {
           '0%, 100%': { backgroundColor: 'transparent' },
-          '50%': { backgroundColor: 'rgba(251, 154, 91, 0.18)' },
+          '50%': { backgroundColor: 'rgba(157, 128, 255, 0.18)' },
         },
       },
       animation: {

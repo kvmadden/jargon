@@ -11,19 +11,19 @@
        color system can't reach. Keeping them in globals.css means components
        NEVER carry raw hex strings — they reference --accent-jargon instead.
 
-       Signature accent: marker orange #C2410C (2026-11-03), which replaced the violet 7C5CFF (hashless on purpose, for the retired-hex scanner). The
+       v0.1 brand: signature violet #7C5CFF replaced periwinkle #7C9CFF. The
        full token table + WCAG notes live in tailwind.config.js. */
-    --accent-jargon: #C2410C;
-    --accent-jargon-hi: #FB9A5B;
-    --accent-jargon-lo: #9A3412;
-    /* 12% tint — matches Tailwind's accent-jargon/[0.12] (#C2410C = rgb(194, 65, 12)) */
-    --accent-jargon-tint: rgba(194, 65, 12, 0.12);
+    --accent-jargon: #7C5CFF;
+    --accent-jargon-hi: #9D80FF;
+    --accent-jargon-lo: #5B3DE8;
+    /* 12% tint — matches Tailwind's accent-jargon/[0.12] (#7C5CFF = rgb(124, 92, 255)) */
+    --accent-jargon-tint: rgba(124, 92, 255, 0.12);
     /* Derived stops for inset glows / hero badge halo (Layer 4 polish) */
-    --accent-jargon-hi-20: rgba(251, 154, 91, 0.20);
-    --accent-jargon-30: rgba(194, 65, 12, 0.30);
-    --accent-jargon-60: rgba(194, 65, 12, 0.60);
+    --accent-jargon-hi-20: rgba(157, 128, 255, 0.20);
+    --accent-jargon-30: rgba(124, 92, 255, 0.30);
+    --accent-jargon-60: rgba(124, 92, 255, 0.60);
     /* Border default mirror, used as the heatmap "0" cell color */
-    --border-default: #3d372e;
+    --border-default: #3f3f46;
     /* --text-primary lives here no longer. It is GENERATED into :root by the
        addBase plugin in tailwind.config.js, straight off
        colors.text.primary.dark, because this file is plain CSS and cannot

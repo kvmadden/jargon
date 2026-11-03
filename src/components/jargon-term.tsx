@@ -32,9 +32,9 @@ export function JargonTerm({ children, bare = false, className = '' }: Props) {
   // Renders as inline-block so the rounded background sits flush with the type.
   return (
     <span
-      // BLOCKER fix from code-reviewer: `text-accent-jargon` (#C2410C) fails
-      // WCAG AA 4.5:1 for body text. Routed through `accent-jargon-hi` (#FB9A5B,
-      // 8.71:1 on bg-base / 7.79:1 on surface-card — passes AA). Background tint
+      // BLOCKER fix from code-reviewer: `text-accent-jargon` (#7C5CFF) fails
+      // WCAG AA 4.5:1 for body text. Routed through `accent-jargon-hi` (#9D80FF,
+      // 5.88:1 on bg-base / 4.94:1 on surface-card — passes AA). Background tint
       // stays the original signature for the brand-sheet "term" recipe.
       className={`inline-block font-mono font-medium text-accent-jargon-hi rounded-sm align-baseline ${
         bare ? '' : 'bg-accent-jargon/[0.12]'

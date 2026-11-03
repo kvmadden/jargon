@@ -32,7 +32,7 @@ describe('<PathGlyph> tint', () => {
   it('still renders the brand accent when active', () => {
     render(<PathGlyph path="git-cli" active alt="git" />);
     const src = screen.getByRole('img', { name: 'git' }).getAttribute('src') ?? '';
-    expect(src).toContain('color=%23c2410c');
+    expect(src).toContain('color=%237c5cff');
     expect(src).not.toContain(RETIRED_ZINC);
   });
 

@@ -2664,7 +2664,7 @@ function LivedIconsStrip({ slugs }: { slugs: string[] }) {
           title={slug}
         >
           <img
-            src={`https://api.iconify.design/ph/${slug}.svg?color=%23FB9A5B`}
+            src={`https://api.iconify.design/ph/${slug}.svg?color=%239D80FF`}
             alt={slug}
             width={24}
             height={24}
