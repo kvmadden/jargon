@@ -164,7 +164,7 @@
         "run_id": "cloud-environment::pharmacist"
       },
       "canonical_override": {
-        "example_in_sentence": "the bug shows up in staging but not in production, because staging points at the payment provider's sandbox instead of the live account."
+        "example_in_sentence": "the bug shows up in the staging environment but not in production, because staging points at the payment provider's sandbox instead of the live account."
       },
       "expected": {
         "decision": "needs_review",
