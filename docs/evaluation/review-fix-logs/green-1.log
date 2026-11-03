@@ -3,7 +3,7 @@
 > vitest run src/lib/streak-freeze.test.ts src/App.test.tsx src/lib/personalize-claim-check.test.ts src/lib/prompt-version-sync.test.ts
 
 
- RUN  v4.1.12 /Volumes/HubData/work/worktrees/jargon-verifier-upgrade
+ RUN  v4.1.12 <repo>
 
 
  Test Files  4 passed (4)

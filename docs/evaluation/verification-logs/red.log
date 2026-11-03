@@ -3,7 +3,7 @@
 > vitest run src/lib/personalize-claim-check.test.ts
 
 
- RUN  v4.1.12 /Volumes/HubData/work/worktrees/jargon-verifier-upgrade
+ RUN  v4.1.12 <repo>
 
  ❯ src/lib/personalize-claim-check.test.ts (7 tests | 6 failed) 14ms
      × rejects the saved expert-confirmed miss bi-rls::nurse even when the model passes 6ms
