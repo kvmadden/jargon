@@ -63,13 +63,15 @@ flowchart TD
 
 ## Lesson style
 
-The logo, titles and term names stay lowercase. Lesson sentences display in sentence case with full punctuation, a definition reads as one lead sentence plus bullets, and seven terms get a small diagram drawn in code (`src/lib/lesson-text.ts`, `src/components/lesson-body.tsx`, `src/components/concept-illustration.tsx`). The stored canonical text is not rewritten. It is formatted for display, and the prompts ask the model to write the same way.
+The logo and term names stay lowercase. Section headings ("What it means", "In the wild", "Why it matters") use sentence case, with a soft divider between sections. Lesson sentences display in sentence case with full punctuation, a definition reads as one lead sentence plus bullets, and seven terms get a small diagram drawn in code (`src/lib/lesson-text.ts`, `src/components/lesson-body.tsx`, `src/components/concept-illustration.tsx`). The stored canonical text is not rewritten. It is formatted for display, and the prompts ask the model to write the same way.
 
-A diagram pill always has room around its text, and a flow sits on one line when it fits. When it does not fit, the flow becomes a vertical stack with down arrows instead of wrapping partway. A browser test checks every diagram at five screen sizes (`tests/e2e/lesson-layout.spec.ts`).
+Lesson text never shows an em dash or a semicolon, the canonical content and model output included. `plainPunctuation` turns a dash into a comma, a colon or a sentence break, and a semicolon into a sentence break, on the way to the screen. A test runs every seed lesson field and every curated scenario, transcript and conversation guide through it. No text on the lesson screens is smaller than 14px.
 
-When a term is an abbreviation, an initialism, an acronym or a clipped word, the line right under its title says what it stands for, before the definition: "RLS stands for Row-Level Security", with the letters marked, or "Short for repository". The expansions are data on each term (`supabase/term-expansions.json`, loaded by a migration), so lessons written by the model show the same line. Nine of the 147 entries are marked for a person to confirm.
+A diagram pill always has room around its text, and a flow sits on one line when it fits, centered in its box. When it does not fit, the flow becomes a centered vertical stack with down arrows instead of wrapping partway. A browser test checks every diagram at five screen sizes (`tests/e2e/lesson-layout.spec.ts`).
 
-On a laptop or desktop the term page is a reading column of about 65 characters beside a side panel with the diagram, the next step and related terms. Search and feedback sit in a top bar there instead of floating over the page. Phones keep one column. The look borrows from a field notebook: warm dark paper, a marker orange accent and a mono face for term names, since the app is about learning technical words through your own job.
+When a term is an abbreviation, an initialism, an acronym or a clipped word, the line right under its title says what it stands for, before the definition: "RLS stands for Row-Level Security", with the letters marked, or "Short for repository". The expansions are data on each term (`supabase/term-expansions.json`, loaded by a migration), so lessons written by the model show the same line. Kevin confirmed all 147 entries on 2026-11-03.
+
+On a laptop or desktop the term page is a reading column of about 65 characters beside a quiet side panel with the diagram, the note about your field, the next step and related terms. Phones keep one column. At every size, search and feedback sit in an app bar at the top of the page, so nothing floats over the content. The speaker button sits on the title's line. The accent is the violet, and the term name is set in a mono face.
 
 ## Evaluation
 

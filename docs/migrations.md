@@ -1,6 +1,6 @@
 # Migrations added by the evaluation work
 
-Kevin approved the first four migrations on 2026-11-03. The fifth, term expansions, is new in this round and still needs his approval. They go to production only after the pull requests merge. Each one is safe to run more than once, and a SQL test runs each one twice against the real earlier migrations (`npm run test:sql`).
+Kevin approved all five migrations on 2026-11-03, the term expansions one after round 3. They go to production only after the pull requests merge. Each one is safe to run more than once, and a SQL test runs each one twice against the real earlier migrations (`npm run test:sql`).
 
 | Migration | What it does | Why it is safe to rerun | SQL test |
 | --- | --- | --- | --- |
