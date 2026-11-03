@@ -290,6 +290,26 @@ describe('dedupedRequestPersonalization', () => {
     await p3;
   });
 
+  it('keeps concurrent requests for two accounts apart, so one never receives the other result', async () => {
+    const { dedupedRequestPersonalization, _resetInFlightPersonalizations } = await import('./term-detail');
+    const { requestPersonalization } = await import('../lib/data');
+    _resetInFlightPersonalizations();
+
+    const resolvers: Array<(v: any) => void> = [];
+    vi.mocked(requestPersonalization).mockImplementation(
+      () => new Promise((resolve) => resolvers.push(resolve)) as any,
+    );
+
+    const forA = dedupedRequestPersonalization('term-3', 'user-a');
+    const forB = dedupedRequestPersonalization('term-3', 'user-b');
+    expect(requestPersonalization).toHaveBeenCalledTimes(2);
+
+    resolvers[0]({ long_definition: 'for a', why_it_matters: '', example_in_sentence: '', isFallback: false });
+    resolvers[1]({ long_definition: 'for b', why_it_matters: '', example_in_sentence: '', isFallback: false });
+    expect((await forA).long_definition).toBe('for a');
+    expect((await forB).long_definition).toBe('for b');
+  });
+
   it('cleans up in-flight entry on request failure so subsequent calls can retry', async () => {
     const { dedupedRequestPersonalization, _resetInFlightPersonalizations } = await import('./term-detail');
     const { requestPersonalization } = await import('../lib/data');
