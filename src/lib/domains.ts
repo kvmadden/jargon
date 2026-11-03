@@ -313,7 +313,7 @@ export function goalDescription(domain: Domain): string {
 //
 // Why hex (not a CSS variable name)? Iconify is a CDN, not a CSS context.
 // The color HAS to be resolved at URL-build time. Pass the resolved hex
-// from your design tokens — for jargon, that's `#7C5CFF` (accent-jargon)
+// from your design tokens — for jargon, that's `#C2410C` (accent-jargon)
 // for active state and `text-secondary` (token: text.dim.dark) for muted state.
 
 const ICONIFY_BASE = 'https://api.iconify.design';
@@ -471,7 +471,7 @@ export function isLiveDomainOption(opt: OnboardingDomainOption): boolean {
  * "mirror in lockstep" comments were exactly how the retired zinc 71717a
  * (hashless here on purpose: the retired-hex scanner matches raw #-literals)
  * outlived its 2026-07-28 retirement here. The violet pair stays literal on
- * purpose: accent-jargon (#7C5CFF) / accent-jargon-hi (#9D80FF) are this
+ * purpose: accent-jargon (#C2410C) / accent-jargon-hi (#FB9A5B) are this
  * app's brand-locked per-app accent, not a shared system token.
  *
  * State semantics:
@@ -484,8 +484,8 @@ export type OnboardingIconState = 'soon' | 'selected' | 'available';
 export function onboardingIconUrl(opt: OnboardingDomainOption, state: OnboardingIconState): string {
   const tint =
     state === 'soon'      ? colors.text.dim.dark // matches the text-muted class
-    : state === 'selected' ? '#7C5CFF'  // accent-jargon (brand-locked)
-    :                        '#9D80FF'; // accent-jargon-hi (brand-locked)
+    : state === 'selected' ? '#C2410C'  // accent-jargon (brand-locked)
+    :                        '#FB9A5B'; // accent-jargon-hi (brand-locked)
   return iconUrl(opt.icon.set, opt.icon.name, tint);
 }
 
@@ -497,16 +497,16 @@ export function onboardingIconUrl(opt: OnboardingDomainOption, state: Onboarding
 // in this file (per project convention hard rule: no inline hex in components).
 // The strip component takes a `tone` enum, calls this helper to get a URL
 // per slug. Tones map to:
-//   - 'accent'    → #7C5CFF  accent-jargon (UI-tone violet, brand-locked)
-//   - 'accent-hi' → #9D80FF  accent-jargon-hi (text-tone violet, brand-locked)
+//   - 'accent'    → #C2410C  accent-jargon (UI-tone marker orange, brand-locked since 2026-11-03)
+//   - 'accent-hi' → #FB9A5B  accent-jargon-hi (text-tone marker orange, brand-locked since 2026-11-03)
 //   - 'muted'     → colors.text.dim.dark (matches the text-muted class)
 
 export type LivedIconTone = 'accent' | 'accent-hi' | 'muted';
 
 export function livedIconUrl(slug: string, tone: LivedIconTone): string {
   const tint =
-    tone === 'accent'    ? '#7C5CFF'   // accent-jargon (brand-locked)
-    : tone === 'accent-hi' ? '#9D80FF' // accent-jargon-hi (brand-locked)
+    tone === 'accent'    ? '#C2410C'   // accent-jargon (brand-locked)
+    : tone === 'accent-hi' ? '#FB9A5B' // accent-jargon-hi (brand-locked)
     :                        colors.text.dim.dark; // matches the text-muted class
   return iconUrl('ph', slug, tint);
 }

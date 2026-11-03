@@ -34,8 +34,8 @@ import { domainIconUrl, type Domain } from '../lib/domains';
  *     "mirror" of a token has no wire down which a correction can travel.
  */
 const TONE_HEX = {
-  accent: '#7C5CFF',
-  'accent-hi': '#9D80FF',
+  accent: '#C2410C',
+  'accent-hi': '#FB9A5B',
   muted: colors.text.dim.dark,
   primary: colors.text.primary.dark,
 } as const;

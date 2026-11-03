@@ -73,11 +73,11 @@ export function Confetti({ active, count = 80, durationMs = 1600, onComplete }: 
 
     // Resolve CSS-var colors at fire time so theme overrides take effect.
     const root = getComputedStyle(document.documentElement);
-    // Fallback hex matches v0.1 signature violet (#7C5CFF) so a stripped CSS-var
+    // Fallback hex matches the signature marker orange (#C2410C) so a stripped CSS-var
     // environment (e.g. headless test runner without globals.css loaded) still
     // fires brand-correct particles. Lives here as the single canvas-only
     // literal — no Tailwind-class equivalent can reach into RAF code.
-    const palette = COLORS.map((v) => root.getPropertyValue(v).trim() || '#7C5CFF');
+    const palette = COLORS.map((v) => root.getPropertyValue(v).trim() || '#C2410C');
 
     // Fire from the middle horizontally, slightly above the vertical centerline so
     // the gravity arc lands across most of the screen.

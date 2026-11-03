@@ -9,7 +9,7 @@
 //   - Maps every single path (coding + AI domains) to a relevant line-art icon,
 //     completely replacing the generic square placeholder box.
 //   - Tint color resolves based on active state: signature periwinkle/violet
-//     (#7C5CFF) for active paths, and text.dim.dark for inactive.
+//     (#C2410C) for active paths, and text.dim.dark for inactive.
 //
 // The inactive tint is now IMPORTED. From 2026-08-24 to 2026-08-28 this comment
 // claimed it already resolved to the token package while the line below still
@@ -25,7 +25,7 @@ import { type PathId } from '../lib/database.types';
 import { iconUrl } from '../lib/domains';
 
 /** Brand-locked accent — see domain-icon.tsx TONE_HEX for why this one is not a token. */
-const ACCENT_JARGON = '#7C5CFF';
+const ACCENT_JARGON = '#C2410C';
 
 type GlyphSize = 'sm' | 'md' | 'lg';
 

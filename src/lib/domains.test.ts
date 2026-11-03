@@ -224,8 +224,8 @@ describe('domain icons (Iconify)', () => {
 
   describe('iconUrl', () => {
     it('builds the canonical Iconify URL with %23-encoded hex', () => {
-      expect(iconUrl('ph', 'code', '#7C5CFF')).toBe(
-        'https://api.iconify.design/ph/code.svg?color=%237c5cff',
+      expect(iconUrl('ph', 'code', '#C2410C')).toBe(
+        'https://api.iconify.design/ph/code.svg?color=%23c2410c',
       );
     });
 
@@ -263,24 +263,24 @@ describe('domain icons (Iconify)', () => {
       expect(url).not.toContain('71717a');
     });
 
-    it('leaves the accent tints on the brand-locked jargon violet pair', () => {
-      expect(onboardingIconUrl(opt, 'selected')).toContain('%237c5cff');
-      expect(onboardingIconUrl(opt, 'available')).toContain('%239d80ff');
-      expect(livedIconUrl('barbell', 'accent')).toContain('%237c5cff');
-      expect(livedIconUrl('barbell', 'accent-hi')).toContain('%239d80ff');
+    it('leaves the accent tints on the brand-locked jargon marker pair', () => {
+      expect(onboardingIconUrl(opt, 'selected')).toContain('%23c2410c');
+      expect(onboardingIconUrl(opt, 'available')).toContain('%23fb9a5b');
+      expect(livedIconUrl('barbell', 'accent')).toContain('%23c2410c');
+      expect(livedIconUrl('barbell', 'accent-hi')).toContain('%23fb9a5b');
     });
   });
 
   describe('domainIconUrl', () => {
     it('resolves the coding domain to ph:code with the requested tint', () => {
-      expect(domainIconUrl('coding', '#7C5CFF')).toBe(
-        'https://api.iconify.design/ph/code.svg?color=%237c5cff',
+      expect(domainIconUrl('coding', '#C2410C')).toBe(
+        'https://api.iconify.design/ph/code.svg?color=%23c2410c',
       );
     });
 
     it('falls back to the default-domain icon for unknown domains', () => {
-      const fallback = domainIconUrl('mystery' as Domain, '#7C5CFF');
-      const expected = domainIconUrl(DEFAULT_DOMAIN, '#7C5CFF');
+      const fallback = domainIconUrl('mystery' as Domain, '#C2410C');
+      const expected = domainIconUrl(DEFAULT_DOMAIN, '#C2410C');
       expect(fallback).toBe(expected);
     });
   });
