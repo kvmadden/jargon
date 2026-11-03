@@ -1,0 +1,999 @@
+{
+  "note": "What each abbreviation, initialism, acronym or clipped word in a term name stands for. Written on 2026-11-03 by Claude from general knowledge. Entries with \"review\" need a person to confirm the wording. \"not_abbreviation\" marks a name that looks like one but is not. The migration 20261103000400_term_expansions.sql and the update block at the end of supabase/seed.sql are generated from this file, and a test keeps them equal.",
+  "terms": {
+    "agile-code-review": {
+      "parts": [
+        {
+          "abbr": "PR",
+          "expansion": "pull request",
+          "kind": "letters"
+        }
+      ]
+    },
+    "agile-demo": {
+      "parts": [
+        {
+          "abbr": "demo",
+          "expansion": "demonstration",
+          "kind": "clipped"
+        }
+      ]
+    },
+    "agile-em": {
+      "parts": [
+        {
+          "abbr": "EM",
+          "expansion": "engineering manager",
+          "kind": "letters"
+        }
+      ]
+    },
+    "agile-pm": {
+      "parts": [
+        {
+          "abbr": "PM",
+          "expansion": "product manager",
+          "kind": "letters"
+        }
+      ]
+    },
+    "agile-po": {
+      "parts": [
+        {
+          "abbr": "PO",
+          "expansion": "product owner",
+          "kind": "letters"
+        }
+      ]
+    },
+    "agile-sm": {
+      "parts": [
+        {
+          "abbr": "SM",
+          "expansion": "scrum master",
+          "kind": "letters"
+        }
+      ]
+    },
+    "agile-visual-qa": {
+      "parts": [
+        {
+          "abbr": "QA",
+          "expansion": "quality assurance",
+          "kind": "letters"
+        }
+      ]
+    },
+    "agile-wip": {
+      "parts": [
+        {
+          "abbr": "WIP",
+          "expansion": "work in progress",
+          "kind": "letters"
+        }
+      ]
+    },
+    "agile-wip-limit": {
+      "parts": [
+        {
+          "abbr": "WIP",
+          "expansion": "work in progress",
+          "kind": "letters"
+        }
+      ]
+    },
+    "ai-eval": {
+      "parts": [
+        {
+          "abbr": "eval",
+          "expansion": "evaluation",
+          "kind": "clipped"
+        }
+      ]
+    },
+    "ai-evals": {
+      "parts": [
+        {
+          "abbr": "evals",
+          "expansion": "evaluations",
+          "kind": "clipped"
+        }
+      ]
+    },
+    "ai-llm": {
+      "parts": [
+        {
+          "abbr": "LLM",
+          "expansion": "large language model",
+          "kind": "letters"
+        }
+      ]
+    },
+    "ai-rag": {
+      "parts": [
+        {
+          "abbr": "RAG",
+          "expansion": "retrieval-augmented generation",
+          "kind": "letters"
+        }
+      ]
+    },
+    "aid-agi": {
+      "parts": [
+        {
+          "abbr": "AGI",
+          "expansion": "artificial general intelligence",
+          "kind": "letters"
+        }
+      ]
+    },
+    "aid-ai": {
+      "parts": [
+        {
+          "abbr": "AI",
+          "expansion": "artificial intelligence",
+          "kind": "letters"
+        }
+      ]
+    },
+    "aid-assistant": {
+      "parts": [
+        {
+          "abbr": "AI",
+          "expansion": "artificial intelligence",
+          "kind": "letters"
+        }
+      ]
+    },
+    "aid-chatgpt": {
+      "parts": [
+        {
+          "abbr": "GPT",
+          "expansion": "generative pre-trained transformer",
+          "kind": "letters"
+        }
+      ]
+    },
+    "aid-evals": {
+      "parts": [
+        {
+          "abbr": "evals",
+          "expansion": "evaluations",
+          "kind": "clipped"
+        }
+      ]
+    },
+    "aid-human-eval": {
+      "parts": [
+        {
+          "abbr": "eval",
+          "expansion": "evaluation",
+          "kind": "clipped"
+        }
+      ]
+    },
+    "aid-llm": {
+      "parts": [
+        {
+          "abbr": "LLM",
+          "expansion": "large language model",
+          "kind": "letters"
+        }
+      ]
+    },
+    "aid-mcp": {
+      "parts": [
+        {
+          "abbr": "MCP",
+          "expansion": "Model Context Protocol",
+          "kind": "letters"
+        }
+      ]
+    },
+    "aid-rag": {
+      "parts": [
+        {
+          "abbr": "RAG",
+          "expansion": "retrieval-augmented generation",
+          "kind": "letters"
+        }
+      ]
+    },
+    "arch-api": {
+      "parts": [
+        {
+          "abbr": "API",
+          "expansion": "application programming interface",
+          "kind": "letters"
+        }
+      ]
+    },
+    "az-rbac": {
+      "parts": [
+        {
+          "abbr": "RBAC",
+          "expansion": "role-based access control",
+          "kind": "letters"
+        }
+      ]
+    },
+    "bi-dashboard": {
+      "parts": [
+        {
+          "abbr": "BI",
+          "expansion": "business intelligence",
+          "kind": "letters"
+        }
+      ]
+    },
+    "bi-dax": {
+      "parts": [
+        {
+          "abbr": "DAX",
+          "expansion": "Data Analysis Expressions",
+          "kind": "letters"
+        }
+      ]
+    },
+    "bi-report": {
+      "parts": [
+        {
+          "abbr": "BI",
+          "expansion": "business intelligence",
+          "kind": "letters"
+        }
+      ]
+    },
+    "bi-rls": {
+      "parts": [
+        {
+          "abbr": "RLS",
+          "expansion": "row-level security",
+          "kind": "letters"
+        }
+      ]
+    },
+    "bi-workspace": {
+      "parts": [
+        {
+          "abbr": "BI",
+          "expansion": "business intelligence",
+          "kind": "letters"
+        }
+      ]
+    },
+    "cc-askuserquestion": {
+      "not_abbreviation": true
+    },
+    "cc-claude-md": {
+      "parts": [
+        {
+          "abbr": ".md",
+          "expansion": "Markdown",
+          "kind": "clipped"
+        }
+      ]
+    },
+    "cc-mcp": {
+      "parts": [
+        {
+          "abbr": "MCP",
+          "expansion": "Model Context Protocol",
+          "kind": "letters"
+        }
+      ]
+    },
+    "cc-mcp-client": {
+      "parts": [
+        {
+          "abbr": "MCP",
+          "expansion": "Model Context Protocol",
+          "kind": "letters"
+        }
+      ]
+    },
+    "cc-mcp-server": {
+      "parts": [
+        {
+          "abbr": "MCP",
+          "expansion": "Model Context Protocol",
+          "kind": "letters"
+        }
+      ]
+    },
+    "cc-sdk": {
+      "parts": [
+        {
+          "abbr": "SDK",
+          "expansion": "software development kit",
+          "kind": "letters"
+        }
+      ]
+    },
+    "cc-todowrite": {
+      "not_abbreviation": true
+    },
+    "cloud-cdn": {
+      "parts": [
+        {
+          "abbr": "CDN",
+          "expansion": "content delivery network",
+          "kind": "letters"
+        }
+      ]
+    },
+    "dev-api": {
+      "parts": [
+        {
+          "abbr": "API",
+          "expansion": "application programming interface",
+          "kind": "letters"
+        }
+      ]
+    },
+    "dev-ci-cd": {
+      "parts": [
+        {
+          "abbr": "CI",
+          "expansion": "continuous integration",
+          "kind": "letters"
+        },
+        {
+          "abbr": "CD",
+          "expansion": "continuous delivery or continuous deployment",
+          "kind": "letters"
+        }
+      ]
+    },
+    "dev-mvp": {
+      "parts": [
+        {
+          "abbr": "MVP",
+          "expansion": "minimum viable product",
+          "kind": "letters"
+        }
+      ]
+    },
+    "dev-props": {
+      "parts": [
+        {
+          "abbr": "props",
+          "expansion": "properties",
+          "kind": "clipped"
+        }
+      ]
+    },
+    "dev-readme": {
+      "not_abbreviation": true
+    },
+    "ent-aws": {
+      "parts": [
+        {
+          "abbr": "AWS",
+          "expansion": "Amazon Web Services",
+          "kind": "letters"
+        }
+      ]
+    },
+    "ent-bigquery": {
+      "not_abbreviation": true
+    },
+    "ent-draft-pr": {
+      "parts": [
+        {
+          "abbr": "PR",
+          "expansion": "pull request",
+          "kind": "letters"
+        }
+      ]
+    },
+    "ent-gcp": {
+      "parts": [
+        {
+          "abbr": "GCP",
+          "expansion": "Google Cloud Platform",
+          "kind": "letters"
+        }
+      ]
+    },
+    "ent-github": {
+      "not_abbreviation": true
+    },
+    "ent-gitlab": {
+      "not_abbreviation": true
+    },
+    "ent-hubspot": {
+      "not_abbreviation": true
+    },
+    "ent-jira": {
+      "not_abbreviation": true
+    },
+    "ent-powerbi": {
+      "parts": [
+        {
+          "abbr": "BI",
+          "expansion": "business intelligence",
+          "kind": "letters"
+        }
+      ]
+    },
+    "ent-sap": {
+      "parts": [
+        {
+          "abbr": "SAP",
+          "expansion": "Systems, Applications and Products in Data Processing",
+          "kind": "letters"
+        }
+      ],
+      "review": "SAP is a company name. The expansion is the English form of the founders' German name, and the company rarely uses it."
+    },
+    "ent-servicenow": {
+      "not_abbreviation": true
+    },
+    "ent-stacked-pr": {
+      "parts": [
+        {
+          "abbr": "PR",
+          "expansion": "pull request",
+          "kind": "letters"
+        }
+      ]
+    },
+    "excel-pivot-table": {
+      "not_abbreviation": true
+    },
+    "fabric-onelake": {
+      "not_abbreviation": true
+    },
+    "flow-ci": {
+      "parts": [
+        {
+          "abbr": "CI",
+          "expansion": "continuous integration",
+          "kind": "letters"
+        }
+      ]
+    },
+    "flow-pull-request": {
+      "parts": [
+        {
+          "abbr": "PR",
+          "expansion": "pull request",
+          "kind": "letters"
+        }
+      ]
+    },
+    "git-head": {
+      "not_abbreviation": true
+    },
+    "git-pr": {
+      "parts": [
+        {
+          "abbr": "PR",
+          "expansion": "pull request",
+          "kind": "letters"
+        }
+      ]
+    },
+    "hw-arm": {
+      "parts": [
+        {
+          "abbr": "ARM",
+          "expansion": "Advanced RISC Machines",
+          "kind": "letters"
+        }
+      ],
+      "review": "ARM first stood for Acorn RISC Machine, later Advanced RISC Machines, and the company now writes Arm as a name. RISC is itself short for reduced instruction set computer."
+    },
+    "hw-bios-uefi": {
+      "parts": [
+        {
+          "abbr": "BIOS",
+          "expansion": "Basic Input/Output System",
+          "kind": "letters"
+        },
+        {
+          "abbr": "UEFI",
+          "expansion": "Unified Extensible Firmware Interface",
+          "kind": "letters"
+        }
+      ]
+    },
+    "hw-cache": {
+      "parts": [
+        {
+          "abbr": "CPU",
+          "expansion": "central processing unit",
+          "kind": "letters"
+        }
+      ]
+    },
+    "hw-cpu": {
+      "parts": [
+        {
+          "abbr": "CPU",
+          "expansion": "central processing unit",
+          "kind": "letters"
+        }
+      ]
+    },
+    "hw-gpu": {
+      "parts": [
+        {
+          "abbr": "GPU",
+          "expansion": "graphics processing unit",
+          "kind": "letters"
+        }
+      ]
+    },
+    "hw-pcie": {
+      "parts": [
+        {
+          "abbr": "PCIe",
+          "expansion": "Peripheral Component Interconnect Express",
+          "kind": "letters"
+        }
+      ]
+    },
+    "hw-ram": {
+      "parts": [
+        {
+          "abbr": "RAM",
+          "expansion": "random-access memory",
+          "kind": "letters"
+        }
+      ]
+    },
+    "hw-ssd": {
+      "parts": [
+        {
+          "abbr": "SSD",
+          "expansion": "solid-state drive",
+          "kind": "letters"
+        }
+      ]
+    },
+    "lang-css": {
+      "parts": [
+        {
+          "abbr": "CSS",
+          "expansion": "Cascading Style Sheets",
+          "kind": "letters"
+        }
+      ]
+    },
+    "lang-html": {
+      "parts": [
+        {
+          "abbr": "HTML",
+          "expansion": "Hypertext Markup Language",
+          "kind": "letters"
+        }
+      ]
+    },
+    "lang-javascript": {
+      "not_abbreviation": true
+    },
+    "lang-sql": {
+      "parts": [
+        {
+          "abbr": "SQL",
+          "expansion": "Structured Query Language",
+          "kind": "letters"
+        }
+      ]
+    },
+    "lang-typescript": {
+      "not_abbreviation": true
+    },
+    "ms365-admin-center": {
+      "parts": [
+        {
+          "abbr": "admin",
+          "expansion": "administration",
+          "kind": "clipped"
+        }
+      ],
+      "review": "\"admin\" can also mean administrator. In \"admin center\" it is read as administration."
+    },
+    "ms365-entra": {
+      "parts": [
+        {
+          "abbr": "ID",
+          "expansion": "identity",
+          "kind": "clipped"
+        }
+      ],
+      "review": "In Microsoft Entra ID, Microsoft treats \"ID\" as identity. It is a product name, so a reviewer should confirm the wording."
+    },
+    "net-dns": {
+      "parts": [
+        {
+          "abbr": "DNS",
+          "expansion": "Domain Name System",
+          "kind": "letters"
+        }
+      ]
+    },
+    "net-ip-address": {
+      "parts": [
+        {
+          "abbr": "IP",
+          "expansion": "Internet Protocol",
+          "kind": "letters"
+        }
+      ]
+    },
+    "net-tcp": {
+      "parts": [
+        {
+          "abbr": "TCP",
+          "expansion": "Transmission Control Protocol",
+          "kind": "letters"
+        }
+      ]
+    },
+    "net-tls": {
+      "parts": [
+        {
+          "abbr": "TLS",
+          "expansion": "Transport Layer Security",
+          "kind": "letters"
+        }
+      ]
+    },
+    "net-udp": {
+      "parts": [
+        {
+          "abbr": "UDP",
+          "expansion": "User Datagram Protocol",
+          "kind": "letters"
+        }
+      ]
+    },
+    "net-vpn": {
+      "parts": [
+        {
+          "abbr": "VPN",
+          "expansion": "virtual private network",
+          "kind": "letters"
+        }
+      ]
+    },
+    "os-permission": {
+      "parts": [
+        {
+          "abbr": "OS",
+          "expansion": "operating system",
+          "kind": "letters"
+        }
+      ]
+    },
+    "pp-power-apps": {
+      "parts": [
+        {
+          "abbr": "apps",
+          "expansion": "applications",
+          "kind": "clipped"
+        }
+      ]
+    },
+    "prod-crm": {
+      "parts": [
+        {
+          "abbr": "CRM",
+          "expansion": "customer relationship management",
+          "kind": "letters"
+        }
+      ]
+    },
+    "prod-erp": {
+      "parts": [
+        {
+          "abbr": "ERP",
+          "expansion": "enterprise resource planning",
+          "kind": "letters"
+        }
+      ]
+    },
+    "prod-kpi": {
+      "parts": [
+        {
+          "abbr": "KPI",
+          "expansion": "key performance indicator",
+          "kind": "letters"
+        }
+      ]
+    },
+    "prod-okr": {
+      "parts": [
+        {
+          "abbr": "OKR",
+          "expansion": "objectives and key results",
+          "kind": "letters"
+        }
+      ]
+    },
+    "prod-sso": {
+      "parts": [
+        {
+          "abbr": "SSO",
+          "expansion": "single sign-on",
+          "kind": "letters"
+        }
+      ]
+    },
+    "qa-mttr": {
+      "parts": [
+        {
+          "abbr": "MTTR",
+          "expansion": "mean time to recovery",
+          "kind": "letters"
+        }
+      ],
+      "review": "MTTR is also read as mean time to repair or to restore. The canonical entry uses recovery."
+    },
+    "qa-sla": {
+      "parts": [
+        {
+          "abbr": "SLA",
+          "expansion": "service-level agreement",
+          "kind": "letters"
+        }
+      ]
+    },
+    "qa-slo": {
+      "parts": [
+        {
+          "abbr": "SLO",
+          "expansion": "service-level objective",
+          "kind": "letters"
+        }
+      ]
+    },
+    "se-fmea": {
+      "parts": [
+        {
+          "abbr": "FMEA",
+          "expansion": "failure mode and effects analysis",
+          "kind": "letters"
+        }
+      ]
+    },
+    "sec-mfa": {
+      "parts": [
+        {
+          "abbr": "MFA",
+          "expansion": "multi-factor authentication",
+          "kind": "letters"
+        }
+      ]
+    },
+    "sec-oauth": {
+      "parts": [
+        {
+          "abbr": "OAuth",
+          "expansion": "open authorization",
+          "kind": "letters"
+        }
+      ]
+    },
+    "sec-rbac": {
+      "parts": [
+        {
+          "abbr": "RBAC",
+          "expansion": "role-based access control",
+          "kind": "letters"
+        }
+      ]
+    },
+    "sec-sso": {
+      "parts": [
+        {
+          "abbr": "SSO",
+          "expansion": "single sign-on",
+          "kind": "letters"
+        }
+      ]
+    },
+    "sys-api-gateway": {
+      "parts": [
+        {
+          "abbr": "API",
+          "expansion": "application programming interface",
+          "kind": "letters"
+        }
+      ]
+    },
+    "sys-cdn": {
+      "parts": [
+        {
+          "abbr": "CDN",
+          "expansion": "content delivery network",
+          "kind": "letters"
+        }
+      ]
+    },
+    "sys-cors": {
+      "parts": [
+        {
+          "abbr": "CORS",
+          "expansion": "cross-origin resource sharing",
+          "kind": "letters"
+        }
+      ]
+    },
+    "sys-dns": {
+      "parts": [
+        {
+          "abbr": "DNS",
+          "expansion": "Domain Name System",
+          "kind": "letters"
+        }
+      ]
+    },
+    "sys-graphql": {
+      "parts": [
+        {
+          "abbr": "GraphQL",
+          "expansion": "graph query language",
+          "kind": "clipped"
+        }
+      ],
+      "review": "GraphQL is a product name. \"QL\" is commonly read as query language, but the project does not publish an official expansion."
+    },
+    "sys-http-header": {
+      "parts": [
+        {
+          "abbr": "HTTP",
+          "expansion": "Hypertext Transfer Protocol",
+          "kind": "letters"
+        }
+      ]
+    },
+    "sys-http-method": {
+      "parts": [
+        {
+          "abbr": "HTTP",
+          "expansion": "Hypertext Transfer Protocol",
+          "kind": "letters"
+        }
+      ]
+    },
+    "sys-http-request": {
+      "parts": [
+        {
+          "abbr": "HTTP",
+          "expansion": "Hypertext Transfer Protocol",
+          "kind": "letters"
+        }
+      ]
+    },
+    "sys-http-response": {
+      "parts": [
+        {
+          "abbr": "HTTP",
+          "expansion": "Hypertext Transfer Protocol",
+          "kind": "letters"
+        }
+      ]
+    },
+    "sys-https": {
+      "parts": [
+        {
+          "abbr": "HTTPS",
+          "expansion": "Hypertext Transfer Protocol Secure",
+          "kind": "letters"
+        },
+        {
+          "abbr": "TLS",
+          "expansion": "Transport Layer Security",
+          "kind": "letters"
+        }
+      ]
+    },
+    "sys-json": {
+      "parts": [
+        {
+          "abbr": "JSON",
+          "expansion": "JavaScript Object Notation",
+          "kind": "letters"
+        }
+      ]
+    },
+    "sys-jwt": {
+      "parts": [
+        {
+          "abbr": "JWT",
+          "expansion": "JSON Web Token",
+          "kind": "letters"
+        }
+      ]
+    },
+    "sys-nosql": {
+      "parts": [
+        {
+          "abbr": "NoSQL",
+          "expansion": "not only SQL",
+          "kind": "letters"
+        }
+      ],
+      "review": "Usage varies: some sources say \"not only SQL\", others \"non-SQL\" or \"non-relational\"."
+    },
+    "sys-rest": {
+      "parts": [
+        {
+          "abbr": "REST",
+          "expansion": "representational state transfer",
+          "kind": "letters"
+        }
+      ]
+    },
+    "sys-rls": {
+      "parts": [
+        {
+          "abbr": "RLS",
+          "expansion": "row-level security",
+          "kind": "letters"
+        }
+      ]
+    },
+    "sys-sla": {
+      "parts": [
+        {
+          "abbr": "SLA",
+          "expansion": "service-level agreement",
+          "kind": "letters"
+        }
+      ]
+    },
+    "sys-slo": {
+      "parts": [
+        {
+          "abbr": "SLO",
+          "expansion": "service-level objective",
+          "kind": "letters"
+        }
+      ]
+    },
+    "sys-sql": {
+      "parts": [
+        {
+          "abbr": "SQL",
+          "expansion": "Structured Query Language",
+          "kind": "letters"
+        }
+      ]
+    },
+    "sys-sso": {
+      "parts": [
+        {
+          "abbr": "SSO",
+          "expansion": "single sign-on",
+          "kind": "letters"
+        }
+      ]
+    },
+    "sys-websocket": {
+      "not_abbreviation": true
+    },
+    "web-spa": {
+      "parts": [
+        {
+          "abbr": "app",
+          "expansion": "application",
+          "kind": "clipped"
+        }
+      ]
+    },
+    "web-url": {
+      "parts": [
+        {
+          "abbr": "URL",
+          "expansion": "Uniform Resource Locator",
+          "kind": "letters"
+        }
+      ]
+    }
+  }
+}

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { TermRow } from '../lib/database.types';
 import { PATH_META } from '../lib/database.types';
 import { LessonBody } from './lesson-body';
+import { ExpansionLine } from './expansion-line';
 import { ConceptIllustration } from './concept-illustration';
 import { illustrationFor } from '../lib/lesson-illustrations';
 import { toSentenceCase } from '../lib/lesson-text';
@@ -77,6 +78,7 @@ export function LearnCard({ term, onReady }: Props) {
         {term.pronunciation && (
           <p className="text-sm font-mono text-text-secondary mt-1">/ {term.pronunciation} /</p>
         )}
+        <ExpansionLine term={term.term} expansion={term.expansion} />
       </div>
 
       {/* Scrollable middle — full context, never truncated. pb-6 keeps a little

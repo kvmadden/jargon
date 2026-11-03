@@ -17,6 +17,7 @@ import { ReportAnalogyButton } from '../components/report-analogy-button';
 import { JargonTerm } from '../components/jargon-term';
 import { GlossaryText } from '../components/glossary-text';
 import { LessonBody } from '../components/lesson-body';
+import { ExpansionLine } from '../components/expansion-line';
 import { ConceptIllustration } from '../components/concept-illustration';
 import { illustrationFor } from '../lib/lesson-illustrations';
 import { toSentenceCase } from '../lib/lesson-text';
@@ -546,6 +547,7 @@ function TermDetailContent() {
             )}
             <PronounceButton text={term.term} />
           </div>
+          <ExpansionLine term={term.term} expansion={term.expansion} />
           <p className="text-base text-text-primary mt-4 leading-relaxed">
             {toSentenceCase(term.one_line_definition)}
           </p>

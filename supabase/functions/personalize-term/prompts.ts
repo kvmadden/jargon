@@ -61,6 +61,7 @@ RULES:
 - Match the canonical's length within ±20%. A rewrite under 0.4 times or over 2 times the canonical length is rejected. Do not pad. Do not professor-mode.
 - Preserve every technical fact in the canonical entry. The user is learning the real meaning; analogy is the on-ramp, not the destination.
 - Style: sentence case with full punctuation. Capitalize the first word of every sentence, and end every sentence with a period. Keep the term's own name exactly as the canonical entry writes it, even if it is lowercase. Use short sentences. In long_definition, open with one plain sentence that says what the term is, then two or three short sentences, because the app shows each sentence after the first as a bullet. No exclamation points. No "Imagine if…" / "Picture this…" preamble.
+- EXPANSION: when the user message gives one, the app shows it above the lesson exactly as written. Never contradict it, reword it, or give the letters a different meaning.
 - REQUIRED COMPARISON: the user message gives one comparison a person reviewed for this term and the learner's field. Use it word for word as one sentence of long_definition. Do not add any other analogy, metaphor or comparison.
 - example_in_sentence MUST be one sentence that uses the term naturally in a context the user would actually encounter or recognize. Not a textbook example.
 - If the user profile is sparse (e.g. only education level filled in), lean on education-appropriate plain-English analogies and keep close to the canonical structure.
@@ -169,6 +170,8 @@ export const pass3SystemPrompt = pass1SystemPrompt;
 export interface TermRow {
   id: string;
   term: string;
+  /** What the term's abbreviation stands for (terms.expansion, 2026-11-03). */
+  expansion?: { parts?: Array<{ abbr: string; expansion: string; kind: string }>; not_abbreviation?: boolean } | null;
   one_line_definition: string;
   long_definition: string;
   example_in_sentence: string;
@@ -361,8 +364,17 @@ export function formatKnownVocabulary(names: KnownVocabulary): string {
 
 // Canonical fields are flattened to one line each, so a stored line break in a
 // term cannot start a forged prompt section.
+/** "RLS stands for row-level security." lines from the term's expansion data, or ''. */
+export function expansionSentences(term: TermRow): string {
+  const parts = term.expansion && !term.expansion.not_abbreviation ? term.expansion.parts ?? [] : [];
+  return parts
+    .map((p) => (p.kind === 'clipped' ? `${oneLine(p.abbr, 40)} is short for ${oneLine(p.expansion, 120)}.` : `${oneLine(p.abbr, 40)} stands for ${oneLine(p.expansion, 120)}.`))
+    .join(' ');
+}
+
 function canonicalBlock(term: TermRow): string {
-  return `TERM: ${oneLine(term.term, 200)}
+  const expansion = expansionSentences(term);
+  return `TERM: ${oneLine(term.term, 200)}${expansion ? `\nEXPANSION (shown to the learner above the lesson, word for word): ${expansion}` : ''}
 ONE-LINE DEFINITION: ${oneLine(term.one_line_definition, 1000)}
 
 CANONICAL LONG DEFINITION:

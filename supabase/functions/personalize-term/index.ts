@@ -237,7 +237,7 @@ Deno.serve(async (req) => {
   // ─── Canonical term, profile, cached rendering ───────────────────────────────
   const { data: term, error: termErr } = await supabase
     .from('terms')
-    .select('id, term, one_line_definition, long_definition, example_in_sentence, why_it_matters, domain')
+    .select('id, term, expansion, one_line_definition, long_definition, example_in_sentence, why_it_matters, domain')
     .eq('id', body.termId)
     .maybeSingle();
   if (termErr || !term) return jsonResponse(req, { error: 'term not found' }, 404);
