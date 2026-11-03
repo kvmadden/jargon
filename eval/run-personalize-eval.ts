@@ -21,6 +21,8 @@
 //   --terms <file>         terms file (default eval/data/terms.json, the frozen
 //                          2026-10-30 input)
 //   --profiles <file>      profiles file (default eval/data/profiles.json)
+//   --results-dir <dir>    where to write <EVAL_DATE>.jsonl and its meta file
+//                          (default eval/results). Frozen files are refused.
 //
 // Each row records the manifest hash: prompts, pipeline, gate, model, prompt
 // version, terms and profiles. Resuming a results file written under a
@@ -35,7 +37,7 @@ import { runPersonalization } from '../supabase/functions/personalize-term/pipel
 import { APPROVED_ANALOGIES } from '../supabase/functions/personalize-term/approved-analogies.ts';
 import { PERSONALIZE_MODEL } from '../supabase/functions/personalize-term/prompts.ts';
 import { MODEL_PRICES, PRICES_CHECKED_ON } from '../supabase/functions/_shared/pricing.ts';
-import { MANIFEST_SOURCES, canStartItem, checkResume, httpCallModel, manifestHash, worstCaseItemUsd } from './lib/eval-lib.ts';
+import { MANIFEST_SOURCES, canStartItem, checkResume, httpCallModel, manifestHash, outputPaths, worstCaseItemUsd } from './lib/eval-lib.ts';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p: string) => readFileSync(resolve(ROOT, p), 'utf8');
@@ -72,14 +74,16 @@ const profilesFile = JSON.parse(profilesSrc);
 const profiles = profilesFile.profiles as any[];
 const knownVocabulary: string[] = profilesFile.known_vocabulary ?? [];
 
-const RESULTS_DIR = join(ROOT, 'eval/results');
-const RESULTS_PATH = join(RESULTS_DIR, `${EVAL_DATE}.jsonl`);
-mkdirSync(RESULTS_DIR, { recursive: true });
 const frozen = JSON.parse(read('eval/frozen-artifacts.json')).files as Record<string, string>;
-if (Object.keys(frozen).some((p) => resolve(ROOT, p) === RESULTS_PATH)) {
-  console.error(`${EVAL_DATE}.jsonl is a frozen artifact. Use a new EVAL_DATE.`);
+let RESULTS_PATH: string;
+let META_PATH: string;
+try {
+  ({ results: RESULTS_PATH, meta: META_PATH } = outputPaths(ROOT, flag('--results-dir') ?? 'eval/results', EVAL_DATE, frozen));
+} catch (err: any) {
+  console.error(err?.message ?? String(err));
   process.exit(2);
 }
+mkdirSync(dirname(RESULTS_PATH), { recursive: true });
 
 // Interleaved: round r takes the r-th term of every category, each with every
 // profile, so a budget stop leaves a set balanced across categories and profiles.
@@ -183,7 +187,7 @@ async function main() {
   }
   await Promise.all(Array.from({ length: CONCURRENCY }, worker));
   writeFileSync(
-    join(RESULTS_DIR, `${EVAL_DATE}-meta.json`),
+    META_PATH,
     JSON.stringify(
       {
         eval_date: EVAL_DATE,

@@ -14,6 +14,7 @@ import {
   wilson95,
   worstCaseItemUsd,
   MANIFEST_SOURCES,
+  outputPaths,
   type FetchLike,
 } from '../../eval/lib/eval-lib.ts';
 import { buildReport } from '../../eval/report.ts';
@@ -187,6 +188,22 @@ describe('httpCallModel', () => {
     );
     expect(out.status).toBe('cached');
     expect(out.accepted).toEqual(rendering);
+  });
+});
+
+describe('outputPaths', () => {
+  const frozen = JSON.parse(read('eval/frozen-artifacts.json')).files;
+
+  it('writes a new run into its own folder', () => {
+    const p = outputPaths(ROOT, 'eval/results/run-2026-11-10', '2026-11-10', frozen);
+    expect(p.results).toBe(resolve(ROOT, 'eval/results/run-2026-11-10/2026-11-10.jsonl'));
+    expect(p.meta).toBe(resolve(ROOT, 'eval/results/run-2026-11-10/2026-11-10-meta.json'));
+  });
+
+  it('refuses to overwrite a frozen run (2026-10-30 or the smoke run), and a malformed date', () => {
+    expect(() => outputPaths(ROOT, 'eval/results', '2026-10-30', frozen)).toThrow(/frozen artifact/);
+    expect(() => outputPaths(ROOT, 'eval/results/smoke-2026-11-03', '2026-11-03', frozen)).toThrow(/frozen artifact/);
+    expect(() => outputPaths(ROOT, 'eval/results', '../x', frozen)).toThrow(/YYYY-MM-DD/);
   });
 });
 

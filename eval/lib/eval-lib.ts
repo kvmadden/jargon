@@ -4,6 +4,7 @@
 // src/lib/eval-lib.test.ts tests them offline.
 
 import { createHash } from 'node:crypto';
+import { join, relative, resolve } from 'node:path';
 import { checkRendering, type GateResult } from '../../supabase/functions/personalize-term/claim-gate.ts';
 import { worstCaseRequestUsd, type CallModel, type ModelReply } from '../../supabase/functions/personalize-term/pipeline.ts';
 import { splitSentences } from '../../supabase/functions/personalize-term/claim-text.ts';
@@ -282,4 +283,27 @@ export function replayGate(
     });
   }
   return out;
+}
+
+// ─── Output paths ──────────────────────────────────────────────────────────────
+
+/**
+ * Where a run writes its rows and its meta file. Refuses any path pinned in
+ * eval/frozen-artifacts.json, so a new run can never overwrite frozen evidence.
+ */
+export function outputPaths(
+  root: string,
+  resultsDir: string,
+  date: string,
+  frozenFiles: Record<string, string>,
+): { results: string; meta: string } {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error(`EVAL_DATE must be YYYY-MM-DD, got ${date}`);
+  const dir = resolve(root, resultsDir);
+  const results = join(dir, `${date}.jsonl`);
+  const meta = join(dir, `${date}-meta.json`);
+  const frozen = new Set(Object.keys(frozenFiles).map((p) => resolve(root, p)));
+  for (const path of [results, meta]) {
+    if (frozen.has(path)) throw new Error(`${relative(root, path)} is a frozen artifact. Use another --results-dir or EVAL_DATE.`);
+  }
+  return { results, meta };
 }
