@@ -65,6 +65,12 @@ flowchart TD
 
 The logo, titles and term names stay lowercase. Lesson sentences display in sentence case with full punctuation, a definition reads as one lead sentence plus bullets, and seven terms get a small diagram drawn in code (`src/lib/lesson-text.ts`, `src/components/lesson-body.tsx`, `src/components/concept-illustration.tsx`). The stored canonical text is not rewritten. It is formatted for display, and the prompts ask the model to write the same way.
 
+A diagram pill always has room around its text, and a flow sits on one line when it fits. When it does not fit, the flow becomes a vertical stack with down arrows instead of wrapping partway. A browser test checks every diagram at five screen sizes (`tests/e2e/lesson-layout.spec.ts`).
+
+When a term is an abbreviation, an initialism, an acronym or a clipped word, the line right under its title says what it stands for, before the definition: "RLS stands for Row-Level Security", with the letters marked, or "Short for repository". The expansions are data on each term (`supabase/term-expansions.json`, loaded by a migration), so lessons written by the model show the same line. Nine of the 147 entries are marked for a person to confirm.
+
+On a laptop or desktop the term page is a reading column of about 65 characters beside a side panel with the diagram, the next step and related terms. Search and feedback sit in a top bar there instead of floating over the page. Phones keep one column. The look borrows from a field notebook: warm dark paper, a marker orange accent and a mono face for term names, since the app is about learning technical words through your own job.
+
 ## Evaluation
 
 **Honest headline.** One development run on 2026-10-30 covered 79 of 120 planned items: 27 of 40 terms, no hard term, and 3 profiles written by the author, all with an empty learned vocabulary. The same model family generated and verified, and the verifier accepted 78 of 79. Of the 4 errors the rewrites introduced, the verifier caught **0 of 4** (95% CI 0-49%), and all 4 sat in outputs that used an analogy. Counting errors copied from wrong canonical entries, at least **9 of 78** accepted outputs (12%, 95% CI 6-20%) showed a learner a claim judged wrong. Only 5 of those 9 were confirmed by a person, after an AI screen flagged them, and 73 of the 78 accepted outputs never had an expert read. There was no baseline. There is no measured learning benefit.
