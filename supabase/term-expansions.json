@@ -1,5 +1,5 @@
 {
-  "note": "What each abbreviation, initialism, acronym or clipped word in a term name stands for. Written on 2026-11-03 by Claude from general knowledge. Entries with \"review\" need a person to confirm the wording. \"not_abbreviation\" marks a name that looks like one but is not. The migration 20261103000400_term_expansions.sql and the update block at the end of supabase/seed.sql are generated from this file, and a test keeps them equal.",
+  "note": "What each abbreviation, initialism, acronym or clipped word in a term name stands for. Written on 2026-11-03 by Claude from general knowledge. Kevin approved the migration and confirmed every entry on 2026-11-03, including the nine that carry a \"note\" on why they needed a person. \"not_abbreviation\" marks a name that looks like one but is not. The migration 20261103000400_term_expansions.sql and the update block at the end of supabase/seed.sql are generated from this file, and a test keeps them equal.",
   "terms": {
     "agile-code-review": {
       "parts": [
@@ -443,7 +443,7 @@
           "kind": "letters"
         }
       ],
-      "review": "Originally superuser do. Newer documentation reads it as substitute user do, since it can run a command as any user."
+      "note": "Originally superuser do. Newer documentation reads it as substitute user do, since it can run a command as any user."
     },
     "cloud-cdn": {
       "parts": [
@@ -584,7 +584,7 @@
           "kind": "letters"
         }
       ],
-      "review": "SAP is a company name. The expansion is the English form of the founders' German name, and the company rarely uses it."
+      "note": "SAP is a company name. The expansion is the English form of the founders' German name, and the company rarely uses it."
     },
     "ent-servicenow": {
       "not_abbreviation": true
@@ -669,7 +669,7 @@
           "kind": "letters"
         }
       ],
-      "review": "ARM first stood for Acorn RISC Machine, later Advanced RISC Machines, and the company now writes Arm as a name. RISC is itself short for reduced instruction set computer."
+      "note": "ARM first stood for Acorn RISC Machine, later Advanced RISC Machines, and the company now writes Arm as a name. RISC is itself short for reduced instruction set computer."
     },
     "hw-bios-uefi": {
       "parts": [
@@ -798,7 +798,7 @@
           "kind": "clipped"
         }
       ],
-      "review": "\"admin\" can also mean administrator. In \"admin center\" it is read as administration."
+      "note": "\"admin\" can also mean administrator. In \"admin center\" it is read as administration."
     },
     "ms365-entra": {
       "parts": [
@@ -808,7 +808,7 @@
           "kind": "clipped"
         }
       ],
-      "review": "In Microsoft Entra ID, Microsoft treats \"ID\" as identity. It is a product name, so a reviewer should confirm the wording."
+      "note": "In Microsoft Entra ID, Microsoft treats \"ID\" as identity. It is a product name, so a reviewer should confirm the wording."
     },
     "net-dns": {
       "parts": [
@@ -944,7 +944,7 @@
           "kind": "letters"
         }
       ],
-      "review": "MTTR is also read as mean time to repair or to restore. The canonical entry uses recovery."
+      "note": "MTTR is also read as mean time to repair or to restore. The canonical entry uses recovery."
     },
     "qa-sla": {
       "parts": [
@@ -1080,7 +1080,7 @@
           "kind": "clipped"
         }
       ],
-      "review": "GraphQL is a product name. \"QL\" is commonly read as query language, but the project does not publish an official expansion."
+      "note": "GraphQL is a product name. \"QL\" is commonly read as query language, but the project does not publish an official expansion."
     },
     "sys-http-header": {
       "parts": [
@@ -1158,7 +1158,7 @@
           "kind": "letters"
         }
       ],
-      "review": "Usage varies: some sources say \"not only SQL\", others \"non-SQL\" or \"non-relational\"."
+      "note": "Usage varies: some sources say \"not only SQL\", others \"non-SQL\" or \"non-relational\"."
     },
     "sys-pub-sub": {
       "parts": [
@@ -1233,7 +1233,7 @@
     },
     "tool-npm": {
       "not_abbreviation": true,
-      "review": "npm's own documentation says the name is not an acronym, though many people read it as Node Package Manager."
+      "note": "npm's own documentation says the name is not an acronym, though many people read it as Node Package Manager."
     },
     "tool-pnpm": {
       "parts": [

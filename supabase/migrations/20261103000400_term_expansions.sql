@@ -6,7 +6,8 @@
 --   {"parts": [{"abbr": "RLS", "expansion": "row-level security", "kind": "letters"}]}
 --   {"parts": [{"abbr": "repo", "expansion": "repository", "kind": "clipped"}]}
 --   {"not_abbreviation": true}  (looks like one, but is a name)
--- An entry may carry "review" with the reason a person should confirm it.
+-- An entry may carry "note" with the reason it needed a person. Kevin
+-- confirmed every entry on 2026-11-03.
 --
 -- Generated from supabase/term-expansions.json. Safe to rerun: each update
 -- sets the same value again.
@@ -62,7 +63,7 @@ update terms set expansion = '{"parts": [{"abbr": "ls", "expansion": "list", "ki
 update terms set expansion = '{"parts": [{"abbr": "man", "expansion": "manual", "kind": "clipped"}]}'::jsonb where id = 'cli-manpage';
 update terms set expansion = '{"parts": [{"abbr": "mv", "expansion": "move", "kind": "clipped"}]}'::jsonb where id = 'cli-mv';
 update terms set expansion = '{"parts": [{"abbr": "rm", "expansion": "remove", "kind": "clipped"}]}'::jsonb where id = 'cli-rm';
-update terms set expansion = '{"parts": [{"abbr": "sudo", "expansion": "superuser do", "kind": "letters"}], "review": "Originally superuser do. Newer documentation reads it as substitute user do, since it can run a command as any user."}'::jsonb where id = 'cli-sudo';
+update terms set expansion = '{"note": "Originally superuser do. Newer documentation reads it as substitute user do, since it can run a command as any user.", "parts": [{"abbr": "sudo", "expansion": "superuser do", "kind": "letters"}]}'::jsonb where id = 'cli-sudo';
 update terms set expansion = '{"parts": [{"abbr": "CDN", "expansion": "content delivery network", "kind": "letters"}]}'::jsonb where id = 'cloud-cdn';
 update terms set expansion = '{"parts": [{"abbr": "Redis", "expansion": "Remote Dictionary Server", "kind": "letters"}]}'::jsonb where id = 'data-redis';
 update terms set expansion = '{"parts": [{"abbr": "API", "expansion": "application programming interface", "kind": "letters"}]}'::jsonb where id = 'dev-api';
@@ -81,7 +82,7 @@ update terms set expansion = '{"not_abbreviation": true}'::jsonb where id = 'ent
 update terms set expansion = '{"not_abbreviation": true}'::jsonb where id = 'ent-jira';
 update terms set expansion = '{"parts": [{"abbr": "k8s", "expansion": "Kubernetes, counting the 8 letters between k and s", "kind": "clipped"}]}'::jsonb where id = 'ent-kubernetes';
 update terms set expansion = '{"parts": [{"abbr": "BI", "expansion": "business intelligence", "kind": "letters"}]}'::jsonb where id = 'ent-powerbi';
-update terms set expansion = '{"parts": [{"abbr": "SAP", "expansion": "Systems, Applications and Products in Data Processing", "kind": "letters"}], "review": "SAP is a company name. The expansion is the English form of the founders'' German name, and the company rarely uses it."}'::jsonb where id = 'ent-sap';
+update terms set expansion = '{"note": "SAP is a company name. The expansion is the English form of the founders'' German name, and the company rarely uses it.", "parts": [{"abbr": "SAP", "expansion": "Systems, Applications and Products in Data Processing", "kind": "letters"}]}'::jsonb where id = 'ent-sap';
 update terms set expansion = '{"not_abbreviation": true}'::jsonb where id = 'ent-servicenow';
 update terms set expansion = '{"parts": [{"abbr": "PR", "expansion": "pull request", "kind": "letters"}]}'::jsonb where id = 'ent-stacked-pr';
 update terms set expansion = '{"not_abbreviation": true}'::jsonb where id = 'excel-pivot-table';
@@ -93,7 +94,7 @@ update terms set expansion = '{"parts": [{"abbr": "PR", "expansion": "pull reque
 update terms set expansion = '{"parts": [{"abbr": "diff", "expansion": "difference", "kind": "clipped"}]}'::jsonb where id = 'git-diff';
 update terms set expansion = '{"not_abbreviation": true}'::jsonb where id = 'git-head';
 update terms set expansion = '{"parts": [{"abbr": "PR", "expansion": "pull request", "kind": "letters"}]}'::jsonb where id = 'git-pr';
-update terms set expansion = '{"parts": [{"abbr": "ARM", "expansion": "Advanced RISC Machines", "kind": "letters"}], "review": "ARM first stood for Acorn RISC Machine, later Advanced RISC Machines, and the company now writes Arm as a name. RISC is itself short for reduced instruction set computer."}'::jsonb where id = 'hw-arm';
+update terms set expansion = '{"note": "ARM first stood for Acorn RISC Machine, later Advanced RISC Machines, and the company now writes Arm as a name. RISC is itself short for reduced instruction set computer.", "parts": [{"abbr": "ARM", "expansion": "Advanced RISC Machines", "kind": "letters"}]}'::jsonb where id = 'hw-arm';
 update terms set expansion = '{"parts": [{"abbr": "BIOS", "expansion": "Basic Input/Output System", "kind": "letters"}, {"abbr": "UEFI", "expansion": "Unified Extensible Firmware Interface", "kind": "letters"}]}'::jsonb where id = 'hw-bios-uefi';
 update terms set expansion = '{"parts": [{"abbr": "CPU", "expansion": "central processing unit", "kind": "letters"}]}'::jsonb where id = 'hw-cache';
 update terms set expansion = '{"parts": [{"abbr": "CPU", "expansion": "central processing unit", "kind": "letters"}]}'::jsonb where id = 'hw-cpu';
@@ -108,8 +109,8 @@ update terms set expansion = '{"parts": [{"abbr": "HTML", "expansion": "Hypertex
 update terms set expansion = '{"not_abbreviation": true}'::jsonb where id = 'lang-javascript';
 update terms set expansion = '{"parts": [{"abbr": "SQL", "expansion": "Structured Query Language", "kind": "letters"}]}'::jsonb where id = 'lang-sql';
 update terms set expansion = '{"not_abbreviation": true}'::jsonb where id = 'lang-typescript';
-update terms set expansion = '{"parts": [{"abbr": "admin", "expansion": "administration", "kind": "clipped"}], "review": "\"admin\" can also mean administrator. In \"admin center\" it is read as administration."}'::jsonb where id = 'ms365-admin-center';
-update terms set expansion = '{"parts": [{"abbr": "ID", "expansion": "identity", "kind": "clipped"}], "review": "In Microsoft Entra ID, Microsoft treats \"ID\" as identity. It is a product name, so a reviewer should confirm the wording."}'::jsonb where id = 'ms365-entra';
+update terms set expansion = '{"note": "\"admin\" can also mean administrator. In \"admin center\" it is read as administration.", "parts": [{"abbr": "admin", "expansion": "administration", "kind": "clipped"}]}'::jsonb where id = 'ms365-admin-center';
+update terms set expansion = '{"note": "In Microsoft Entra ID, Microsoft treats \"ID\" as identity. It is a product name, so a reviewer should confirm the wording.", "parts": [{"abbr": "ID", "expansion": "identity", "kind": "clipped"}]}'::jsonb where id = 'ms365-entra';
 update terms set expansion = '{"parts": [{"abbr": "DNS", "expansion": "Domain Name System", "kind": "letters"}]}'::jsonb where id = 'net-dns';
 update terms set expansion = '{"parts": [{"abbr": "IP", "expansion": "Internet Protocol", "kind": "letters"}]}'::jsonb where id = 'net-ip-address';
 update terms set expansion = '{"parts": [{"abbr": "TCP", "expansion": "Transmission Control Protocol", "kind": "letters"}]}'::jsonb where id = 'net-tcp';
@@ -124,7 +125,7 @@ update terms set expansion = '{"parts": [{"abbr": "KPI", "expansion": "key perfo
 update terms set expansion = '{"parts": [{"abbr": "OKR", "expansion": "objectives and key results", "kind": "letters"}]}'::jsonb where id = 'prod-okr';
 update terms set expansion = '{"parts": [{"abbr": "SSO", "expansion": "single sign-on", "kind": "letters"}]}'::jsonb where id = 'prod-sso';
 update terms set expansion = '{"parts": [{"abbr": "E2E", "expansion": "end-to-end", "kind": "letters"}]}'::jsonb where id = 'qa-e2e-test';
-update terms set expansion = '{"parts": [{"abbr": "MTTR", "expansion": "mean time to recovery", "kind": "letters"}], "review": "MTTR is also read as mean time to repair or to restore. The canonical entry uses recovery."}'::jsonb where id = 'qa-mttr';
+update terms set expansion = '{"note": "MTTR is also read as mean time to repair or to restore. The canonical entry uses recovery.", "parts": [{"abbr": "MTTR", "expansion": "mean time to recovery", "kind": "letters"}]}'::jsonb where id = 'qa-mttr';
 update terms set expansion = '{"parts": [{"abbr": "SLA", "expansion": "service-level agreement", "kind": "letters"}]}'::jsonb where id = 'qa-sla';
 update terms set expansion = '{"parts": [{"abbr": "SLO", "expansion": "service-level objective", "kind": "letters"}]}'::jsonb where id = 'qa-slo';
 update terms set expansion = '{"parts": [{"abbr": "FMEA", "expansion": "failure mode and effects analysis", "kind": "letters"}]}'::jsonb where id = 'se-fmea';
@@ -139,7 +140,7 @@ update terms set expansion = '{"parts": [{"abbr": "CDN", "expansion": "content d
 update terms set expansion = '{"parts": [{"abbr": "CORS", "expansion": "cross-origin resource sharing", "kind": "letters"}]}'::jsonb where id = 'sys-cors';
 update terms set expansion = '{"parts": [{"abbr": "DNS", "expansion": "Domain Name System", "kind": "letters"}]}'::jsonb where id = 'sys-dns';
 update terms set expansion = '{"parts": [{"abbr": "enum", "expansion": "enumeration", "kind": "clipped"}]}'::jsonb where id = 'sys-enum';
-update terms set expansion = '{"parts": [{"abbr": "GraphQL", "expansion": "graph query language", "kind": "clipped"}], "review": "GraphQL is a product name. \"QL\" is commonly read as query language, but the project does not publish an official expansion."}'::jsonb where id = 'sys-graphql';
+update terms set expansion = '{"note": "GraphQL is a product name. \"QL\" is commonly read as query language, but the project does not publish an official expansion.", "parts": [{"abbr": "GraphQL", "expansion": "graph query language", "kind": "clipped"}]}'::jsonb where id = 'sys-graphql';
 update terms set expansion = '{"parts": [{"abbr": "HTTP", "expansion": "Hypertext Transfer Protocol", "kind": "letters"}]}'::jsonb where id = 'sys-http-header';
 update terms set expansion = '{"parts": [{"abbr": "HTTP", "expansion": "Hypertext Transfer Protocol", "kind": "letters"}]}'::jsonb where id = 'sys-http-method';
 update terms set expansion = '{"parts": [{"abbr": "HTTP", "expansion": "Hypertext Transfer Protocol", "kind": "letters"}]}'::jsonb where id = 'sys-http-request';
@@ -147,7 +148,7 @@ update terms set expansion = '{"parts": [{"abbr": "HTTP", "expansion": "Hypertex
 update terms set expansion = '{"parts": [{"abbr": "HTTPS", "expansion": "Hypertext Transfer Protocol Secure", "kind": "letters"}, {"abbr": "TLS", "expansion": "Transport Layer Security", "kind": "letters"}]}'::jsonb where id = 'sys-https';
 update terms set expansion = '{"parts": [{"abbr": "JSON", "expansion": "JavaScript Object Notation", "kind": "letters"}]}'::jsonb where id = 'sys-json';
 update terms set expansion = '{"parts": [{"abbr": "JWT", "expansion": "JSON Web Token", "kind": "letters"}]}'::jsonb where id = 'sys-jwt';
-update terms set expansion = '{"parts": [{"abbr": "NoSQL", "expansion": "not only SQL", "kind": "letters"}], "review": "Usage varies: some sources say \"not only SQL\", others \"non-SQL\" or \"non-relational\"."}'::jsonb where id = 'sys-nosql';
+update terms set expansion = '{"note": "Usage varies: some sources say \"not only SQL\", others \"non-SQL\" or \"non-relational\".", "parts": [{"abbr": "NoSQL", "expansion": "not only SQL", "kind": "letters"}]}'::jsonb where id = 'sys-nosql';
 update terms set expansion = '{"parts": [{"abbr": "pub", "expansion": "publish", "kind": "clipped"}, {"abbr": "sub", "expansion": "subscribe", "kind": "clipped"}]}'::jsonb where id = 'sys-pub-sub';
 update terms set expansion = '{"parts": [{"abbr": "REST", "expansion": "representational state transfer", "kind": "letters"}]}'::jsonb where id = 'sys-rest';
 update terms set expansion = '{"parts": [{"abbr": "RLS", "expansion": "row-level security", "kind": "letters"}]}'::jsonb where id = 'sys-rls';
@@ -156,7 +157,7 @@ update terms set expansion = '{"parts": [{"abbr": "SLO", "expansion": "service-l
 update terms set expansion = '{"parts": [{"abbr": "SQL", "expansion": "Structured Query Language", "kind": "letters"}]}'::jsonb where id = 'sys-sql';
 update terms set expansion = '{"parts": [{"abbr": "SSO", "expansion": "single sign-on", "kind": "letters"}]}'::jsonb where id = 'sys-sso';
 update terms set expansion = '{"not_abbreviation": true}'::jsonb where id = 'sys-websocket';
-update terms set expansion = '{"not_abbreviation": true, "review": "npm''s own documentation says the name is not an acronym, though many people read it as Node Package Manager."}'::jsonb where id = 'tool-npm';
+update terms set expansion = '{"not_abbreviation": true, "note": "npm''s own documentation says the name is not an acronym, though many people read it as Node Package Manager."}'::jsonb where id = 'tool-npm';
 update terms set expansion = '{"parts": [{"abbr": "pnpm", "expansion": "performant npm", "kind": "letters"}]}'::jsonb where id = 'tool-pnpm';
 update terms set expansion = '{"parts": [{"abbr": "app", "expansion": "application", "kind": "clipped"}]}'::jsonb where id = 'web-spa';
 update terms set expansion = '{"parts": [{"abbr": "URL", "expansion": "Uniform Resource Locator", "kind": "letters"}]}'::jsonb where id = 'web-url';

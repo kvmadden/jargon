@@ -74,9 +74,10 @@ describe('term expansion data', () => {
     }
   });
 
-  it('lists the entries a person should confirm', () => {
-    const review = Object.entries(data.terms).filter(([, e]) => e.review).map(([id]) => id).sort();
-    expect(review).toEqual(['cli-sudo', 'ent-sap', 'hw-arm', 'ms365-admin-center', 'ms365-entra', 'qa-mttr', 'sys-graphql', 'sys-nosql', 'tool-npm']);
+  it('keeps the note on the nine entries Kevin confirmed, and nothing waits for review', () => {
+    const noted = Object.entries(data.terms).filter(([, e]) => e.note).map(([id]) => id).sort();
+    expect(noted).toEqual(['cli-sudo', 'ent-sap', 'hw-arm', 'ms365-admin-center', 'ms365-entra', 'qa-mttr', 'sys-graphql', 'sys-nosql', 'tool-npm']);
+    expect(Object.values(data.terms).some((e) => 'review' in e)).toBe(false);
   });
 });
 

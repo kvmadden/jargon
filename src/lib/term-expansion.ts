@@ -15,8 +15,8 @@ export interface ExpansionPart {
 export interface TermExpansion {
   parts?: ExpansionPart[];
   not_abbreviation?: boolean;
-  /** Why a person should confirm this entry. */
-  review?: string;
+  /** Why this entry needed a person (Kevin confirmed all of them, 2026-11-03). */
+  note?: string;
 }
 
 /** One word of an expansion, with the letter the abbreviation takes from it marked. */
