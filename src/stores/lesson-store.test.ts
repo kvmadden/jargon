@@ -381,6 +381,7 @@ describe('additional lesson-store actions', () => {
       xp: 0,
       correct: 0,
       total: 0,
+      ungraded: 0,
       accuracy: 0,
       avgTimeMs: 0,
     });
@@ -555,3 +556,24 @@ describe('additional lesson-store actions', () => {
   });
 });
 
+
+describe('totals() with ungraded answers', () => {
+  it('leaves an ungraded sentence out of correct and out of the accuracy denominator', () => {
+    const store = useLessonStore.getState();
+    store.reset();
+    for (const outcome of ['correct', 'wrong', 'ungraded', 'ungraded'] as const) {
+      useLessonStore.getState().recordResult({ termId: `t-${outcome}-${Math.random()}`, outcome, xpEarned: 0, quizType: 'sentence' });
+    }
+    const t = useLessonStore.getState().totals();
+    expect(t.total).toBe(4);
+    expect(t.ungraded).toBe(2);
+    expect(t.correct).toBe(1);
+    expect(t.accuracy).toBe(50);
+  });
+
+  it('reports 0 accuracy, not NaN, when nothing was graded', () => {
+    useLessonStore.getState().reset();
+    useLessonStore.getState().recordResult({ termId: 't1', outcome: 'ungraded', xpEarned: 0, quizType: 'sentence' });
+    expect(useLessonStore.getState().totals().accuracy).toBe(0);
+  });
+});

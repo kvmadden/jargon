@@ -7,7 +7,9 @@
 // supabase/functions/_shared/allowlist.ts).
 //
 // Request: POST { term, oneLineDefinition, exampleInSentence, userSubmission }
-// Response: { tier: 'pass' | 'partial' | 'fail', score: number, feedback: string, isFallback?: boolean }
+// Response: { tier: 'pass' | 'partial' | 'fail' | 'ungraded', score: number, feedback: string, isFallback?: boolean }
+// 'ungraded' (with isFallback) means no grade: a timeout, an error, the spend
+// cap, an unreadable reply, or a tier and score that disagree.
 //
 // The grader prompt below is verbatim from src/lib/grader.ts (Stage A) — this is the
 // canonical Opus 4.7 prompt referenced by SPEC.md §6.3 (sentence-quiz grader) and §7.
@@ -17,6 +19,7 @@ import Anthropic from 'https://esm.sh/@anthropic-ai/sdk@0.32.1';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
 import { getUserFromJWT } from '../_shared/auth.ts';
 import { corsHeaders, preflight, jsonResponse } from '../_shared/cors.ts';
+import { precheckSentence, tierMatchesScore } from '../_shared/grade-rules.ts';
 import { isAllowlisted } from '../_shared/allowlist.ts';
 import { vocabularyDescription } from '../_shared/domain-vocabulary.ts';
 import { checkSpend } from '../_shared/spend-guard.ts';
@@ -94,11 +97,19 @@ interface GradeRequest {
 }
 
 interface GradeResult {
-  tier: 'pass' | 'partial' | 'fail';
+  tier: 'pass' | 'partial' | 'fail' | 'ungraded';
   score: number;
   feedback: string;
   isFallback?: boolean;
 }
+
+// Every path that cannot grade returns this shape. It used to return partial
+// with score 50, which the client recorded as half right and counted as
+// correct. 'ungraded' writes no progress and earns no credit.
+function ungradedResponse(feedback: string): GradeResult {
+  return { tier: 'ungraded', score: 0, feedback, isFallback: true };
+}
+const NOT_GRADED = 'The grader did not answer, so this sentence was not graded and your progress is unchanged.';
 
 function buildUserMessage(req: GradeRequest): string {
   return `TERM: ${req.term}
@@ -109,7 +120,8 @@ LEARNER ANSWER:
 ${req.userSubmission}`;
 }
 
-function tryParseJson(raw: string): GradeResult | null {
+/** The model's grade, 'inconsistent' when its tier and score disagree, or null when unreadable. */
+function tryParseJson(raw: string): GradeResult | 'inconsistent' | null {
   const cleaned = raw
     .trim()
     .replace(/^```(?:json)?\s*/i, '')
@@ -124,11 +136,10 @@ function tryParseJson(raw: string): GradeResult | null {
       typeof parsed.feedback === 'string' &&
       ['pass', 'partial', 'fail'].includes(parsed.tier)
     ) {
-      return {
-        tier: parsed.tier,
-        score: Math.max(0, Math.min(100, Math.round(parsed.score))),
-        feedback: parsed.feedback,
-      };
+      const score = Math.max(0, Math.min(100, Math.round(parsed.score)));
+      // pass with 0, or fail with 100, is a contradiction, not a grade.
+      if (!tierMatchesScore(parsed.tier, score)) return 'inconsistent';
+      return { tier: parsed.tier, score, feedback: parsed.feedback };
     }
   } catch {
     // fall through
@@ -142,18 +153,10 @@ function tryParseJson(raw: string): GradeResult | null {
  * round-trips, but the server is authoritative.
  */
 function localPrecheck(req: GradeRequest): GradeResult | null {
-  const trimmed = req.userSubmission.trim();
-  if (trimmed.length === 0) {
-    return { tier: 'fail', score: 0, feedback: 'Try writing a full sentence.' };
-  }
-  const wordCount = trimmed.split(/\s+/).length;
-  if (wordCount < 2) {
-    return { tier: 'fail', score: 0, feedback: 'Try a full sentence — at least a subject and a verb.' };
-  }
-  if (trimmed.toLowerCase() === req.exampleInSentence.toLowerCase()) {
-    return { tier: 'fail', score: 0, feedback: 'Use your own words to show you understand.' };
-  }
-  return null;
+  // Shared with the client (grade-rules.ts): Unicode and whitespace are
+  // normalized before the verbatim check, and words are counted with
+  // Intl.Segmenter so Chinese and Japanese sentences are not one word.
+  return precheckSentence(req.userSubmission, req.exampleInSentence);
 }
 
 Deno.serve(async (req) => {
@@ -181,7 +184,8 @@ Deno.serve(async (req) => {
 
   const { user, error: userErr } = await getUserFromJWT(jwt, supabaseUrl, anonKey);
   if (userErr || !user?.email || !user?.id) {
-    return jsonResponse(req, { error: 'invalid jwt', detail: userErr ?? 'no email' }, 401);
+    if (userErr) console.error('[grade-sentence] jwt check failed:', userErr);
+    return jsonResponse(req, { error: 'invalid jwt' }, 401);
   }
   // Stage B+1.4-B: dynamic allowlist via `allowed_users` table. Service-role
   // client required because that table's RLS is service-role only by design.
@@ -234,19 +238,14 @@ Deno.serve(async (req) => {
     await writeLog(serviceClient, {
       user_id: user.id,
       term_label: body.term,
-      score: 50,
+      score: null,
       cost_usd: 0,
       latency_ms: Date.now() - startMs,
       status: 'skipped-over-cap',
     });
     return jsonResponse(
       req,
-      {
-        tier: 'partial',
-        score: 50,
-        feedback: 'Grader is at its monthly limit — gave you partial credit so you can keep moving.',
-        isFallback: true,
-      } as GradeResult,
+      ungradedResponse('The grader is at its monthly limit, so this sentence was not graded and your progress is unchanged.'),
       200,
     );
   }
@@ -257,17 +256,12 @@ Deno.serve(async (req) => {
     await writeLog(serviceClient, {
       user_id: user.id,
       term_label: body.term,
-      score: 50,
+      score: null,
       cost_usd: 0,
       latency_ms: Date.now() - startMs,
       status: 'fallback-misconfigured',
     });
-    return jsonResponse(req, {
-      tier: 'partial',
-      score: 50,
-      feedback: 'Grader misconfigured server-side; gave you partial credit.',
-      isFallback: true,
-    } as GradeResult, 200);
+    return jsonResponse(req, ungradedResponse(NOT_GRADED), 200);
   }
 
   const anthropic = new Anthropic({ apiKey: anthropicKey });
@@ -296,6 +290,17 @@ Deno.serve(async (req) => {
     const block = response?.content?.[0];
     if (block && block.type === 'text') {
       const parsed = tryParseJson(block.text);
+      if (parsed === 'inconsistent') {
+        await writeLog(serviceClient, {
+          user_id: user.id,
+          term_label: body.term,
+          score: null,
+          cost_usd: costUsd,
+          latency_ms: Date.now() - startMs,
+          status: 'fallback-inconsistent',
+        });
+        return jsonResponse(req, ungradedResponse(NOT_GRADED), 200);
+      }
       if (parsed) {
         await writeLog(serviceClient, {
           user_id: user.id,
@@ -311,36 +316,24 @@ Deno.serve(async (req) => {
     await writeLog(serviceClient, {
       user_id: user.id,
       term_label: body.term,
-      score: 50,
+      score: null,
       cost_usd: costUsd,
       latency_ms: Date.now() - startMs,
       status: 'fallback-parse',
     });
-    return jsonResponse(req, {
-      tier: 'partial',
-      score: 50,
-      feedback: 'Grader returned an unexpected response; gave you partial credit.',
-      isFallback: true,
-    } as GradeResult, 200);
+    return jsonResponse(req, ungradedResponse(NOT_GRADED), 200);
   } catch (err: any) {
     const isTimeout = err?.name === 'AbortError' || /abort/i.test(err?.message ?? '');
     console.error('[grade-sentence] error:', err);
     await writeLog(serviceClient, {
       user_id: user.id,
       term_label: body.term,
-      score: 50,
+      score: null,
       cost_usd: 0,
       latency_ms: Date.now() - startMs,
       status: isTimeout ? 'fallback-timeout' : 'fallback-anthropic-error',
     });
-    return jsonResponse(req, {
-      tier: 'partial',
-      score: 50,
-      feedback: isTimeout
-        ? 'Grader timed out — gave you partial credit so you can keep moving.'
-        : 'Grader encountered an error — gave you partial credit so you can keep moving.',
-      isFallback: true,
-    } as GradeResult, 200);
+    return jsonResponse(req, ungradedResponse(NOT_GRADED), 200);
   } finally {
     clearTimeout(timeoutId);
   }

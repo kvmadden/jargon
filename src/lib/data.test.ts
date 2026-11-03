@@ -860,6 +860,15 @@ describe('Data Layer hardening & error handling', () => {
       );
     });
 
+    it('refuses an ungraded answer, so a grader outage can never be written as progress', async () => {
+      const from = vi.mocked(supabase.from);
+      from.mockClear();
+      await expect(recordAnswer({ userId: 'user-1', term: validTerm, outcome: 'ungraded' as any, prev: undefined })).rejects.toThrowError(
+        expect.objectContaining({ code: 'VALIDATION_ERROR' })
+      );
+      expect(from).not.toHaveBeenCalled();
+    });
+
     it('throws database error if upsert fails', async () => {
       vi.mocked(supabase.from).mockReturnValue(createMockBuilder({ data: null, error: new Error('Upsert error') }));
       await expect(recordAnswer({ userId: 'user-1', term: validTerm, outcome: 'correct', prev: undefined })).rejects.toThrowError(
