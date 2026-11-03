@@ -1,0 +1,108 @@
+{
+  "note": "The three 2026-10-30 profiles plus a synthetic pharmacy technician. All invented.",
+  "known_vocabulary": [],
+  "profiles": [
+    {
+      "id": "nurse",
+      "label": "hospital nurse",
+      "user_id": "eval-nurse",
+      "education_level": "bachelors",
+      "job": "registered nurse on a medical-surgical unit at a community hospital, 12-hour day shifts",
+      "heritage": null,
+      "roles": [
+        "charge nurse a few shifts a month",
+        "precepts new graduate nurses"
+      ],
+      "interests": [
+        "trail running",
+        "gardening"
+      ],
+      "goals_freeform": "our hospital is rolling out new charting and AI documentation tools and I want to follow what the IT and vendor people are saying in meetings",
+      "goals_extended": null,
+      "encounter_contexts": [
+        "unit huddles",
+        "vendor training sessions",
+        "emails from hospital IT"
+      ],
+      "background_text": "eight years at the bedside. comfortable with the electronic health record, barcode medication administration, shift handoff reports and infusion pumps. no programming background.",
+      "personalization_enabled": true,
+      "profile_version": 1
+    },
+    {
+      "id": "pharmacist",
+      "label": "retail pharmacist",
+      "user_id": "eval-pharmacist",
+      "education_level": "doctorate",
+      "job": "staff pharmacist at a neighborhood retail pharmacy",
+      "heritage": null,
+      "roles": [
+        "immunizer",
+        "trains new pharmacy technicians"
+      ],
+      "interests": [
+        "cooking",
+        "college basketball"
+      ],
+      "goals_freeform": "the pharmacy software keeps changing and I want to understand the technical terms the help desk and software trainers use",
+      "goals_extended": null,
+      "encounter_contexts": [
+        "software release notes",
+        "help desk calls",
+        "online continuing-education courses"
+      ],
+      "background_text": "PharmD, eleven years in community pharmacy. daily work includes prescription verification, drug utilization review, insurance claim adjudication and rejections, prior authorizations, controlled-substance counts and immunizations. no programming background.",
+      "personalization_enabled": true,
+      "profile_version": 1
+    },
+    {
+      "id": "teacher",
+      "label": "high-school teacher",
+      "user_id": "eval-teacher",
+      "education_level": "masters",
+      "job": "high-school biology teacher at a public high school",
+      "heritage": null,
+      "roles": [
+        "coaches the cross-country team",
+        "sits on the school technology committee"
+      ],
+      "interests": [
+        "birdwatching",
+        "baking bread"
+      ],
+      "goals_freeform": "students use AI tools constantly and the district is choosing new software; I want to ask good questions on the technology committee",
+      "goals_extended": null,
+      "encounter_contexts": [
+        "technology committee meetings",
+        "district IT emails",
+        "conversations with students"
+      ],
+      "background_text": "fourteen years teaching biology and AP environmental science. uses the school's learning management system and a gradebook daily. writes lab rubrics and unit plans. no programming background.",
+      "personalization_enabled": true,
+      "profile_version": 1
+    },
+    {
+      "id": "pharmacy-technician",
+      "label": "pharmacy technician (synthetic)",
+      "user_id": "eval-pharmacy-technician",
+      "education_level": "some college",
+      "job": "certified pharmacy technician at a neighborhood retail pharmacy",
+      "heritage": null,
+      "roles": [
+        "runs the drive-thru window on weekends"
+      ],
+      "interests": [
+        "baking",
+        "soccer"
+      ],
+      "goals_freeform": "the pharmacy software keeps changing and I want to follow what the trainers say",
+      "goals_extended": null,
+      "encounter_contexts": [
+        "software training sessions",
+        "help desk calls"
+      ],
+      "background_text": "Certified pharmacy technician. Comfortable with the pharmacy system, no programming background.",
+      "personalization_enabled": true,
+      "profile_version": 1
+    }
+  ]
+}

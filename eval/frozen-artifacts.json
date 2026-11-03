@@ -1,5 +1,5 @@
 {
-  "note": "Inputs and outputs of the 2026-10-30 personalize eval, frozen as run. They are development data now (the claim gate and dev cases were built after reading them). eval/data/terms.json keeps the canonical text the run was checked against, including the three entries corrected on 2026-11-03. src/lib/eval-frozen-artifacts.test.ts checks these hashes. The 2026-11-03 smoke run (6 items, paid, development data) and its terms input are pinned the same way.",
+  "note": "Inputs and outputs of the 2026-10-30 personalize eval, frozen as run. They are development data now (the claim gate and dev cases were built after reading them). eval/data/terms.json keeps the canonical text the run was checked against, including the three entries corrected on 2026-11-03. src/lib/eval-frozen-artifacts.test.ts checks these hashes. The 2026-11-03 smoke run (6 items, paid, development data) and its terms input are pinned the same way. The 2026-11-03 v11 prompt check (6 items, paid, draft comparisons) and its inputs are pinned too.",
   "files": {
     "eval/data/terms.json": "37cfc3eb085dcf7ecfe04046248d30bee769b295d4e2733057cd141acb2906b9",
     "eval/data/profiles.json": "c99fcae99c5875315405485d645bcc2ea8429dbf3ab2404bb08642612b299588",
@@ -9,6 +9,10 @@
     "eval/results/2026-10-30-summary.md": "a757c0fc3061812aa12e73a40ff6e6d5bb770ec3f5b30f2bb379dacdcf9aee9f",
     "eval/data/terms-2026-11-03.json": "673b3c0ae4e47aa86dd97051cf799aab7e647b6886ca9b7de6d1e2f9ca530c2e",
     "eval/results/smoke-2026-11-03/2026-11-03.jsonl": "ad639abb5914d4cb4cd132b4c25825f0ee130d4a5b2d604e3154813c6cf872e3",
-    "eval/results/smoke-2026-11-03/2026-11-03-meta.json": "03a3c24b411d9931027bbf71e3fd583f5e7ea148aef89190a3a057edbf1ba8f1"
+    "eval/results/smoke-2026-11-03/2026-11-03-meta.json": "03a3c24b411d9931027bbf71e3fd583f5e7ea148aef89190a3a057edbf1ba8f1",
+    "eval/data/terms-bank-2026-11-03.json": "63a254606cdcff95e2c0468cd9e0d59b19ec5e46e259d6fa07c54aaf2087f539",
+    "eval/data/profiles-2026-11-03.json": "c8578dafb3cbb405d25a4935ab8ec3018f5ea461eebdc410b7cc8d1a812c15a0",
+    "eval/results/check-v11-2026-11-03/2026-11-03.jsonl": "cc1eaa360bd9459bdbf5c145fbad932712b95794ae933ab94feb30b432f658e5",
+    "eval/results/check-v11-2026-11-03/2026-11-03-meta.json": "d81dd054af24fd08fe49f46e24d213067cdea12d1d323559aa145ff1cdb9818c"
   }
 }

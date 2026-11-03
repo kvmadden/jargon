@@ -35,7 +35,7 @@ export const ANALOGY_BANK: readonly AnalogyEntry[] = [
   // bi-rls
   { termId: 'bi-rls', field: 'nurse', comparison: 'RLS is like cutting one printed assignment sheet into strips, so each nurse holds the strip with their own patients.', status: 'draft', draftedBy: DRAFT },
   { termId: 'bi-rls', field: 'pharmacist', comparison: 'RLS is like printing one fill report and handing each store the pages for its own prescriptions.', status: 'draft', draftedBy: DRAFT },
-  { termId: 'bi-rls', field: 'pharmacy_technician', comparison: 'RLS is like sorting one stack of printed labels into bins, one bin for each workstation.', status: 'draft', draftedBy: DRAFT },
+  { termId: 'bi-rls', field: 'pharmacy_technician', comparison: 'RLS is like giving each workstation a copy of the same fill list, folded so it shows that workstation’s prescriptions.', status: 'draft', draftedBy: DRAFT },
   { termId: 'bi-rls', field: 'teacher', comparison: 'RLS is like printing one gradebook and handing each teacher the pages for their own classes.', status: 'draft', draftedBy: DRAFT },
   // sys-jwt
   { termId: 'sys-jwt', field: 'nurse', comparison: 'A JWT is like a signed order: anyone can read it, and the signature tells you who wrote it.', status: 'draft', draftedBy: DRAFT },

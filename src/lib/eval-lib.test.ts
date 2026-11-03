@@ -14,6 +14,7 @@ import {
   wilson95,
   worstCaseItemUsd,
   MANIFEST_SOURCES,
+  analogyForItem,
   outputPaths,
   type FetchLike,
 } from '../../eval/lib/eval-lib.ts';
@@ -188,6 +189,18 @@ describe('httpCallModel', () => {
     );
     expect(out.status).toBe('cached');
     expect(out.accepted).toEqual(rendering);
+  });
+});
+
+describe('analogyForItem', () => {
+  it('uses a vetted comparison only, unless drafts are allowed for a prompt check', () => {
+    const nurse = { job: 'registered nurse' };
+    expect(analogyForItem('bi-rls', nurse, { allowDrafts: false }).entry).toBeNull();
+    const draft = analogyForItem('bi-rls', nurse, { allowDrafts: true });
+    expect(draft.draft).toBe(true);
+    expect(draft.entry?.field).toBe('nurse');
+    expect(analogyForItem('bi-rls', { job: 'accountant' }, { allowDrafts: true }).entry).toBeNull();
+    expect(analogyForItem('no-such-term', nurse, { allowDrafts: true }).entry).toBeNull();
   });
 });
 
