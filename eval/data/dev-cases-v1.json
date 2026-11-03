@@ -946,11 +946,11 @@
       "term_id": "sys-jwt",
       "profile_id": "nurse",
       "canonical_override": {
-        "long_definition": "JWT stands for JSON Web Token. It is a compact signed string with claims inside, often used to prove who a user is when calling an API, for example a portal that shows patient charts. The signature lets the server detect tampering."
+        "long_definition": "JWT stands for JSON Web Token. It is a compact signed string with claims inside, often used to prove who a user is when calling an API, for example a portal that shows each patient their prescription history. The signature lets the server detect tampering."
       },
       "rendering": {
         "long_definition": "JWT stands for JSON Web Token. it is a compact signed string with claims inside, used to prove who a user is when calling an API. the signature lets the server notice if anyone changed it.",
-        "why_it_matters": "JWTs show up in auth logs, edge functions and Supabase docs. being encoded is not the same as being safe, so a JWT still needs a sensible expiry and proper verification. a chart is like a signed certificate.",
+        "why_it_matters": "JWTs show up in auth logs, edge functions and Supabase docs. being encoded is not the same as being safe, so a JWT still needs a sensible expiry and proper verification. a prescription is like a signed certificate.",
         "example_in_sentence": "the edge function decodes the JWT to read the signed-in user id before it loads their data."
       },
       "verdict": {
@@ -964,7 +964,7 @@
           "analogy_about_learner_field"
         ]
       },
-      "note": "'chart' appears in the canonical entry, which used to drop it from the learner's field words.",
+      "note": "'prescription' appears in the canonical entry, which used to drop it from the learner's field words.",
       "added": "review round 2 (2026-11-03)",
       "kind": null
     },

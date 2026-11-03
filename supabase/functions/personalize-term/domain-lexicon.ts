@@ -35,7 +35,7 @@ export const FIELD_LEXICONS: readonly FieldLexicon[] = [
     // purpose (see AMBIGUOUS_TECH_WORDS), so a sentence about software is not
     // mistaken for one about the clinic.
     terms: [
-      'patient', 'chart', 'charting', 'ehr', 'emr', 'mar', 'ward', 'bedside', 'sbar', 'census', 'huddle', 'pump',
+      'patient', 'charting', 'ehr', 'emr', 'mar', 'ward', 'bedside', 'sbar', 'census', 'huddle', 'pump',
       'med', 'meds', 'medication', 'dose', 'dosing', 'titrate', 'prescription', 'prescriber', 'rx', 'refill',
       'dispense', 'dispensing', 'dispensed', 'vial', 'pharmacy', 'pharmacist', 'technician', 'pbm', 'adjudicate',
       'adjudication', 'formulary', 'dur', 'pdmp', 'narcotic', 'counseling', 'immunization', 'vaccine', 'clinic',
@@ -44,6 +44,7 @@ export const FIELD_LEXICONS: readonly FieldLexicon[] = [
       'prior auth', 'controlled substance', 'c-ii', 'break-the-glass', 'break the glass', 'charge nurse',
       'code blue', 'rapid response', 'drug interaction', 'lab result', 'pharmacy tech', 'prescription transfer',
       'medication administration', 'medical record', 'patient record', 'health record', 'float nurse',
+      'patient chart', 'medical chart', 'nursing chart',
       'float pool', 'medication list', 'nursing unit',
       // Ambiguous words in phrases where they only have the field meaning.
       'pharmacy store', 'store manager', 'your store', 'their store', 'another store', 'other store',
@@ -99,14 +100,14 @@ export const FIELD_LEXICONS: readonly FieldLexicon[] = [
  * Words that name something in a learner's field but also have an everyday
  * software meaning: a data store, JWT claims, a UI label, a unit test, a
  * parent commit, an alarm in a monitoring tool, a Kubernetes admission
- * controller, bug triage, a WHERE clause, an LLM judge. Matching them as field
+ * controller, bug triage, a WHERE clause, an LLM judge, a bar chart. Matching them as field
  * words held correct technical sentences (review round 2). They are never
  * field words, whether they come from a lexicon or from the profile. The cost:
  * a field claim worded only with these words is not recognized as one.
  */
 export const AMBIGUOUS_TECH_WORDS: ReadonlySet<string> = new Set(
   [
-    'store', 'claim', 'label', 'unit', 'chain', 'parent', 'shift', 'alarm', 'admission', 'triage', 'handoff',
+    'store', 'claim', 'label', 'unit', 'chain', 'parent', 'shift', 'alarm', 'admission', 'triage', 'handoff', 'chart',
     'hand-off', 'clause', 'filing', 'premium', 'rubric', 'principal', 'judge', 'reconcile', 'reconciliation',
     'blueprint', 'record', 'order', 'script', 'tech', 'provider', 'transfer', 'count', 'code', 'queue',
   ].map((w) => words(w)[0] ?? w),

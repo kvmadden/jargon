@@ -253,8 +253,17 @@ describe('learner-field vocabulary', () => {
   it('keeps field words even when the canonical entry uses them', () => {
     // The lexicon no longer depends on the canonical text. A sentence that only
     // restates the canonical entry is skipped by the gate instead.
-    expect(buildLearnerLexicon(nurse).words.has('chart')).toBe(true);
+    expect(buildLearnerLexicon(nurse).words.has('patient')).toBe(true);
     void canonical;
+  });
+
+  it('reads "chart" as a field word only in a patient-chart sense (smoke test false hold)', () => {
+    const pharmacist = profiles.get('pharmacist')!;
+    const lex = buildLearnerLexicon(pharmacist);
+    // From the 2026-11-03 smoke run: a graph, not a patient record.
+    expect(learnerFieldMentions('a margin percentage saved as a column gets summed or averaged row by row in a chart', lex)).toEqual([]);
+    expect(learnerFieldMentions('the patient chart shows the allergy list', lex)).toEqual(expect.arrayContaining(['patient chart']));
+    expect(learnerFieldMentions('charting takes most of the shift', buildLearnerLexicon(nurse))).toContain('charting');
   });
 
   it('switches a field on from a trigger word with a plural form', () => {
