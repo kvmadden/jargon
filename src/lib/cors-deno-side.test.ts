@@ -14,6 +14,8 @@
 // NOT been given a production origin list, with an explicit env escape hatch.
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 // @ts-expect-error — _shared lives outside the TS root config but is pure TS.
 import { corsHeaders, preflight, jsonResponse } from '../../supabase/functions/_shared/cors.ts';
 
@@ -73,6 +75,14 @@ describe('corsHeaders — an unconfigured (local/dev) deploy: unchanged (control
     expect(allowOrigin(reqFrom('http://127.0.0.1:5173'))).toBe('http://127.0.0.1:5173');
     expect(allowOrigin(reqFrom('http://localhost:5200'))).toBe('http://localhost:5200');
     expect(allowOrigin(reqFrom('http://127.0.0.1:5200'))).toBe('http://127.0.0.1:5200');
+  });
+
+  it('allows the port vite.config.ts actually serves on', () => {
+    const vite = readFileSync(resolve(__dirname, '../../vite.config.ts'), 'utf8');
+    const port = vite.match(/server:\s*{\s*port:\s*(\d+)/)?.[1];
+    expect(port).toBe('5182');
+    expect(allowOrigin(reqFrom(`http://localhost:${port}`))).toBe(`http://localhost:${port}`);
+    expect(allowOrigin(reqFrom(`http://127.0.0.1:${port}`))).toBe(`http://127.0.0.1:${port}`);
   });
 
   it('falls back to localhost:5173 for an unknown origin', () => {
