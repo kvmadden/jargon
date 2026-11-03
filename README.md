@@ -123,7 +123,7 @@ After `npm install`, launch the offline review with one command:
 npm run dev:evaluation
 ```
 
-Open <http://localhost:5182/evaluation.html>. No environment file, sign-in,
+Open `/evaluation.html` at the address it prints. No environment file, sign-in,
 backend or model key is needed. The page reads the committed 79-run JSONL,
 expert-confirmation IDs and source review notes. It runs the actual supplemental
 `checkCandidateClaims` library on the saved synthetic learner outputs.
@@ -161,7 +161,7 @@ Requirements: Node 20+, and the Supabase CLI plus Docker if you want a local bac
 ```sh
 npm install
 cp .env.example .env.local      # then fill in values
-npm run dev                     # http://localhost:5182
+npm run dev                     # prints a local address, open it
 npm test                        # unit tests
 npm run build                   # type-check and production build
 ```

@@ -37,14 +37,14 @@ Exit 0, nine passed in two files. Tests exercise the saved five misses, unchange
 
 ## Untouched control parity
 
-Created a fresh clone outside the estate, without sibling repositories:
+Created a fresh clone in a temporary folder, without sibling repositories:
 
 ```sh
-git clone --no-local --branch main <local-clone> /tmp/jargon-control-yvy4toto
+git clone --no-local --branch main <local-clone> <tmp>/jargon-control-yvy4toto
 npm ci --ignore-scripts=false
 ```
 
-Both commands exited 0. Lifecycle scripts were enabled. Node `v24.14.1`, npm lockfile unchanged. Both control and candidate have lockfile SHA-256 `2cd285d0c457aba21001488a2d78877fa07f8baecca648fa006745403d082322`. `MFW_UMBRELLA_ROOT` and `OPERATOR_ECOSYSTEM_ROOT` were removed from the environment for both sets of gate commands. The exact control was cleaned up after preserving evidence.
+Both commands exited 0. Lifecycle scripts were enabled. Node `v24.14.1`, npm lockfile unchanged. Both control and candidate have lockfile SHA-256 `2cd285d0c457aba21001488a2d78877fa07f8baecca648fa006745403d082322`. The workspace root variables were removed from the environment for both sets of gate commands. The exact control was cleaned up after preserving evidence.
 
 The full repository gate is `npm run pre-deploy`, which runs the auth-gate tests, TypeScript/Vite build, full Vitest suite, version synchronization and source checks. The ACL test was also attempted on both trees.
 

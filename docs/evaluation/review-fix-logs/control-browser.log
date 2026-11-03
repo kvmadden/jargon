@@ -408,7 +408,7 @@ Running 98 tests using 1 worker
       282 |     await expect(page.getByPlaceholder(/paste a claude code transcript/i)).toBeVisible();
       283 |   });
       284 | });
-        at /private/tmp/jargon-review-control-20261101/tests/e2e/routes-flow.spec.ts:281:78
+        at <tmp>/jargon-review-control-20261101/tests/e2e/routes-flow.spec.ts:281:78
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     test-results/routes-flow-route-group-na-7412a--home-to-spotted-paste-mode-iphone-14/test-failed-1.png
@@ -999,7 +999,7 @@ Running 98 tests using 1 worker
       282 |     await expect(page.getByPlaceholder(/paste a claude code transcript/i)).toBeVisible();
       283 |   });
       284 | });
-        at /private/tmp/jargon-review-control-20261101/tests/e2e/routes-flow.spec.ts:281:78
+        at <tmp>/jargon-review-control-20261101/tests/e2e/routes-flow.spec.ts:281:78
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     test-results/routes-flow-route-group-na-7412a--home-to-spotted-paste-mode-iphone-16-pro-max/test-failed-1.png

@@ -39,7 +39,7 @@ npm ci
 node eval/compare-verifiers-ollama.ts
 ```
 
-Options: `OLLAMA_BASE_URL` (default `http://127.0.0.1:11434`), `OLLAMA_MODEL` (default `llama3.2:3b`), `OLLAMA_TEMPERATURE`, `OLLAMA_SEED`, `OLLAMA_TIMEOUT_MS`, `COMPARE_SETS=heldout,historical`, `COMPARE_LIMIT` for a smoke test and `COMPARE_TAG` for the file name. No API key is read.
+Options: `OLLAMA_BASE_URL` (default: Ollama on the same computer, at its default port 11434), `OLLAMA_MODEL` (default `llama3.2:3b`), `OLLAMA_TEMPERATURE`, `OLLAMA_SEED`, `OLLAMA_TIMEOUT_MS`, `COMPARE_SETS=heldout,historical`, `COMPARE_LIMIT` for a smoke test and `COMPARE_TAG` for the file name. No API key is read.
 
 Output goes to `eval/results/<tag>-ollama-verifier-comparison-<model>.jsonl` (one row per item with both arms, every raw model response, verdicts, regeneration and fallback reason) and a matching `.json` summary. The script refuses to overwrite an existing file, so earlier numbers are kept.
 

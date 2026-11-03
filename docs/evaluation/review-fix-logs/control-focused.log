@@ -3,7 +3,7 @@
 > vitest run src/App.test.tsx src/lib/prompt-version-sync.test.ts
 
 
- RUN  v4.1.12 /private/tmp/jargon-review-control-20261101
+ RUN  v4.1.12 <tmp>/jargon-review-control-20261101
 
 
  Test Files  2 passed (2)

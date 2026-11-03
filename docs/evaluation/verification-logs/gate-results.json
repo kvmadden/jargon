@@ -6,7 +6,7 @@
       "run",
       "pre-deploy"
     ],
-    "cwd": "/tmp/jargon-control-yvy4toto",
+    "cwd": "<tmp>/jargon-control-yvy4toto",
     "exit": 1
   },
   {
@@ -16,7 +16,7 @@
       "run",
       "test:ai-spend-acl"
     ],
-    "cwd": "/tmp/jargon-control-yvy4toto",
+    "cwd": "<tmp>/jargon-control-yvy4toto",
     "exit": 1
   },
   {

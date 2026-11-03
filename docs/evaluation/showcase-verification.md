@@ -6,7 +6,7 @@ Full logs are kept in a local evidence home outside the repository.
 
 The isolated worktree began at `origin/main` (`2db6bcffb674c13df67a0c7926f5784541fd584c`). Fetched origin, checked the tree and searched evaluation, review, disagreement and expert-label capabilities in source and evaluation artifacts. The open PR inventory showed only the verifier upgrade. No competing review screen was found.
 
-PR #1 (`grok/jargon-verifier-upgrade`, dependency tip `297e177`) was integrated by fast-forward before implementation. This UI PR targets main under the global PR rule. The dependency provides the expert-confirmation artifact and shared runtime claim check. No upgrade code or historical artifact is modified here.
+PR #1 (`grok/jargon-verifier-upgrade`, dependency tip `297e177`) was integrated by fast-forward before implementation. This UI PR targets main. The dependency provides the expert-confirmation artifact and shared runtime claim check. No upgrade code or historical artifact is modified here.
 
 The standalone Vite entry reads the real synthetic evaluation artifacts, uses the shared library to compute holds and never calls an external API. It has no auth or Supabase dependency. Unreviewed outputs never become expert agreements. The original source notes are AI-authored, with Kevin's separate confirmation applying only to the five flagged outputs.
 
@@ -32,7 +32,7 @@ Exit 0, four tests passed. Tests cover all 79 runs, five confirmed labels, 74 un
 
 ## Full gate against untouched control
 
-Created an outside-estate fresh clone using Python `tempfile.mkdtemp(prefix='jargon-showcase-control-')` and:
+Created a fresh clone in a temporary folder using Python `tempfile.mkdtemp(prefix='jargon-showcase-control-')` and:
 
 ```sh
 git clone --no-local --branch main <local-clone> <control-path>
@@ -41,11 +41,11 @@ npm ci
 
 Both exited 0. The control path is preserved in the evidence home. Node was `v24.14.1`, npm `11.11.0`, Vitest `4.1.12` on both trees. Both lockfiles have SHA-256 `2cd285d0c457aba21001488a2d78877fa07f8baecca648fa006745403d082322`. Both use the same saved synthetic inputs. No lifecycle script or hook was skipped.
 
-Commands on each tree:
+Commands on each tree, with the workspace root variables unset:
 
 ```sh
-env -u MFW_UMBRELLA_ROOT -u OPERATOR_ECOSYSTEM_ROOT npm run pre-deploy
-env -u MFW_UMBRELLA_ROOT -u OPERATOR_ECOSYSTEM_ROOT npm run test:ai-spend-acl
+npm run pre-deploy
+npm run test:ai-spend-acl
 ```
 
 | Check | Untouched main | Candidate |
@@ -69,9 +69,9 @@ Build exited 0. Capture exited 0 after correcting an initially undersized brand 
 Screenshots were rendered and visually inspected in light and dark at the three requested sizes, including a mobile view of the evaluation rows. The GIF shows filtering, policy replay, full review and the empty agreement state. The capture script requires Python Pillow for GIF encoding. This run installed Pillow in a disposable venv and used:
 
 ```sh
-python3 -m venv /tmp/jargon-eval-gif-venv
-/tmp/jargon-eval-gif-venv/bin/pip install Pillow
-GIF_PYTHON=/tmp/jargon-eval-gif-venv/bin/python node scripts/capture-evaluation.mjs
+python3 -m venv <tmp>/jargon-eval-gif-venv
+<tmp>/jargon-eval-gif-venv/bin/pip install Pillow
+GIF_PYTHON=<tmp>/jargon-eval-gif-venv/bin/python node scripts/capture-evaluation.mjs
 ```
 
 All exited 0. The script deletes its frame scratch directory in `finally`. The control clone and encoding venv were deleted after preserving evidence. Original logs live in the evidence home. Committed log copies only remove trailing blank lines and whitespace for clean diff checks, and show `<repo>` and `<tmp>` in place of local checkout and temporary folder paths.
@@ -84,24 +84,24 @@ No new LLM run, regeneration, deployment, database test or full Playwright suite
 
 The PR #1 review fix is integrated with merge commits, retaining #1 then #2 ancestry and main as the PR base. Both PRs remain HOLD and draft. The production policy dependency was retained rather than silently released through the offline UI. The missing expert adjudication and authorized inference decisions are listed in [release decisions](release-decisions.md).
 
-The shared local-month refill defect is fixed with frozen RED-first regression tests. The current full `pre-deploy` gate passes 1118/1118 unit tests, build and source checks, exit 0. Untouched fresh main passes 1103/1103, exit 0. PostgreSQL 17.6 ACL regression passes on both, exit 0. Identical Node, lockfile, enabled install lifecycle scripts, estate-free environment and control details are in [the shared verification](review-fixes.md). Historical red records above are retained.
+The shared local-month refill defect is fixed with frozen RED-first regression tests. The current full `pre-deploy` gate passes 1118/1118 unit tests, build and source checks, exit 0. Untouched fresh main passes 1103/1103, exit 0. PostgreSQL 17.6 ACL regression passes on both, exit 0. Identical Node, lockfile, enabled install lifecycle scripts, unset workspace root variables and control details are in [the shared verification](review-fixes.md). Historical red records above are retained.
 
-These exact candidate commands exited 0 after `npm ci`:
+These exact candidate commands exited 0 after `npm ci`, with the workspace root variables unset:
 
 ```sh
-env -u MFW_UMBRELLA_ROOT -u OPERATOR_ECOSYSTEM_ROOT npm test -- src/lib/streak-freeze.test.ts src/App.test.tsx src/lib/personalize-claim-check.test.ts src/lib/prompt-version-sync.test.ts src/lib/evaluation-review.test.ts src/evaluation/review.test.tsx
-env -u MFW_UMBRELLA_ROOT -u OPERATOR_ECOSYSTEM_ROOT npm run pre-deploy
-env -u MFW_UMBRELLA_ROOT -u OPERATOR_ECOSYSTEM_ROOT PG_BIN=<postgresql-17>/bin npm run test:ai-spend-acl
+npm test -- src/lib/streak-freeze.test.ts src/App.test.tsx src/lib/personalize-claim-check.test.ts src/lib/prompt-version-sync.test.ts src/lib/evaluation-review.test.ts src/evaluation/review.test.tsx
+npm run pre-deploy
+PG_BIN=<postgresql-17>/bin npm run test:ai-spend-acl
 node eval/replay-claim-check.ts
-GIF_PYTHON=/tmp/jargon-review-gif-20261101/bin/python node scripts/capture-evaluation.mjs
+GIF_PYTHON=<tmp>/jargon-review-gif-20261101/bin/python node scripts/capture-evaluation.mjs
 git diff --check
 ```
 
-Focused checks pass 20/20. Replay output is unchanged. Installed Pillow in the owned disposable venv using `python3 -m venv /tmp/jargon-review-gif-20261101` and `/tmp/jargon-review-gif-20261101/bin/pip install Pillow`, both exit 0. Capture checks pass with all 79 rows, five disagreements, policy replay, search, empty agreements and keyboard dialogs. Light and dark captures were visually inspected at 1440x900, 430x932 and 390x844. Minimum measured target is 44 pixels at every size, with no overflow or page errors. Product visuals were unchanged, so refreshed captures are preserved in the evidence home instead of replacing existing repository media.
+Focused checks pass 20/20. Replay output is unchanged. Installed Pillow in the owned disposable venv using `python3 -m venv <tmp>/jargon-review-gif-20261101` and `<tmp>/jargon-review-gif-20261101/bin/pip install Pillow`, both exit 0. Capture checks pass with all 79 rows, five disagreements, policy replay, search, empty agreements and keyboard dialogs. Light and dark captures were visually inspected at 1440x900, 430x932 and 390x844. Minimum measured target is 44 pixels at every size, with no overflow or page errors. Product visuals were unchanged, so refreshed captures are preserved in the evidence home instead of replacing existing repository media.
 
 Current logs are in [review-fix-logs](review-fix-logs). Raw logs and refreshed screenshots, GIF and geometry are kept in the local evidence home. No new expert labels, paid API call, hosted inference, deployment or merge occurred. No Deno deployment or head-matched hosted preview is certified. Hosted checks are currently absent. The original saved outputs and frozen challenge set remain unchanged.
 
-The complete browser command `env -u MFW_UMBRELLA_ROOT -u OPERATOR_ECOSYSTEM_ROOT JARGON_E2E_PORT=5283 npm run test:e2e -- --reporter=line` exited 1, with 96 passed and two failed. Both failures exactly match untouched main and corrected PR #1: `tests/e2e/routes-flow.spec.ts:277`, spotted paste-mode navigation, on iphone-14 and iphone-16-pro-max. The missing heading assertion is at line 281. Candidate-only failures: none. [Failure identity comparison](review-fix-logs/browser-failure-comparison.json). The browser suite remains red despite the green repository gate. No browser project was skipped or assertion weakened.
+The complete browser command `JARGON_E2E_PORT=5283 npm run test:e2e -- --reporter=line` exited 1, with 96 passed and two failed. Both failures exactly match untouched main and corrected PR #1: `tests/e2e/routes-flow.spec.ts:277`, spotted paste-mode navigation, on iphone-14 and iphone-16-pro-max. The missing heading assertion is at line 281. Candidate-only failures: none. [Failure identity comparison](review-fix-logs/browser-failure-comparison.json). The browser suite remains red despite the green repository gate. No browser project was skipped or assertion weakened.
 
 ## November 1 expert labels and local comparison
 

@@ -24,20 +24,20 @@ The focused command was rerun after `npm ci`. Untouched main's existing App and 
 
 ## Untouched current-main comparison
 
-Created the owned clone outside the estate without sibling repos:
+Created a fresh control clone in a temporary folder, without sibling repos. Every command below ran with the workspace root variables unset:
 
 ```sh
-git clone --no-local --branch main <local-clone> /tmp/jargon-review-control-20261101
-env -u MFW_UMBRELLA_ROOT -u OPERATOR_ECOSYSTEM_ROOT npm ci
+git clone --no-local --branch main <local-clone> <tmp>/jargon-review-control-20261101
+npm ci
 ```
 
-Both exited 0. Installed candidate dependencies with the same `npm ci` command, lifecycle scripts enabled. Node v24.14.1, npm 11.11.0, Vitest 4.1.12 and Playwright 1.64.1. All lockfiles retain SHA-256 `2cd285d0c457aba21001488a2d78877fa07f8baecca648fa006745403d082322`. All gate runs unset both estate variables and use the checked-in synthetic fixtures. Control source is untouched.
+Both exited 0. Installed candidate dependencies with the same `npm ci` command, lifecycle scripts enabled. Node v24.14.1, npm 11.11.0, Vitest 4.1.12 and Playwright 1.64.1. All lockfiles retain SHA-256 `2cd285d0c457aba21001488a2d78877fa07f8baecca648fa006745403d082322`. All gate runs unset the workspace root variables and use the checked-in synthetic fixtures. Control source is untouched.
 
 | Command | Untouched main | PR #1 |
 | --- | --- | --- |
-| `env -u MFW_UMBRELLA_ROOT -u OPERATOR_ECOSYSTEM_ROOT npm run pre-deploy` | Exit 0, 1103/1103 unit tests, build and source checks pass | Exit 0, 1114/1114 unit tests, build and source checks pass |
-| `env -u MFW_UMBRELLA_ROOT -u OPERATOR_ECOSYSTEM_ROOT PG_BIN=<postgresql-17>/bin npm run test:ai-spend-acl` | Exit 0, ACL regression ok | Exit 0, ACL regression ok |
-| `env -u MFW_UMBRELLA_ROOT -u OPERATOR_ECOSYSTEM_ROOT JARGON_E2E_PORT=5281 npm run test:e2e -- --reporter=line` | Exit 1, 96 passed and 2 failed | Same command with port 5282, exit 1, 96 passed and 2 failed |
+| `npm run pre-deploy` | Exit 0, 1103/1103 unit tests, build and source checks pass | Exit 0, 1114/1114 unit tests, build and source checks pass |
+| `PG_BIN=<postgresql-17>/bin npm run test:ai-spend-acl` | Exit 0, ACL regression ok | Exit 0, ACL regression ok |
+| `JARGON_E2E_PORT=5281 npm run test:e2e -- --reporter=line` | Exit 1, 96 passed and 2 failed | Same command with port 5282, exit 1, 96 passed and 2 failed |
 
 The earlier calendar failure does not reproduce at today's wall-clock instant on main. The new frozen regression tests reproduce it independently of that instant. The full repository `pre-deploy` gate is green. The broader browser suite is red on both trees. Both browser failures are `tests/e2e/routes-flow.spec.ts:277`, navigation from home to spotted paste mode, on iphone-14 and iphone-16-pro-max. Each expects the missing `spotted in the wild` heading at line 281. Candidate-only failure identities: none. This unrelated baseline browser contract was preserved, not waived or called green.
 
