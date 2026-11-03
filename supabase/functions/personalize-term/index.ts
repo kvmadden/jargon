@@ -51,8 +51,9 @@ import {
   buildPass3UserMessage,
   parseRendering,
   parseVerdict,
-  estimateOpusCost,
+  estimatePersonalizeCost,
 } from './prompts.ts';
+import { usageFromResponse } from '../_shared/pricing.ts';
 import type {
   TermRow,
   UserProfileRow,
@@ -133,6 +134,8 @@ interface CallResult<T> {
   rawText: string;
   tokensIn: number;
   tokensOut: number;
+  /** List-price cost, prompt-cache writes and reads included. */
+  costUsd: number;
 }
 
 // Mutable accumulator threaded through the multi-pass flow. One row per
@@ -264,6 +267,7 @@ async function callOpusWithTimeout<T>(
       rawText,
       tokensIn: response?.usage?.input_tokens ?? 0,
       tokensOut: response?.usage?.output_tokens ?? 0,
+      costUsd: estimatePersonalizeCost(usageFromResponse(response)),
     };
   } finally {
     clearTimeout(timeoutId);
@@ -488,7 +492,7 @@ Deno.serve(async (req) => {
   }
   state.pass1_tokens_in = pass1.tokensIn;
   state.pass1_tokens_out = pass1.tokensOut;
-  state.total_cost_usd += estimateOpusCost(pass1.tokensIn, pass1.tokensOut);
+  state.total_cost_usd += pass1.costUsd;
   state.pass1_candidate = pass1.parsed;
   if (!pass1.parsed) {
     state.error_text = `pass1 unparseable: ${pass1.rawText.slice(0, 200)}`;
@@ -518,7 +522,7 @@ Deno.serve(async (req) => {
   }
   state.pass2_tokens_in = pass2.tokensIn;
   state.pass2_tokens_out = pass2.tokensOut;
-  state.total_cost_usd += estimateOpusCost(pass2.tokensIn, pass2.tokensOut);
+  state.total_cost_usd += pass2.costUsd;
   state.pass2_result = pass2.parsed;
   if (!pass2.parsed) {
     state.error_text = `pass2 unparseable: ${pass2.rawText.slice(0, 200)}`;
@@ -599,7 +603,7 @@ Deno.serve(async (req) => {
   }
   state.pass3_tokens_in = pass3.tokensIn;
   state.pass3_tokens_out = pass3.tokensOut;
-  state.total_cost_usd += estimateOpusCost(pass3.tokensIn, pass3.tokensOut);
+  state.total_cost_usd += pass3.costUsd;
   state.pass3_candidate = pass3.parsed;
   if (!pass3.parsed) {
     state.error_text = `pass3 unparseable: ${pass3.rawText.slice(0, 200)}`;
@@ -629,7 +633,7 @@ Deno.serve(async (req) => {
   }
   state.pass2_retry_tokens_in = pass2Retry.tokensIn;
   state.pass2_retry_tokens_out = pass2Retry.tokensOut;
-  state.total_cost_usd += estimateOpusCost(pass2Retry.tokensIn, pass2Retry.tokensOut);
+  state.total_cost_usd += pass2Retry.costUsd;
   state.pass2_retry_result = pass2Retry.parsed;
   if (!pass2Retry.parsed) {
     state.error_text = `pass2-retry unparseable: ${pass2Retry.rawText.slice(0, 200)}`;

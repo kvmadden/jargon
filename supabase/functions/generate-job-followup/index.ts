@@ -35,15 +35,14 @@ import { getUserFromJWT } from '../_shared/auth.ts';
 import { preflight, jsonResponse } from '../_shared/cors.ts';
 import { isAllowlisted } from '../_shared/allowlist.ts';
 import { checkSpend } from '../_shared/spend-guard.ts';
+import { costFromResponse } from '../_shared/pricing.ts';
 
 // Right-sized to Sonnet 4.6: generating 1 job subspecialty question + chip options is a bounded structured generation task.
 const FOLLOWUP_MODEL = 'claude-sonnet-4-6';
 const FOLLOWUP_TIMEOUT_MS = 30_000;
 const FOLLOWUP_MAX_TOKENS = 200;
 
-// Sonnet 4.6 pricing: $3/MTok input, $15/MTok output.
-const PRICE_IN_PER_MTOK = 3;
-const PRICE_OUT_PER_MTOK = 15;
+// Pricing lives in _shared/pricing.ts (list price, cache tokens included).
 
 type FinalStatus =
   | 'success'
@@ -66,13 +65,6 @@ interface LogPayload {
   total_latency_ms?: number | null;
   final_status: FinalStatus;
   error_text?: string | null;
-}
-
-function calcCost(tokensIn: number | null, tokensOut: number | null): number | null {
-  if (tokensIn === null && tokensOut === null) return null;
-  const inUsd = ((tokensIn ?? 0) / 1_000_000) * PRICE_IN_PER_MTOK;
-  const outUsd = ((tokensOut ?? 0) / 1_000_000) * PRICE_OUT_PER_MTOK;
-  return Number((inUsd + outUsd).toFixed(5));
 }
 
 async function writeLog(serviceClient: SupabaseClient, payload: LogPayload): Promise<void> {
@@ -299,7 +291,7 @@ Deno.serve(async (req) => {
     )) as any;
     const tokensIn = response?.usage?.input_tokens ?? null;
     const tokensOut = response?.usage?.output_tokens ?? null;
-    const cost = calcCost(tokensIn, tokensOut);
+    const cost = costFromResponse(FOLLOWUP_MODEL, response);
     const block = response?.content?.[0];
     const rawText = block && block.type === 'text' ? (block.text as string) : '';
     const parsed = rawText ? parseFollowup(rawText) : null;

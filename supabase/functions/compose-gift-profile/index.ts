@@ -43,7 +43,8 @@
 //   The client falls through to the 13-step manual wizard with recipient
 //   name + email pre-filled.
 //
-// Per-call cost estimate (Opus 4.7 at $15/MTok in, $75/MTok out):
+// Per-call cost estimate (Opus 4.7 at its $5/MTok in, $25/MTok out list price,
+// see _shared/pricing.ts):
 //   Pass 1: ~1500 in + ~1200 out = $0.0075 + $0.0300 = $0.0375
 //   Pass 2: ~2500 in + ~200 out  = $0.0125 + $0.0050 = $0.0175
 //   Total: ~$0.055/call. Worst case (verbose output) ≤ $0.10.
@@ -72,6 +73,7 @@ import { getUserFromJWT } from '../_shared/auth.ts';
 import { preflight, jsonResponse } from '../_shared/cors.ts';
 import { isAllowlisted } from '../_shared/allowlist.ts';
 import { checkSpend } from '../_shared/spend-guard.ts';
+import { estimateCostUsd, usageFromResponse } from '../_shared/pricing.ts';
 import { LIVED_ICONS_ALLOWLIST, validateLivedIcons } from '../_shared/lived-icons-allowlist.ts';
 import { sanitizeProfileShape, type ProfileShape } from '../_shared/profile-shape.ts';
 
@@ -83,9 +85,7 @@ const PASS1_MAX_TOKENS = 4000;
 const PASS2_MAX_TOKENS = 800;
 const MAX_FREEFORM_CHARS = 2000;
 
-// Opus 4.7 unit costs (USD per 1M tokens) — used to populate
-// compose_gift_log.total_cost_usd. Spec §10.1: $15 input / $75 output per MTok.
-const COST_PER_M_OPUS_4_7 = { in: 15.0, out: 75.0 } as const;
+// Cost per call comes from _shared/pricing.ts (list price, cache tokens included).
 
 // ─── Shape contracts ───────────────────────────────────────────────────────
 
@@ -155,6 +155,8 @@ interface CallResult<T> {
   rawText: string;
   tokensIn: number;
   tokensOut: number;
+  /** List-price cost of this call, cache tokens included (_shared/pricing.ts). */
+  costUsd: number;
 }
 
 interface LogState {
@@ -396,12 +398,6 @@ function emptyResponse(): ComposeResponse {
   };
 }
 
-function estimateOpusCost(tokensIn: number, tokensOut: number): number {
-  return (
-    (tokensIn / 1_000_000) * COST_PER_M_OPUS_4_7.in +
-    (tokensOut / 1_000_000) * COST_PER_M_OPUS_4_7.out
-  );
-}
 
 async function callOpusWithTimeout<T>(
   anthropic: Anthropic,
@@ -433,6 +429,7 @@ async function callOpusWithTimeout<T>(
       rawText,
       tokensIn: response?.usage?.input_tokens ?? 0,
       tokensOut: response?.usage?.output_tokens ?? 0,
+      costUsd: estimateCostUsd(COMPOSE_MODEL, usageFromResponse(response)),
     };
   } finally {
     clearTimeout(timeoutId);
@@ -642,7 +639,7 @@ Deno.serve(async (req) => {
 
   state.total_tokens_in += pass1.tokensIn;
   state.total_tokens_out += pass1.tokensOut;
-  state.total_cost_usd += estimateOpusCost(pass1.tokensIn, pass1.tokensOut);
+  state.total_cost_usd += pass1.costUsd;
 
   if (!pass1.parsed) {
     state.pass1_status = 'fallback-parse';
@@ -669,7 +666,7 @@ Deno.serve(async (req) => {
     );
     state.total_tokens_in += pass2.tokensIn;
     state.total_tokens_out += pass2.tokensOut;
-    state.total_cost_usd += estimateOpusCost(pass2.tokensIn, pass2.tokensOut);
+    state.total_cost_usd += pass2.costUsd;
   } catch (err: any) {
     const isAbort = err?.name === 'AbortError' || /abort/i.test(String(err?.message ?? ''));
     state.pass2_status = isAbort ? 'fallback-timeout' : 'fallback-anthropic-error';

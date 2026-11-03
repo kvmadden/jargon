@@ -20,14 +20,13 @@ import { corsHeaders, preflight, jsonResponse } from '../_shared/cors.ts';
 import { isAllowlisted } from '../_shared/allowlist.ts';
 import { vocabularyDescription } from '../_shared/domain-vocabulary.ts';
 import { checkSpend } from '../_shared/spend-guard.ts';
+import { costFromResponse } from '../_shared/pricing.ts';
 
 // Retained Opus 4.7: sentence grading requires nuanced evaluation of metaphors, adjacent meanings, and non-judgmental feedback tone.
 const GRADER_MODEL = 'claude-opus-4-7';
 const GRADER_TIMEOUT_MS = 30_000;
 
-// Opus 4.7 pricing: $15/MTok in, $75/MTok out
-const PRICE_IN_PER_MTOK = 15;
-const PRICE_OUT_PER_MTOK = 75;
+// Pricing lives in _shared/pricing.ts (list price, cache tokens included).
 
 interface LogPayload {
   user_id: string;
@@ -45,13 +44,6 @@ async function writeLog(serviceClient: any, payload: LogPayload): Promise<void> 
   } catch (err) {
     console.error('[grade-sentence] log write threw:', err);
   }
-}
-
-function calcCost(tokensIn: number | null, tokensOut: number | null): number | null {
-  if (tokensIn === null && tokensOut === null) return null;
-  const inUsd = ((tokensIn ?? 0) / 1_000_000) * PRICE_IN_PER_MTOK;
-  const outUsd = ((tokensOut ?? 0) / 1_000_000) * PRICE_OUT_PER_MTOK;
-  return Number((inUsd + outUsd).toFixed(5));
 }
 
 // ─── Canonical from SPEC.md §6.3.5 — keep in sync ──────────────────────────────
@@ -300,9 +292,7 @@ Deno.serve(async (req) => {
       },
       { signal: controller.signal },
     )) as any;
-    const tokensIn = response?.usage?.input_tokens ?? null;
-    const tokensOut = response?.usage?.output_tokens ?? null;
-    const costUsd = calcCost(tokensIn, tokensOut);
+    const costUsd = costFromResponse(GRADER_MODEL, response);
     const block = response?.content?.[0];
     if (block && block.type === 'text') {
       const parsed = tryParseJson(block.text);

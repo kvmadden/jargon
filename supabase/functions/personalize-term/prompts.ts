@@ -9,6 +9,7 @@
 
 // deno-lint-ignore-file no-explicit-any
 import { vocabularyDescription } from '../_shared/domain-vocabulary.ts';
+import { estimateCostUsd, type TokenUsage } from '../_shared/pricing.ts';
 
 // ─── Constants (the design spec §6.1) ─────────────────
 export const PERSONALIZE_MODEL = 'claude-opus-4-7';
@@ -20,9 +21,10 @@ export const PERSONALIZE_MAX_TOKENS_PASS2 = 700;     // verifier (7 short reason
 export const PERSONALIZE_MAX_TOKENS_PASS3 = 800;     // regenerator
 export const PERSONALIZE_MAX_RETRIES = 1;            // one regeneration only — hard ceiling
 
-// Opus 4.7 unit costs (USD per 1M tokens) — used to populate
-// personalize_log.total_cost_usd. Spec §10.1: $15 input / $75 output per MTok.
-export const COST_PER_M_OPUS_4_7 = { in: 15.0, out: 75.0 } as const;
+// Cost per call: see _shared/pricing.ts. The old constant here was $15 / $75
+// per million tokens (three times the Opus 4.7 list price) and it ignored
+// prompt-cache tokens. personalize_log.total_cost_usd, which the spend guard
+// reads, is now computed at list price with cache tokens included.
 
 // ─── Verbatim prompts: the design spec §7 ─────────────
 //
@@ -507,9 +509,7 @@ export function parseVerdict(raw: string): VerifierVerdict | null {
   }
 }
 
-export function estimateOpusCost(tokensIn: number, tokensOut: number): number {
-  return (
-    (tokensIn / 1_000_000) * COST_PER_M_OPUS_4_7.in +
-    (tokensOut / 1_000_000) * COST_PER_M_OPUS_4_7.out
-  );
+/** List-price cost of one personalize-term call, cache tokens included. */
+export function estimatePersonalizeCost(usage: TokenUsage): number {
+  return estimateCostUsd(PERSONALIZE_MODEL, usage);
 }

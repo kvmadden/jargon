@@ -26,6 +26,7 @@ import { vocabularyDescription } from '../_shared/domain-vocabulary.ts';
 import { goalDescription } from '../_shared/domain-goals.ts';
 import { pathsForDomain, pathListPipe } from '../_shared/domain-paths.ts';
 import { checkSpend } from '../_shared/spend-guard.ts';
+import { estimateCostUsd, usageFromResponse } from '../_shared/pricing.ts';
 
 // ─── Constants ──────────────────────────────────────────────────────────────────
 const PASS1_MODEL = 'claude-sonnet-4-6';
@@ -42,14 +43,8 @@ const PASS1_TARGET_COUNT = 10; // spec says 5–15 per cycle; 10 is a safe middl
 // terms.path CHECK constraint.
 type PathId = string;
 
-// Approx unit costs (USD per 1M tokens) for cost estimation in ingestion_log.
-// These are rough — accuracy not critical, used only for the Stage B1 dashboard.
-const COST_PER_M = {
-  'claude-sonnet-4-6': { in: 3.0, out: 15.0 },
-  'claude-opus-4-7': { in: 15.0, out: 75.0 },
-  'claude-haiku-4-5-20251001': { in: 0.8, out: 4.0 },
-  'text-embedding-3-small': { in: 0.02, out: 0 },
-} as const;
+// Costs for ingestion_log come from _shared/pricing.ts (list prices, cache
+// tokens included). ingestion_log feeds the global spend total.
 
 // ─── Shape contracts ────────────────────────────────────────────────────────────
 interface Candidate {
@@ -253,10 +248,6 @@ function tryParseJson<T>(raw: string): T | null {
   }
 }
 
-function estimateCost(model: keyof typeof COST_PER_M, tokensIn: number, tokensOut: number): number {
-  const rates = COST_PER_M[model];
-  return (tokensIn / 1_000_000) * rates.in + (tokensOut / 1_000_000) * rates.out;
-}
 
 // ─── Anthropic + OpenAI call wrappers ──────────────────────────────────────────
 
@@ -266,7 +257,7 @@ async function callAnthropicJson(
   system: string,
   user: string,
   maxTokens = 4096,
-): Promise<{ raw: string; tokensIn: number; tokensOut: number }> {
+): Promise<{ raw: string; tokensIn: number; tokensOut: number; costUsd: number }> {
   const res = (await anthropic.messages.create({
     model,
     max_tokens: maxTokens,
@@ -285,6 +276,7 @@ async function callAnthropicJson(
     raw,
     tokensIn: res?.usage?.input_tokens ?? 0,
     tokensOut: res?.usage?.output_tokens ?? 0,
+    costUsd: estimateCostUsd(model, usageFromResponse(res)),
   };
 }
 
@@ -377,8 +369,13 @@ async function runCycle(
   let candidates: Candidate[] = [];
   let pass1TokensIn = 0;
   let pass1TokensOut = 0;
+  // Pass 1 is one call shared by every candidate. Its cost is logged exactly
+  // once, on the first candidate row this cycle writes. (It used to be added to
+  // every early-dedupe row and to no other row, so a cycle could count it many
+  // times or not at all.)
+  let pass1CostUnlogged = 0;
   try {
-    const { raw, tokensIn, tokensOut } = await backoffRetry(
+    const { raw, tokensIn, tokensOut, costUsd } = await backoffRetry(
       () =>
         callAnthropicJson(
           anthropic,
@@ -391,6 +388,7 @@ async function runCycle(
     );
     pass1TokensIn = tokensIn;
     pass1TokensOut = tokensOut;
+    pass1CostUnlogged = costUsd;
     const parsed = tryParseJson<{ candidates: Candidate[] }>(raw);
     if (!parsed?.candidates || !Array.isArray(parsed.candidates)) {
       throw new Error('Pass 1 returned no candidates array');
@@ -404,7 +402,8 @@ async function runCycle(
   // ─── Per-candidate 4-pass loop ───────────────────────────────────────────────
   for (const candidate of candidates) {
     const candStart = Date.now();
-    let totalCost = 0;
+    let totalCost = pass1CostUnlogged;
+    pass1CostUnlogged = 0;
     let pass2: VerifierResult | null = null;
     let pass3: VerifierResult | null = null;
     let pass4aDef: string | null = null;
@@ -433,7 +432,7 @@ async function runCycle(
           finalStatus,
           failurePass,
           totalLatencyMs: Date.now() - candStart,
-          totalCostUsd: estimateCost(PASS1_MODEL, pass1TokensIn, pass1TokensOut),
+          totalCostUsd: totalCost,
           errorText,
         });
         continue;
@@ -459,7 +458,7 @@ async function runCycle(
           ),
         'pass2',
       );
-      totalCost += estimateCost(PASS2_MODEL, pass2Call.tokensIn, pass2Call.tokensOut);
+      totalCost += pass2Call.costUsd;
       pass2 =
         tryParseJson<VerifierResult>(pass2Call.raw) ??
         { result: 'fail', reasoning: 'unparseable verifier output', failed_criteria: ['parser'] };
@@ -499,7 +498,7 @@ async function runCycle(
           ),
         'pass3',
       );
-      totalCost += estimateCost(PASS3_MODEL, pass3Call.tokensIn, pass3Call.tokensOut);
+      totalCost += pass3Call.costUsd;
       pass3 =
         tryParseJson<VerifierResult>(pass3Call.raw) ??
         { result: 'fail', reasoning: 'unparseable verifier output', failed_criteria: ['parser'] };
@@ -539,7 +538,7 @@ async function runCycle(
           ),
         'pass4a',
       );
-      totalCost += estimateCost(PASS4A_MODEL, pass4aCall.tokensIn, pass4aCall.tokensOut);
+      totalCost += pass4aCall.costUsd;
       pass4aDef = pass4aCall.raw.trim();
 
       // Pass 4b: cosine compare. Embedding-down → reject (per spec §6.4).
@@ -551,7 +550,7 @@ async function runCycle(
         pass4bSim = cosineSimilarity(embOriginal, embRegen);
         // Embedding cost is tiny but logged for completeness
         const embTokens = candidate.one_line_definition.length / 4 + (pass4aDef?.length ?? 0) / 4;
-        totalCost += estimateCost(EMBEDDING_MODEL, Math.ceil(embTokens), 0);
+        totalCost += estimateCostUsd(EMBEDDING_MODEL, { input_tokens: Math.ceil(embTokens) });
       } catch (err: any) {
         errorText = `embedding failed: ${err?.message ?? err}`;
         failurePass = 'pass4b';
@@ -716,7 +715,7 @@ interface LogArgs {
   pass4aDef: string | null;
   pass4bSim: number | null;
   finalStatus: 'inserted' | 'rejected';
-  failurePass: 'dedupe' | 'pass2' | 'pass3' | 'pass4b' | 'dedupe-late' | null;
+  failurePass: 'dedupe' | 'pass2' | 'pass3' | 'pass4b' | 'dedupe-late' | 'insert' | null;
   totalLatencyMs: number;
   totalCostUsd: number;
   errorText: string | null;

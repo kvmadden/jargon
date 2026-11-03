@@ -33,11 +33,12 @@
 //     they map to fallback-timeout exactly as in the function.
 //   - No Supabase: the term comes from eval/data/terms.json, the profile from
 //     eval/data/profiles.json, and known vocabulary is the list in that file.
-//   - Cost is recorded two ways: cost_usd_function_formula is exactly what
-//     personalize_log.total_cost_usd would hold (estimateOpusCost over
-//     input_tokens/output_tokens). cost_usd_incl_cache adds prompt-cache write
-//     (1.25x input rate) and read (0.1x input rate) tokens, which the
-//     function's formula omits. The budget guard uses the larger of the two.
+//   - Cost comes from supabase/functions/_shared/pricing.ts, the same module
+//     the Edge Function now uses: list price, prompt-cache writes (1.25x input)
+//     and reads (0.1x input) included. cost_usd_function_formula and
+//     cost_usd_incl_cache are kept as field names for continuity with the
+//     2026-10-30 results and now hold the same number. The 2026-10-30 rows
+//     were priced at $15 / $75 per million tokens (three times list price).
 
 import { readFileSync, writeFileSync, appendFileSync, existsSync, mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -49,7 +50,6 @@ import {
   PERSONALIZE_MAX_TOKENS_PASS2,
   PERSONALIZE_MAX_TOKENS_PASS3,
   PERSONALIZE_MAX_RETRIES,
-  COST_PER_M_OPUS_4_7,
   pass1SystemPrompt,
   PASS2_SYSTEM_PROMPT,
   pass3SystemPrompt,
@@ -59,8 +59,14 @@ import {
   buildPass3UserMessage,
   parseRendering,
   parseVerdict,
-  estimateOpusCost,
 } from '../supabase/functions/personalize-term/prompts.ts';
+import {
+  estimateCostUsd,
+  MODEL_PRICES,
+  CACHE_WRITE_MULTIPLIER,
+  CACHE_READ_MULTIPLIER,
+  PRICES_CHECKED_ON,
+} from '../supabase/functions/_shared/pricing.ts';
 import type {
   TermRow,
   UserProfileRow,
@@ -71,8 +77,6 @@ import type {
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const API_URL = 'https://api.anthropic.com/v1/messages';
 const ANTHROPIC_VERSION = '2023-06-01';
-const CACHE_WRITE_MULT = 1.25;
-const CACHE_READ_MULT = 0.1;
 
 const PROMPT_VERSION = (() => {
   const src = readFileSync(join(ROOT, 'supabase/functions/personalize-term/index.ts'), 'utf8');
@@ -215,11 +219,13 @@ async function callOpus<T>(
     const tokensOut = u.output_tokens ?? 0;
     const cacheWrite = u.cache_creation_input_tokens ?? 0;
     const cacheRead = u.cache_read_input_tokens ?? 0;
-    const costFormula = estimateOpusCost(tokensIn, tokensOut);
-    const costInclCache =
-      costFormula +
-      (cacheWrite / 1_000_000) * COST_PER_M_OPUS_4_7.in * CACHE_WRITE_MULT +
-      (cacheRead / 1_000_000) * COST_PER_M_OPUS_4_7.in * CACHE_READ_MULT;
+    const costInclCache = estimateCostUsd(PERSONALIZE_MODEL, {
+      input_tokens: tokensIn,
+      output_tokens: tokensOut,
+      cache_creation_input_tokens: cacheWrite,
+      cache_read_input_tokens: cacheRead,
+    });
+    const costFormula = costInclCache;
     return {
       parsed: rawText ? parser(rawText) : null,
       rawText,
@@ -445,7 +451,8 @@ async function main() {
     eval_date: EVAL_DATE, model: PERSONALIZE_MODEL, prompt_version: PROMPT_VERSION,
     planned_items: allItems.length, completed_items: done.size, stopped_for_budget: stoppedForBudget,
     budget_usd: BUDGET_USD, spent_usd: spent, concurrency: CONCURRENCY,
-    pricing_per_mtok: COST_PER_M_OPUS_4_7, cache_write_mult: CACHE_WRITE_MULT, cache_read_mult: CACHE_READ_MULT,
+    pricing_per_mtok: MODEL_PRICES[PERSONALIZE_MODEL], prices_checked_on: PRICES_CHECKED_ON,
+    cache_write_mult: CACHE_WRITE_MULTIPLIER, cache_read_mult: CACHE_READ_MULTIPLIER,
     timeout_ms: PERSONALIZE_TIMEOUT_MS,
     max_tokens: { pass1: PERSONALIZE_MAX_TOKENS_PASS1, pass2: PERSONALIZE_MAX_TOKENS_PASS2, pass3: PERSONALIZE_MAX_TOKENS_PASS3 },
     finished_at: new Date().toISOString(),
