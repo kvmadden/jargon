@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import type { TermRow } from '../lib/database.types';
 import { PATH_META } from '../lib/database.types';
+import { LessonBody } from './lesson-body';
+import { ConceptIllustration } from './concept-illustration';
+import { illustrationFor } from '../lib/lesson-illustrations';
+import { toSentenceCase } from '../lib/lesson-text';
 
 interface Props {
   term: TermRow;
@@ -81,21 +85,25 @@ export function LearnCard({ term, onReady }: Props) {
         <div className="border-t border-border-default mt-3 mb-6" />
 
         <p className="text-text-primary font-sans text-lg leading-relaxed">
-          {term.one_line_definition}
+          {toSentenceCase(term.one_line_definition)}
         </p>
 
         <p className="text-text-muted font-mono text-2xs uppercase tracking-[0.08em] mt-6 mb-2">
           ▸ what it really means
         </p>
-        <p className="text-text-secondary font-sans text-body leading-relaxed">
-          {term.long_definition}
-        </p>
+        {/* A lead sentence plus bullets, in sentence case (Kevin's ruling, 2026-11-03). */}
+        <LessonBody text={term.long_definition} leadClassName="text-text-secondary font-sans text-body leading-relaxed" />
+        {illustrationFor(term.id) && (
+          <div className="mt-4">
+            <ConceptIllustration illustration={illustrationFor(term.id)!} />
+          </div>
+        )}
 
         <p className="text-text-muted font-mono text-2xs uppercase tracking-[0.08em] mt-6 mb-2">
           ▸ in the wild
         </p>
         <p className="italic text-text-secondary font-sans text-body leading-relaxed">
-          "{term.example_in_sentence}"
+          "{toSentenceCase(term.example_in_sentence)}"
         </p>
 
         {hasWhyItMatters && (
@@ -103,9 +111,7 @@ export function LearnCard({ term, onReady }: Props) {
             <p className="text-text-muted font-mono text-2xs uppercase tracking-[0.08em] mt-6 mb-2">
               ▸ why it matters
             </p>
-            <p className="text-text-secondary font-sans text-body leading-relaxed">
-              {term.why_it_matters}
-            </p>
+            <LessonBody text={term.why_it_matters} leadClassName="text-text-secondary font-sans text-body leading-relaxed" />
           </>
         )}
       </div>

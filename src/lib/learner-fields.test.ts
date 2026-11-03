@@ -4,7 +4,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { SUPPORTED_FIELDS, learnerFieldFor, learnerFieldLabel } from './learner-fields';
+import { SUPPORTED_FIELDS, learnerFieldFor, learnerFieldLabel, supportedFieldsSentence } from './learner-fields';
 
 describe('learner-fields copies', () => {
   it('the client and server copies are identical', () => {
@@ -37,6 +37,10 @@ describe('learnerFieldFor', () => {
 
   it.each([[{ job: 'accountant' }], [{ job: 'software engineer' }], [{}], [null]])('%j -> no supported field', (profile) => {
     expect(learnerFieldFor(profile as any)).toBeNull();
+  });
+
+  it('names the supported fields in running text', () => {
+    expect(supportedFieldsSentence()).toBe('nurses, pharmacists, pharmacy technicians and teachers');
   });
 
   it('gives a label for a field id', () => {

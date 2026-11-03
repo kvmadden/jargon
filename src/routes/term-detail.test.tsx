@@ -243,6 +243,65 @@ describe('stale and reported renderings are never displayed', () => {
   });
 });
 
+describe('lesson layout and why a lesson is not personalized (v11)', () => {
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    const { _resetInFlightPersonalizations } = await import('./term-detail');
+    _resetInFlightPersonalizations();
+    useUserStore.setState({ user: { id: 'learner' } as any, session: null, loading: false });
+    useSettingsStore.setState({ settings: { personalization_enabled: true, first_personalization_seen_at: '2026-07-22T00:00:00Z' } as any });
+    vi.mocked(fetchLatestPersonalizationStatus).mockResolvedValue(null as any);
+    vi.mocked(fetchPersonalizedRendering).mockResolvedValue({ status: 'missing' } as any);
+    vi.mocked(supabase.from).mockImplementation((table: any) => ({
+      select: vi.fn(() => ({
+        eq: vi.fn((_c: any, val: any) => ({
+          maybeSingle: vi.fn(() => table === 'terms' && val === 'bi-rls'
+            ? Promise.resolve({ data: { id: 'bi-rls', term: 'rls', pronunciation: null, one_line_definition: 'row-level security that filters rows', long_definition: 'rls stands for row-level security. it applies roles and filters. each viewer sees different rows.', example_in_sentence: 'each manager sees their own region', why_it_matters: 'one report can show each person their own rows', path: 'git-cli' }, error: null })
+            : Promise.resolve({ data: null, error: null })),
+        })),
+        in: vi.fn(() => Promise.resolve({ data: [], error: null })),
+      })),
+    }) as any);
+  });
+
+  const renderTerm = () =>
+    render(
+      <MemoryRouter initialEntries={['/term/bi-rls']}>
+        <Routes><Route path="/term/:termId" element={<TermDetail />} /></Routes>
+      </MemoryRouter>,
+    );
+
+  it('shows the definition as a lead sentence plus bullets, in sentence case, with the title still lowercase', async () => {
+    const { requestPersonalization } = await import('../lib/data');
+    vi.mocked(requestPersonalization).mockResolvedValue({ long_definition: '', why_it_matters: '', example_in_sentence: '', fromCache: false, isFallback: true } as any);
+    renderTerm();
+    expect(await screen.findByRole('heading', { name: 'rls' })).toBeInTheDocument();
+    expect(screen.getByText('Rls stands for row-level security.')).toBeInTheDocument();
+    expect(screen.getByText('Each viewer sees different rows.').closest('li')).not.toBeNull();
+    expect(screen.getByText('Row-level security that filters rows.')).toBeInTheDocument();
+  });
+
+  it('says why when no vetted comparison exists for the learner field', async () => {
+    const { requestPersonalization } = await import('../lib/data');
+    vi.mocked(requestPersonalization).mockResolvedValue({
+      long_definition: '', why_it_matters: '', example_in_sentence: '', fromCache: false, isFallback: true,
+      unavailableReason: 'no_vetted_analogy', learnerField: 'pharmacy_technician',
+    } as any);
+    renderTerm();
+    expect(await screen.findByRole('note')).toHaveTextContent('not personalized for pharmacy technicians yet');
+  });
+
+  it('lists the supported fields when the profile matches none', async () => {
+    const { requestPersonalization } = await import('../lib/data');
+    vi.mocked(requestPersonalization).mockResolvedValue({
+      long_definition: '', why_it_matters: '', example_in_sentence: '', fromCache: false, isFallback: true,
+      unavailableReason: 'unsupported_field', learnerField: null,
+    } as any);
+    renderTerm();
+    expect(await screen.findByRole('note')).toHaveTextContent('nurses, pharmacists, pharmacy technicians and teachers');
+  });
+});
+
 describe('dedupedRequestPersonalization', () => {
   beforeEach(() => {
     vi.clearAllMocks();

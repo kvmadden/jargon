@@ -16,6 +16,11 @@ import { PronounceButton } from '../components/pronounce-button';
 import { ReportAnalogyButton } from '../components/report-analogy-button';
 import { JargonTerm } from '../components/jargon-term';
 import { GlossaryText } from '../components/glossary-text';
+import { LessonBody } from '../components/lesson-body';
+import { ConceptIllustration } from '../components/concept-illustration';
+import { illustrationFor } from '../lib/lesson-illustrations';
+import { toSentenceCase } from '../lib/lesson-text';
+import { learnerFieldPlural, supportedFieldsSentence } from '../lib/learner-fields';
 import { TermQuickPeek } from '../components/term-quick-peek';
 import { conversationGuideForTermId } from '../lib/conversation-guide-content';
 import { useUserStore } from '../stores/user-store';
@@ -149,6 +154,8 @@ function TermDetailContent() {
   // `personalized` holds the three rewritten fields when available. `null` =
   // canonical mode (no personalization OR profile disabled). `showOriginal`
   // is the per-open toggle (resets on every fresh /term/:id open by design).
+  // Why no personalized lesson was offered, when the server says so (v11).
+  const [unavailable, setUnavailable] = useState<{ reason: 'unsupported_field' | 'no_vetted_analogy'; field: string | null } | null>(null);
   const [personalized, setPersonalized] = useState<{
     long_definition: string;
     why_it_matters: string;
@@ -314,9 +321,13 @@ function TermDetailContent() {
       try {
         const fresh = await dedupedRequestPersonalization(termId, user?.id ?? '');
         if (cancelled) return;
+        if (fresh.unavailableReason) {
+          setUnavailable({ reason: fresh.unavailableReason, field: fresh.learnerField ?? null });
+        }
         if (fresh.isFallback) {
           // Server returned the canonical entry (held for review, error, cap, parse
-          // miss). The canonical text is already on screen, so nothing changes.
+          // miss, or no vetted comparison). The canonical text is already on
+          // screen, so nothing changes.
           return;
         }
         // Crossfade in the new rendering (200ms opacity per spec §5.1).
@@ -536,8 +547,15 @@ function TermDetailContent() {
             <PronounceButton text={term.term} />
           </div>
           <p className="text-base text-text-primary mt-4 leading-relaxed">
-            {term.one_line_definition}
+            {toSentenceCase(term.one_line_definition)}
           </p>
+          {unavailable && (
+            <p role="note" className="text-xs text-text-muted leading-relaxed mt-3">
+              {unavailable.reason === 'unsupported_field'
+                ? `Personalized lessons are offered for ${supportedFieldsSentence()}. Your profile does not match one of these yet, so this is the standard lesson.`
+                : `This lesson is not personalized for ${learnerFieldPlural(unavailable.field) ?? 'your field'} yet, because no comparison for this term has been reviewed. This is the standard lesson.`}
+            </p>
+          )}
         </section>
 
         {/* B+1.18 — first-time "translator working" reveal card. Surfaces
@@ -588,22 +606,26 @@ function TermDetailContent() {
           }`}
         >
           <Section label="what it means">
-            <p className="text-sm text-text-secondary leading-relaxed">
-              {/* B+1.16 — body renders through GlossaryText so any reference
-                  to ANOTHER known term turns into a tappable chip the user
-                  can drill into. Self-rescue from unfamiliar vocabulary
-                  without leaving the reading flow for long. */}
-              <GlossaryText glossary={glossary} currentTermId={term.id} onChipTap={setPeekTermId}>
-                {longDef}
-              </GlossaryText>
-            </p>
+            {/* A lead sentence plus bullets, in sentence case (Kevin's ruling,
+                2026-11-03). Each piece still renders through GlossaryText, so
+                a reference to another known term is a tappable chip. */}
+            <LessonBody
+              text={longDef}
+              render={(t) => (
+                <GlossaryText glossary={glossary} currentTermId={term.id} onChipTap={setPeekTermId}>
+                  {t}
+                </GlossaryText>
+              )}
+            />
           </Section>
+
+          {illustrationFor(term.id) && <ConceptIllustration illustration={illustrationFor(term.id)!} />}
 
           <Section label="in the wild">
             <p className="text-sm italic text-text-secondary leading-relaxed">
               “
               <GlossaryText glossary={glossary} currentTermId={term.id} onChipTap={setPeekTermId}>
-                {exampleSentence}
+                {toSentenceCase(exampleSentence)}
               </GlossaryText>
               ”
             </p>
@@ -625,11 +647,15 @@ function TermDetailContent() {
           )}
 
           <Section label="why it matters">
-            <p className="text-sm text-text-secondary leading-relaxed">
-              <GlossaryText glossary={glossary} currentTermId={term.id} onChipTap={setPeekTermId}>
-                {whyMatters}
-              </GlossaryText>
-            </p>
+            <LessonBody
+              text={whyMatters}
+              leadClassName="text-sm text-text-secondary leading-relaxed"
+              render={(t) => (
+                <GlossaryText glossary={glossary} currentTermId={term.id} onChipTap={setPeekTermId}>
+                  {t}
+                </GlossaryText>
+              )}
+            />
           </Section>
 
           {/* "show original" / "show your version" toggle.

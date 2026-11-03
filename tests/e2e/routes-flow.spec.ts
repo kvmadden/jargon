@@ -200,8 +200,9 @@ test.describe('vocabulary deep links and detail views', () => {
     await page.goto('/term/term-git-1');
 
     await expect(page.getByRole('heading', { name: 'commit' })).toBeVisible();
-    await expect(page.getByText('a commit records changes to the repository with a message.')).toBeVisible();
-    await expect(page.getByText('git commit -m "fix bug"')).toBeVisible();
+    // Lesson sentences display in sentence case (Kevin's ruling, 2026-11-03).
+    await expect(page.getByText('A commit records changes to the repository with a message.')).toBeVisible();
+    await expect(page.getByText('git commit -m "fix bug".')).toBeVisible();
   });
 
   test('deep link to non-existent term renders "term not found" with back button', async ({ page }) => {
