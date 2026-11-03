@@ -213,6 +213,27 @@ describe('worstCaseRequestUsd', () => {
   });
 });
 
+describe('a required vetted comparison', () => {
+  const comparison = 'RLS is like cutting one printed assignment sheet into strips, so each nurse holds the strip with their own patients.';
+  const withIt: ParsedRendering = { ...plainRls, long_definition: `${plainRls.long_definition} ${comparison}` };
+
+  it('is sent to Pass 1 as a JSON string and accepted when used word for word', async () => {
+    const m = fakeModel([JSON.stringify(withIt), verdict({ uses_analogy: true })]);
+    const out = await runPersonalization({ ...base, vettedAnalogy: comparison }, m.call);
+    expect(m.requests[0].user).toContain(`REQUIRED COMPARISON`);
+    expect(m.requests[0].user).toContain(JSON.stringify(comparison));
+    expect(out.status).toBe('cached');
+  });
+
+  it('holds a lesson that leaves the comparison out, even after a regeneration', async () => {
+    const m = fakeModel([JSON.stringify(plainRls), verdict(), JSON.stringify(plainRls), verdict()]);
+    const out = await runPersonalization({ ...base, vettedAnalogy: comparison }, m.call);
+    expect(out.status).toBe('held-needs-review');
+    expect(out.retryGate?.findings.map((f) => f.kind)).toContain('missing_vetted_analogy');
+    expect(m.requests[2].user).toContain('REQUIRED COMPARISON');
+  });
+});
+
 describe('cost of a call without usage', () => {
   it('prices a reply that carries no usage at its worst case, not at zero', async () => {
     const steps = [JSON.stringify(plainRls), verdict()];

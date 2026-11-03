@@ -31,4 +31,14 @@ describe('personalize-term wiring', () => {
   it('queues disputed canonical entries for review even when the rewrite is shown', () => {
     expect(src).toMatch(/needs_review: \(o\?\.needsReview \?\? false\) \|\| \(o\?\.canonicalReview\.length \?\? 0\) > 0/);
   });
+
+  it('offers a personalized lesson only for a supported field with a vetted comparison, and says why otherwise', () => {
+    expect(src).toMatch(/const learnerField: LearnerFieldId \| null = learnerFieldFor\(typedProfile\)/);
+    expect(src).toMatch(/const vetted = vettedAnalogyFor\(typedTerm\.id, learnerField\)/);
+    expect(src).toMatch(/unavailableReason: reason, learnerField/);
+    expect(src).toMatch(/'skipped-unsupported-field' : 'skipped-no-analogy'/);
+    expect(src).toMatch(/vettedAnalogy: vetted\.comparison/);
+    // The check comes before any model call.
+    expect(src.indexOf('vettedAnalogyFor(typedTerm.id')).toBeLessThan(src.indexOf('await runPersonalization('));
+  });
 });

@@ -176,7 +176,7 @@ export function validatePrefilledProfile(profile: unknown): PrefilledProfile {
  * a stale rendering is no longer displayed while it regenerates: it was
  * accepted by an older, weaker check, so the canonical text shows instead.
  */
-export const CURRENT_PROMPT_VERSION = 10;
+export const CURRENT_PROMPT_VERSION = 11;
 
 /** Must match the model name written by the Edge Function. */
 export const PERSONALIZE_MODEL = 'claude-opus-4-7';
@@ -211,6 +211,14 @@ export interface PersonalizationResponse {
   isFallback: boolean;
   /** True when a rewrite was held for human review and the canonical text was returned instead. */
   needsReview?: boolean;
+  /**
+   * Why no personalized lesson was offered (v11): the learner's field is not
+   * one jargon supports yet, or no comparison has been vetted for this term
+   * and field. The canonical lesson is shown.
+   */
+  unavailableReason?: 'unsupported_field' | 'no_vetted_analogy';
+  /** The learner field the profile matched, when one did. */
+  learnerField?: string | null;
 }
 
 /**

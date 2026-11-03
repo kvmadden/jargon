@@ -62,6 +62,8 @@ export const FINAL_STATUSES = [
   'skipped-over-cap',
   'cache-hit',
   'skipped-recent-fallback',
+  'skipped-unsupported-field',
+  'skipped-no-analogy',
 ] as const;
 
 export type FinalStatus = (typeof FINAL_STATUSES)[number];
@@ -98,6 +100,13 @@ export interface PersonalizationInput {
   profile: UserProfileRow;
   knownVocabulary: KnownVocabulary;
   approvedAnalogies?: readonly ApprovedAnalogy[];
+  /**
+   * The comparison a person vetted for this term and learner field. The
+   * rewrite must use it word for word. The Edge Function does not call the
+   * pipeline without one (Kevin's ruling: no vetted comparison, no
+   * personalized lesson).
+   */
+  vettedAnalogy?: string | null;
   /** Override for tests. Production uses PERSONALIZE_MAX_RETRIES (1). */
   maxRetries?: number;
 }
@@ -171,11 +180,13 @@ export function worstCaseRequestUsd(term: TermRow, profile: UserProfileRow, kv: 
   const big = 'x'.repeat(RENDERING_FIELD_MAX_CHARS * 4);
   const maxCandidate: ParsedRendering = { long_definition: big, why_it_matters: big, example_in_sentence: big };
   const domain = term.domain ?? 'coding';
-  const pass1 = worstCaseCallUsd(PERSONALIZE_MODEL, pass1SystemPrompt(domain) + buildPass1UserMessage(term, profile, kv), PERSONALIZE_MAX_TOKENS_PASS1);
+  // The required comparison is capped at 400 characters before it is sent.
+  const comparison = 'x'.repeat(400 * 4);
+  const pass1 = worstCaseCallUsd(PERSONALIZE_MODEL, pass1SystemPrompt(domain) + buildPass1UserMessage(term, profile, kv, comparison), PERSONALIZE_MAX_TOKENS_PASS1);
   const pass2 = worstCaseCallUsd(PERSONALIZE_MODEL, PASS2_SYSTEM_PROMPT + buildPass2UserMessage(term, maxCandidate, profile, kv), PERSONALIZE_MAX_TOKENS_PASS2);
   const pass3 = worstCaseCallUsd(
     PERSONALIZE_MODEL,
-    pass3SystemPrompt(domain) + buildPass3UserMessage(term, profile, maxCandidate, 'x'.repeat(RETRY_FEEDBACK_MAX_CHARS * 4), kv),
+    pass3SystemPrompt(domain) + buildPass3UserMessage(term, profile, maxCandidate, 'x'.repeat(RETRY_FEEDBACK_MAX_CHARS * 4), kv, comparison),
     PERSONALIZE_MAX_TOKENS_PASS3,
   );
   return pass1 + pass2 + pass3 + pass2;
@@ -185,7 +196,7 @@ export async function runPersonalization(
   input: PersonalizationInput,
   callModel: CallModel,
 ): Promise<PersonalizationOutcome> {
-  const { term, profile, knownVocabulary, approvedAnalogies = [] } = input;
+  const { term, profile, knownVocabulary, approvedAnalogies = [], vettedAnalogy = null } = input;
   const maxRetries = input.maxRetries ?? PERSONALIZE_MAX_RETRIES;
   const out: PersonalizationOutcome = {
     status: 'fallback-anthropic-error',
@@ -231,7 +242,15 @@ export async function runPersonalization(
   }
 
   function gate(candidate: ParsedRendering, verdict: VerifierVerdict): GateResult {
-    return checkRendering({ term, rendering: candidate, profile, verdict, approvedAnalogies });
+    return checkRendering({
+      term,
+      rendering: candidate,
+      profile,
+      verdict,
+      approvedAnalogies,
+      vettedSentences: vettedAnalogy ? [vettedAnalogy] : [],
+      requireVetted: Boolean(vettedAnalogy),
+    });
   }
 
   // ─── Pass 1: generate ───────────────────────────────────────────────────────
@@ -240,7 +259,7 @@ export async function runPersonalization(
     reply = await call({
       pass: 'pass1',
       system: pass1SystemPrompt(term.domain),
-      user: buildPass1UserMessage(term, profile, knownVocabulary),
+      user: buildPass1UserMessage(term, profile, knownVocabulary, vettedAnalogy),
       maxTokens: PERSONALIZE_MAX_TOKENS_PASS1,
     });
   } catch (err) {
@@ -280,7 +299,7 @@ export async function runPersonalization(
     reply = await call({
       pass: 'pass3',
       system: pass3SystemPrompt(term.domain),
-      user: buildPass3UserMessage(term, profile, candidate1, retryFeedback(verdict1, out.pass1Gate), knownVocabulary),
+      user: buildPass3UserMessage(term, profile, candidate1, retryFeedback(verdict1, out.pass1Gate), knownVocabulary, vettedAnalogy),
       maxTokens: PERSONALIZE_MAX_TOKENS_PASS3,
     });
   } catch (err) {

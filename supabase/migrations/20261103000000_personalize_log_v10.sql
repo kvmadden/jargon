@@ -13,6 +13,10 @@
 --   skipped-recent-fallback  a hold or verification failure for the same learner,
 --                            term and prompt version happened in the last 24 hours,
 --                            so no model call was made.
+--   skipped-unsupported-field  the learner's field is not one jargon personalizes
+--                            for yet (prompt version 11), so no model call was made.
+--   skipped-no-analogy       no comparison has been vetted for this term and field
+--                            (prompt version 11), so no model call was made.
 --
 -- New columns make every row attributable to the prompt and model that wrote
 -- it, which the 2026-10-30 offline eval could not do from production logs.
@@ -41,7 +45,9 @@ alter table personalize_log add constraint personalize_log_final_status_check
     'fallback-timeout',
     'skipped-over-cap',
     'cache-hit',
-    'skipped-recent-fallback'
+    'skipped-recent-fallback',
+    'skipped-unsupported-field',
+    'skipped-no-analogy'
   ]));
 
 -- The backoff lookup reads the latest backoff-status row for one learner, term

@@ -178,6 +178,7 @@ describe('comparison markers', () => {
     'the same reason a C-II dispense needs two checks',
     'basically the software version of a pump alarm',
     'a JWT is like a sealed envelope',
+    'RLS is like cutting one printed sheet into strips',
   ])('detects "%s"', (s) => {
     expect(hasComparisonMarker(s)).toBe(true);
   });
