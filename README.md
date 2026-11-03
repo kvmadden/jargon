@@ -96,6 +96,21 @@ node scripts/audit-canonical.mjs  # canonical entries a person should read first
 
 A new run makes paid model calls and needs an explicit budget. See `eval/README.md`.
 
+## Data handling
+
+- **Sent to Anthropic:** the learner profile (job, education, interests, background, goals and where they meet the vocabulary), the term, sentences written for grading, questions asked in a lesson, and gift descriptions of another person. **Sent to OpenAI:** the one-line definitions of generated terms (ingest only). **Sent to Gemini:** badge image prompts built from profile motifs.
+- **Stored in Supabase:** profiles, progress and cached renderings, `personalize_log` (every candidate, verdict and gate result, so text derived from the profile is in it), `analogy_reports` (the reported text and the complaint) and `compose_gift_log` (the recipient's name). The grade and lesson-question logs keep the term, score and status, not the learner's text.
+- No retention period is set for these tables, and this repository documents no data terms with the model providers.
+- Nothing in the app detects or removes patient, customer or other personal details. Learners should not type them into sentences, questions or profiles.
+
+## What real-world use would need
+
+- The blind evaluation in `docs/evaluation.md`, with a baseline and expert review of accepted outputs.
+- A person working the `needs_review` queue and the canonical audit, with each decision recorded.
+- A retention policy and provider data terms for the tables above.
+- A boundary for lesson questions asked in clinical settings. The question function answers any question about a term and has no rule against clinical advice.
+- Monthly cost at real usage. Personalizing the whole 646-term corpus once costs roughly $24 per learner at the 2026-10-30 list-price rate of about $0.037 per item, more than the default $5 per-user monthly cap, so a full corpus would personalize over several months.
+
 ## Stack
 
 - React 18, TypeScript, Vite, React Router, Zustand, Tailwind CSS
