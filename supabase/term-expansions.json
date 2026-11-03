@@ -46,6 +46,15 @@
         }
       ]
     },
+    "agile-retro": {
+      "parts": [
+        {
+          "abbr": "retro",
+          "expansion": "retrospective",
+          "kind": "clipped"
+        }
+      ]
+    },
     "agile-sm": {
       "parts": [
         {
@@ -82,6 +91,15 @@
         }
       ]
     },
+    "ai-chain-of-thought": {
+      "parts": [
+        {
+          "abbr": "CoT",
+          "expansion": "chain of thought",
+          "kind": "letters"
+        }
+      ]
+    },
     "ai-eval": {
       "parts": [
         {
@@ -105,6 +123,15 @@
         {
           "abbr": "LLM",
           "expansion": "large language model",
+          "kind": "letters"
+        }
+      ]
+    },
+    "ai-moe": {
+      "parts": [
+        {
+          "abbr": "MoE",
+          "expansion": "mixture of experts",
           "kind": "letters"
         }
       ]
@@ -265,6 +292,15 @@
     "cc-askuserquestion": {
       "not_abbreviation": true
     },
+    "cc-bash-tool": {
+      "parts": [
+        {
+          "abbr": "Bash",
+          "expansion": "Bourne Again Shell",
+          "kind": "letters"
+        }
+      ]
+    },
     "cc-claude-md": {
       "parts": [
         {
@@ -310,14 +346,119 @@
         }
       ]
     },
+    "cc-search-tools": {
+      "parts": [
+        {
+          "abbr": "grep",
+          "expansion": "global regular expression print",
+          "kind": "letters"
+        },
+        {
+          "abbr": "Glob",
+          "expansion": "global",
+          "kind": "clipped"
+        }
+      ]
+    },
     "cc-todowrite": {
       "not_abbreviation": true
+    },
+    "cli-bash": {
+      "parts": [
+        {
+          "abbr": "Bash",
+          "expansion": "Bourne Again Shell",
+          "kind": "letters"
+        }
+      ]
+    },
+    "cli-cat": {
+      "parts": [
+        {
+          "abbr": "cat",
+          "expansion": "concatenate",
+          "kind": "clipped"
+        }
+      ]
+    },
+    "cli-cd": {
+      "parts": [
+        {
+          "abbr": "cd",
+          "expansion": "change directory",
+          "kind": "letters"
+        }
+      ]
+    },
+    "cli-grep": {
+      "parts": [
+        {
+          "abbr": "grep",
+          "expansion": "global regular expression print",
+          "kind": "letters"
+        }
+      ]
+    },
+    "cli-ls": {
+      "parts": [
+        {
+          "abbr": "ls",
+          "expansion": "list",
+          "kind": "clipped"
+        }
+      ]
+    },
+    "cli-manpage": {
+      "parts": [
+        {
+          "abbr": "man",
+          "expansion": "manual",
+          "kind": "clipped"
+        }
+      ]
+    },
+    "cli-mv": {
+      "parts": [
+        {
+          "abbr": "mv",
+          "expansion": "move",
+          "kind": "clipped"
+        }
+      ]
+    },
+    "cli-rm": {
+      "parts": [
+        {
+          "abbr": "rm",
+          "expansion": "remove",
+          "kind": "clipped"
+        }
+      ]
+    },
+    "cli-sudo": {
+      "parts": [
+        {
+          "abbr": "sudo",
+          "expansion": "superuser do",
+          "kind": "letters"
+        }
+      ],
+      "review": "Originally superuser do. Newer documentation reads it as substitute user do, since it can run a command as any user."
     },
     "cloud-cdn": {
       "parts": [
         {
           "abbr": "CDN",
           "expansion": "content delivery network",
+          "kind": "letters"
+        }
+      ]
+    },
+    "data-redis": {
+      "parts": [
+        {
+          "abbr": "Redis",
+          "expansion": "Remote Dictionary Server",
           "kind": "letters"
         }
       ]
@@ -366,6 +507,15 @@
     "dev-readme": {
       "not_abbreviation": true
     },
+    "dev-tech-debt": {
+      "parts": [
+        {
+          "abbr": "tech",
+          "expansion": "technical",
+          "kind": "clipped"
+        }
+      ]
+    },
     "ent-aws": {
       "parts": [
         {
@@ -408,6 +558,15 @@
     "ent-jira": {
       "not_abbreviation": true
     },
+    "ent-kubernetes": {
+      "parts": [
+        {
+          "abbr": "k8s",
+          "expansion": "Kubernetes, counting the 8 letters between k and s",
+          "kind": "clipped"
+        }
+      ]
+    },
     "ent-powerbi": {
       "parts": [
         {
@@ -442,6 +601,15 @@
     "excel-pivot-table": {
       "not_abbreviation": true
     },
+    "fabric-dataflow-gen2": {
+      "parts": [
+        {
+          "abbr": "Gen2",
+          "expansion": "generation 2",
+          "kind": "clipped"
+        }
+      ]
+    },
     "fabric-onelake": {
       "not_abbreviation": true
     },
@@ -454,12 +622,30 @@
         }
       ]
     },
+    "flow-diff": {
+      "parts": [
+        {
+          "abbr": "diff",
+          "expansion": "difference",
+          "kind": "clipped"
+        }
+      ]
+    },
     "flow-pull-request": {
       "parts": [
         {
           "abbr": "PR",
           "expansion": "pull request",
           "kind": "letters"
+        }
+      ]
+    },
+    "git-diff": {
+      "parts": [
+        {
+          "abbr": "diff",
+          "expansion": "difference",
+          "kind": "clipped"
         }
       ]
     },
@@ -544,11 +730,29 @@
         }
       ]
     },
+    "hw-soc": {
+      "parts": [
+        {
+          "abbr": "SoC",
+          "expansion": "system on a chip",
+          "kind": "letters"
+        }
+      ]
+    },
     "hw-ssd": {
       "parts": [
         {
           "abbr": "SSD",
           "expansion": "solid-state drive",
+          "kind": "letters"
+        }
+      ]
+    },
+    "lang-bash": {
+      "parts": [
+        {
+          "abbr": "Bash",
+          "expansion": "Bourne Again Shell",
           "kind": "letters"
         }
       ]
@@ -723,6 +927,15 @@
         }
       ]
     },
+    "qa-e2e-test": {
+      "parts": [
+        {
+          "abbr": "E2E",
+          "expansion": "end-to-end",
+          "kind": "letters"
+        }
+      ]
+    },
     "qa-mttr": {
       "parts": [
         {
@@ -805,6 +1018,24 @@
         }
       ]
     },
+    "sys-authn": {
+      "parts": [
+        {
+          "abbr": "authn",
+          "expansion": "authentication",
+          "kind": "clipped"
+        }
+      ]
+    },
+    "sys-authz": {
+      "parts": [
+        {
+          "abbr": "authz",
+          "expansion": "authorization",
+          "kind": "clipped"
+        }
+      ]
+    },
     "sys-cdn": {
       "parts": [
         {
@@ -829,6 +1060,15 @@
           "abbr": "DNS",
           "expansion": "Domain Name System",
           "kind": "letters"
+        }
+      ]
+    },
+    "sys-enum": {
+      "parts": [
+        {
+          "abbr": "enum",
+          "expansion": "enumeration",
+          "kind": "clipped"
         }
       ]
     },
@@ -920,6 +1160,20 @@
       ],
       "review": "Usage varies: some sources say \"not only SQL\", others \"non-SQL\" or \"non-relational\"."
     },
+    "sys-pub-sub": {
+      "parts": [
+        {
+          "abbr": "pub",
+          "expansion": "publish",
+          "kind": "clipped"
+        },
+        {
+          "abbr": "sub",
+          "expansion": "subscribe",
+          "kind": "clipped"
+        }
+      ]
+    },
     "sys-rest": {
       "parts": [
         {
@@ -976,6 +1230,19 @@
     },
     "sys-websocket": {
       "not_abbreviation": true
+    },
+    "tool-npm": {
+      "not_abbreviation": true,
+      "review": "npm's own documentation says the name is not an acronym, though many people read it as Node Package Manager."
+    },
+    "tool-pnpm": {
+      "parts": [
+        {
+          "abbr": "pnpm",
+          "expansion": "performant npm",
+          "kind": "letters"
+        }
+      ]
     },
     "web-spa": {
       "parts": [

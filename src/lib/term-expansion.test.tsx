@@ -18,11 +18,14 @@ const data = JSON.parse(read('supabase/term-expansions.json')) as { terms: Recor
 const seedText = read('supabase/seed.sql');
 const rows = [...uniqueById(parseTermInserts(seedText)).values()] as Array<{ id: string; term: string }>;
 
-// Clipped forms that count as abbreviations when they are a whole word of a term name.
+// Clipped forms, lowercase commands and acronym names that count as
+// abbreviations when they are a whole word of a term name.
 const CLIPPED = new Set(['repo', 'app', 'apps', 'config', 'env', 'auth', 'admin', 'prod', 'dev', 'docs', 'spec', 'info', 'demo',
-  'stats', 'temp', 'regex', 'lib', 'pkg', 'src', 'cmd', 'db', 'ops', 'param', 'params', 'arg', 'args', 'cert', 'props', 'evals', 'eval']);
+  'stats', 'temp', 'regex', 'lib', 'pkg', 'src', 'cmd', 'db', 'ops', 'param', 'params', 'arg', 'args', 'cert', 'props', 'evals', 'eval',
+  'cd', 'ls', 'mv', 'rm', 'cat', 'man', 'grep', 'sudo', 'bash', 'authn', 'authz', 'k8s', 'retro', 'tech', 'enum', 'diff', 'pub',
+  'sub', 'npm', 'pnpm', 'gen2', 'redis', 'glob']);
 // Mixed-case acronyms that are not all capitals.
-const MIXED = /^(?:OAuth|NoSQL|PCIe|SaaS|PaaS|IaaS|GraphQL|ChatGPT|iOS|macOS)$/;
+const MIXED = /^(?:OAuth|NoSQL|PCIe|SaaS|PaaS|IaaS|GraphQL|ChatGPT|iOS|macOS|CoT|MoE|SoC|E2E)$/;
 
 function looksLikeAbbreviation(term: string): boolean {
   return term
@@ -73,7 +76,7 @@ describe('term expansion data', () => {
 
   it('lists the entries a person should confirm', () => {
     const review = Object.entries(data.terms).filter(([, e]) => e.review).map(([id]) => id).sort();
-    expect(review).toEqual(['ent-sap', 'hw-arm', 'ms365-admin-center', 'ms365-entra', 'qa-mttr', 'sys-graphql', 'sys-nosql']);
+    expect(review).toEqual(['cli-sudo', 'ent-sap', 'hw-arm', 'ms365-admin-center', 'ms365-entra', 'qa-mttr', 'sys-graphql', 'sys-nosql', 'tool-npm']);
   });
 });
 
@@ -108,6 +111,24 @@ describe('ExpansionLine', () => {
   it('says "Short for" for a clipped term', () => {
     render(<ExpansionLine term="evals" expansion={data.terms['aid-evals']} />);
     expect(screen.getByText(/Short for/)).toHaveTextContent('Short for evaluations.');
+  });
+
+  it('keeps the case the abbreviation gives each letter', () => {
+    const cot = render(<ExpansionLine term="chain of thought (CoT)" expansion={data.terms['ai-chain-of-thought']} />);
+    expect(cot.container.textContent).toBe('CoT stands for Chain of Thought.');
+    expect([...cot.container.querySelectorAll('strong')].map((s) => s.textContent)).toEqual(['C', 'o', 'T']);
+    cot.unmount();
+    const cd = render(<ExpansionLine term="cd" expansion={data.terms['cli-cd']} />);
+    expect(cd.container.textContent).toBe('cd stands for change directory.');
+    expect([...cd.container.querySelectorAll('strong')].map((s) => s.textContent)).toEqual(['c', 'd']);
+  });
+
+  it('covers commands, clipped words and two-part names', () => {
+    const line = (term: string, id: string) => render(<ExpansionLine term={term} expansion={data.terms[id]} />).container.textContent;
+    expect(line('ls', 'cli-ls')).toBe('Short for list.');
+    expect(line('Kubernetes (k8s)', 'ent-kubernetes')).toBe('k8s is short for Kubernetes, counting the 8 letters between k and s.');
+    expect(line('pub/sub (publish-subscribe)', 'sys-pub-sub')).toBe('pub is short for publish.sub is short for subscribe.');
+    expect(line('npm', 'tool-npm')).toBe('');
   });
 
   it('shows the expansion without marking when the letters do not map', () => {

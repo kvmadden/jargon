@@ -26,6 +26,8 @@ export interface MarkedWord {
   mark: number;
   /** The separator after this word (space, hyphen, slash), shown as is. */
   after: string;
+  /** Whether the abbreviation writes this letter as a capital (CoT keeps the o small). */
+  upper: boolean;
 }
 
 /**
@@ -40,12 +42,13 @@ export function letterMarks(part: ExpansionPart): MarkedWord[] | null {
   const pieces = part.expansion.match(/[A-Za-z][A-Za-z']*|[^A-Za-z]+/g) ?? [];
   const words: MarkedWord[] = [];
   for (const piece of pieces) {
-    if (/^[A-Za-z]/.test(piece)) words.push({ text: piece, mark: 0, after: '' });
+    if (/^[A-Za-z]/.test(piece)) words.push({ text: piece, mark: 0, after: '', upper: true });
     else if (words.length > 0) words[words.length - 1].after += piece;
   }
   if (words.length !== letters.length || words.length < 2) return null;
   for (let i = 0; i < words.length; i++) {
     if (words[i].text[0].toLowerCase() !== letters[i].toLowerCase()) return null;
+    words[i].upper = letters[i] !== letters[i].toLowerCase();
   }
   return words;
 }
