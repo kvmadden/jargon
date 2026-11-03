@@ -103,14 +103,21 @@ export function buildReport(): string {
   out.push('');
   out.push('## Claim gate replay (development result)');
   out.push('');
-  out.push(`Today's claim gate, replayed over the ${replay.accepted_outputs} saved accepted outputs with the verifier's saved analogy flag:`);
+  out.push(`Today's claim gate, replayed over the ${replay.as_saved.accepted_outputs} saved accepted outputs. The gate was built from the ${replay.as_saved.introduced_errors.total} introduced errors in this run, and revised after review round 2, so holding them is expected and says nothing about new outputs.`);
   out.push('');
-  out.push(`- Holds ${rate(replay.held_or_revise, replay.accepted_outputs)} for review.`);
-  out.push(`- Holds ${replay.introduced_errors.held} of ${replay.introduced_errors.total} introduced errors.`);
-  out.push(`- Holds ${replay.inherited_wrong.held} of ${replay.inherited_wrong.total} inherited errors. The gate compares against the canonical text, so it cannot see an error the canonical text shares. Correcting the canonical text is the fix (docs/canonical-review.md).`);
-  out.push(`- Holds ${replay.judged_correct.held} of ${replay.judged_correct.total} outputs the AI read-through judged correct, and ${replay.unlabeled.held} of ${replay.unlabeled.total} unlabeled outputs. A hold shows the learner the canonical text, so its cost is lost personalization, not a wrong answer.`);
+  out.push('The gate holds any sentence about the learner\'s field that the verifier does not quote as supported. The 2026-10-30 verifier (prompt version 9) never listed claims, so the replay is shown two ways:');
   out.push('');
-  out.push('The gate was built after reading these errors, so holding all of them is expected. How it does on new outputs is unmeasured until the blind test in docs/evaluation.md runs.');
+  out.push('| | As saved (nothing vouched for) | Every sentence vouched for |');
+  out.push('| --- | --- | --- |');
+  const both = (k: 'introduced_errors' | 'inherited_wrong' | 'judged_correct' | 'unlabeled') =>
+    `${replay.as_saved[k].held} of ${replay.as_saved[k].total} | ${replay.all_vouched[k].held} of ${replay.all_vouched[k].total}`;
+  out.push(`| Accepted outputs held | ${rate(replay.as_saved.held_or_revise, replay.as_saved.accepted_outputs)} | ${rate(replay.all_vouched.held_or_revise, replay.all_vouched.accepted_outputs)} |`);
+  out.push(`| Introduced errors held | ${both('introduced_errors')} |`);
+  out.push(`| Inherited errors held | ${both('inherited_wrong')} |`);
+  out.push(`| Outputs the AI read-through judged correct, held | ${both('judged_correct')} |`);
+  out.push(`| Unlabeled outputs held | ${both('unlabeled')} |`);
+  out.push('');
+  out.push('A v10 verifier that quotes the field sentences it supports would land between the two columns. A hold shows the learner the canonical text, so its cost is lost personalization, not a wrong answer. The gate cannot tell that a claim is copied from a wrong canonical entry. The inherited errors it holds are held because they use field words or restrictions. Correcting the canonical text is the fix for those (docs/canonical-review.md).');
   out.push('');
   return out.join('\n');
 }

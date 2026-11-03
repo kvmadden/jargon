@@ -65,11 +65,13 @@ export function contentWords(text: string): Set<string> {
 //
 // General English comparison constructions. Deliberately not tied to any one
 // profession: the gate pairs these with the learner's own field, so the
-// marker alone never holds a sentence.
+// marker alone never holds a sentence. "imagine", "picture", "as if" and
+// "mirrors" are left out: they mostly introduce a literal scene ("imagine
+// opening a dashboard of ward admissions"), not a claim that two things work
+// the same way. A field sentence without a marker still needs the verifier to
+// vouch for it (claim-gate.ts), so leaving them out opens no gap.
 const COMPARISON_PATTERNS: RegExp[] = [
   /\bthink of\b/i,
-  /\bimagine\b/i,
-  /\bpicture (?:a|an|the|how|your)\b/i,
   /\b(?:just|much|kind of|sort of|works|acts|functions|exactly) like\b/i,
   /\blike (?:a|an|the|how|when|your|you|our|their|its)\b/i,
   /\bsimilar to\b/i,
@@ -79,11 +81,9 @@ const COMPARISON_PATTERNS: RegExp[] = [
   /\b(?:the )?same (?:way|reason|idea|logic|principle) (?:as|that|a|an|your|you)\b/i,
   /\bsame idea\b/i,
   /\bjust as\b/i,
-  /\bas if\b/i,
   /\bthe equivalent of\b/i,
   /\bthe [\p{L}-]+ version of\b/iu,
   /\b(?:it|this|that)(?:'s| is) (?:basically |essentially |a bit )?like\b/i,
-  /\bmirrors?\b/i,
   /\b(?:works|acts|behaves|operates|functions) (?:the same way as|the way)\b/i,
 ];
 
@@ -95,10 +95,12 @@ export function hasComparisonMarker(sentence: string): boolean {
 // ─── Restrictive and exclusive claims ─────────────────────────────────────────
 
 /**
- * Words that make a statement restrictive: they assert a limit on what people
- * or systems do ("only", "never", "cannot"). Intensifiers such as "every" and
- * "always" are not included: on the development run they mostly appeared in
- * scene-setting ("every time someone filters") rather than in claims.
+ * Constructions that assert a limit on what people or systems can do. They
+ * cover the access-rule wordings the reviews found ("only if", "restricted
+ * to", "unless", "locked out", "keeps each nurse inside", "just the profiles",
+ * "does not let"), not only the words seen in the development run.
+ * Intensifiers such as "every" and "always" are not here: a field sentence
+ * that uses them is still held unless the verifier vouches for it.
  */
 const RESTRICTIVE_PATTERNS: Array<{ re: RegExp; label: string }> = [
   { re: /\bonly\b/i, label: 'only' },
@@ -106,29 +108,78 @@ const RESTRICTIVE_PATTERNS: Array<{ re: RegExp; label: string }> = [
   { re: /\bexclusively\b/i, label: 'exclusively' },
   { re: /\bthe sole\b/i, label: 'the sole' },
   { re: /\bnothing but\b/i, label: 'nothing but' },
+  { re: /\bjust (?:the|their|your|his|her|its|those|these|one|a single)\b/i, label: 'just' },
   { re: /\bnever\b/i, label: 'never' },
   { re: /\bno one\b|\bnobody\b/i, label: 'no one' },
   { re: /\bcannot\b|\bcan't\b|\bcan not\b/i, label: 'cannot' },
   { re: /\bimpossible\b/i, label: 'impossible' },
+  { re: /\b(?:restricted|limited|confined) to\b/i, label: 'restricted to' },
+  { re: /\bunless\b/i, label: 'unless' },
+  { re: /\b(?:locked|shut|kept|keeps|keep) out\b/i, label: 'locked out' },
+  { re: /\b(?:keeps?|kept) (?:[\p{L}'’-]+ ){0,3}(?:inside|within)\b/iu, label: 'keeps inside' },
+  {
+    re: /\b(?:does not|doesn't|do not|don't|will not|won't|would not|wouldn't|is not allowed to|isn't allowed to|are not allowed to|aren't allowed to)\s+(?:let|allow|show|expose|permit|give|grant)\b/i,
+    label: 'does not allow',
+  },
 ];
 
-// "not only X but Y" is additive, and "only if" states a condition. Neither
-// asserts exclusivity about the world.
-const NON_EXCLUSIVE_ONLY = /\bnot only\b|\bonly if\b|\bif only\b|\bonly just\b/gi;
+// "not only X but Y" is additive, "if only" is a wish and "only just" means
+// barely. "only if" is kept: it states a necessary condition, which is a
+// restriction ("a nurse can open a chart only if the patient is on their unit").
+const NON_EXCLUSIVE_ONLY = /\bnot only\b|\bif only\b|\bonly just\b/gi;
 
-/** Corrective framing: the sentence warns against a belief instead of asserting it. */
+/** Corrective framing: the clause warns against a belief instead of asserting it. */
 const CORRECTIVE_FRAME =
   /\b(?:do not|don't|never) assume\b|\bnot necessarily\b|\bisn't (?:always|necessarily)\b|\bis not (?:always|necessarily)\b|\bdoesn't mean\b|\bdoes not mean\b|\b(?:a )?(?:common )?misconception\b|\bit is not true that\b|\bit's not true that\b|\bcontrary to\b/i;
 
-/** Labels of the restrictive markers a sentence asserts (empty when none, or when it is framed as a correction). */
-export function restrictiveMarkers(sentence: string): string[] {
-  if (CORRECTIVE_FRAME.test(sentence)) return [];
-  const scrubbed = sentence.replace(NON_EXCLUSIVE_ONLY, ' ');
-  return RESTRICTIVE_PATTERNS.filter(({ re }) => re.test(scrubbed)).map(({ label }) => label);
+// Clause boundaries. A corrective frame covers only its own clause, so
+// "contrary to a common misconception, nurses can only open charts on their
+// unit" still asserts the restriction after the comma.
+const CLAUSE_BREAK = /\s*(?:[,;:()]|\s[-–]\s|\b(?:because|but|while|whereas|although|though|since|so|yet)\b)\s*/i;
+
+/** The clauses of a sentence, split at punctuation and at contrast or cause words. */
+export function splitClauses(sentence: string): string[] {
+  return sentence.split(CLAUSE_BREAK).map((c) => c.trim()).filter((c) => /[\p{L}\p{N}]/u.test(c));
 }
 
-/** Exclusive markers, a subset of the restrictive markers. */
-export const EXCLUSIVE_LABELS = new Set(['only', 'solely', 'exclusively', 'the sole', 'nothing but']);
+/**
+ * Labels of the restrictive constructions a sentence asserts. A clause framed
+ * as a correction ("do not assume ...") is skipped, and only that clause.
+ */
+export function restrictiveMarkers(sentence: string): string[] {
+  const labels = new Set<string>();
+  for (const clause of splitClauses(sentence)) {
+    if (CORRECTIVE_FRAME.test(clause)) continue;
+    const scrubbed = clause.replace(NON_EXCLUSIVE_ONLY, ' ');
+    for (const { re, label } of RESTRICTIVE_PATTERNS) if (re.test(scrubbed)) labels.add(label);
+  }
+  return [...labels];
+}
+
+/** Share of the words in `a` that also appear in `b` (0 when `a` is empty). */
+export function shareOf(a: ReadonlySet<string>, b: ReadonlySet<string>): number {
+  if (a.size === 0) return 0;
+  let n = 0;
+  for (const w of a) if (b.has(w)) n++;
+  return n / a.size;
+}
+
+/** Lowercase token sequence used for whole-word phrase matching. Hyphens split tokens. */
+export function tokens(text: string): string[] {
+  return words(text.replace(/[-–]/g, ' '));
+}
+
+/** True when `phrase` appears in `text` as whole words, in order. */
+export function containsPhrase(text: string, phrase: string): boolean {
+  const t = tokens(text);
+  const p = tokens(phrase);
+  if (p.length === 0 || p.length > t.length) return false;
+  outer: for (let i = 0; i + p.length <= t.length; i++) {
+    for (let j = 0; j < p.length; j++) if (t[i + j] !== p[j]) continue outer;
+    return true;
+  }
+  return false;
+}
 
 /** True when the text visibly contains at least one letter or digit. */
 export function hasVisibleText(text: string): boolean {

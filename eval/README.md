@@ -5,8 +5,8 @@ Offline evaluation tools for `personalize-term`. Everything here except `run-per
 | Command | What it does |
 | --- | --- |
 | `node eval/report.ts` | Writes `results/2026-10-30-report.md`, the corrected report on the 2026-10-30 run. `--check` exits 1 if the committed file is out of date. |
-| `node eval/replay-gate.ts` | Replays the claim gate over the saved outputs and writes `results/2026-10-30-gate-replay.json`. `--check` as above. Development result. |
-| `node eval/check-rendering.ts --term <id> --profile <id> --rendering <file> [--analogy]` | Runs the claim gate on one rendering against the corrected seed. Exit code 0 is pass, 3 is needs_review, 4 is revise. |
+| `node eval/replay-gate.ts` | Replays the claim gate over the saved outputs and writes `results/2026-10-30-gate-replay.json`, once as saved (nothing vouched for) and once with every sentence vouched for. `--check` as above. Development result. |
+| `node eval/check-rendering.ts --term <id> --profile <id> --rendering <file> [--analogy] [--verdict <file> or --vouch-all]` | Runs the claim gate on one rendering against the corrected seed. Without a verdict, no sentence is vouched for. Exit code 0 is pass, 3 is needs_review, 4 is revise. |
 | `node eval/build-dataset.mjs --out <file>` | Picks 40 terms from the seed. Refuses to overwrite a frozen file. |
 | `node eval/run-personalize-eval.ts --terms <file>` | Runs the pipeline against the Anthropic API. **Paid.** |
 
@@ -26,4 +26,4 @@ node eval/build-dataset.mjs --out eval/data/terms-2026-11-10.json
 EVAL_DATE=2026-11-10 EVAL_BUDGET_USD=10 node eval/run-personalize-eval.ts --terms eval/data/terms-2026-11-10.json
 ```
 
-The runner calls `supabase/functions/personalize-term/pipeline.ts`, the same code the Edge Function runs. It reserves each item's worst case at list price before starting it, so the budget is an upper bound. Each row carries a manifest hash of the prompts, pipeline, gate, model, prompt version, terms and profiles, and a resume under a different manifest is refused. Results are development data unless the inputs are a locked blind set scored once (`docs/evaluation.md`).
+The runner calls `supabase/functions/personalize-term/pipeline.ts`, the same code the Edge Function runs. It reserves each item's worst case at list price before starting it. A retry needs room for one more worst-case attempt, and an attempt that ended without a readable response is counted at its worst case, because it may have been billed. Each row carries a manifest hash of every file that defines the experiment (prompts, pipeline, gate, text rules, lexicon, approved analogies, pricing, budget and the eval library), the model, the prompt version, the terms and the profiles. A resume under a different manifest is refused. Results are development data unless the inputs are a locked blind set scored once (`docs/evaluation.md`).

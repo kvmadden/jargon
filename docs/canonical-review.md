@@ -124,16 +124,16 @@ Why: Only one of the four names listed carries a 'B'. The old wording implied th
 
 ## Audit
 
-Run `node scripts/audit-canonical.mjs` (add `--json` for the sentences). On the corrected seed it flags 146 of 646 entries:
+Run `node scripts/audit-canonical.mjs` (add `--json` for the sentences). On the corrected seed it flags 169 of 646 entries:
 
 | Flag | Entries | What it means |
 | --- | --- | --- |
-| `exclusive_claim` | 144 of 646 | A sentence says only, never, cannot, no one or similar. Two of the three known errors were claims of this kind. |
-| `quiz_tests_claim` | 48 of 646 | The fill-in-the-blank sentence carries such a claim, so learners are graded on it. |
+| `exclusive_claim` | 167 of 646 | A sentence says only, only if, never, cannot, no one, restricted to, unless or similar. Two of the three known errors were claims of this kind. |
+| `quiz_tests_claim` | 54 of 646 | The fill-in-the-blank sentence carries such a claim, so learners are graded on it. |
 | `unpublished_or_dated` | 2 of 646 | A commercial model is named next to a size or a count. |
 | `malformed_blank` | 0 of 646 | The fill-in-the-blank sentence does not have exactly one blank. |
 
-A flag means "read this", not "this is wrong". Most flagged sentences are sound advice such as "never commit a secret". Suggested order: the 48 quiz sentences first, in batches of 20, then the rest of the exclusive claims.
+A flag means "read this", not "this is wrong". Most flagged sentences are sound advice such as "never commit a secret". Suggested order: the 54 quiz sentences first, in batches of 20, then the rest of the exclusive claims.
 
 What the audit cannot do:
 

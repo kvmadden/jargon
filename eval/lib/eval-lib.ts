@@ -5,7 +5,8 @@
 
 import { createHash } from 'node:crypto';
 import { checkRendering, type GateResult } from '../../supabase/functions/personalize-term/claim-gate.ts';
-import type { CallModel, ModelReply } from '../../supabase/functions/personalize-term/pipeline.ts';
+import { worstCaseRequestUsd, type CallModel, type ModelReply } from '../../supabase/functions/personalize-term/pipeline.ts';
+import { splitSentences } from '../../supabase/functions/personalize-term/claim-text.ts';
 import {
   PASS2_SYSTEM_PROMPT,
   PERSONALIZE_MAX_TOKENS_PASS1,
@@ -77,18 +78,38 @@ export function listPriceOfRow(row: { model?: string; calls?: Record<string, Sav
 export interface ManifestInput {
   promptVersion: number;
   model: string;
-  promptsSource: string;
-  pipelineSource: string;
-  gateSource: string;
+  /** Every source file that changes what an item does or costs, keyed by path. */
+  sources: Record<string, string>;
   termsFile: string;
   profilesFile: string;
 }
 
+/** Files whose content defines an eval experiment. A change to any of them is a new experiment. */
+export const MANIFEST_SOURCES = [
+  'supabase/functions/personalize-term/prompts.ts',
+  'supabase/functions/personalize-term/pipeline.ts',
+  'supabase/functions/personalize-term/claim-gate.ts',
+  'supabase/functions/personalize-term/claim-text.ts',
+  'supabase/functions/personalize-term/domain-lexicon.ts',
+  'supabase/functions/personalize-term/approved-analogies.ts',
+  'supabase/functions/_shared/pricing.ts',
+  'supabase/functions/_shared/cycle-budget.ts',
+  'supabase/functions/_shared/domain-vocabulary.ts',
+  'eval/lib/eval-lib.ts',
+] as const;
+
 /** Hash of everything that defines an experiment. Rows from a different manifest are a different experiment. */
 export function manifestHash(m: ManifestInput): string {
   const h = createHash('sha256');
-  for (const [k, v] of Object.entries(m).sort(([a], [b]) => a.localeCompare(b))) {
-    h.update(`${k}\n${String(v).length}\n${v}\n`);
+  const flat: Record<string, string> = {
+    promptVersion: String(m.promptVersion),
+    model: m.model,
+    termsFile: m.termsFile,
+    profilesFile: m.profilesFile,
+  };
+  for (const [path, source] of Object.entries(m.sources)) flat[`source:${path}`] = source;
+  for (const [k, v] of Object.entries(flat).sort(([a], [b]) => a.localeCompare(b))) {
+    h.update(`${k}\n${v.length}\n${v}\n`);
   }
   return h.digest('hex');
 }
@@ -102,33 +123,9 @@ export function checkResume(existingRows: Array<{ manifest_sha256?: string }>, m
 
 // ─── Budget ────────────────────────────────────────────────────────────────────
 
-/**
- * Upper bound on one item's cost at list price: Pass 1, Pass 2, Pass 3 and the
- * Pass 2 re-run, each with the longest prompt it can have. A parsed candidate
- * field is at most RENDERING_FIELD_MAX_CHARS characters, and a character is at
- * most 4 UTF-8 bytes, so the candidate is bounded by that many bytes.
- */
+/** Upper bound on one item's cost at list price (the same bound the Edge Function checks). */
 export function worstCaseItemUsd(term: TermRow, profile: UserProfileRow, kv: KnownVocabulary): number {
-  const big = 'x'.repeat(RENDERING_FIELD_MAX_CHARS * 4);
-  const maxCandidate: ParsedRendering = { long_definition: big, why_it_matters: big, example_in_sentence: big };
-  const domain = term.domain ?? 'coding';
-  const pass1 = worstCaseCallUsd(
-    PERSONALIZE_MODEL,
-    pass1SystemPrompt(domain) + buildPass1UserMessage(term, profile, kv),
-    PERSONALIZE_MAX_TOKENS_PASS1,
-  );
-  const pass2 = worstCaseCallUsd(
-    PERSONALIZE_MODEL,
-    PASS2_SYSTEM_PROMPT + buildPass2UserMessage(term, maxCandidate, profile, kv),
-    PERSONALIZE_MAX_TOKENS_PASS2,
-  );
-  // The feedback block quotes findings and criteria. 8000 bytes bounds it for any parsed verdict.
-  const pass3 = worstCaseCallUsd(
-    PERSONALIZE_MODEL,
-    pass3SystemPrompt(domain) + buildPass3UserMessage(term, profile, maxCandidate, 'x'.repeat(8000), kv),
-    PERSONALIZE_MAX_TOKENS_PASS3,
-  );
-  return pass1 + pass2 + pass3 + pass2;
+  return worstCaseRequestUsd(term, profile, kv);
 }
 
 /** True when the spend so far, the in-flight reservations and this item's worst case fit in the budget. */
@@ -149,17 +146,29 @@ export type FetchLike = (url: string, init: Record<string, unknown>) => Promise<
  * the Edge Function sends through the SDK. 429 and 5xx responses and network
  * errors are retried up to 3 times (provider capacity, not product
  * behavior). Timeouts are not retried, matching the function.
+ *
+ * Billing. An attempt that ends without a readable response (a network error
+ * after sending, an unreadable body, a timeout) may still have been billed.
+ * Its worst case is reported through chargeUnknown, so the runner counts it as
+ * spent. Before each retry, allowRetry is asked whether one more worst-case
+ * attempt fits the budget. The item reservation covers only first attempts.
  */
 export function httpCallModel(opts: {
   fetch: FetchLike;
   apiKey: string;
   sleep?: (ms: number) => Promise<void>;
   onRetry?: () => void;
+  chargeUnknown?: (worstCaseUsd: number) => void;
+  allowRetry?: (worstCaseUsd: number) => boolean;
   url?: string;
 }): CallModel {
   const url = opts.url ?? 'https://api.anthropic.com/v1/messages';
   const sleep = opts.sleep ?? ((ms: number) => new Promise((r) => setTimeout(r, ms)));
   return async (request): Promise<ModelReply> => {
+    const worst = worstCaseCallUsd(PERSONALIZE_MODEL, request.system + request.user, request.maxTokens);
+    const retryOrStop = (why: string) => {
+      if (opts.allowRetry && !opts.allowRetry(worst)) throw new Error(`budget: no room to retry after ${why}`);
+    };
     for (let attempt = 0; ; attempt++) {
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), PERSONALIZE_TIMEOUT_MS);
@@ -181,8 +190,11 @@ export function httpCallModel(opts: {
         body = await res.json();
       } catch (err: any) {
         clearTimeout(timer);
+        // No readable response: the request may have been billed anyway.
+        opts.chargeUnknown?.(worst);
         if (err?.name === 'AbortError') throw Object.assign(new Error(`timeout after ${PERSONALIZE_TIMEOUT_MS} ms`), { name: 'TimeoutError' });
         if (attempt < 3) {
+          retryOrStop('a network error');
           opts.onRetry?.();
           await sleep(2000 * 2 ** attempt);
           continue;
@@ -192,6 +204,7 @@ export function httpCallModel(opts: {
       clearTimeout(timer);
       if (!res.ok) {
         if ((res.status === 429 || res.status >= 500) && attempt < 3) {
+          retryOrStop(`http ${res.status}`);
           opts.onRetry?.();
           await sleep(4000 * 2 ** attempt);
           continue;
@@ -203,7 +216,7 @@ export function httpCallModel(opts: {
         : '';
       return {
         rawText,
-        usage: body?.usage ?? {},
+        usage: body?.usage ?? null,
         stopReason: body?.stop_reason ?? null,
         latencyMs: Date.now() - started,
       };
@@ -224,14 +237,20 @@ export interface ReplayRow {
 
 /**
  * Runs today's claim gate over every saved accepted output, with the verifier's
- * saved analogy flag. No model call. The verifier's claim lists did not exist
- * in that run, so they are empty here.
+ * saved analogy flag. No model call.
  */
 export function replayGate(
   rows: any[],
   terms: Map<string, TermRow>,
   profiles: Map<string, Record<string, unknown>>,
   labels: Map<string, { label: string; origin: string }>,
+  /**
+   * 'none': the saved verdicts as they are (the v9 verifier listed no claims,
+   * so nothing is vouched for, an upper bound on holds). 'all': every sentence
+   * vouched for as supported, a lower bound that shows what the rules hold
+   * even when the verifier vouches.
+   */
+  vouch: 'none' | 'all' = 'none',
 ): ReplayRow[] {
   const out: ReplayRow[] = [];
   for (const row of rows) {
@@ -240,11 +259,17 @@ export function replayGate(
     const term = terms.get(row.term_id);
     const profile = profiles.get(row.profile_id);
     if (!term || !profile) throw new Error(`missing term or profile for ${row.run_id}`);
+    const domainClaims =
+      vouch === 'all'
+        ? (['long_definition', 'why_it_matters', 'example_in_sentence'] as const).flatMap((field) =>
+            splitSentences(row.final_text[field]).map((claim) => ({ field, claim, assessment: 'supported' as const })),
+          )
+        : [];
     const result = checkRendering({
       term,
       rendering: row.final_text,
       profile,
-      verdict: { uses_analogy: Boolean(verdict?.uses_analogy) },
+      verdict: { uses_analogy: Boolean(verdict?.uses_analogy), domain_claims: domainClaims, canonical_concerns: [] },
     });
     const l = labels.get(row.run_id) ?? null;
     out.push({

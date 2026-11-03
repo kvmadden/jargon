@@ -16,24 +16,32 @@ On the 2026-10-30 run the verifier accepted 78 of 79 rewrites. Four accepted rew
 
 ## What the gate holds
 
-| Rule | Holds when | Why |
+The gate reads every sentence of all three fields. A sentence that uses the learner's field vocabulary is a field sentence, unless nearly all of its words, and every field word, come from the canonical entry (a restatement).
+
+| Rule | Holds when | Even when the verifier vouches? |
 | --- | --- | --- |
-| Analogy into the learner's field | A sentence with a comparison marker (think of, like a, the same way, just as and similar) uses words from the learner's field | Those claims cannot be checked against the canonical entry. All 4 introduced errors were of this kind. |
-| Restrictive claim about the field | only, never, cannot, no one or similar, next to field words, and not in the canonical entry | The RLS and OAuth errors were access rules stated as absolutes. "Do not assume" and other corrections are exempt. |
-| New exclusive claim | The rewrite says only or solely where the canonical entry has no exclusive claim | The staging error was an "only" claim. |
-| Verifier flags | Any `domain_claims` entry marked unsupported or unsure, or any `canonical_concerns` | The verifier's doubt is a reason to hold, not to pass. |
-| Length | The rewrite is under 0.4 or over 2 times the canonical length | Asks for a revision, not a hold. |
+| Unvouched field sentence | The verifier did not quote the sentence in `domain_claims` as supported | Not applicable. Vouching is what clears it. |
+| Analogy into the learner's field | The sentence has a comparison marker (think of, like a, similar to, the same way, just as and similar), or the verifier says the rewrite uses an analogy | Yes. All 4 introduced errors were of this kind. |
+| Restriction about the field | only, only if, never, cannot, no one, restricted to, unless, locked out, keeps ... inside, just the, does not let and similar, unless a canonical sentence states the same restriction about the same things | Yes. The access-rule errors were restrictions stated as fact. A correction ("do not assume ...") is exempt for its own clause only. |
+| Verifier flags | Any `domain_claims` entry marked unsupported or unsure | Not applicable |
+| Disputed canonical text | The rewrite repeats a canonical statement the verifier disputes. A disputed statement always goes to canonical review, even when the rewrite is shown. | Not applicable |
+| Length | Under 0.4 or over 2 times the canonical length | Asks for a revision, not a hold |
 
-The learner's field comes from the profile: curated lexicons for healthcare, education, finance, legal and trades work, switched on by the job and background, plus the profile's own work words. Words that appear in the canonical entry are removed, so the term's own vocabulary never counts as the learner's field.
+Words with a common software meaning (store, claim, label, unit, parent, shift, alarm, clause, judge and others) never count as field words on their own. They count inside unambiguous phrases such as "their store", "insurance claim" or "script label".
 
-An analogy a reviewer has approved can be listed in `approved-analogies.ts`, with the reviewer and the date. It stops being held for that one term only. The list is empty.
+The learner's field comes from the profile: curated lexicons for healthcare, education, finance, legal and trades work, switched on by the job and background, plus the profile's own work words and interests.
+
+An analogy a reviewer has approved can be listed in `approved-analogies.ts`, with the reviewer and the date. For its own term, it clears only the analogy rule, and only in the sentence that contains its anchor as whole words. The list is empty.
 
 ## What it cannot do
 
-- It cannot see an error the canonical entry shares. The fix for that is correcting and reviewing the canonical text (`docs/canonical-review.md`), and the verifier is now told the canonical entry can be wrong.
-- It misses a field claim with no marker word and no field vocabulary, for example an analogy from an interest ("like a slow-cooker recipe") that uses none of the learner's words. The dev cases document this gap.
-- It holds some correct analogies. On the saved run it held 3 of the 9 outputs the AI read-through judged correct. A hold costs personalization, not accuracy: the learner sees the canonical text.
-- It was built after reading the errors it catches. Its results on the saved run and on `eval/data/dev-cases-v1.json` are development results.
+- It cannot tell that a claim is copied from a wrong canonical entry. The fix for that is correcting and reviewing the canonical text (`docs/canonical-review.md`), and the verifier is now told the canonical entry can be wrong.
+- It trusts the verifier's vouch for a field sentence that has no marker and no restriction. A vouched universal claim ("every dispensing label carries a signature") passes.
+- It misses an analogy that uses none of the learner's words, for example one drawn from an interest's world ("a network of bird feeders" for a learner whose interest is birdwatching). The dev cases keep this gap visible.
+- It misses a field claim worded only with ambiguous words (store, unit, claim and the rest) outside the listed phrases.
+- It holds many correct rewrites. On the saved run it holds 76 of 78 accepted outputs when nothing is vouched for and 25 of 78 when everything is, and 9 or 3 of the 9 outputs the AI read-through judged correct. On the 55 dev cases it holds 9 of the 24 labeled correct, and 29 of the 30 labeled wrong.
+- The spend check refuses a request whose own worst case could cross a cap, but it does not reserve spend for requests running at the same time.
+- It was built after reading the errors it catches and the review findings. Every result on that material is a development result.
 
 ## What a learner sees
 
@@ -43,4 +51,4 @@ An analogy a reviewer has approved can be listed in `approved-analogies.ts`, wit
 | Held for review, failed twice, timed out, over the spend cap | The canonical text |
 | The cached rewrite was made under an older prompt, profile or model | The canonical text while a new one is made. It was shown before, and an older check had accepted it. |
 | The learner reported the rewrite | The canonical text. The report deletes the cached rewrite (the report keeps a copy for review). |
-| A hold or verification failure in the last 24 hours for the same term and prompt version | The canonical text, with no model call |
+| A hold or verification failure in the last 24 hours for the same term, prompt version and profile version | The canonical text, with no model call. A skipped request does not end the backoff. |

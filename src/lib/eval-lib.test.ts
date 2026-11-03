@@ -13,6 +13,7 @@ import {
   rate,
   wilson95,
   worstCaseItemUsd,
+  MANIFEST_SOURCES,
   type FetchLike,
 } from '../../eval/lib/eval-lib.ts';
 import { buildReport } from '../../eval/report.ts';
@@ -53,18 +54,26 @@ describe('manifest and resume', () => {
   const base = {
     promptVersion: 10,
     model: 'claude-opus-4-7',
-    promptsSource: 'p',
-    pipelineSource: 'q',
-    gateSource: 'g',
+    sources: Object.fromEntries(MANIFEST_SOURCES.map((p) => [p, `source of ${p}`])) as Record<string, string>,
     termsFile: 't',
     profilesFile: 'f',
   };
 
-  it('changes when any input changes', () => {
+  it('changes when any input changes, including every gate, lexicon, pricing and budget file', () => {
     const h = manifestHash(base);
-    for (const k of Object.keys(base) as Array<keyof typeof base>) {
-      expect(manifestHash({ ...base, [k]: `${base[k]}x` })).not.toBe(h);
+    expect(manifestHash({ ...base, promptVersion: 11 })).not.toBe(h);
+    expect(manifestHash({ ...base, termsFile: 'tx' })).not.toBe(h);
+    for (const path of MANIFEST_SOURCES) {
+      expect(manifestHash({ ...base, sources: { ...base.sources, [path]: 'changed' } }), path).not.toBe(h);
     }
+    expect(MANIFEST_SOURCES).toEqual(
+      expect.arrayContaining([
+        'supabase/functions/personalize-term/claim-text.ts',
+        'supabase/functions/personalize-term/domain-lexicon.ts',
+        'supabase/functions/personalize-term/approved-analogies.ts',
+        'supabase/functions/_shared/pricing.ts',
+      ]),
+    );
   });
 
   it('refuses to resume rows from another manifest, or rows with none', () => {
@@ -132,6 +141,26 @@ describe('httpCallModel', () => {
     await expect(httpCallModel({ fetch: bad.f, apiKey: 'k', sleep: noSleep })(request)).rejects.toThrow(/http 400/);
   });
 
+  it('charges an attempt with no readable response at its worst case, and stops retrying when the budget is out', async () => {
+    let charged = 0;
+    const { f } = fakeFetch([new Error('socket hang up'), new Error('socket hang up')]);
+    const call = httpCallModel({
+      fetch: f,
+      apiKey: 'k',
+      sleep: noSleep,
+      chargeUnknown: (usd) => (charged += usd),
+      allowRetry: () => charged < 0.0001,
+    });
+    await expect(call(request)).rejects.toThrow(/budget: no room to retry/);
+    expect(charged).toBeGreaterThan(0);
+  });
+
+  it('reports missing usage as null, so the pipeline prices it at its worst case', async () => {
+    const { f } = fakeFetch([{ status: 200, body: { content: [{ type: 'text', text: 'a' }] } }]);
+    const reply = await httpCallModel({ fetch: f, apiKey: 'k', sleep: noSleep })(request);
+    expect(reply.usage).toBeNull();
+  });
+
   it('reports an aborted call as a timeout, which the pipeline maps to fallback-timeout', async () => {
     const abort = Object.assign(new Error('aborted'), { name: 'AbortError' });
     const { f } = fakeFetch([abort]);
@@ -146,8 +175,8 @@ describe('httpCallModel', () => {
   it('drives the shared pipeline end to end over HTTP', async () => {
     const rendering = {
       long_definition: 'RLS stands for row-level security. in Power BI it applies roles and filters so different viewers see different rows of the same model.',
-      why_it_matters: 'RLS is how one report safely shows each person their own rows, which matters when a dashboard covers several units.',
-      example_in_sentence: 'the vendor said RLS will give each unit manager their own unit numbers on the shared dashboard.',
+      why_it_matters: 'RLS is how one report safely shows each person their own rows, which matters when a dashboard covers several teams.',
+      example_in_sentence: 'the vendor said RLS will give each manager their own numbers on the shared dashboard.',
     };
     const verdict: Record<string, unknown> = { uses_analogy: false, domain_claims: [], canonical_concerns: [], overall: 'pass' };
     for (const c of VERIFIER_CRITERIA) verdict[c] = { result: 'pass', reasoning: 'ok' };
@@ -170,10 +199,12 @@ describe('committed generated results', () => {
     expect(read('eval/results/2026-10-30-report.md')).toBe(buildReport());
   });
 
-  it('the replay holds every introduced error and reports the inherited ones it cannot see', () => {
+  it('the replay reports both bounds and says the gate was built from these errors', () => {
     const r = buildReplay();
-    expect(r.introduced_errors).toEqual({ total: 4, held: 4 });
-    expect(r.inherited_wrong.total).toBe(5);
     expect(r.status).toBe('development result');
+    expect(r.note).toMatch(/built from the 4 introduced errors/);
+    expect(r.as_saved.introduced_errors).toEqual({ total: 4, held: 4 });
+    expect(r.all_vouched.introduced_errors).toEqual({ total: 4, held: 4 });
+    expect(r.as_saved.held_or_revise).toBeGreaterThanOrEqual(r.all_vouched.held_or_revise);
   });
 });

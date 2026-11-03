@@ -1,7 +1,7 @@
 {
   "status": "development data",
   "written": "2026-11-03",
-  "note": "Hard cases for the personalize-term claim gate. Every case was chosen after reading the 2026-10-30 run, so results on these cases are development results and cannot support a headline claim. A headline result needs the fresh blind set described in docs/evaluation.md. Saved cases point at rows in eval/results/2026-10-30.jsonl by run_id. Written cases carry their own text. 'expected' is what the gate does today. 'ideal' differs only where the gate has a known gap, and docs/verification.md lists those gaps.",
+  "note": "Hard cases for the personalize-term claim gate. Every case was chosen after reading the 2026-10-30 run or the review round 2 findings, so results on these cases are development results and cannot support a headline claim. A headline result needs the fresh blind set described in docs/evaluation.md. Saved cases point at rows in eval/results/2026-10-30.jsonl by run_id. Written cases carry their own text. 'expected' is the decision the gate should make. 'known_gap' marks a case where the gate still makes a different decision, with that decision, so the gap stays visible. 'truth' is the case's own label: correct, wrong or unsupported. 'vouch: all' means the verifier marked every sentence supported, which tests the rules that hold a claim even when the verifier vouches for it.",
   "failure_kinds": {
     "invented_access_rule": "the analogy presents an access restriction as how the learner's workplace works",
     "conflated_scope": "the analogy maps a scope (store, unit) onto something that is shared in practice",
@@ -21,7 +21,8 @@
         "kinds": [
           "analogy_about_learner_field"
         ]
-      }
+      },
+      "truth": "wrong"
     },
     {
       "id": "written-rls-nurse-paraphrase",
@@ -41,7 +42,8 @@
         "kinds": [
           "analogy_about_learner_field"
         ]
-      }
+      },
+      "truth": "wrong"
     },
     {
       "id": "saved-rls-pharmacist",
@@ -54,7 +56,8 @@
         "kinds": [
           "analogy_about_learner_field"
         ]
-      }
+      },
+      "truth": "wrong"
     },
     {
       "id": "written-rls-pharmacist-paraphrase",
@@ -74,7 +77,8 @@
         "kinds": [
           "analogy_about_learner_field"
         ]
-      }
+      },
+      "truth": "wrong"
     },
     {
       "id": "saved-jwt-pharmacist",
@@ -87,7 +91,8 @@
         "kinds": [
           "analogy_about_learner_field"
         ]
-      }
+      },
+      "truth": "wrong"
     },
     {
       "id": "written-jwt-pharmacist-paraphrase",
@@ -107,7 +112,8 @@
         "kinds": [
           "analogy_about_learner_field"
         ]
-      }
+      },
+      "truth": "wrong"
     },
     {
       "id": "saved-oauth-pharmacist",
@@ -120,7 +126,8 @@
         "kinds": [
           "analogy_about_learner_field"
         ]
-      }
+      },
+      "truth": "wrong"
     },
     {
       "id": "written-oauth-pharmacist-paraphrase",
@@ -140,7 +147,8 @@
         "kinds": [
           "analogy_about_learner_field"
         ]
-      }
+      },
+      "truth": "wrong"
     },
     {
       "id": "saved-environment-pharmacist-old-canonical",
@@ -149,13 +157,13 @@
         "run_id": "cloud-environment::pharmacist"
       },
       "expected": {
-        "decision": "pass",
-        "kinds": []
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ]
       },
-      "ideal": {
-        "decision": "needs_review"
-      },
-      "note": "Known gap. The false claim ('the only place connected to the real insurance claim system') copies the old canonical example, which said staging is 'the only place pointed at the real payment provider'. The gate compares against the canonical, so it cannot see an error the canonical shares. The fix is the corrected canonical (next case)."
+      "note": "Held now, because the sentence names the pharmacist's field and the 2026-10-30 verifier vouched for nothing. The gate still cannot tell that the claim is copied from the canonical entry. The fix for that is the corrected canonical entry (next case).",
+      "truth": "wrong"
     },
     {
       "id": "saved-environment-pharmacist-corrected-canonical",
@@ -169,11 +177,11 @@
       "expected": {
         "decision": "needs_review",
         "kinds": [
-          "restrictive_claim_about_learner_field",
-          "new_exclusive_claim"
+          "restrictive_claim_about_learner_field"
         ]
       },
-      "note": "Same saved rewrite, checked against the corrected canonical example now in supabase/seed.sql."
+      "note": "Same saved rewrite, checked against the corrected canonical example now in supabase/seed.sql.",
+      "truth": "wrong"
     },
     {
       "id": "saved-mfa-nurse",
@@ -182,10 +190,13 @@
         "run_id": "sec-mfa::nurse"
       },
       "expected": {
-        "decision": "pass",
-        "kinds": []
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ]
       },
-      "note": "Judged correct by Kevin Madden, PharmD, on 2026-11-01. PR #1's keyword rule held it."
+      "note": "Judged correct by Kevin Madden, PharmD, on 2026-11-01. PR #1's keyword rule held it. Held by the fail-closed rule: the 2026-10-30 verifier vouched for no sentence, so its field sentences are unvouched. A false hold by design (see the -vouched case).",
+      "truth": "correct"
     },
     {
       "id": "saved-pivot-table-nurse",
@@ -194,10 +205,13 @@
         "run_id": "excel-pivot-table::nurse"
       },
       "expected": {
-        "decision": "pass",
-        "kinds": []
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ]
       },
-      "note": "Judged correct by Kevin Madden, PharmD, on 2026-11-01. PR #1's keyword rule held it."
+      "note": "Judged correct by Kevin Madden, PharmD, on 2026-11-01. PR #1's keyword rule held it. Held by the fail-closed rule: the 2026-10-30 verifier vouched for no sentence, so its field sentences are unvouched. A false hold by design (see the -vouched case).",
+      "truth": "correct"
     },
     {
       "id": "saved-data-pipeline-pharmacist",
@@ -206,10 +220,13 @@
         "run_id": "fabric-data-pipeline::pharmacist"
       },
       "expected": {
-        "decision": "pass",
-        "kinds": []
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ]
       },
-      "note": "Judged correct by Kevin Madden, PharmD, on 2026-11-01. PR #1's keyword rule held it because the store 'opens'."
+      "note": "Judged correct by Kevin Madden, PharmD, on 2026-11-01. PR #1's keyword rule held it because the store 'opens'. Held by the fail-closed rule: the 2026-10-30 verifier vouched for no sentence, so its field sentences are unvouched. A false hold by design (see the -vouched case).",
+      "truth": "correct"
     },
     {
       "id": "saved-oauth-nurse",
@@ -218,10 +235,13 @@
         "run_id": "sec-oauth::nurse"
       },
       "expected": {
-        "decision": "pass",
-        "kinds": []
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ]
       },
-      "note": "Judged correct by Kevin Madden, PharmD, on 2026-11-01. Its 'never sees your actual hospital password' repeats the canonical's own 'never', so it is not a new restrictive claim."
+      "note": "Judged correct by Kevin Madden, PharmD, on 2026-11-01. Its 'never sees your actual hospital password' repeats the canonical's own 'never', so it is not a new restrictive claim. Held by the fail-closed rule: the 2026-10-30 verifier vouched for no sentence, so its field sentences are unvouched. A false hold by design (see the -vouched case).",
+      "truth": "correct"
     },
     {
       "id": "saved-rbac-nurse",
@@ -235,7 +255,87 @@
           "analogy_about_learner_field"
         ]
       },
-      "note": "Judged correct by Kevin Madden, PharmD, on 2026-11-01. Held anyway: it is an analogy into the nurse's EHR, which this pipeline cannot verify. This is the cost of the abstention policy, counted as a false hold."
+      "note": "Judged correct by Kevin Madden, PharmD, on 2026-11-01. Held anyway: it is an analogy into the nurse's EHR, which this pipeline cannot verify. This is the cost of the abstention policy, counted as a false hold.",
+      "truth": "correct"
+    },
+    {
+      "id": "saved-mfa-nurse-vouched",
+      "kind": null,
+      "source": {
+        "run_id": "sec-mfa::nurse"
+      },
+      "expected": {
+        "decision": "pass",
+        "kinds": []
+      },
+      "note": "The same expert-judged correct output, with a verifier that vouches for every sentence.",
+      "truth": "correct",
+      "vouch": "all",
+      "added": "review round 2 (2026-11-03)"
+    },
+    {
+      "id": "saved-pivot-table-nurse-vouched",
+      "kind": null,
+      "source": {
+        "run_id": "excel-pivot-table::nurse"
+      },
+      "expected": {
+        "decision": "pass",
+        "kinds": []
+      },
+      "note": "The same expert-judged correct output, with a verifier that vouches for every sentence.",
+      "truth": "correct",
+      "vouch": "all",
+      "added": "review round 2 (2026-11-03)"
+    },
+    {
+      "id": "saved-data-pipeline-pharmacist-vouched",
+      "kind": null,
+      "source": {
+        "run_id": "fabric-data-pipeline::pharmacist"
+      },
+      "expected": {
+        "decision": "pass",
+        "kinds": []
+      },
+      "note": "The same expert-judged correct output, with a verifier that vouches for every sentence.",
+      "truth": "correct",
+      "vouch": "all",
+      "added": "review round 2 (2026-11-03)"
+    },
+    {
+      "id": "saved-oauth-nurse-vouched",
+      "kind": null,
+      "source": {
+        "run_id": "sec-oauth::nurse"
+      },
+      "expected": {
+        "decision": "needs_review",
+        "kinds": [
+          "restrictive_claim_about_learner_field"
+        ]
+      },
+      "note": "Held even when vouched: its 'never sees your hospital password' is a restriction no canonical sentence states in those words. A false hold by design.",
+      "truth": "correct",
+      "vouch": "all",
+      "added": "review round 2 (2026-11-03)"
+    },
+    {
+      "id": "saved-rbac-nurse-vouched",
+      "kind": null,
+      "source": {
+        "run_id": "sec-rbac::nurse"
+      },
+      "expected": {
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field"
+        ]
+      },
+      "note": "The same expert-judged correct output, with a verifier that vouches for every sentence.",
+      "truth": "correct",
+      "vouch": "all",
+      "added": "review round 2 (2026-11-03)"
     },
     {
       "id": "written-corrective-negation",
@@ -254,7 +354,9 @@
         "decision": "pass",
         "kinds": []
       },
-      "note": "A correction is not the claim it corrects. PR #1's rule held this pattern."
+      "note": "A correction is not the claim it corrects. PR #1's rule held this pattern.",
+      "truth": "correct",
+      "vouch": "all"
     },
     {
       "id": "written-fictional-demo",
@@ -272,7 +374,9 @@
       "expected": {
         "decision": "pass",
         "kinds": []
-      }
+      },
+      "truth": "correct",
+      "vouch": "all"
     },
     {
       "id": "written-abbreviation-split",
@@ -293,7 +397,8 @@
           "restrictive_claim_about_learner_field"
         ]
       },
-      "note": "The abbreviation must not split the sentence. PR #1's splitter broke it at 'e.g.' and missed the claim."
+      "note": "The abbreviation must not split the sentence. PR #1's splitter broke it at 'e.g.' and missed the claim.",
+      "truth": "wrong"
     },
     {
       "id": "written-scene-setting",
@@ -311,7 +416,9 @@
       "expected": {
         "decision": "pass",
         "kinds": []
-      }
+      },
+      "truth": "correct",
+      "vouch": "all"
     },
     {
       "id": "written-restrictive-practice-claim",
@@ -332,7 +439,8 @@
           "restrictive_claim_about_learner_field"
         ]
       },
-      "note": "Probably true, but it is a restrictive claim about how the learner's own workplace runs, which this pipeline cannot verify. Held by policy."
+      "note": "Probably true, but it is a restrictive claim about how the learner's own workplace runs, which this pipeline cannot verify. Held by policy.",
+      "truth": "correct"
     },
     {
       "id": "written-interest-analogy-gap",
@@ -342,19 +450,23 @@
       "rendering": {
         "long_definition": "a CDN keeps copies of files on servers in many places so each visitor downloads from a nearby one.",
         "why_it_matters": "a CDN is like a network of bird feeders across town, so a songbird never has to fly far for seed.",
-        "example_in_sentence": "the district's new platform uses a CDN, so videos load quickly at every school."
+        "example_in_sentence": "the new video platform uses a CDN, so videos load quickly for everyone."
       },
       "verdict": {
         "uses_analogy": true
       },
       "expected": {
-        "decision": "pass",
-        "kinds": []
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field"
+        ]
       },
-      "ideal": {
-        "decision": "needs_review"
-      },
-      "note": "Known gap. The learner's interest is 'birdwatching'. The gate matches interests by the learner's own words, and 'bird feeders' is not one of them, so this interest analogy passes. The LLM verifier's domain_claims list is the backstop."
+      "note": "Known gap. The learner's interest is 'birdwatching'. The analogy uses bird feeders and songbirds, none of the learner's own words, so nothing marks it as a field or interest claim. The example sentence has no field words, so the case isolates the analogy.",
+      "truth": "wrong",
+      "known_gap": {
+        "decision_today": "pass",
+        "why": "The analogy uses the interest's world (bird feeders) but none of the learner's own words, so nothing marks it as a field claim."
+      }
     },
     {
       "id": "written-verifier-unsure-claim",
@@ -382,7 +494,8 @@
         "kinds": [
           "verifier_unsupported_claim"
         ]
-      }
+      },
+      "truth": "unsupported"
     },
     {
       "id": "written-canonical-concern",
@@ -402,11 +515,13 @@
         ]
       },
       "expected": {
-        "decision": "needs_review",
+        "decision": "pass",
         "kinds": [
           "canonical_concern"
         ]
-      }
+      },
+      "truth": "correct",
+      "note": "The verifier doubts the canonical entry, and the rewrite does not repeat the doubted claim. The rewrite is shown and the canonical entry goes to review."
     },
     {
       "id": "written-length-runaway",
@@ -426,7 +541,744 @@
         "kinds": [
           "length_out_of_range"
         ]
-      }
+      },
+      "truth": "correct",
+      "vouch": "all"
+    },
+    {
+      "id": "r2-canonical-only-exempts-new-only",
+      "found_by": [
+        "GPT",
+        "Grok"
+      ],
+      "truth": "wrong",
+      "term_id": "bi-rls",
+      "profile_id": "nurse",
+      "rendering": {
+        "long_definition": "RLS stands for row-level security. in Power BI it applies roles and filters so different viewers see different rows of the same model.",
+        "why_it_matters": "RLS is how one report safely shows each person their own rows, which matters when a dashboard covers several teams. hospital nurses can only open charts for patients on their own unit.",
+        "example_in_sentence": "the vendor said RLS will give each manager their own numbers on the shared dashboard."
+      },
+      "verdict": {
+        "uses_analogy": false,
+        "domain_claims": [],
+        "canonical_concerns": []
+      },
+      "expected": {
+        "decision": "needs_review",
+        "kinds": [
+          "restrictive_claim_about_learner_field",
+          "unvouched_field_claim"
+        ]
+      },
+      "note": "The canonical entry says 'only' about report rows. That used to exempt every new 'only' claim.",
+      "added": "review round 2 (2026-11-03)",
+      "kind": null
+    },
+    {
+      "id": "r2-canonical-only-exempts-new-only-vouched",
+      "found_by": [
+        "GPT",
+        "Grok"
+      ],
+      "truth": "wrong",
+      "term_id": "bi-rls",
+      "profile_id": "nurse",
+      "rendering": {
+        "long_definition": "RLS stands for row-level security. in Power BI it applies roles and filters so different viewers see different rows of the same model.",
+        "why_it_matters": "RLS is how one report safely shows each person their own rows, which matters when a dashboard covers several teams. hospital nurses can only open charts for patients on their own unit.",
+        "example_in_sentence": "the vendor said RLS will give each manager their own numbers on the shared dashboard."
+      },
+      "verdict": {
+        "uses_analogy": false,
+        "canonical_concerns": []
+      },
+      "vouch": "all",
+      "expected": {
+        "decision": "needs_review",
+        "kinds": [
+          "restrictive_claim_about_learner_field"
+        ]
+      },
+      "note": "Even when the verifier vouches for it, a restrictive claim about the field that the canonical entry does not state is held.",
+      "added": "review round 2 (2026-11-03)",
+      "kind": null
+    },
+    {
+      "id": "r2-only-if-condition",
+      "found_by": [
+        "GPT"
+      ],
+      "truth": "wrong",
+      "term_id": "sys-jwt",
+      "profile_id": "nurse",
+      "rendering": {
+        "long_definition": "JWT stands for JSON Web Token. it is a compact signed string with claims inside, used to prove who a user is when calling an API. the signature lets the server notice if anyone changed it.",
+        "why_it_matters": "JWTs show up in auth logs, edge functions and Supabase docs. being encoded is not the same as being safe, so a JWT still needs a sensible expiry and proper verification. a nurse can open a patient chart only if that patient is on the nurse's own unit.",
+        "example_in_sentence": "the edge function decodes the JWT to read the signed-in user id before it loads their data."
+      },
+      "verdict": {
+        "uses_analogy": false,
+        "domain_claims": [],
+        "canonical_concerns": []
+      },
+      "vouch": "all",
+      "expected": {
+        "decision": "needs_review",
+        "kinds": [
+          "restrictive_claim_about_learner_field"
+        ]
+      },
+      "note": "'only if' states a necessary condition, which is a restriction.",
+      "added": "review round 2 (2026-11-03)",
+      "kind": null
+    },
+    {
+      "id": "r2-corrective-frame-gpt",
+      "found_by": [
+        "GPT"
+      ],
+      "truth": "wrong",
+      "term_id": "sys-jwt",
+      "profile_id": "nurse",
+      "rendering": {
+        "long_definition": "JWT stands for JSON Web Token. it is a compact signed string with claims inside, used to prove who a user is when calling an API. the signature lets the server notice if anyone changed it.",
+        "why_it_matters": "JWTs show up in auth logs, edge functions and Supabase docs. being encoded is not the same as being safe, so a JWT still needs a sensible expiry and proper verification. contrary to a common misconception about software, nurses can only open charts on their own unit.",
+        "example_in_sentence": "the edge function decodes the JWT to read the signed-in user id before it loads their data."
+      },
+      "verdict": {
+        "uses_analogy": false,
+        "canonical_concerns": []
+      },
+      "vouch": "all",
+      "expected": {
+        "decision": "needs_review",
+        "kinds": [
+          "restrictive_claim_about_learner_field"
+        ]
+      },
+      "note": "A corrective phrase covers only its own clause, not an assertion after it.",
+      "added": "review round 2 (2026-11-03)",
+      "kind": null
+    },
+    {
+      "id": "r2-corrective-frame-grok",
+      "found_by": [
+        "Grok"
+      ],
+      "truth": "wrong",
+      "term_id": "sys-jwt",
+      "profile_id": "nurse",
+      "rendering": {
+        "long_definition": "JWT stands for JSON Web Token. it is a compact signed string with claims inside, used to prove who a user is when calling an API. the signature lets the server notice if anyone changed it.",
+        "why_it_matters": "JWTs show up in auth logs, edge functions and Supabase docs. being encoded is not the same as being safe, so a JWT still needs a sensible expiry and proper verification. A common misconception is that nurses can browse any chart, because in practice a nurse cannot open a chart unless the patient is on that nurse's unit.",
+        "example_in_sentence": "the edge function decodes the JWT to read the signed-in user id before it loads their data."
+      },
+      "verdict": {
+        "uses_analogy": false,
+        "canonical_concerns": []
+      },
+      "vouch": "all",
+      "expected": {
+        "decision": "needs_review",
+        "kinds": [
+          "restrictive_claim_about_learner_field"
+        ]
+      },
+      "added": "review round 2 (2026-11-03)",
+      "kind": null
+    },
+    {
+      "id": "r2-marker-elsewhere-hides-unmarked-analogy",
+      "found_by": [
+        "GPT",
+        "Grok"
+      ],
+      "truth": "wrong",
+      "term_id": "sys-jwt",
+      "profile_id": "pharmacist",
+      "rendering": {
+        "long_definition": "JWT stands for JSON Web Token. it is a compact signed string with claims inside, used to prove who a user is when calling an API. the signature lets the server notice if anyone changed it. a JWT is the pharmacy's signed, tamper-evident dispensing label.",
+        "why_it_matters": "JWTs show up in auth logs, edge functions and Supabase docs. being encoded is not the same as being safe, so a JWT still needs a sensible expiry and proper verification. think of a saved snapshot of who you are.",
+        "example_in_sentence": "the edge function decodes the JWT to read the signed-in user id before it loads their data."
+      },
+      "verdict": {
+        "uses_analogy": true,
+        "canonical_concerns": []
+      },
+      "vouch": "all",
+      "expected": {
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field"
+        ]
+      },
+      "note": "A marked comparison in one sentence must not exempt an unmarked analogy in another.",
+      "added": "review round 2 (2026-11-03)",
+      "kind": null
+    },
+    {
+      "id": "r2-unmarked-analogy-in-example",
+      "found_by": [
+        "GPT",
+        "Grok"
+      ],
+      "truth": "wrong",
+      "term_id": "sys-jwt",
+      "profile_id": "pharmacist",
+      "rendering": {
+        "long_definition": "JWT stands for JSON Web Token. it is a compact signed string with claims inside, used to prove who a user is when calling an API. the signature lets the server notice if anyone changed it.",
+        "why_it_matters": "JWTs show up in auth logs, edge functions and Supabase docs. being encoded is not the same as being safe, so a JWT still needs a sensible expiry and proper verification.",
+        "example_in_sentence": "a JWT is the pharmacy's signed, tamper-evident dispensing label, checked before anything is handed over."
+      },
+      "verdict": {
+        "uses_analogy": true,
+        "canonical_concerns": []
+      },
+      "vouch": "all",
+      "expected": {
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field"
+        ]
+      },
+      "added": "review round 2 (2026-11-03)",
+      "kind": null
+    },
+    {
+      "id": "r2-example-claim-no-analogy-flag",
+      "found_by": [
+        "Grok"
+      ],
+      "truth": "wrong",
+      "term_id": "bi-rls",
+      "profile_id": "nurse",
+      "rendering": {
+        "long_definition": "RLS stands for row-level security. in Power BI it applies roles and filters so different viewers see different rows of the same model.",
+        "why_it_matters": "RLS is how one report safely shows each person their own rows, which matters when a dashboard covers several teams.",
+        "example_in_sentence": "the vendor said our EHR keeps each nurse inside their own unit's charts."
+      },
+      "verdict": {
+        "uses_analogy": false,
+        "domain_claims": [],
+        "canonical_concerns": []
+      },
+      "expected": {
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ]
+      },
+      "added": "review round 2 (2026-11-03)",
+      "kind": null
+    },
+    {
+      "id": "r2-unmarked-reword-keeps-inside",
+      "found_by": [
+        "Grok"
+      ],
+      "truth": "wrong",
+      "term_id": "bi-rls",
+      "profile_id": "nurse",
+      "rendering": {
+        "long_definition": "RLS stands for row-level security. in Power BI it applies roles and filters so different viewers see different rows of the same model.",
+        "why_it_matters": "RLS is how one report safely shows each person their own rows, which matters when a dashboard covers several teams. On your floor, the charting system keeps each nurse inside the records of people assigned to that floor, and a float nurse is locked out of everyone else.",
+        "example_in_sentence": "the vendor said RLS will give each manager their own numbers on the shared dashboard."
+      },
+      "verdict": {
+        "uses_analogy": false,
+        "canonical_concerns": []
+      },
+      "vouch": "all",
+      "expected": {
+        "decision": "needs_review",
+        "kinds": [
+          "restrictive_claim_about_learner_field"
+        ]
+      },
+      "added": "review round 2 (2026-11-03)",
+      "kind": null
+    },
+    {
+      "id": "r2-unmarked-reword-just",
+      "found_by": [
+        "Grok"
+      ],
+      "truth": "wrong",
+      "term_id": "bi-rls",
+      "profile_id": "pharmacist",
+      "rendering": {
+        "long_definition": "RLS stands for row-level security. in Power BI it applies roles and filters so different viewers see different rows of the same model.",
+        "why_it_matters": "RLS is how one report safely shows each person their own rows, which matters when a dashboard covers several teams. each location sees just the profiles of patients who filled there.",
+        "example_in_sentence": "the vendor said RLS will give each manager their own numbers on the shared dashboard."
+      },
+      "verdict": {
+        "uses_analogy": false,
+        "canonical_concerns": []
+      },
+      "vouch": "all",
+      "expected": {
+        "decision": "needs_review",
+        "kinds": [
+          "restrictive_claim_about_learner_field"
+        ]
+      },
+      "note": "The canonical entry says 'just their region'. That must not exempt a different 'just' claim.",
+      "added": "review round 2 (2026-11-03)",
+      "kind": null
+    },
+    {
+      "id": "r2-split-sentences",
+      "found_by": [
+        "Grok"
+      ],
+      "truth": "wrong",
+      "term_id": "bi-rls",
+      "profile_id": "nurse",
+      "rendering": {
+        "long_definition": "RLS stands for row-level security. in Power BI it applies roles and filters so different viewers see different rows of the same model. RLS is like a filter on report rows.",
+        "why_it_matters": "RLS is how one report safely shows each person their own rows, which matters when a dashboard covers several teams. On your floor, the charting system keeps each nurse inside the records of people assigned to that floor.",
+        "example_in_sentence": "the vendor said RLS will give each manager their own numbers on the shared dashboard."
+      },
+      "verdict": {
+        "uses_analogy": true,
+        "canonical_concerns": []
+      },
+      "vouch": "all",
+      "expected": {
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field",
+          "restrictive_claim_about_learner_field"
+        ]
+      },
+      "added": "review round 2 (2026-11-03)",
+      "kind": null
+    },
+    {
+      "id": "r2-restricted-to",
+      "found_by": [
+        "GPT"
+      ],
+      "truth": "wrong",
+      "term_id": "bi-rls",
+      "profile_id": "nurse",
+      "rendering": {
+        "long_definition": "RLS stands for row-level security. in Power BI it applies roles and filters so different viewers see different rows of the same model.",
+        "why_it_matters": "RLS is how one report safely shows each person their own rows, which matters when a dashboard covers several teams. hospital chart access is restricted to the nurse's assigned ward.",
+        "example_in_sentence": "the vendor said RLS will give each manager their own numbers on the shared dashboard."
+      },
+      "verdict": {
+        "uses_analogy": false,
+        "canonical_concerns": []
+      },
+      "vouch": "all",
+      "expected": {
+        "decision": "needs_review",
+        "kinds": [
+          "restrictive_claim_about_learner_field"
+        ]
+      },
+      "added": "review round 2 (2026-11-03)",
+      "kind": null
+    },
+    {
+      "id": "r2-every",
+      "found_by": [
+        "GPT"
+      ],
+      "truth": "wrong",
+      "term_id": "sys-jwt",
+      "profile_id": "pharmacist",
+      "rendering": {
+        "long_definition": "JWT stands for JSON Web Token. it is a compact signed string with claims inside, used to prove who a user is when calling an API. the signature lets the server notice if anyone changed it.",
+        "why_it_matters": "JWTs show up in auth logs, edge functions and Supabase docs. being encoded is not the same as being safe, so a JWT still needs a sensible expiry and proper verification. every dispensing label carries a cryptographic signature.",
+        "example_in_sentence": "the edge function decodes the JWT to read the signed-in user id before it loads their data."
+      },
+      "verdict": {
+        "uses_analogy": false,
+        "domain_claims": [],
+        "canonical_concerns": []
+      },
+      "expected": {
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ]
+      },
+      "added": "review round 2 (2026-11-03)",
+      "kind": null,
+      "note": "A universal claim about the field. Held unless the verifier vouches for it. 'every' is not a restrictive marker, so a vouched universal claim passes (a documented limit)."
+    },
+    {
+      "id": "r2-does-not-expose",
+      "found_by": [
+        "GPT"
+      ],
+      "truth": "wrong",
+      "term_id": "bi-rls",
+      "profile_id": "pharmacist",
+      "rendering": {
+        "long_definition": "RLS stands for row-level security. in Power BI it applies roles and filters so different viewers see different rows of the same model.",
+        "why_it_matters": "RLS is how one report safely shows each person their own rows, which matters when a dashboard covers several teams. the pharmacy system does not expose records from another store.",
+        "example_in_sentence": "the vendor said RLS will give each manager their own numbers on the shared dashboard."
+      },
+      "verdict": {
+        "uses_analogy": false,
+        "canonical_concerns": []
+      },
+      "vouch": "all",
+      "expected": {
+        "decision": "needs_review",
+        "kinds": [
+          "restrictive_claim_about_learner_field"
+        ]
+      },
+      "added": "review round 2 (2026-11-03)",
+      "kind": null
+    },
+    {
+      "id": "r2-canonical-word-still-field",
+      "found_by": [
+        "GPT"
+      ],
+      "truth": "wrong",
+      "term_id": "sys-jwt",
+      "profile_id": "nurse",
+      "canonical_override": {
+        "long_definition": "JWT stands for JSON Web Token. It is a compact signed string with claims inside, often used to prove who a user is when calling an API, for example a portal that shows patient charts. The signature lets the server detect tampering."
+      },
+      "rendering": {
+        "long_definition": "JWT stands for JSON Web Token. it is a compact signed string with claims inside, used to prove who a user is when calling an API. the signature lets the server notice if anyone changed it.",
+        "why_it_matters": "JWTs show up in auth logs, edge functions and Supabase docs. being encoded is not the same as being safe, so a JWT still needs a sensible expiry and proper verification. a chart is like a signed certificate.",
+        "example_in_sentence": "the edge function decodes the JWT to read the signed-in user id before it loads their data."
+      },
+      "verdict": {
+        "uses_analogy": true,
+        "canonical_concerns": []
+      },
+      "vouch": "all",
+      "expected": {
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field"
+        ]
+      },
+      "note": "'chart' appears in the canonical entry, which used to drop it from the learner's field words.",
+      "added": "review round 2 (2026-11-03)",
+      "kind": null
+    },
+    {
+      "id": "r2-trigger-plural",
+      "found_by": [
+        "GPT"
+      ],
+      "truth": "wrong",
+      "term_id": "sys-jwt",
+      "profile_id": "teacher",
+      "profile_override": {
+        "job": "logistics",
+        "roles": [],
+        "background_text": "",
+        "interests": [],
+        "heritage": null
+      },
+      "rendering": {
+        "long_definition": "JWT stands for JSON Web Token. it is a compact signed string with claims inside, used to prove who a user is when calling an API. the signature lets the server notice if anyone changed it.",
+        "why_it_matters": "JWTs show up in auth logs, edge functions and Supabase docs. being encoded is not the same as being safe, so a JWT still needs a sensible expiry and proper verification. a JWT is like a sealed shipment that each warehouse checks on arrival.",
+        "example_in_sentence": "the edge function decodes the JWT to read the signed-in user id before it loads their data."
+      },
+      "verdict": {
+        "uses_analogy": true,
+        "canonical_concerns": []
+      },
+      "vouch": "all",
+      "expected": {
+        "decision": "needs_review",
+        "kinds": [
+          "analogy_about_learner_field"
+        ]
+      },
+      "note": "A profile job of 'logistics' must switch on the trades words.",
+      "added": "review round 2 (2026-11-03)",
+      "kind": null
+    },
+    {
+      "id": "r2-literal-imagine-vouched",
+      "found_by": [
+        "GPT"
+      ],
+      "truth": "correct",
+      "term_id": "bi-rls",
+      "profile_id": "nurse",
+      "rendering": {
+        "long_definition": "RLS stands for row-level security. in Power BI it applies roles and filters so different viewers see different rows of the same model.",
+        "why_it_matters": "RLS is how one report safely shows each person their own rows, which matters when a dashboard covers several teams.",
+        "example_in_sentence": "imagine opening a dashboard of ward admissions, where a filter selects the rows you want to inspect."
+      },
+      "verdict": {
+        "uses_analogy": false,
+        "canonical_concerns": []
+      },
+      "vouch": "all",
+      "expected": {
+        "decision": "pass",
+        "kinds": []
+      },
+      "note": "A literal scene, vouched for by the verifier. 'imagine' is no longer read as a comparison.",
+      "added": "review round 2 (2026-11-03)",
+      "kind": null
+    },
+    {
+      "id": "r2-literal-imagine-unvouched",
+      "found_by": [
+        "GPT"
+      ],
+      "truth": "correct",
+      "term_id": "bi-rls",
+      "profile_id": "nurse",
+      "rendering": {
+        "long_definition": "RLS stands for row-level security. in Power BI it applies roles and filters so different viewers see different rows of the same model.",
+        "why_it_matters": "RLS is how one report safely shows each person their own rows, which matters when a dashboard covers several teams.",
+        "example_in_sentence": "imagine opening a dashboard of ward admissions, where a filter selects the rows you want to inspect."
+      },
+      "verdict": {
+        "uses_analogy": false,
+        "domain_claims": [],
+        "canonical_concerns": []
+      },
+      "expected": {
+        "decision": "needs_review",
+        "kinds": [
+          "unvouched_field_claim"
+        ]
+      },
+      "note": "The same correct sentence, not vouched for. Held by design: a field sentence needs the verifier to mark it supported.",
+      "added": "review round 2 (2026-11-03)",
+      "kind": null
+    },
+    {
+      "id": "r2-technical-only",
+      "found_by": [
+        "Grok"
+      ],
+      "truth": "correct",
+      "term_id": "sys-jwt",
+      "profile_id": "teacher",
+      "rendering": {
+        "long_definition": "JWT stands for JSON Web Token. it is a compact signed string with claims inside, used to prove who a user is when calling an API. the signature lets the server notice if anyone changed it.",
+        "why_it_matters": "JWTs show up in auth logs, edge functions and Supabase docs. being encoded is not the same as being safe, so a JWT still needs a sensible expiry and proper verification. a token only works until it expires.",
+        "example_in_sentence": "the edge function decodes the JWT to read the signed-in user id before it loads their data."
+      },
+      "verdict": {
+        "uses_analogy": false,
+        "domain_claims": [],
+        "canonical_concerns": []
+      },
+      "expected": {
+        "decision": "pass",
+        "kinds": []
+      },
+      "note": "A technical 'only' claim with no learner-field words is the verifier's call, not the gate's.",
+      "added": "review round 2 (2026-11-03)",
+      "kind": null
+    },
+    {
+      "id": "r2-stores-verb",
+      "found_by": [
+        "Grok"
+      ],
+      "truth": "correct",
+      "term_id": "sys-jwt",
+      "profile_id": "pharmacist",
+      "rendering": {
+        "long_definition": "JWT stands for JSON Web Token. it is a compact signed string with claims inside, used to prove who a user is when calling an API. the signature lets the server notice if anyone changed it.",
+        "why_it_matters": "JWTs show up in auth logs, edge functions and Supabase docs. being encoded is not the same as being safe, so a JWT still needs a sensible expiry and proper verification. The browser stores the token like a saved key.",
+        "example_in_sentence": "the edge function decodes the JWT to read the signed-in user id before it loads their data."
+      },
+      "verdict": {
+        "uses_analogy": true,
+        "domain_claims": [],
+        "canonical_concerns": []
+      },
+      "expected": {
+        "decision": "pass",
+        "kinds": []
+      },
+      "note": "'stores' is a software verb here, not a pharmacy store.",
+      "added": "review round 2 (2026-11-03)",
+      "kind": null
+    },
+    {
+      "id": "r2-parent-commit",
+      "found_by": [
+        "Grok"
+      ],
+      "truth": "correct",
+      "term_id": "sys-jwt",
+      "profile_id": "teacher",
+      "rendering": {
+        "long_definition": "JWT stands for JSON Web Token. it is a compact signed string with claims inside, used to prove who a user is when calling an API. the signature lets the server notice if anyone changed it.",
+        "why_it_matters": "JWTs show up in auth logs, edge functions and Supabase docs. being encoded is not the same as being safe, so a JWT still needs a sensible expiry and proper verification. Each signed claim points back to its parent token, like a link in a chain.",
+        "example_in_sentence": "the edge function decodes the JWT to read the signed-in user id before it loads their data."
+      },
+      "verdict": {
+        "uses_analogy": true,
+        "domain_claims": [],
+        "canonical_concerns": []
+      },
+      "expected": {
+        "decision": "pass",
+        "kinds": []
+      },
+      "note": "'parent' is a software word here, not a school parent.",
+      "added": "review round 2 (2026-11-03)",
+      "kind": null
+    },
+    {
+      "id": "r2-mirrors-vouched",
+      "found_by": [
+        "Grok"
+      ],
+      "truth": "correct",
+      "term_id": "bi-rls",
+      "profile_id": "nurse",
+      "rendering": {
+        "long_definition": "RLS stands for row-level security. in Power BI it applies roles and filters so different viewers see different rows of the same model.",
+        "why_it_matters": "RLS is how one report safely shows each person their own rows, which matters when a dashboard covers several teams.",
+        "example_in_sentence": "the vendor said the dashboard medication list mirrors the MAR every hour."
+      },
+      "verdict": {
+        "uses_analogy": false,
+        "canonical_concerns": []
+      },
+      "vouch": "all",
+      "expected": {
+        "decision": "pass",
+        "kinds": []
+      },
+      "added": "review round 2 (2026-11-03)",
+      "kind": null
+    },
+    {
+      "id": "r2-as-if-vouched",
+      "found_by": [
+        "Grok"
+      ],
+      "truth": "correct",
+      "term_id": "bi-rls",
+      "profile_id": "nurse",
+      "rendering": {
+        "long_definition": "RLS stands for row-level security. in Power BI it applies roles and filters so different viewers see different rows of the same model.",
+        "why_it_matters": "RLS is how one report safely shows each person their own rows, which matters when a dashboard covers several teams.",
+        "example_in_sentence": "the trainer said to treat the test login as if the nurse had just started the shift."
+      },
+      "verdict": {
+        "uses_analogy": false,
+        "canonical_concerns": []
+      },
+      "vouch": "all",
+      "expected": {
+        "decision": "pass",
+        "kinds": []
+      },
+      "added": "review round 2 (2026-11-03)",
+      "kind": null
+    },
+    {
+      "id": "r2-concern-dropped-from-rewrite",
+      "found_by": [
+        "Grok"
+      ],
+      "truth": "correct",
+      "term_id": "bi-rls",
+      "profile_id": "teacher",
+      "rendering": {
+        "long_definition": "RLS stands for row-level security. in Power BI it applies roles and filters so different viewers see different rows of the same model.",
+        "why_it_matters": "RLS is how one report safely shows each person their own rows, which matters when a dashboard covers several teams.",
+        "example_in_sentence": "the vendor said RLS will give each manager their own numbers on the shared dashboard."
+      },
+      "verdict": {
+        "uses_analogy": false,
+        "domain_claims": [],
+        "canonical_concerns": [
+          "the canonical says every regional manager sees just their region, which depends on how the roles were set up"
+        ]
+      },
+      "expected": {
+        "decision": "pass",
+        "kinds": [
+          "canonical_concern"
+        ]
+      },
+      "note": "The verifier doubts a canonical sentence the rewrite does not repeat. The rewrite is shown and the canonical entry still goes to review.",
+      "added": "review round 2 (2026-11-03)",
+      "kind": null
+    },
+    {
+      "id": "r2-concern-repeated-in-rewrite",
+      "found_by": [
+        "Grok"
+      ],
+      "truth": "wrong",
+      "term_id": "bi-rls",
+      "profile_id": "teacher",
+      "rendering": {
+        "long_definition": "RLS stands for row-level security. in Power BI it applies roles and filters so different viewers see different rows of the same model.",
+        "why_it_matters": "RLS is how one report safely shows each person their own rows, which matters when a dashboard covers several teams. every regional manager opens the same report but sees just their region.",
+        "example_in_sentence": "the vendor said RLS will give each manager their own numbers on the shared dashboard."
+      },
+      "verdict": {
+        "uses_analogy": false,
+        "domain_claims": [],
+        "canonical_concerns": [
+          "the canonical says every regional manager sees just their region, which depends on how the roles were set up"
+        ]
+      },
+      "expected": {
+        "decision": "needs_review",
+        "kinds": [
+          "canonical_concern"
+        ]
+      },
+      "added": "review round 2 (2026-11-03)",
+      "kind": null
+    },
+    {
+      "id": "r2-approved-anchor-keeps-other-claims",
+      "found_by": [
+        "Grok"
+      ],
+      "truth": "wrong",
+      "term_id": "bi-rls",
+      "profile_id": "nurse",
+      "rendering": {
+        "long_definition": "RLS stands for row-level security. in Power BI it applies roles and filters so different viewers see different rows of the same model. think of a unit census board, and nurses can only open charts on their own unit.",
+        "why_it_matters": "RLS is how one report safely shows each person their own rows, which matters when a dashboard covers several teams.",
+        "example_in_sentence": "the vendor said RLS will give each manager their own numbers on the shared dashboard."
+      },
+      "verdict": {
+        "uses_analogy": true,
+        "canonical_concerns": []
+      },
+      "vouch": "all",
+      "approved": [
+        {
+          "termId": "bi-rls",
+          "anchor": "unit census board",
+          "reviewer": "test reviewer",
+          "reviewedAt": "2026-11-03"
+        }
+      ],
+      "expected": {
+        "decision": "needs_review",
+        "kinds": [
+          "restrictive_claim_about_learner_field"
+        ]
+      },
+      "note": "An approved analogy clears only the analogy finding, never another claim in the same sentence.",
+      "added": "review round 2 (2026-11-03)",
+      "kind": null
     }
   ]
 }

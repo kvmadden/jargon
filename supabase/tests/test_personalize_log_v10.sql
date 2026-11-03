@@ -20,10 +20,10 @@ create table pick_lived_icons_log (final_status text check (final_status in ('x'
 -- The migration must be safe to run twice.
 \ir ../migrations/20261103000000_personalize_log_v10.sql
 
-\set ON_ERROR_STOP off
-\set QUIET on
-
+-- ON_ERROR_STOP stays on. The two DO blocks below catch only the exception
+-- they expect, so any other error stops the run instead of skipping a check.
 create temp table results (name text, ok boolean);
+grant insert on results to anon, authenticated, service_role;
 
 -- Every v10 status is accepted.
 do $$
@@ -37,8 +37,6 @@ begin
     values ('11111111-1111-1111-1111-111111111111', 'bi-rls', now(), s);
   end loop;
   insert into results values ('all 14 statuses accepted', true);
-exception when others then
-  insert into results values ('all 14 statuses accepted: ' || sqlerrm, false);
 end $$;
 
 -- An unknown status is still rejected.
@@ -51,41 +49,61 @@ exception when check_violation then
   insert into results values ('unknown status rejected', true);
 end $$;
 
--- New rows default to not needing review, and the provenance columns exist.
 insert into results
-select 'needs_review defaults to false',
-       bool_and(needs_review = false) and count(*) = 14
+select 'needs_review defaults to false', bool_and(needs_review = false) and count(*) = 14
 from personalize_log;
 
 insert into results
-select 'provenance columns exist',
-       count(*) = 5
+select 'provenance columns exist', count(*) = 6
 from information_schema.columns
 where table_name = 'personalize_log'
-  and column_name in ('prompt_version', 'model', 'needs_review', 'gate_result', 'call_details');
+  and column_name in ('prompt_version', 'profile_version', 'model', 'needs_review', 'gate_result', 'call_details');
 
 insert into results
-select 'review queue index exists',
-       count(*) = 1
+select 'review queue index exists', count(*) = 1
 from pg_indexes
 where tablename = 'personalize_log' and indexname = 'idx_personalize_log_needs_review';
 
--- The table stays service-role only.
-insert into results
-select 'row level security still on',
-       relrowsecurity
-from pg_class where relname = 'personalize_log';
+-- Service role only, tested as the roles themselves. Supabase grants table
+-- privileges to anon and authenticated by default, so the grants are given
+-- here and row level security must still keep both out.
+grant select, insert on personalize_log to anon, authenticated, service_role;
 
-\set QUIET off
+set role authenticated;
+insert into results select 'authenticated reads no rows', count(*) = 0 from personalize_log;
+reset role;
+set role anon;
+insert into results select 'anon reads no rows', count(*) = 0 from personalize_log;
+reset role;
+
+do $$
+begin
+  set local role authenticated;
+  insert into personalize_log (user_id, term_id, request_started_at, final_status)
+  values ('11111111-1111-1111-1111-111111111111', 'bi-rls', now(), 'cached');
+  reset role;
+  insert into results values ('authenticated cannot insert', false);
+exception when insufficient_privilege then
+  reset role;
+  insert into results values ('authenticated cannot insert', true);
+end $$;
+
+set role service_role;
+insert into results select 'service role reads every row', count(*) = 14 from personalize_log;
+reset role;
+
 select name, ok from results order by name;
 
-\set ON_ERROR_STOP on
+-- A missing check, a NULL result and a false result all fail the run.
 do $$
-declare n int;
+declare n int; bad int;
 begin
-  select count(*) into n from results where not ok;
-  if n > 0 then
-    raise exception 'personalize_log v10: % check(s) failed', n;
+  select count(*), count(*) filter (where ok is distinct from true) into n, bad from results;
+  if n <> 9 then
+    raise exception 'personalize_log v10: expected 9 checks, found %', n;
+  end if;
+  if bad > 0 then
+    raise exception 'personalize_log v10: % check(s) failed', bad;
   end if;
 end $$;
 \echo 'personalize_log v10: ok'

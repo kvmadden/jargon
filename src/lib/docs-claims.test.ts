@@ -21,7 +21,8 @@ describe('figures quoted in the docs come from the computed report', () => {
     ['$8.77', 'As logged: $8.77'],
     ['$4.44', 'about $4.44'],
     ['27 of 40', 'Distinct terms: 27 of 40'],
-    ['19 of 78', 'Holds 19 of 78'],
+    ['76 of 78', '76 of 78 (97%'],
+    ['25 of 78', '25 of 78 (32%'],
   ])('%s', (figure, inReport) => {
     expect(report).toContain(inReport);
     expect(read('README.md')).toContain(figure);

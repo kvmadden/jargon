@@ -27,9 +27,11 @@ import { checkSpend } from '../_shared/spend-guard.ts';
 import { roundUsd, usageFromResponse } from '../_shared/pricing.ts';
 import { PERSONALIZE_MODEL, PERSONALIZE_TIMEOUT_MS } from './prompts.ts';
 import type { KnownVocabulary, TermRow, UserProfileRow } from './prompts.ts';
-import { runPersonalization } from './pipeline.ts';
+import { runPersonalization, worstCaseRequestUsd } from './pipeline.ts';
 import type { CallModel, FinalStatus, PersonalizationOutcome } from './pipeline.ts';
 import {
+  BACKOFF_HOURS,
+  findBackoffAttempt,
   isRenderingFresh,
   orderKnownVocabulary,
   parsePersonalizeRequest,
@@ -118,7 +120,8 @@ function sdkCallModel(anthropic: Anthropic): CallModel {
         .join('');
       return {
         rawText,
-        usage: usageFromResponse(response),
+        // No usage object means unknown cost, which the pipeline prices at the worst case.
+        usage: response?.usage ? usageFromResponse(response) : null,
         stopReason: typeof response?.stop_reason === 'string' ? response.stop_reason : null,
         latencyMs: Date.now() - started,
       };
@@ -135,6 +138,7 @@ interface LogFields {
   request_started_ms: number;
   outcome: PersonalizationOutcome | null;
   error_text: string | null;
+  profile_version?: number | null;
 }
 
 async function writeLog(serviceClient: any, fields: LogFields, finalStatus: FinalStatus): Promise<void> {
@@ -149,25 +153,27 @@ async function writeLog(serviceClient: any, fields: LogFields, finalStatus: Fina
     term_id: fields.term_id,
     request_started_at: fields.request_started_at,
     pass1_candidate: o?.pass1Candidate ?? null,
-    pass1_tokens_in: p1?.usage.input_tokens ?? null,
-    pass1_tokens_out: p1?.usage.output_tokens ?? null,
+    pass1_tokens_in: p1?.usage?.input_tokens ?? null,
+    pass1_tokens_out: p1?.usage?.output_tokens ?? null,
     pass2_result: o?.pass1Verdict ?? null,
-    pass2_tokens_in: p2?.usage.input_tokens ?? null,
-    pass2_tokens_out: p2?.usage.output_tokens ?? null,
+    pass2_tokens_in: p2?.usage?.input_tokens ?? null,
+    pass2_tokens_out: p2?.usage?.output_tokens ?? null,
     pass3_candidate: o?.retryCandidate ?? null,
-    pass3_tokens_in: p3?.usage.input_tokens ?? null,
-    pass3_tokens_out: p3?.usage.output_tokens ?? null,
+    pass3_tokens_in: p3?.usage?.input_tokens ?? null,
+    pass3_tokens_out: p3?.usage?.output_tokens ?? null,
     pass2_retry_result: o?.retryVerdict ?? null,
-    pass2_retry_tokens_in: p2r?.usage.input_tokens ?? null,
-    pass2_retry_tokens_out: p2r?.usage.output_tokens ?? null,
+    pass2_retry_tokens_in: p2r?.usage?.input_tokens ?? null,
+    pass2_retry_tokens_out: p2r?.usage?.output_tokens ?? null,
     final_status: finalStatus,
     total_latency_ms: Date.now() - fields.request_started_ms,
     total_cost_usd: roundUsd(o?.costUsd ?? 0),
     error_text: fields.error_text ?? o?.errorText ?? null,
     prompt_version: PROMPT_VERSION,
+    profile_version: fields.profile_version ?? null,
     model: PERSONALIZE_MODEL,
-    needs_review: o?.needsReview ?? false,
-    gate_result: o ? { pass1: o.pass1Gate, retry: o.retryGate } : null,
+    // Held rewrites and disputed canonical entries both go to the review queue.
+    needs_review: (o?.needsReview ?? false) || (o?.canonicalReview.length ?? 0) > 0,
+    gate_result: o ? { pass1: o.pass1Gate, retry: o.retryGate, canonical_review: o.canonicalReview } : null,
     call_details: o
       ? o.passes.map((p) => ({
           pass: p.pass,
@@ -175,6 +181,7 @@ async function writeLog(serviceClient: any, fields: LogFields, finalStatus: Fina
           stop_reason: p.stopReason,
           latency_ms: p.latencyMs,
           cost_usd: roundUsd(p.costUsd),
+          usage_missing: p.usageMissing,
         }))
       : null,
   });
@@ -251,6 +258,7 @@ Deno.serve(async (req) => {
     return jsonResponse(req, canonicalResponse(typedTerm), 200);
   }
   const typedProfile = profile as UserProfileRow;
+  log.profile_version = typedProfile.profile_version;
 
   const { data: cachedRow } = await supabase
     .from('user_term_renderings')
@@ -284,15 +292,13 @@ Deno.serve(async (req) => {
   }
 
   // ─── Back off after a recent hold or verification failure ────────────────────
-  const { data: latestAttempt } = await serviceClient
-    .from('personalize_log')
-    .select('final_status, created_at, prompt_version')
-    .eq('user_id', userId)
-    .eq('term_id', typedTerm.id)
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .maybeSingle();
-  if (shouldBackOff(latestAttempt as any, PROMPT_VERSION, new Date())) {
+  const latestAttempt = await findBackoffAttempt(serviceClient, {
+    userId,
+    termId: typedTerm.id,
+    promptVersion: PROMPT_VERSION,
+    now: new Date(),
+  });
+  if (shouldBackOff(latestAttempt, PROMPT_VERSION, new Date(), BACKOFF_HOURS, typedProfile.profile_version)) {
     await dropStaleRendering();
     await writeLog(serviceClient, log, 'skipped-recent-fallback');
     const wasHeld = (latestAttempt as { final_status?: string } | null)?.final_status === 'held-needs-review';
@@ -301,7 +307,16 @@ Deno.serve(async (req) => {
 
   // ─── Spend guard and model client ────────────────────────────────────────────
   const spend = await checkSpend(serviceClient, userId);
-  if (!spend.allowed) {
+  // The caps are checked against logged spend plus this request's own worst
+  // case, so one request cannot start when it could cross a cap. Requests
+  // running at the same time are not reserved against each other: that needs
+  // an atomic reservation in Postgres and is still open (docs/verification.md).
+  const knownVocabularyForBudget = await fetchKnownVocabulary(supabase, typedTerm.id);
+  const worst = worstCaseRequestUsd(typedTerm, typedProfile, knownVocabularyForBudget);
+  const overWorstCase =
+    spend.globalMonthUsd + worst > spend.globalCapUsd ||
+    (spend.scope === 'ok' && spend.userMonthUsd + worst > spend.userCapUsd);
+  if (!spend.allowed || overWorstCase) {
     log.error_text = 'over spend cap';
     await writeLog(serviceClient, log, 'skipped-over-cap');
     return jsonResponse(req, canonicalResponse(typedTerm), 200);
@@ -319,7 +334,7 @@ Deno.serve(async (req) => {
     : new Anthropic({ apiKey: anthropicKey });
 
   // ─── The pass sequence ───────────────────────────────────────────────────────
-  const knownVocabulary = await fetchKnownVocabulary(supabase, typedTerm.id);
+  const knownVocabulary = knownVocabularyForBudget;
   const outcome = await runPersonalization(
     { term: typedTerm, profile: typedProfile, knownVocabulary, approvedAnalogies: APPROVED_ANALOGIES },
     sdkCallModel(anthropic),

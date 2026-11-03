@@ -58,8 +58,12 @@ describe('auditTerm', () => {
     expect(f.map((x: { kind: string }) => x.kind).sort()).toEqual(['exclusive_claim', 'quiz_tests_claim']);
   });
 
-  it('does not flag "not only", "only if" or a corrected misconception', () => {
-    expect(auditTerm({ ...base, long_definition: 'it is not only fast. it runs only if asked. do not assume it never fails.' })).toEqual([]);
+  it('does not flag "not only" or a corrected misconception', () => {
+    expect(auditTerm({ ...base, long_definition: 'it is not only fast. do not assume it never fails.' })).toEqual([]);
+  });
+
+  it('flags "only if", which states a necessary condition', () => {
+    expect(auditTerm({ ...base, long_definition: 'it runs only if asked.' })[0].kind).toBe('exclusive_claim');
   });
 
   it('flags a commercial model named next to a size', () => {

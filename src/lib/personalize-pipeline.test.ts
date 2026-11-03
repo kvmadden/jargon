@@ -9,6 +9,7 @@ import { resolve } from 'node:path';
 import {
   isTimeoutError,
   runPersonalization,
+  worstCaseRequestUsd,
   type CallModel,
   type ModelRequest,
 } from '../../supabase/functions/personalize-term/pipeline.ts';
@@ -42,8 +43,15 @@ const savedNurseRls: ParsedRendering = savedRuns.get('bi-rls::nurse').final_text
 
 const plainRls: ParsedRendering = {
   long_definition: 'RLS stands for row-level security. in Power BI it applies roles and filters so different viewers see different rows of the same model.',
-  why_it_matters: 'RLS is how one report safely shows each person their own rows, which matters when a dashboard covers several units.',
-  example_in_sentence: 'the vendor said RLS will give each unit manager their own unit numbers on the shared dashboard.',
+  why_it_matters: 'RLS is how one report safely shows each person their own rows, which matters when a dashboard covers several teams.',
+  example_in_sentence: 'the vendor said RLS will give each manager their own numbers on the shared dashboard.',
+};
+
+// The same rewrite with a scene set in the nurse's world. Under the fail-closed
+// rule it passes only when the verifier quotes that sentence as supported.
+const sceneRls: ParsedRendering = {
+  ...plainRls,
+  example_in_sentence: 'the vendor said RLS will give each nurse manager their own numbers on the shared charting dashboard.',
 };
 
 function verdict(over: Record<string, unknown> = {}, overall = 'pass') {
@@ -186,12 +194,52 @@ describe('runPersonalization', () => {
   });
 });
 
+describe('the fail-closed field rule through the pipeline', () => {
+  it('holds a scene in the learner field the verifier did not quote, and accepts it once quoted as supported', async () => {
+    const unvouched = await runPersonalization(base, fakeModel([JSON.stringify(sceneRls), verdict(), JSON.stringify(sceneRls), verdict()]).call);
+    expect(unvouched.status).toBe('held-needs-review');
+    const claims = [{ field: 'example_in_sentence', claim: sceneRls.example_in_sentence, assessment: 'supported' }];
+    const vouched = await runPersonalization(base, fakeModel([JSON.stringify(sceneRls), verdict({ domain_claims: claims })]).call);
+    expect(vouched.status).toBe('cached');
+  });
+});
+
+describe('worstCaseRequestUsd', () => {
+  it('covers four calls with the longest fields a parsed rendering can have', () => {
+    const worst = worstCaseRequestUsd(rls, nurse, []);
+    // Four calls of at least 48 KB of candidate text each at the Opus input price.
+    expect(worst).toBeGreaterThan(4 * 3 * 4000 * 4 * 5e-6 * 0.5);
+    expect(worstCaseRequestUsd(rls, nurse, Array.from({ length: 120 }, (_, i) => `term ${i}`))).toBeGreaterThan(worst);
+  });
+});
+
+describe('cost of a call without usage', () => {
+  it('prices a reply that carries no usage at its worst case, not at zero', async () => {
+    const steps = [JSON.stringify(plainRls), verdict()];
+    const call: CallModel = async () => ({ rawText: steps.shift()!, usage: null, stopReason: 'end_turn', latencyMs: 1 });
+    const out = await runPersonalization(base, call);
+    expect(out.passes.every((p) => p.usageMissing)).toBe(true);
+    expect(out.costUsd).toBeGreaterThan(0.01);
+  });
+});
+
+describe('canonical review', () => {
+  it('shows a rewrite that dropped the disputed canonical statement, and still queues the canonical entry', async () => {
+    const concern = verdict({ canonical_concerns: ['the canonical says every regional manager sees just their region'] });
+    const out = await runPersonalization(base, fakeModel([JSON.stringify(plainRls), concern]).call);
+    expect(out.status).toBe('cached');
+    expect(out.canonicalReview).toHaveLength(1);
+  });
+});
+
 describe('isTimeoutError', () => {
   it.each([
     [Object.assign(new Error('x'), { name: 'AbortError' }), true],
     [Object.assign(new Error('x'), { name: 'TimeoutError' }), true],
-    [new Error('request timed out'), true],
+    [Object.assign(new Error('Request was aborted.'), { name: 'APIUserAbortError' }), true],
+    [new Error('timeout after 30000 ms'), true],
     [new Error('http 500'), false],
+    [new Error('http 400: invalid_request_error: timeout must be a positive number'), false],
   ])('%s -> %s', (err, expected) => {
     expect(isTimeoutError(err)).toBe(expected);
   });

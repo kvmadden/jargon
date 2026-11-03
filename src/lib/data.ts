@@ -278,8 +278,9 @@ export async function fetchPersonalizedRendering(termId: string): Promise<Render
   }
 
   const isStale =
-    typedCache.profile_version_at_render < typedProfile.profile_version ||
-    typedCache.prompt_version < CURRENT_PROMPT_VERSION ||
+    // Exact matches only, the same rule as the server's isRenderingFresh.
+    typedCache.profile_version_at_render !== typedProfile.profile_version ||
+    typedCache.prompt_version !== CURRENT_PROMPT_VERSION ||
     typedCache.model_used !== PERSONALIZE_MODEL ||
     typedCache.reported_at !== null;
 

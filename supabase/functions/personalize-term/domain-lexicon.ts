@@ -13,7 +13,7 @@
 //
 // Pure module: no Deno globals, no network imports.
 
-import { contentWords, words } from './claim-text.ts';
+import { containsPhrase, contentWords, words } from './claim-text.ts';
 
 export interface FieldLexicon {
   field: string;
@@ -31,20 +31,30 @@ export const FIELD_LEXICONS: readonly FieldLexicon[] = [
       'pharmacist', 'pharmacy', 'pharmd', 'medical', 'patient', 'icu', 'med-surg', 'medical-surgical',
       'paramedic', 'emt', 'therapist', 'dentist', 'dental', 'caregiver', 'midwife', 'surgeon',
     ],
-    // Single words that also have a common software meaning (order, script,
-    // tech, provider, transfer, count, code) are left out on purpose, so a
-    // sentence about software is not mistaken for one about the clinic.
+    // Single words that also have a common software meaning are left out on
+    // purpose (see AMBIGUOUS_TECH_WORDS), so a sentence about software is not
+    // mistaken for one about the clinic.
     terms: [
-      'patient', 'chart', 'charting', 'ehr', 'emr', 'mar', 'unit', 'ward', 'bedside', 'shift', 'handoff',
-      'hand-off', 'sbar', 'census', 'huddle', 'pump', 'alarm', 'med', 'meds', 'medication', 'dose', 'dosing',
-      'titrate', 'prescription', 'prescriber', 'rx', 'refill', 'dispense', 'dispensing', 'dispensed', 'label',
-      'vial', 'pharmacy', 'pharmacist', 'technician', 'pbm', 'claim', 'adjudicate', 'adjudication', 'formulary',
-      'dur', 'pdmp', 'narcotic', 'chain', 'store', 'counseling', 'immunization', 'vaccine', 'clinic', 'physician',
-      'nurse', 'triage', 'admission', 'discharge', 'diagnosis', 'allergy', 'vitals', 'infusion', 'barcode',
-      'bcma', 'insurance', 'payer', 'copay', 'drug', 'compounding', 'will-call', 'drive-thru',
-      'prior authorization', 'prior auth', 'controlled substance', 'c-ii', 'break-the-glass', 'break the glass',
-      'charge nurse', 'code blue', 'rapid response', 'drug interaction', 'lab result', 'pharmacy tech',
-      'prescription transfer', 'medication administration',
+      'patient', 'chart', 'charting', 'ehr', 'emr', 'mar', 'ward', 'bedside', 'sbar', 'census', 'huddle', 'pump',
+      'med', 'meds', 'medication', 'dose', 'dosing', 'titrate', 'prescription', 'prescriber', 'rx', 'refill',
+      'dispense', 'dispensing', 'dispensed', 'vial', 'pharmacy', 'pharmacist', 'technician', 'pbm', 'adjudicate',
+      'adjudication', 'formulary', 'dur', 'pdmp', 'narcotic', 'counseling', 'immunization', 'vaccine', 'clinic',
+      'physician', 'nurse', 'discharge', 'diagnosis', 'allergy', 'vitals', 'infusion', 'barcode', 'bcma',
+      'insurance', 'payer', 'copay', 'drug', 'compounding', 'will-call', 'drive-thru', 'prior authorization',
+      'prior auth', 'controlled substance', 'c-ii', 'break-the-glass', 'break the glass', 'charge nurse',
+      'code blue', 'rapid response', 'drug interaction', 'lab result', 'pharmacy tech', 'prescription transfer',
+      'medication administration', 'medical record', 'patient record', 'health record', 'float nurse',
+      'float pool', 'medication list', 'nursing unit',
+      // Ambiguous words in phrases where they only have the field meaning.
+      'pharmacy store', 'store manager', 'your store', 'their store', 'another store', 'other store',
+      'each store', 'pharmacy chain', 'chain pharmacy', 'chain store', 'your unit', 'their unit', 'own unit',
+      'my unit', 'our unit', 'insurance claim', 'pharmacy claim', 'claim system', 'claim rejection',
+      'rejected claim', 'script label', 'prescription label', 'rx label', 'pharmacy label', 'dispensing label',
+      'medication label', 'drug label', 'day shift', 'night shift', 'shift change', 'your shift',
+      'pump alarm', 'alarm fatigue', 'bed alarm', 'monitor alarm', 'patient admission', 'ward admission',
+      'triage nurse', 'shift handoff', 'nurse handoff', 'bedside handoff', 'medication order',
+      'healthcare provider', 'care provider', 'patient transfer', 'pill count', 'narcotic count',
+      'fill queue', 'verification queue', 'pharmacy queue', 'new script', 'filled script',
     ],
   },
   {
@@ -54,9 +64,9 @@ export const FIELD_LEXICONS: readonly FieldLexicon[] = [
       'educator', 'tutor', 'curriculum', 'instructor', 'college', 'university',
     ],
     terms: [
-      'student', 'gradebook', 'grade', 'grading', 'lms', 'rubric', 'roster', 'district', 'principal',
-      'classroom', 'syllabus', 'semester', 'attendance', 'iep', 'parent', 'homework', 'teacher', 'school',
-      'superintendent', 'enrollment', 'lesson plan', 'unit plan', 'report card', 'lab report',
+      'student', 'gradebook', 'grade', 'grading', 'lms', 'roster', 'district', 'classroom', 'syllabus',
+      'semester', 'attendance', 'iep', 'homework', 'teacher', 'school', 'superintendent', 'enrollment',
+      'lesson plan', 'unit plan', 'report card', 'lab report', 'school principal', 'parent conference',
     ],
   },
   {
@@ -66,15 +76,14 @@ export const FIELD_LEXICONS: readonly FieldLexicon[] = [
       'bookkeeper', 'treasury', 'loan', 'underwriter', 'insurance',
     ],
     terms: [
-      'ledger', 'reconciliation', 'reconcile', 'invoice', 'receivable', 'payable', 'month-end', 'gaap', 'loan',
-      'underwriting', 'claim', 'premium', 'teller', 'deposit', 'general ledger', 'journal entry',
-      'balance sheet',
+      'ledger', 'invoice', 'receivable', 'payable', 'month-end', 'gaap', 'loan', 'underwriting', 'teller',
+      'deposit', 'general ledger', 'journal entry', 'balance sheet', 'insurance claim', 'bank reconciliation',
     ],
   },
   {
     field: 'legal',
     triggers: ['lawyer', 'attorney', 'paralegal', 'legal', 'counsel', 'court', 'judge'],
-    terms: ['docket', 'filing', 'deposition', 'court', 'judge', 'statute', 'clause', 'counsel', 'subpoena'],
+    terms: ['docket', 'deposition', 'court', 'statute', 'counsel', 'subpoena', 'court filing', 'contract clause'],
   },
   {
     field: 'trades',
@@ -82,12 +91,26 @@ export const FIELD_LEXICONS: readonly FieldLexicon[] = [
       'plumber', 'electrician', 'carpenter', 'mechanic', 'welder', 'contractor', 'hvac', 'construction',
       'machinist', 'warehouse', 'logistics',
     ],
-    terms: [
-      'blueprint', 'valve', 'forklift', 'shipment', 'pallet', 'warehouse', 'job site', 'work order',
-      'building inspection',
-    ],
+    terms: ['valve', 'forklift', 'shipment', 'pallet', 'warehouse', 'job site', 'work order', 'building inspection'],
   },
 ];
+
+/**
+ * Words that name something in a learner's field but also have an everyday
+ * software meaning: a data store, JWT claims, a UI label, a unit test, a
+ * parent commit, an alarm in a monitoring tool, a Kubernetes admission
+ * controller, bug triage, a WHERE clause, an LLM judge. Matching them as field
+ * words held correct technical sentences (review round 2). They are never
+ * field words, whether they come from a lexicon or from the profile. The cost:
+ * a field claim worded only with these words is not recognized as one.
+ */
+export const AMBIGUOUS_TECH_WORDS: ReadonlySet<string> = new Set(
+  [
+    'store', 'claim', 'label', 'unit', 'chain', 'parent', 'shift', 'alarm', 'admission', 'triage', 'handoff',
+    'hand-off', 'clause', 'filing', 'premium', 'rubric', 'principal', 'judge', 'reconcile', 'reconciliation',
+    'blueprint', 'record', 'order', 'script', 'tech', 'provider', 'transfer', 'count', 'code', 'queue',
+  ].map((w) => words(w)[0] ?? w),
+);
 
 // Profile words that say little about the learner's field, or that also have a
 // common software meaning, are not treated as field vocabulary.
@@ -123,30 +146,32 @@ export interface LearnerLexicon {
 }
 
 /**
- * Build the learner's practice vocabulary. Words that also appear in the
- * canonical entry are removed: they belong to the term being taught, so using
- * them is not a claim about the learner's field.
+ * Build the learner's practice vocabulary. Words the canonical entry also uses
+ * are kept: a new sentence can use them to make a new claim about the field.
+ * The gate checks per sentence whether a sentence only restates the canonical
+ * entry (claim-gate.ts).
  */
-export function buildLearnerLexicon(profile: DomainProfile, canonicalText: string): LearnerLexicon {
+export function buildLearnerLexicon(profile: DomainProfile): LearnerLexicon {
   const workText = [profile.job ?? '', ...(profile.roles ?? []), profile.background_text ?? '', profile.heritage ?? ''].join(' ');
   const interests = (profile.interests ?? []).map((i) => i.toLowerCase().trim()).filter((i) => i.length > 0);
   const triggerWords = new Set(words([workText, ...interests].join(' ')));
-  const canonicalWords = contentWords(canonicalText);
 
-  const fields = FIELD_LEXICONS.filter((lex) => lex.triggers.some((t) => triggerWords.has(t)));
+  // Triggers go through the same tokenizer as the profile, so "logistics"
+  // matches a profile that says "logistics".
+  const fields = FIELD_LEXICONS.filter((lex) => lex.triggers.some((t) => triggerWords.has(words(t)[0] ?? t)));
   const wordSet = new Set<string>();
   const phrases: string[] = [];
+  const usable = (w: string) => !AMBIGUOUS_TECH_WORDS.has(w);
 
-  // The learner's own words for their work: specific (5+ letters), not generic,
-  // and not shared with the term being taught.
+  // The learner's own words for their work: specific (5+ letters) and not generic.
   for (const w of contentWords(workText)) {
-    if (w.length >= 5 && !GENERIC_PROFILE_WORDS.has(w) && !canonicalWords.has(w)) wordSet.add(w);
+    if (w.length >= 5 && !GENERIC_PROFILE_WORDS.has(w) && usable(w)) wordSet.add(w);
   }
   // Interests are matched as whole phrases ("trail running", "baking bread"),
   // and single-word interests only when they are specific (6+ letters).
   for (const interest of interests) {
     if (/\s/.test(interest)) phrases.push(interest);
-    else if (interest.length >= 6 && !canonicalWords.has(interest)) wordSet.add(interest);
+    else if (interest.length >= 6) wordSet.add(words(interest)[0] ?? interest);
   }
   for (const lex of fields) {
     for (const term of lex.terms) {
@@ -155,7 +180,7 @@ export function buildLearnerLexicon(profile: DomainProfile, canonicalText: strin
         phrases.push(t);
       } else {
         const normalized = words(t)[0] ?? t;
-        if (!canonicalWords.has(normalized)) wordSet.add(normalized);
+        if (usable(normalized)) wordSet.add(normalized);
       }
     }
   }
@@ -163,9 +188,10 @@ export function buildLearnerLexicon(profile: DomainProfile, canonicalText: strin
 }
 
 /**
- * The learner-field words and phrases a sentence uses. Hyphenated compounds
- * are also read part by part, so "drug-interaction pop-up" matches "drug" and
- * the phrase "drug interaction".
+ * The learner-field words and phrases a sentence uses. Phrases match as whole
+ * words in order, so "art history" does not match inside "smart history".
+ * Hyphenated compounds are also read part by part, so "drug-interaction
+ * pop-up" matches "drug" and the phrase "drug interaction".
  */
 export function learnerFieldMentions(sentence: string, lexicon: LearnerLexicon): string[] {
   const found = new Set<string>();
@@ -173,8 +199,6 @@ export function learnerFieldMentions(sentence: string, lexicon: LearnerLexicon):
     if (lexicon.words.has(w)) found.add(w);
     if (w.includes('-')) for (const part of words(w.replace(/-/g, ' '))) if (lexicon.words.has(part)) found.add(part);
   }
-  const lower = sentence.toLowerCase();
-  const spaced = lower.replace(/-/g, ' ');
-  for (const p of lexicon.phrases) if (lower.includes(p) || spaced.includes(p.replace(/-/g, ' '))) found.add(p);
+  for (const p of lexicon.phrases) if (containsPhrase(sentence, p)) found.add(p);
   return [...found];
 }

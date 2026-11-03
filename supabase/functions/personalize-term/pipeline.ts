@@ -18,6 +18,8 @@
 // Pure module: no Deno globals, no network imports.
 
 import {
+  PERSONALIZE_MODEL,
+  RENDERING_FIELD_MAX_CHARS,
   PERSONALIZE_MAX_RETRIES,
   PERSONALIZE_MAX_TOKENS_PASS1,
   PERSONALIZE_MAX_TOKENS_PASS2,
@@ -37,6 +39,7 @@ import type { KnownVocabulary, ParsedRendering, TermRow, UserProfileRow, Verifie
 import { checkRendering, gateFeedbackBlock } from './claim-gate.ts';
 import type { ApprovedAnalogy, GateResult } from './claim-gate.ts';
 import type { TokenUsage } from '../_shared/pricing.ts';
+import { worstCaseCallUsd } from '../_shared/cycle-budget.ts';
 
 /**
  * Every final_status personalize-term can write. The personalize_log CHECK
@@ -74,7 +77,8 @@ export interface ModelRequest {
 
 export interface ModelReply {
   rawText: string;
-  usage: TokenUsage;
+  /** null when the response carried no usage. The call is then priced at its worst case. */
+  usage: TokenUsage | null;
   stopReason: string | null;
   latencyMs: number;
 }
@@ -85,6 +89,8 @@ export type CallModel = (request: ModelRequest) => Promise<ModelReply>;
 export interface PassRecord extends ModelReply {
   pass: PassName;
   costUsd: number;
+  /** True when the response had no usage and costUsd is the call's worst case. */
+  usageMissing: boolean;
 }
 
 export interface PersonalizationInput {
@@ -102,6 +108,8 @@ export interface PersonalizationOutcome {
   accepted: ParsedRendering | null;
   /** True when a rewrite was held because of claims the gate cannot verify. */
   needsReview: boolean;
+  /** Canonical statements the verifier disputed, on any pass. They go to review whether or not the rewrite is shown. */
+  canonicalReview: string[];
   pass1Candidate: ParsedRendering | null;
   pass1Verdict: VerifierVerdict | null;
   pass1Gate: GateResult | null;
@@ -113,13 +121,23 @@ export interface PersonalizationOutcome {
   errorText: string | null;
 }
 
-/** True for an aborted or timed-out call, in the Deno SDK or in the eval's fetch transport. */
+const TIMEOUT_ERROR_NAMES = new Set(['AbortError', 'TimeoutError', 'APIUserAbortError', 'APIConnectionTimeoutError']);
+const TIMEOUT_MESSAGE = /^(?:timeout after \d+ ?ms|request (?:was aborted|timed out)\.?|the operation was aborted\.?)$/i;
+
+/**
+ * True for an aborted or timed-out call, in the Deno SDK or in the eval's
+ * fetch transport. It reads the error name, and only whole known timeout
+ * messages, so an API error that merely mentions "timeout" is not one.
+ */
 export function isTimeoutError(err: unknown): boolean {
   const e = err as { name?: unknown; message?: unknown } | null;
   const name = typeof e?.name === 'string' ? e.name : '';
-  const message = typeof e?.message === 'string' ? e.message : String(err ?? '');
-  return name === 'AbortError' || name === 'TimeoutError' || /abort|timed? ?out|timeout/i.test(message);
+  const message = typeof e?.message === 'string' ? e.message.trim() : '';
+  return TIMEOUT_ERROR_NAMES.has(name) || TIMEOUT_MESSAGE.test(message);
 }
+
+/** Longest feedback block the regeneration prompt gets. The eval's worst-case budget uses it as a bound. */
+export const RETRY_FEEDBACK_MAX_CHARS = 8000;
 
 function verdictPasses(v: VerifierVerdict): boolean {
   return v.overall === 'pass';
@@ -130,7 +148,8 @@ function retryFeedback(verdict: VerifierVerdict, gate: GateResult): string {
   if (!verdictPasses(verdict)) parts.push(buildFailedCriteriaBlock(verdict));
   const gateBlock = gateFeedbackBlock(gate);
   if (gateBlock) parts.push(gateBlock);
-  return parts.length > 0 ? parts.join('\n') : '- (no specific failure captured; recheck every criterion)';
+  const block = parts.length > 0 ? parts.join('\n') : '- (no specific failure captured; recheck every criterion)';
+  return block.length > RETRY_FEEDBACK_MAX_CHARS ? block.slice(0, RETRY_FEEDBACK_MAX_CHARS) : block;
 }
 
 /** Status for a rewrite that ends without being accepted. Held claims take precedence. */
@@ -138,6 +157,28 @@ function rejectionStatus(verdict: VerifierVerdict, gate: GateResult, retried: bo
   if (gate.decision === 'needs_review') return 'held-needs-review';
   if (!verdictPasses(verdict)) return retried ? 'fallback-pass2-retry-fail' : 'fallback-pass2-fail';
   return 'fallback-format';
+}
+
+/**
+ * Upper bound on one request's cost at list price: Pass 1, Pass 2, Pass 3 and
+ * the Pass 2 re-run, each with the longest prompt it can have. A parsed field
+ * is at most RENDERING_FIELD_MAX_CHARS characters of at most 4 UTF-8 bytes, and
+ * the regeneration feedback is cut at RETRY_FEEDBACK_MAX_CHARS. The Edge
+ * Function checks this against the spend caps before it starts, and the eval
+ * reserves it per item.
+ */
+export function worstCaseRequestUsd(term: TermRow, profile: UserProfileRow, kv: KnownVocabulary): number {
+  const big = 'x'.repeat(RENDERING_FIELD_MAX_CHARS * 4);
+  const maxCandidate: ParsedRendering = { long_definition: big, why_it_matters: big, example_in_sentence: big };
+  const domain = term.domain ?? 'coding';
+  const pass1 = worstCaseCallUsd(PERSONALIZE_MODEL, pass1SystemPrompt(domain) + buildPass1UserMessage(term, profile, kv), PERSONALIZE_MAX_TOKENS_PASS1);
+  const pass2 = worstCaseCallUsd(PERSONALIZE_MODEL, PASS2_SYSTEM_PROMPT + buildPass2UserMessage(term, maxCandidate, profile, kv), PERSONALIZE_MAX_TOKENS_PASS2);
+  const pass3 = worstCaseCallUsd(
+    PERSONALIZE_MODEL,
+    pass3SystemPrompt(domain) + buildPass3UserMessage(term, profile, maxCandidate, 'x'.repeat(RETRY_FEEDBACK_MAX_CHARS * 4), kv),
+    PERSONALIZE_MAX_TOKENS_PASS3,
+  );
+  return pass1 + pass2 + pass3 + pass2;
 }
 
 export async function runPersonalization(
@@ -150,6 +191,7 @@ export async function runPersonalization(
     status: 'fallback-anthropic-error',
     accepted: null,
     needsReview: false,
+    canonicalReview: [],
     pass1Candidate: null,
     pass1Verdict: null,
     pass1Gate: null,
@@ -163,8 +205,13 @@ export async function runPersonalization(
 
   async function call(request: ModelRequest): Promise<ModelReply> {
     const reply = await callModel(request);
-    const costUsd = estimatePersonalizeCost(reply.usage);
-    out.passes.push({ ...reply, pass: request.pass, costUsd });
+    // A response without usage is priced at the call's worst case, so the
+    // spend log and the caps never count it as free.
+    const usageMissing = !reply.usage || !((reply.usage.input_tokens ?? 0) > 0 || (reply.usage.output_tokens ?? 0) > 0);
+    const costUsd = usageMissing
+      ? worstCaseCallUsd(PERSONALIZE_MODEL, request.system + request.user, request.maxTokens)
+      : estimatePersonalizeCost(reply.usage!);
+    out.passes.push({ ...reply, pass: request.pass, costUsd, usageMissing });
     out.costUsd += costUsd;
     return reply;
   }
@@ -219,6 +266,7 @@ export async function runPersonalization(
   const verdict1 = out.pass1Verdict;
   out.pass1Gate = gate(candidate1, verdict1);
   if (out.pass1Gate.decision === 'needs_review') out.needsReview = true;
+  out.canonicalReview.push(...out.pass1Gate.canonicalReview);
 
   if (verdictPasses(verdict1) && out.pass1Gate.decision === 'pass') {
     out.status = 'cached';
@@ -259,6 +307,7 @@ export async function runPersonalization(
   }
   const verdict2 = out.retryVerdict;
   out.retryGate = gate(candidate2, verdict2);
+  for (const c of out.retryGate.canonicalReview) if (!out.canonicalReview.includes(c)) out.canonicalReview.push(c);
 
   if (verdictPasses(verdict2) && out.retryGate.decision === 'pass') {
     // The accepted retry carries no held claim, so it is shown, even if Pass 1 had one.

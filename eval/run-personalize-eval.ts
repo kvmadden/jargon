@@ -35,7 +35,7 @@ import { runPersonalization } from '../supabase/functions/personalize-term/pipel
 import { APPROVED_ANALOGIES } from '../supabase/functions/personalize-term/approved-analogies.ts';
 import { PERSONALIZE_MODEL } from '../supabase/functions/personalize-term/prompts.ts';
 import { MODEL_PRICES, PRICES_CHECKED_ON } from '../supabase/functions/_shared/pricing.ts';
-import { canStartItem, checkResume, httpCallModel, manifestHash, worstCaseItemUsd } from './lib/eval-lib.ts';
+import { MANIFEST_SOURCES, canStartItem, checkResume, httpCallModel, manifestHash, worstCaseItemUsd } from './lib/eval-lib.ts';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p: string) => readFileSync(resolve(ROOT, p), 'utf8');
@@ -62,9 +62,7 @@ const profilesSrc = read(PROFILES_PATH);
 const MANIFEST = manifestHash({
   promptVersion: PROMPT_VERSION,
   model: PERSONALIZE_MODEL,
-  promptsSource: read('supabase/functions/personalize-term/prompts.ts'),
-  pipelineSource: read('supabase/functions/personalize-term/pipeline.ts'),
-  gateSource: read('supabase/functions/personalize-term/claim-gate.ts'),
+  sources: Object.fromEntries(MANIFEST_SOURCES.map((path) => [path, read(path)])),
   termsFile: termsSrc,
   profilesFile: profilesSrc,
 });
@@ -118,7 +116,19 @@ async function main() {
   let next = 0;
   let stoppedForBudget = false;
   let transportRetries = 0;
-  const callModel = httpCallModel({ fetch: fetch as any, apiKey: apiKey!, onRetry: () => transportRetries++ });
+  let unknownBillingUsd = 0;
+  const callModel = httpCallModel({
+    fetch: fetch as any,
+    apiKey: apiKey!,
+    onRetry: () => transportRetries++,
+    // An attempt with no readable response may have been billed: count its worst case as spent.
+    chargeUnknown: (usd) => {
+      spent += usd;
+      unknownBillingUsd += usd;
+    },
+    // A retry needs room for one more worst-case attempt on top of everything reserved.
+    allowRetry: (usd) => canStartItem(spent, reserved, usd, BUDGET_USD),
+  });
 
   async function worker() {
     for (;;) {
@@ -189,6 +199,7 @@ async function main() {
         budget_usd: BUDGET_USD,
         spent_usd: spent,
         transport_retries: transportRetries,
+        unknown_billing_usd: unknownBillingUsd,
         pricing_per_mtok: MODEL_PRICES[PERSONALIZE_MODEL],
         prices_checked_on: PRICES_CHECKED_ON,
         finished_at: new Date().toISOString(),

@@ -19,6 +19,7 @@
 
 alter table personalize_log
   add column if not exists prompt_version int4,
+  add column if not exists profile_version int4,
   add column if not exists model text,
   add column if not exists needs_review boolean not null default false,
   add column if not exists gate_result jsonb,
@@ -43,7 +44,8 @@ alter table personalize_log add constraint personalize_log_final_status_check
     'skipped-recent-fallback'
   ]));
 
--- The backoff lookup reads the latest row for one learner and term.
+-- The backoff lookup reads the latest backoff-status row for one learner, term
+-- and prompt version inside the window.
 create index if not exists idx_personalize_log_user_term_recent
   on personalize_log (user_id, term_id, created_at desc);
 

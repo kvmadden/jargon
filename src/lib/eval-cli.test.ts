@@ -25,7 +25,17 @@ describe('eval/check-rendering.ts', () => {
     writeFileSync(file, JSON.stringify(saved.get('bi-rls::nurse').final_text));
     const r = run(['eval/check-rendering.ts', '--term', 'bi-rls', '--profile', 'nurse', '--rendering', file, '--analogy']);
     expect(r.status).toBe(3);
-    expect(JSON.parse(r.stdout).findings[0].kind).toBe('analogy_about_learner_field');
+    expect(JSON.parse(r.stdout).findings.map((f: { kind: string }) => f.kind)).toContain('analogy_about_learner_field');
+  });
+
+  it('still holds the saved RLS analogy when the verifier vouches for every sentence', () => {
+    const file = join(dir, 'rls2.json');
+    writeFileSync(file, JSON.stringify(saved.get('bi-rls::nurse').final_text));
+    const r = run(['eval/check-rendering.ts', '--term', 'bi-rls', '--profile', 'nurse', '--rendering', file, '--analogy', '--vouch-all']);
+    expect(r.status).toBe(3);
+    const kinds = JSON.parse(r.stdout).findings.map((f: { kind: string }) => f.kind);
+    expect(kinds).not.toContain('unvouched_field_claim');
+    expect(kinds).toContain('restrictive_claim_about_learner_field');
   });
 
   it('exits 0 for a plain rewrite', () => {
@@ -34,8 +44,8 @@ describe('eval/check-rendering.ts', () => {
       file,
       JSON.stringify({
         long_definition: 'RLS stands for row-level security. in Power BI it applies roles and filters so different viewers see different rows of the same model.',
-        why_it_matters: 'RLS is how one report safely shows each person their own rows, which matters when a dashboard covers several units.',
-        example_in_sentence: 'the vendor said RLS will give each unit manager their own unit numbers on the shared dashboard.',
+        why_it_matters: 'RLS is how one report safely shows each person their own rows, which matters when a dashboard covers several teams.',
+        example_in_sentence: 'the vendor said RLS will give each manager their own numbers on the shared dashboard.',
       }),
     );
     const r = run(['eval/check-rendering.ts', '--term', 'bi-rls', '--profile', 'nurse', '--rendering', file]);

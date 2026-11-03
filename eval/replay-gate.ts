@@ -21,19 +21,32 @@ export function buildReplay() {
   const terms = new Map(JSON.parse(read('eval/data/terms.json')).terms.map((t: any) => [t.id, t]));
   const profiles = new Map(JSON.parse(read('eval/data/profiles.json')).profiles.map((p: any) => [p.id, p]));
   const labels = new Map(JSON.parse(read('eval/data/labels-2026-10-30.json')).labels.map((l: any) => [l.run_id, l]));
-  const replay = replayGate(rows, terms as any, profiles as any, labels as any);
-  const held = replay.filter((r) => r.decision !== 'pass');
-  const count = (f: (r: (typeof replay)[number]) => boolean) => replay.filter(f).length;
+  const summarize = (vouch: 'none' | 'all') => {
+    const replay = replayGate(rows, terms as any, profiles as any, labels as any, vouch);
+    const count = (f: (r: (typeof replay)[number]) => boolean) => replay.filter(f).length;
+    const held = (f: (r: (typeof replay)[number]) => boolean) => count((r) => f(r) && r.decision !== 'pass');
+    return {
+      accepted_outputs: replay.length,
+      held_or_revise: held(() => true),
+      introduced_errors: { total: count((r) => r.origin === 'introduced'), held: held((r) => r.origin === 'introduced') },
+      inherited_wrong: {
+        total: count((r) => r.origin === 'inherited' && r.label === 'wrong'),
+        held: held((r) => r.origin === 'inherited' && r.label === 'wrong'),
+      },
+      judged_correct: { total: count((r) => r.label === 'judged correct'), held: held((r) => r.label === 'judged correct') },
+      unlabeled: { total: count((r) => r.label === null), held: held((r) => r.label === null) },
+      rows: replay,
+    };
+  };
   return {
     status: 'development result',
-    note: 'Claim gate replayed over the saved accepted outputs of the 2026-10-30 run, with the verifier analogy flag from that run and empty claim lists (the verifier did not produce them then). The gate was built after reading these outputs.',
-    accepted_outputs: replay.length,
-    held_or_revise: held.length,
-    introduced_errors: { total: count((r) => r.origin === 'introduced'), held: count((r) => r.origin === 'introduced' && r.decision !== 'pass') },
-    inherited_wrong: { total: count((r) => r.origin === 'inherited' && r.label === 'wrong'), held: count((r) => r.origin === 'inherited' && r.label === 'wrong' && r.decision !== 'pass') },
-    judged_correct: { total: count((r) => r.label === 'judged correct'), held: count((r) => r.label === 'judged correct' && r.decision !== 'pass') },
-    unlabeled: { total: count((r) => r.label === null), held: count((r) => r.label === null && r.decision !== 'pass') },
-    rows: replay,
+    note:
+      'Claim gate replayed over the saved accepted outputs of the 2026-10-30 run, with that run\'s verifier analogy flag. ' +
+      'The gate was built from the 4 introduced errors in this run and then revised after review round 2, so holding them is expected. ' +
+      'The v9 verifier listed no claims. as_saved keeps it that way, so no field sentence is vouched for (an upper bound on holds). ' +
+      'all_vouched marks every sentence supported (a lower bound: what the rules hold even when the verifier vouches).',
+    as_saved: summarize('none'),
+    all_vouched: summarize('all'),
   };
 }
 
@@ -56,6 +69,9 @@ if (isMain) {
   } else {
     writeFileSync(path, text);
     const r = JSON.parse(text);
-    console.log(`held ${r.held_or_revise} of ${r.accepted_outputs}; introduced errors held ${r.introduced_errors.held} of ${r.introduced_errors.total}; inherited held ${r.inherited_wrong.held} of ${r.inherited_wrong.total}; judged correct held ${r.judged_correct.held} of ${r.judged_correct.total}`);
+    for (const mode of ['as_saved', 'all_vouched'] as const) {
+      const m = r[mode];
+      console.log(`${mode}: held ${m.held_or_revise} of ${m.accepted_outputs}, introduced ${m.introduced_errors.held} of ${m.introduced_errors.total}, inherited ${m.inherited_wrong.held} of ${m.inherited_wrong.total}, judged correct ${m.judged_correct.held} of ${m.judged_correct.total}, unlabeled ${m.unlabeled.held} of ${m.unlabeled.total}`);
+    }
   }
 }
