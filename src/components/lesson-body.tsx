@@ -21,7 +21,7 @@ export function LessonBody({
         <ul className="flex flex-col gap-1.5 pl-1">
           {points.map((point, i) => (
             <li key={i} className="flex gap-2 text-sm text-text-secondary leading-relaxed">
-              <span aria-hidden="true" className="mt-[0.55em] h-1.5 w-1.5 shrink-0 rounded-full bg-accent-jargon-hi" />
+              <span aria-hidden="true" className="shrink-0 text-accent-jargon-hi">•</span>
               <span>{render(point)}</span>
             </li>
           ))}
