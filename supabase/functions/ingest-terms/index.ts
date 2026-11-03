@@ -6,6 +6,15 @@
 //   Pass 3 — Opus 4.7 verifies relevance to the owner's stated goals.
 //   Pass 4a — Haiku 4.5 blind-regenerates the one-line definition with no context.
 //   Pass 4b — Embedding cosine similarity (OpenAI text-embedding-3-small) ≥ 0.85 to pass.
+//             This is a similarity screen on the one-line definition only, not
+//             proof that two models agree on the term.
+//
+// Every gate fails closed (_shared/verdict-gates.ts): a candidate continues only
+// on an explicit, well-formed pass, and a NaN or undefined similarity fails.
+// The job is exempt from the per-user spend cap, so each cycle has its own
+// budget (INGEST_CYCLE_BUDGET_USD, default $5). Pass 1 and each candidate start
+// only if their worst case at list price fits in what is left. Inserted terms
+// stay hidden from learners until a person sets reviewed_at.
 //
 // Triggers:
 //   - Cron: Vercel weekly cron POSTs here with the service-role key.
@@ -27,6 +36,8 @@ import { goalDescription } from '../_shared/domain-goals.ts';
 import { pathsForDomain, pathListPipe } from '../_shared/domain-paths.ts';
 import { checkSpend } from '../_shared/spend-guard.ts';
 import { estimateCostUsd, usageFromResponse } from '../_shared/pricing.ts';
+import { cosineSimilarity, similarityPasses, verdictPasses } from '../_shared/verdict-gates.ts';
+import { RunBudget, budgetFromEnv, worstCaseCallUsd } from '../_shared/cycle-budget.ts';
 
 // ─── Constants ──────────────────────────────────────────────────────────────────
 const PASS1_MODEL = 'claude-sonnet-4-6';
@@ -35,6 +46,14 @@ const PASS3_MODEL = 'claude-opus-4-7';
 const PASS4A_MODEL = 'claude-haiku-4-5-20251001';
 const EMBEDDING_MODEL = 'text-embedding-3-small';
 const COSINE_THRESHOLD = 0.85;
+// Max output tokens per call, shared by the calls and by the worst-case budget.
+const PASS1_MAX_TOKENS = 8192;
+const VERIFY_MAX_TOKENS = 512;
+const PASS4A_MAX_TOKENS = 128;
+// Per-cycle budget in USD (INGEST_CYCLE_BUDGET_USD). The job is exempt from the
+// per-user spend cap, so this is the bound on what one cycle can spend. A
+// candidate starts only if its worst case fits in what is left.
+const DEFAULT_CYCLE_BUDGET_USD = 5;
 const PASS1_TARGET_COUNT = 10; // spec says 5–15 per cycle; 10 is a safe middle.
 // B+1.5.3: ALL_PATHS replaced by per-cycle `pathsForDomain(domain)`. The
 // PathId TYPE was structurally narrow only for the coding-domain world;
@@ -76,6 +95,9 @@ interface CycleSummary {
   candidatesProcessed: number;
   inserted: number;
   rejected: number;
+  /** Candidates logged with failure_pass 'budget' and never verified. */
+  skippedForBudget: number;
+  stoppedForBudget: boolean;
 }
 
 // ─── Prompts (canonical: SPEC.md §6.3 — must match verbatim) ───────────────────
@@ -200,24 +222,6 @@ Reply with ONLY the definition sentence. No JSON, no markdown, no preamble.`;
 }
 
 // ─── Helpers ────────────────────────────────────────────────────────────────────
-
-function dotProduct(a: number[], b: number[]): number {
-  let s = 0;
-  for (let i = 0; i < a.length; i++) s += a[i] * b[i];
-  return s;
-}
-
-function magnitude(v: number[]): number {
-  let s = 0;
-  for (const x of v) s += x * x;
-  return Math.sqrt(s);
-}
-
-function cosineSimilarity(a: number[], b: number[]): number {
-  const m = magnitude(a) * magnitude(b);
-  if (m === 0) return 0;
-  return dotProduct(a, b) / m;
-}
 
 async function backoffRetry<T>(fn: () => Promise<T>, label: string, maxAttempts = 3): Promise<T> {
   let attempt = 0;
@@ -374,21 +378,22 @@ async function runCycle(
   // every early-dedupe row and to no other row, so a cycle could count it many
   // times or not at all.)
   let pass1CostUnlogged = 0;
+  const budget = new RunBudget(budgetFromEnv(Deno.env.get('INGEST_CYCLE_BUDGET_USD'), DEFAULT_CYCLE_BUDGET_USD));
+  const pass1SystemText = pass1System(domain, pathCounts, existingTermsByPath);
+  const pass1UserText = 'Generate this cycle\'s candidate terms now.';
+  if (!budget.canAfford(worstCaseCallUsd(PASS1_MODEL, pass1SystemText + pass1UserText, PASS1_MAX_TOKENS))) {
+    console.warn(`[ingest] cycle budget $${budget.limitUsd} cannot cover Pass 1, so no calls were made`);
+    return { cycleId, candidatesProcessed: 0, inserted: 0, rejected: 0, skippedForBudget: 0, stoppedForBudget: true };
+  }
   try {
     const { raw, tokensIn, tokensOut, costUsd } = await backoffRetry(
-      () =>
-        callAnthropicJson(
-          anthropic,
-          PASS1_MODEL,
-          pass1System(domain, pathCounts, existingTermsByPath),
-          'Generate this cycle\'s candidate terms now.',
-          8192,
-        ),
+      () => callAnthropicJson(anthropic, PASS1_MODEL, pass1SystemText, pass1UserText, PASS1_MAX_TOKENS),
       'pass1',
     );
     pass1TokensIn = tokensIn;
     pass1TokensOut = tokensOut;
     pass1CostUnlogged = costUsd;
+    budget.record(costUsd);
     const parsed = tryParseJson<{ candidates: Candidate[] }>(raw);
     if (!parsed?.candidates || !Array.isArray(parsed.candidates)) {
       throw new Error('Pass 1 returned no candidates array');
@@ -396,20 +401,25 @@ async function runCycle(
     candidates = parsed.candidates;
   } catch (err: any) {
     console.error('[ingest] pass 1 fatal:', err);
-    return { cycleId, candidatesProcessed: 0, inserted: 0, rejected: 0 };
+    return { cycleId, candidatesProcessed: 0, inserted: 0, rejected: 0, skippedForBudget: 0, stoppedForBudget: false };
   }
 
   // ─── Per-candidate 4-pass loop ───────────────────────────────────────────────
+  let skippedForBudget = 0;
+  let stoppedForBudget = false;
   for (const candidate of candidates) {
     const candStart = Date.now();
     let totalCost = pass1CostUnlogged;
+    // Pass 1 is already recorded in the budget. Only this candidate's own
+    // calls are added when it finishes.
+    const pass1Portion = totalCost;
     pass1CostUnlogged = 0;
     let pass2: VerifierResult | null = null;
     let pass3: VerifierResult | null = null;
     let pass4aDef: string | null = null;
     let pass4bSim: number | null = null;
     let finalStatus: 'inserted' | 'rejected' = 'rejected';
-    let failurePass: 'dedupe' | 'pass2' | 'pass3' | 'pass4b' | 'dedupe-late' | 'insert' | null = null;
+    let failurePass: 'dedupe' | 'pass2' | 'pass3' | 'pass4b' | 'dedupe-late' | 'insert' | 'budget' | null = null;
     let errorText: string | null = null;
 
     try {
@@ -447,6 +457,41 @@ async function runCycle(
         candidate,
         existing_terms_in_candidate_path: existingTermsByPath[candidate.path] ?? [],
       });
+
+      // Budget: start this candidate only if its worst case fits. Once one
+      // does not fit, this and every later candidate is logged as skipped.
+      const candidateJson = JSON.stringify(candidate);
+      const worstCase =
+        worstCaseCallUsd(PASS2_MODEL, pass2System(domain) + pass2UserMessage, VERIFY_MAX_TOKENS) +
+        worstCaseCallUsd(PASS3_MODEL, pass3System(domain) + candidateJson, VERIFY_MAX_TOKENS) +
+        worstCaseCallUsd(PASS4A_MODEL, pass4aSystem(domain) + `term: ${candidate.term}\npath: ${candidate.path}`, PASS4A_MAX_TOKENS) +
+        // Embeddings: the definition plus a 128-token regeneration, bounded generously.
+        worstCaseCallUsd(EMBEDDING_MODEL, candidate.one_line_definition, 0) + (PASS4A_MAX_TOKENS * 8 * 0.02) / 1_000_000;
+      if (stoppedForBudget || !budget.canAfford(worstCase)) {
+        stoppedForBudget = true;
+        skippedForBudget++;
+        failurePass = 'budget';
+        errorText = `cycle budget: spent $${budget.spentUsd.toFixed(4)} of $${budget.limitUsd}, next candidate could cost up to $${worstCase.toFixed(4)}`;
+        await logRow(supabase, {
+          cycleId,
+          cycleStartedAt,
+          trigger,
+          candidate,
+          pass1Model: PASS1_MODEL,
+          pass1TokensIn,
+          pass1TokensOut,
+          pass2,
+          pass3,
+          pass4aDef,
+          pass4bSim,
+          finalStatus,
+          failurePass,
+          totalLatencyMs: Date.now() - candStart,
+          totalCostUsd: totalCost,
+          errorText,
+        });
+        continue;
+      }
       const pass2Call = await backoffRetry(
         () =>
           callAnthropicJson(
@@ -454,7 +499,7 @@ async function runCycle(
             PASS2_MODEL,
             pass2System(domain),
             pass2UserMessage,
-            512,
+            VERIFY_MAX_TOKENS,
           ),
         'pass2',
       );
@@ -462,7 +507,8 @@ async function runCycle(
       pass2 =
         tryParseJson<VerifierResult>(pass2Call.raw) ??
         { result: 'fail', reasoning: 'unparseable verifier output', failed_criteria: ['parser'] };
-      if (pass2.result === 'fail') {
+      // Continue only on an explicit, well-formed pass (verdict-gates.ts).
+      if (!verdictPasses(pass2)) {
         failurePass = 'pass2';
         rejected++;
         await logRow(supabase, {
@@ -493,8 +539,8 @@ async function runCycle(
             anthropic,
             PASS3_MODEL,
             pass3System(domain),
-            JSON.stringify(candidate),
-            512,
+            candidateJson,
+            VERIFY_MAX_TOKENS,
           ),
         'pass3',
       );
@@ -502,7 +548,7 @@ async function runCycle(
       pass3 =
         tryParseJson<VerifierResult>(pass3Call.raw) ??
         { result: 'fail', reasoning: 'unparseable verifier output', failed_criteria: ['parser'] };
-      if (pass3.result === 'fail') {
+      if (!verdictPasses(pass3)) {
         failurePass = 'pass3';
         rejected++;
         await logRow(supabase, {
@@ -534,7 +580,7 @@ async function runCycle(
             PASS4A_MODEL,
             pass4aSystem(domain),
             `term: ${candidate.term}\npath: ${candidate.path}`,
-            128,
+            PASS4A_MAX_TOKENS,
           ),
         'pass4a',
       );
@@ -576,7 +622,10 @@ async function runCycle(
         continue;
       }
 
-      if ((pass4bSim ?? 0) < COSINE_THRESHOLD) {
+      // A similarity screen, not proof of agreement: it compares only the
+      // one-line definitions. NaN, null or a length mismatch fails.
+      if (!similarityPasses(pass4bSim, COSINE_THRESHOLD)) {
+        if (pass4bSim === null) errorText = 'embedding similarity undefined (empty, mismatched or non-finite vectors)';
         failurePass = 'pass4b';
         rejected++;
         await logRow(supabase, {
@@ -691,15 +740,28 @@ async function runCycle(
         totalCostUsd: totalCost,
         errorText,
       });
+    } finally {
+      budget.record(totalCost - pass1Portion);
     }
+  }
+  if (stoppedForBudget) {
+    console.warn(`[ingest] cycle budget reached: ${skippedForBudget} of ${candidates.length} candidates skipped`);
   }
 
   return {
     cycleId,
-    candidatesProcessed: candidates.length,
+    candidatesProcessed: candidates.length - skippedForBudget,
     inserted,
     rejected,
+    skippedForBudget,
+    stoppedForBudget,
   };
+}
+
+/** failed_criteria as a text[] the log column accepts, whatever shape the model sent. */
+function criteriaList(v: VerifierResult | null): string[] | null {
+  const raw = (v as { failed_criteria?: unknown } | null)?.failed_criteria;
+  return Array.isArray(raw) ? raw.filter((c): c is string => typeof c === 'string') : null;
 }
 
 interface LogArgs {
@@ -715,7 +777,7 @@ interface LogArgs {
   pass4aDef: string | null;
   pass4bSim: number | null;
   finalStatus: 'inserted' | 'rejected';
-  failurePass: 'dedupe' | 'pass2' | 'pass3' | 'pass4b' | 'dedupe-late' | 'insert' | null;
+  failurePass: 'dedupe' | 'pass2' | 'pass3' | 'pass4b' | 'dedupe-late' | 'insert' | 'budget' | null;
   totalLatencyMs: number;
   totalCostUsd: number;
   errorText: string | null;
@@ -731,12 +793,14 @@ async function logRow(supabase: ReturnType<typeof createClient>, args: LogArgs):
     pass1_model: args.pass1Model,
     pass1_tokens_in: args.pass1TokensIn,
     pass1_tokens_out: args.pass1TokensOut,
-    pass2_result: args.pass2 ? args.pass2.result : 'skipped',
+    // The gate's decision, not the raw string: the column allows only pass,
+    // fail and skipped, and a malformed verdict ("PASS", a missing key) failed the gate.
+    pass2_result: args.pass2 ? (verdictPasses(args.pass2) ? 'pass' : 'fail') : 'skipped',
     pass2_reasoning: args.pass2?.reasoning ?? null,
-    pass2_failed_criteria: args.pass2?.failed_criteria ?? null,
-    pass3_result: args.pass3 ? args.pass3.result : 'skipped',
+    pass2_failed_criteria: criteriaList(args.pass2),
+    pass3_result: args.pass3 ? (verdictPasses(args.pass3) ? 'pass' : 'fail') : 'skipped',
     pass3_reasoning: args.pass3?.reasoning ?? null,
-    pass3_failed_criteria: args.pass3?.failed_criteria ?? null,
+    pass3_failed_criteria: criteriaList(args.pass3),
     pass4a_definition: args.pass4aDef,
     pass4b_similarity: args.pass4bSim,
     pass4b_threshold: COSINE_THRESHOLD,
