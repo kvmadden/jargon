@@ -16,10 +16,8 @@ insert into terms values ('bi-calculated-column', 'unchanged', 'unchanged', 'a c
 insert into terms values ('cloud-environment', 'unchanged', 'the bug only shows up in the staging environment because that''s the only place pointed at the real payment provider.', 'unchanged', 'the bug only shows up in the staging ___ because that''s the only place pointed at the real payment provider.');
 -- A curator already rewrote this one, so the migration must not touch it.
 insert into terms values ('curator-edited', 'x', 'x', 'x', 'x');
-update terms set why_it_matters = 'a curator rewrote this sentence' where id = 'bi-calculated-column';
 insert into user_term_renderings values ('11111111-1111-1111-1111-111111111111', 'cloud-environment'), ('11111111-1111-1111-1111-111111111111', 'sec-mfa');
 
-\ir ../migrations/20261103000100_canonical_corrections.sql
 \ir ../migrations/20261103000100_canonical_corrections.sql
 
 do $$
@@ -36,8 +34,6 @@ begin
   if n <> 1 then raise exception 'not corrected: aid-parameters.example_in_sentence'; end if;
   select count(*) into n from terms where id = 'aid-parameters' and why_it_matters = 'Open-weight model names like "Llama 3 70B" or "Llama 3.1 405B" make more sense once you know that the "B" is billions of parameters. Names like "GPT-5" or "Claude Opus 4.7" carry no size, because those companies do not publish it. Size is the simplest rough comparison of model heft, even though parameters alone do not tell you everything about quality.';
   if n <> 1 then raise exception 'not corrected: aid-parameters.why_it_matters'; end if;
-  select count(*) into n from terms where id = 'bi-calculated-column' and why_it_matters = 'a curator rewrote this sentence';
-  if n <> 1 then raise exception 'overwrote a curator edit'; end if;
   select count(*) into n from terms where long_definition = 'unchanged' or example_in_sentence = 'unchanged';
   if n < 1 then raise exception 'fixture lost its untouched fields'; end if;
   select count(*) into n from user_term_renderings where term_id = 'cloud-environment';
@@ -46,3 +42,23 @@ begin
   if n <> 1 then raise exception 'rendering of an unrelated term removed'; end if;
 end $$;
 \echo 'canonical corrections: ok'
+
+-- The corrected bi-calculated-column text applied on the first run.
+do $$
+declare n int;
+begin
+  select count(*) into n from terms where id = 'bi-calculated-column'
+    and why_it_matters like 'a calculated column is figured out once per row and stored in the table%';
+  if n <> 1 then raise exception 'not corrected: bi-calculated-column.why_it_matters'; end if;
+end $$;
+
+-- A curator then edits the entry. Running the migration again must keep the edit.
+update terms set why_it_matters = 'a curator rewrote this sentence' where id = 'bi-calculated-column';
+\ir ../migrations/20261103000100_canonical_corrections.sql
+do $$
+declare n int;
+begin
+  select count(*) into n from terms where id = 'bi-calculated-column' and why_it_matters = 'a curator rewrote this sentence';
+  if n <> 1 then raise exception 'overwrote a curator edit'; end if;
+end $$;
+\echo 'canonical corrections: curator edit kept'
