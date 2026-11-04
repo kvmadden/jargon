@@ -35,3 +35,4 @@ This folder pre-registers the paid verifier pass on the Part B blind set: 345 sy
 ## Corrections
 
 - 2026-11-03, after the merge of the registration: disclosure 2 first said the build agent read "the gate" after the lock. It read the gate's wrapper and replay script, not the claim gate's own code. The sentence now says so.
+- 2026-11-03, evening: to write the scoring script, the build agent read the claim gate's input types and entry point, how the learner lexicon uses the profile, and the verdict reader. It read no verdict and no rendering text. The earlier statement that it did not read the claim gate's own code no longer holds.
