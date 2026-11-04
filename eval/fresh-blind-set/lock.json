@@ -145,5 +145,31 @@
    "eval/fresh-blind-set/part-b-lib.ts (runner section)"
   ],
   "added_by": "amendment A2 in RUN-PLAN.md"
+ },
+ "pass_results": {
+  "results_sha256": {
+   "chunk-1.jsonl": "901d473595a6f4a047a3be4340847d95736f72ac09dd574b445f7d1ef6ba509b",
+   "chunk-2.jsonl": "e299a2c9601221b29331713ae1f1d758a9125889ae1de0a1ae813da8f60bb963",
+   "chunk-3.jsonl": "b8c97f6c24eb04f4482080d3c63f0908632e78cb539740a4853c21993ca0fd37",
+   "chunk-4.jsonl": "1373782330db09ba17ecb00087a46263357c34e7d939c8a732b9c4ec3c03bb4c",
+   "chunk-5.jsonl": "b3ed048979b547150d7c5ac8caede2d038301ec00aa7ea9eb14547b6b2e4d435",
+   "chunk-6.jsonl": "4b486d82f09e91d77b16ba5e44cd82eee807397fd8f085639bac6214b8249c70",
+   "chunk-7.jsonl": "8eb8369d957955825763b3aa11bc8f1bcd1d71efa1de991b0e3a97deb7f792dd",
+   "chunk-8.jsonl": "0fe675381068f6d976605a24dd73d79ca1f20c180f731a3763f6da437912760c"
+  },
+  "requests_manifest_sha256": "fc2b808bf2cdf54bd0349fbf4e0acd88a6719bfe1c5ff2b796c67d529874abaa",
+  "summary_sha256": "c24655404c5fb39822747fd0fdb194622eb04553e0ec9bd5ba24fa4ed0f43d46",
+  "batch_ids": {
+   "chunk-1": "msgbatch_01CG9yXBKpVac3eDxcCiaGLt",
+   "chunk-2": "msgbatch_01H5jduqrUumUSGfWiRjRgJS",
+   "chunk-3": "msgbatch_01BUC1cb7AaVx1TDWpoLH71q",
+   "chunk-4": "msgbatch_013C667QwhnjnkAtxrfcFtrr",
+   "chunk-5": "msgbatch_018mTxzUDmkZSsU5aPXrahAd",
+   "chunk-6": "msgbatch_01PcWC5UHinJwyR9kdnLXyuw",
+   "chunk-7": "msgbatch_0194cWzskhN4bZyPmMrVhmNY",
+   "chunk-8": "msgbatch_01BMwg3tcoC1zHufzxfhPR86"
+  },
+  "spent_usd": 5.177254,
+  "added_by": "amendment A3 in RUN-PLAN.md"
  }
 }
