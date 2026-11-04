@@ -1,0 +1,100 @@
+{
+ "set": "jargon Part B fresh blind set (labeled renderings)",
+ "algorithm": "sha256",
+ "registered": "2026-11-03",
+ "item_text_in_repository": false,
+ "counts": {
+  "renderings": 345,
+  "terms": 53,
+  "profiles": 11,
+  "by_gold": {
+   "correct": 124,
+   "wrong-introduced": 177,
+   "wrong-inherited": 24,
+   "unsupported": 20
+  },
+  "by_kind": {
+   "correct_field_analogy": 57,
+   "false_contrast_or_only": 22,
+   "conflated_scopes": 22,
+   "wrong_number": 23,
+   "invented_access_rule": 22,
+   "reversed_cause_or_comparison": 22,
+   "inherited_canonical_error": 24,
+   "interest_analogy_false": 22,
+   "unsupported_claim": 20,
+   "correct_corrective_framing": 18,
+   "correct_restrictive_claim": 24,
+   "correct_plain": 25,
+   "nonexistent_artifact": 21,
+   "correct_tech_wrong_field": 23
+  },
+  "by_domain": {
+   "clinical": 125,
+   "education": 63,
+   "finance": 28,
+   "general": 31,
+   "hospitality": 33,
+   "legal": 34,
+   "trades": 31
+  },
+  "terms_with_a_deliberately_wrong_canonical_entry": 10,
+  "kevin_clinical_items_to_review": 30
+ },
+ "spec": {
+  "SPEC.md": "7230c364dd8a44df11e3ef3060b882ca433d444bd2dff75ad20ab04627db960e",
+  "note": "A copy of the Part B spec the set was written from, kept in this folder so the contract is visible."
+ },
+ "staged_set": {
+  "locked_utc": "2026-11-04T01:27:41Z",
+  "file_count": 773,
+  "lock_json_sha256": "e33eee8846f374ab88c53b744812ff882301c4d3a48529d18e41b42ca105bdc1",
+  "manifest_sha256": "92941133c2c2bf486222407eee8892412f0102e5a006e74a9e303b0a1eea0995",
+  "addendum_1_sha256": "fb38d5613c70395655adf726ea15495d5358df8fbb823b8ae9933c8bd58c9960"
+ },
+ "files_note": "SHA-256 of files in the staged set, which is kept outside this repository until scoring. The LOCK-NOTE.md hashed here is the staged version, not the copy in this folder.",
+ "files": {
+  "AMENDMENTS.md": "4a7e1a4b21138eafb29c63a6767450e249fd84ccbec3d2f91f4157e80b1220a4",
+  "LOCK-NOTE.md": "ea9cc53c27038697a8e43178e3c0d4f0a95baa0c07ac7f56faab0c23c0194ea5",
+  "MANIFEST.json": "92941133c2c2bf486222407eee8892412f0102e5a006e74a9e303b0a1eea0995",
+  "agreement.json": "d0fae14ee180d1458b2cfd55cb29b55a200599a650182c249f828a7b076e9433",
+  "agreement.md": "bb700d6a07f9b558e461724c6e695e9378c98186f4b796c7b2287e695c370dcb",
+  "dropped.json": "c4f88ddd6121bcb2b1430fffe55164ba16b035560d8618d1f08dcd9629c3f070",
+  "profiles.jsonl": "3122b4556972496efed06da8373f45af308984edeaec7745cb04653579b2683e",
+  "renderings.jsonl": "08569ffb573a1aa1c1469c0d4a7c12e5851ee52765748e5da80c1db105f536fe",
+  "terms.jsonl": "22a64e8df058e78a01738d899cc95d09725d9074eff3a124ab1c225e27708025",
+  "validation-report.json": "3b2060079f865e264bedbd705b838c61769d14a996d5778371e1efeedfe90b4a",
+  "review/kevin-clinical-items.md": "f177ca59cea7a58b790cf08c9a80a7d8f8c62e273487354b9407eb315834b487"
+ },
+ "added_after_lock": {
+  "review/kevin-clinical-items.json": "8976ac443a3ffc4027b5212e20e8acf438b592f306ec1b9b96fc4f8b79354a7c"
+ },
+ "pinned_verifier": {
+  "commit": "d8aa9df6e490be83b3228bf07bf09bd79e5dc045",
+  "commit_is": "head of draft pull request 5 at registration",
+  "model": "claude-opus-4-7",
+  "max_tokens": 1200,
+  "timeout_ms": 30000,
+  "temperature": "not set, so the API default applies",
+  "system_prompt": "PASS2_SYSTEM_PROMPT in prompts.ts, sent as one text block with cache_control ephemeral",
+  "pass2_system_prompt_sha256": "7534fca9b58b3ad5d7f0e1c8ce1f2ba921ad43c2e969dc74449ea11d833e1d95",
+  "pass2_system_prompt_chars": 12298,
+  "criteria": 8,
+  "files": {
+   "supabase/functions/personalize-term/prompts.ts": "4714e6f3c6354c0a3534ea02129ce070c82e2a380c7580c70907b2544e59cffe",
+   "supabase/functions/personalize-term/pipeline.ts": "df8866255a296ef912155e040324f42889d1614cc94f7f7ee063474617843ab1",
+   "eval/lib/eval-lib.ts": "43519c701ee217e10558b375fc03700af38b27712744077a0199c479df827cec"
+  }
+ },
+ "pinned_gate_and_replay": {
+  "commit": "d8aa9df6e490be83b3228bf07bf09bd79e5dc045",
+  "files": {
+   "supabase/functions/personalize-term/claim-gate.ts": "8fdb14a9a90a03c5e01050743d9d4aa7545a89cd2f47d549f608c89f6d18dddc",
+   "supabase/functions/personalize-term/claim-text.ts": "bd74ba1f6fae9ce23242b2fb6a63bd63d0c106fd143a63f1725361c60e6f9684",
+   "supabase/functions/personalize-term/domain-lexicon.ts": "5ccef6110c3e02486e1bd5b351224d68c99d7dcd1207820b8cbb1d5e3c814a98",
+   "supabase/functions/personalize-term/approved-analogies.ts": "66130f27fb95e1c7e5f08a773638ed4c945d5cef0652133cdc666f54f97c3a53",
+   "eval/check-rendering.ts": "30aee00de83dc5053034ca4757f0d133fe3719a7853f89f023d8bd52dbb70312",
+   "eval/replay-gate.ts": "0cc1162c701dd7fa93e18d1886a5871710a400539269eea8967e6b4ee8e9f722"
+  }
+ }
+}
