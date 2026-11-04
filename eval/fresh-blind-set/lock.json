@@ -96,5 +96,32 @@
    "eval/check-rendering.ts": "30aee00de83dc5053034ca4757f0d133fe3719a7853f89f023d8bd52dbb70312",
    "eval/replay-gate.ts": "0cc1162c701dd7fa93e18d1886a5871710a400539269eea8967e6b4ee8e9f722"
   }
+ },
+ "runner": {
+  "files": {
+   "eval/fresh-blind-set/part-b-lib.ts": "641318436ac9a7988eb27d4d18dde6dbd462ecc5804c063d8415fb55a519d4df",
+   "eval/fresh-blind-set/part-b-http.ts": "8ce34334b0f0d99370c87b850bab043f9d30e499b179efea126e10eab83c6f26",
+   "eval/fresh-blind-set/run-verifier-batch.ts": "a58f07e9234c1a262c2df88414027c552308a3eede3f74a4ac8a5b9477937ab7",
+   "src/lib/part-b-lib.test.ts": "cc8a3b1c28786d97100e4c3013a89a7ac123682989393a04da797a4e167916a1"
+  },
+  "added_by": "amendment A1 in RUN-PLAN.md"
+ },
+ "batch_pass": {
+  "ruling": "Batch it, allow up to $12.50",
+  "ceiling_usd": 7.83,
+  "chunks": [
+   1,
+   24,
+   60,
+   60,
+   60,
+   60,
+   40,
+   40
+  ],
+  "cache_lifetime": "1h",
+  "projection_fallback_usd_per_rendering": 0.0213,
+  "prices_checked_on": "2026-11-03",
+  "added_by": "amendment A1 in RUN-PLAN.md"
  }
 }
