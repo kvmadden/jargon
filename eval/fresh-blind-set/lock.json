@@ -123,5 +123,27 @@
   "projection_fallback_usd_per_rendering": 0.0213,
   "prices_checked_on": "2026-11-03",
   "added_by": "amendment A1 in RUN-PLAN.md"
+ },
+ "second_gate": {
+  "commit": "ad867c337d6e71073c21f1e585b74005b868c7c3",
+  "commit_is": "head of draft pull request 6 at registration of the scoring script",
+  "use": "replayed as a second, labeled column. The registered gate is the one in pinned_gate_and_replay.",
+  "files": {
+   "supabase/functions/personalize-term/claim-gate.ts": "1757c18d9fc47d5ecd589a828a96d97494e517d64dfb8e9d710f3dd4005b3f71",
+   "supabase/functions/personalize-term/claim-text.ts": "4f200eee152728219e056ff5878371536f0036569da3fd5d9a305096b532be99",
+   "supabase/functions/personalize-term/domain-lexicon.ts": "3060027f9c73930e0fe7641a8e3f4f5d7c206e3102604004f8a3e20b5d90a400",
+   "supabase/functions/personalize-term/approved-analogies.ts": "66130f27fb95e1c7e5f08a773638ed4c945d5cef0652133cdc666f54f97c3a53"
+  }
+ },
+ "scorer": {
+  "files": {
+   "eval/fresh-blind-set/part-b-score-lib.ts": "4048f1e318bd6066eddd1a704df5dbb73adcf4c80179ae50205c02d496e27a76",
+   "eval/fresh-blind-set/score-part-b.ts": "57e651ee4efedcb16634b55e8876f3ffc24ac1f0010f9f968085a50d123a1138",
+   "src/lib/part-b-score-lib.test.ts": "ea21307519a3871515acd52973039e3b2b03e3858f3ade5280c1aaca8a0ac081"
+  },
+  "also_used": [
+   "eval/fresh-blind-set/part-b-lib.ts (runner section)"
+  ],
+  "added_by": "amendment A2 in RUN-PLAN.md"
  }
 }
