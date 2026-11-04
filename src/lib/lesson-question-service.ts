@@ -49,6 +49,7 @@ export interface LessonQuestionInput {
 export interface LessonQuestionAnswer {
   answer: string;
   lessonUpdateNotice?: string;
+  provenance?: 'generated' | 'dictionary';
 }
 
 export type LessonQuestionAnswerer = (
@@ -62,7 +63,7 @@ export interface LessonQuestionRecord extends LessonQuestionInput {
   status: LessonQuestionStatus;
   createdAt: string;
   updatedAt: string;
-  answerMode: 'queued' | 'api';
+  answerMode: 'queued' | 'api' | 'dictionary';
   answer?: string;
   answerGeneratedAt?: string;
   lessonUpdateNotice?: string;
@@ -256,7 +257,7 @@ export async function submitLessonQuestion(
           ...record,
           status: 'answered',
           updatedAt: answeredAt,
-          answerMode: 'api',
+          answerMode: answer?.provenance === 'dictionary' ? 'dictionary' : 'api',
           answer: cleanAnswer,
           answerGeneratedAt: answeredAt,
           lessonUpdateNotice:
@@ -355,8 +356,19 @@ export async function answerQueuedLessonQuestion(
   );
   if (!target || target.status === 'archived') return null;
 
+  const requestIdentity = {
+    question: target.question,
+    context: { ...target.context },
+    status: target.status,
+    answerMode: target.answerMode,
+    answer: target.answer,
+    answerGeneratedAt: target.answerGeneratedAt,
+    lessonUpdateNotice: target.lessonUpdateNotice,
+  };
+
   let cleanAnswer = '';
   let updateNotice: string | undefined;
+  let answerProvenance: LessonQuestionAnswer['provenance'];
 
   if (options.answerer) {
     try {
@@ -368,25 +380,55 @@ export async function answerQueuedLessonQuestion(
       if (answer?.answer?.trim()) {
         cleanAnswer = answer.answer.trim();
         updateNotice = answer.lessonUpdateNotice?.trim();
+        answerProvenance = answer.provenance;
       }
     } catch {
       // answerer failed
     }
   }
 
+  // The answerer may have been pending while the single-tab inbox changed.
+  // Re-read before patching so a new submission, acknowledgement, archive or
+  // deletion is not overwritten by the pre-await snapshot.
+  const currentRecords = readAll(storage);
+  const current = currentRecords.find(
+    (q) => q.id === cleanQuestionId && q.userId === cleanUserId,
+  );
+  if (!current || current.status === 'archived') return null;
+
+  const sameRequest =
+    current.question === requestIdentity.question &&
+    current.context.lessonId === requestIdentity.context.lessonId &&
+    current.context.sessionMode === requestIdentity.context.sessionMode &&
+    current.context.pathId === requestIdentity.context.pathId &&
+    current.context.termId === requestIdentity.context.termId &&
+    current.context.term === requestIdentity.context.term &&
+    current.context.cardMode === requestIdentity.context.cardMode;
+  const sameAnswer =
+    current.status === requestIdentity.status &&
+    current.answerMode === requestIdentity.answerMode &&
+    current.answer === requestIdentity.answer &&
+    current.answerGeneratedAt === requestIdentity.answerGeneratedAt &&
+    current.lessonUpdateNotice === requestIdentity.lessonUpdateNotice;
+  if (!sameRequest || !sameAnswer) return null;
+
   const answeredAt = now().toISOString();
   const updatedRecord: LessonQuestionRecord = {
-    ...target,
-    status: cleanAnswer ? 'answered' : target.status,
+    ...current,
+    status: cleanAnswer ? 'answered' : current.status,
     updatedAt: answeredAt,
-    answerMode: cleanAnswer ? 'api' : target.answerMode,
-    answer: cleanAnswer || target.answer,
-    answerGeneratedAt: cleanAnswer ? answeredAt : target.answerGeneratedAt,
+    answerMode: cleanAnswer
+      ? answerProvenance === 'dictionary'
+        ? 'dictionary'
+        : 'api'
+      : current.answerMode,
+    answer: cleanAnswer || current.answer,
+    answerGeneratedAt: cleanAnswer ? answeredAt : current.answerGeneratedAt,
     lessonUpdateNotice:
-      updateNotice || target.lessonUpdateNotice || defaultNotice(target),
+      updateNotice || current.lessonUpdateNotice || defaultNotice(current),
   };
 
-  const updatedRecords = records.map((q) =>
+  const updatedRecords = currentRecords.map((q) =>
     q.id === cleanQuestionId && q.userId === cleanUserId ? updatedRecord : q,
   );
   writeAll(updatedRecords, storage);

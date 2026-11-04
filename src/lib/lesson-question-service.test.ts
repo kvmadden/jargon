@@ -20,6 +20,14 @@ const CONTEXT = {
   cardMode: 'learn',
 } as const;
 
+function deferred<T>() {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>((res) => {
+    resolve = res;
+  });
+  return { promise, resolve };
+}
+
 describe('lesson-question-service', () => {
   beforeEach(() => {
     window.localStorage.removeItem(LESSON_QUESTIONS_STORAGE_KEY);
@@ -82,6 +90,7 @@ describe('lesson-question-service', () => {
       context: CONTEXT,
     });
     expect(result.record.status).toBe('answered');
+    expect(result.record.answerMode).toBe('api');
     expect(result.record.answer).toMatch(/dev server/i);
 
     const notices = lessonQuestionUpdateNotices('curator');
@@ -218,6 +227,203 @@ describe('lesson-question-service', () => {
     expect(updated?.status).toBe('answered');
     expect(updated?.answer).toBe('Hydration is attaching event listeners to server-rendered HTML.');
     expect(lessonQuestionSummary('curator').answered).toBe(1);
+  });
+
+  it('preserves a question submitted while a delayed answer is pending', async () => {
+    await submitLessonQuestion(
+      { userId: 'curator', question: 'First question', context: CONTEXT },
+      { idFactory: () => 'first' },
+    );
+    const started = deferred<void>();
+    const answer = deferred<{ answer: string }>();
+    const pending = answerQueuedLessonQuestion('first', 'curator', {
+      answerer: async () => {
+        started.resolve();
+        return answer.promise;
+      },
+    });
+    await started.promise;
+
+    await submitLessonQuestion(
+      { userId: 'curator', question: 'Second question', context: CONTEXT },
+      { idFactory: () => 'second' },
+    );
+    answer.resolve({ answer: 'First answer.' });
+
+    expect((await pending)?.status).toBe('answered');
+    expect(loadLessonQuestions('curator').map(({ id, status }) => [id, status])).toEqual([
+      ['first', 'answered'],
+      ['second', 'queued'],
+    ]);
+  });
+
+  it('does not unarchive a question archived while its answer is pending', async () => {
+    await submitLessonQuestion(
+      { userId: 'curator', question: 'Archive me', context: CONTEXT },
+      { idFactory: () => 'archived' },
+    );
+    const started = deferred<void>();
+    const answer = deferred<{ answer: string }>();
+    const pending = answerQueuedLessonQuestion('archived', 'curator', {
+      answerer: async () => {
+        started.resolve();
+        return answer.promise;
+      },
+    });
+    await started.promise;
+    archiveLessonQuestion('archived', 'curator');
+    answer.resolve({ answer: 'Late answer.' });
+
+    expect(await pending).toBeNull();
+    const [archived] = loadLessonQuestions('curator');
+    expect(archived).toMatchObject({ id: 'archived', status: 'archived' });
+    expect(archived).not.toHaveProperty('answer');
+  });
+
+  it('does not overwrite a newer answer completed while an older answer is pending', async () => {
+    await submitLessonQuestion(
+      { userId: 'curator', question: 'Overlapping answer', context: CONTEXT },
+      { idFactory: () => 'overlapping' },
+    );
+    const started = deferred<void>();
+    const olderAnswer = deferred<{ answer: string }>();
+    const olderRequest = answerQueuedLessonQuestion('overlapping', 'curator', {
+      answerer: async () => {
+        started.resolve();
+        return olderAnswer.promise;
+      },
+    });
+    await started.promise;
+
+    const newerRequest = await answerQueuedLessonQuestion('overlapping', 'curator', {
+      answerer: async () => ({ answer: 'Newer completed answer.' }),
+    });
+    expect(newerRequest?.answer).toBe('Newer completed answer.');
+
+    olderAnswer.resolve({ answer: 'Older delayed answer.' });
+    expect(await olderRequest).toBeNull();
+    expect(loadLessonQuestions('curator')[0]?.answer).toBe('Newer completed answer.');
+  });
+
+  it.each(['question', 'context'] as const)(
+    'ignores a delayed answer when the saved %s was replaced',
+    async (field) => {
+      await submitLessonQuestion(
+        { userId: 'curator', question: 'Original request', context: CONTEXT },
+        { idFactory: () => `replaced-${field}` },
+      );
+      const started = deferred<void>();
+      const answer = deferred<{ answer: string }>();
+      const pending = answerQueuedLessonQuestion(`replaced-${field}`, 'curator', {
+        answerer: async () => {
+          started.resolve();
+          return answer.promise;
+        },
+      });
+      await started.promise;
+
+      const original = loadLessonQuestions('curator')[0];
+      const replacement = field === 'question'
+        ? { ...original, question: 'Replacement request' }
+        : { ...original, context: { ...original.context, termId: 'replacement-term', term: 'replacement' } };
+      window.localStorage.setItem(LESSON_QUESTIONS_STORAGE_KEY, JSON.stringify([replacement]));
+      answer.resolve({ answer: 'Stale answer.' });
+
+      expect(await pending).toBeNull();
+      expect(loadLessonQuestions('curator')[0]).toMatchObject({
+        question: replacement.question,
+        context: replacement.context,
+        status: 'queued',
+      });
+      expect(loadLessonQuestions('curator')[0]).not.toHaveProperty('answer');
+    },
+  );
+
+  it('does not recreate a question removed while its answer is pending', async () => {
+    await submitLessonQuestion(
+      { userId: 'curator', question: 'Remove while answering', context: CONTEXT },
+      { idFactory: () => 'removed' },
+    );
+    const started = deferred<void>();
+    const answer = deferred<{ answer: string }>();
+    const pending = answerQueuedLessonQuestion('removed', 'curator', {
+      answerer: async () => {
+        started.resolve();
+        return answer.promise;
+      },
+    });
+    await started.promise;
+    window.localStorage.setItem(LESSON_QUESTIONS_STORAGE_KEY, JSON.stringify([]));
+    answer.resolve({ answer: 'Late answer.' });
+
+    expect(await pending).toBeNull();
+    expect(loadLessonQuestions('curator')).toEqual([]);
+  });
+
+  it('preserves an acknowledgement made while a delayed answer is pending', async () => {
+    await submitLessonQuestion(
+      { userId: 'curator', question: 'Explain the update', context: CONTEXT },
+      {
+        idFactory: () => 'acknowledged',
+        answerer: async () => ({ answer: 'Earlier answer.', lessonUpdateNotice: 'Lesson changed.' }),
+      },
+    );
+    const started = deferred<void>();
+    const answer = deferred<{ answer: string; lessonUpdateNotice: string }>();
+    const pending = answerQueuedLessonQuestion('acknowledged', 'curator', {
+      answerer: async () => {
+        started.resolve();
+        return answer.promise;
+      },
+    });
+    await started.promise;
+    acknowledgeLessonQuestionUpdate('acknowledged', 'curator', {
+      now: () => new Date('2026-11-04T15:00:00.000Z'),
+    });
+    answer.resolve({ answer: 'Updated answer.', lessonUpdateNotice: 'New lesson change.' });
+
+    expect(await pending).toMatchObject({
+      answer: 'Updated answer.',
+      lessonUpdateNotice: 'New lesson change.',
+      updateAcknowledgedAt: '2026-11-04T15:00:00.000Z',
+    });
+    expect(lessonQuestionUpdateNotices('curator')).toEqual([]);
+  });
+
+  it('keeps sequential answers working', async () => {
+    await submitLessonQuestion(
+      { userId: 'curator', question: 'Sequential question', context: CONTEXT },
+      { idFactory: () => 'sequential' },
+    );
+    const updated = await answerQueuedLessonQuestion('sequential', 'curator', {
+      answerer: async () => ({ answer: 'Sequential answer.' }),
+    });
+    expect(updated).toMatchObject({ id: 'sequential', status: 'answered', answer: 'Sequential answer.' });
+  });
+
+  it('records dictionary fallback answers as dictionary provenance', async () => {
+    const result = await submitLessonQuestion(
+      { userId: 'curator', question: 'What is Vite?', context: CONTEXT },
+      {
+        idFactory: () => 'dictionary-answer',
+        answerer: async () => ({ answer: 'Vite is a build tool.', provenance: 'dictionary' }),
+      },
+    );
+
+    expect(result.record).toMatchObject({
+      status: 'answered',
+      answerMode: 'dictionary',
+      answer: 'Vite is a build tool.',
+    });
+
+    const updated = await answerQueuedLessonQuestion('dictionary-answer', 'curator', {
+      answerer: async () => ({ answer: 'Vite builds the client app.', provenance: 'dictionary' }),
+    });
+    expect(updated).toMatchObject({
+      status: 'answered',
+      answerMode: 'dictionary',
+      answer: 'Vite builds the client app.',
+    });
   });
 });
 
