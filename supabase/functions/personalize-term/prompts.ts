@@ -490,6 +490,20 @@ export function parseVerdict(raw: string): VerifierVerdict | null {
     ) {
       return null;
     }
+    const criteria = [
+      parsed.technical_accuracy_preserved,
+      parsed.analogy_is_grounded,
+      parsed.analogy_fits_the_term,
+      parsed.example_reads_natural,
+      parsed.analogy_target_accurate,
+      parsed.analogy_is_warranted,
+      parsed.analogy_target_accurate_specific,
+      parsed.vocabulary_within_reach,
+    ];
+    const effectiveOverall = criteria.every((criterion) => criterion.result === 'pass')
+      ? 'pass'
+      : 'fail';
+    if (parsed.overall !== effectiveOverall) return null;
     return {
       uses_analogy: parsed.uses_analogy,
       technical_accuracy_preserved: parsed.technical_accuracy_preserved,
@@ -500,7 +514,7 @@ export function parseVerdict(raw: string): VerifierVerdict | null {
       analogy_is_warranted: parsed.analogy_is_warranted,
       analogy_target_accurate_specific: parsed.analogy_target_accurate_specific,
       vocabulary_within_reach: parsed.vocabulary_within_reach,
-      overall: parsed.overall,
+      overall: effectiveOverall,
     };
   } catch {
     return null;

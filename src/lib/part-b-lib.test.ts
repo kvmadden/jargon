@@ -2,11 +2,15 @@
 // called and no file of the blind set is read. Every fixture here is made up for the test.
 
 import { describe, it, expect } from 'vitest';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import {
   ApiError,
   buildBatchRequests,
   classifyResultLine,
   finalCounts,
+  fingerprintPassConfig,
   parseResultsText,
   perItemEstimateUsd,
   planChunks,
@@ -26,6 +30,7 @@ import {
   type VerifierPin,
 } from '../../eval/fresh-blind-set/part-b-lib.ts';
 import { httpBatchApi } from '../../eval/fresh-blind-set/part-b-http.ts';
+import { ensureRunManifest } from '../../eval/fresh-blind-set/run-manifest.ts';
 
 const MODEL = 'claude-opus-4-7';
 const near = (a: number, b: number) => expect(a).toBeCloseTo(b, 6);
@@ -157,10 +162,12 @@ describe('requests', () => {
 
 function memoryStore(initial: PassState | null = null) {
   let state: PassState | null = initial ? structuredClone(initial) : null;
+  let saves = 0;
   const results = new Map<string, string>();
   const store: Store = {
     loadState: () => (state ? structuredClone(state) : null),
     saveState: (s) => {
+      saves += 1;
       state = structuredClone(s);
     },
     saveResults: (name, text) => {
@@ -168,7 +175,7 @@ function memoryStore(initial: PassState | null = null) {
     },
     readResults: (name) => results.get(name) ?? null,
   };
-  return { store, results, get state() { return state; } };
+  return { store, results, get state() { return state; }, get saves() { return saves; } };
 }
 
 const request = (id: string) => ({ custom_id: id, params: { model: MODEL, max_tokens: 1200, system: [{ type: 'text' as const, text: 'S', cache_control: { type: 'ephemeral' as const } }], messages: [{ role: 'user' as const, content: id }] } });
@@ -292,6 +299,7 @@ describe('runPass', () => {
     const { cfg } = config(6);
     // The state a run leaves behind when the process dies right after the first batch was created.
     const resumeFrom: PassState = {
+      runFingerprint: fingerprintPassConfig(cfg),
       ceilingUsd: 7.83,
       spentUsd: 0,
       chunks: [
@@ -361,6 +369,114 @@ describe('runPass', () => {
     expect(state.finished).toBe(true);
     const counts = finalCounts(mem.store, state, cfg.requests.map((r) => r.custom_id), cfg.parse);
     expect(counts).toMatchObject({ succeeded: 2, failed: 1, missing: 0 });
+  });
+
+  it.each([
+    ['same count with different ids', (cfg: PassConfig) => {
+      cfg.requests = cfg.requests.map((r, i) => ({ ...r, custom_id: `new-${i}`, params: { ...r.params, messages: [{ ...r.params.messages[0], content: `new-${i}` }] } }));
+    }],
+    ['same ids with changed body', (cfg: PassConfig) => {
+      cfg.requests = cfg.requests.map((r) => ({ ...r, params: { ...r.params, messages: [{ ...r.params.messages[0], content: `changed-${r.custom_id}` }] } }));
+    }],
+    ['changed model pin', (cfg: PassConfig) => {
+      cfg.model = 'another-pinned-model';
+      cfg.requests = cfg.requests.map((r) => ({ ...r, params: { ...r.params, model: 'another-pinned-model' } }));
+    }],
+  ])('rejects resume with %s before saving or submitting', async (_label, change) => {
+    const original = config(2, { chunkSizes: [2] }).cfg;
+    const initial: PassState = {
+      runFingerprint: fingerprintPassConfig(original),
+      ceilingUsd: original.ceilingUsd,
+      spentUsd: 0,
+      chunks: [{ index: 0, label: 'chunk-1', ids: original.requests.map((r) => r.custom_id), status: 'pending' }],
+      retry: null,
+      stopped: null,
+      finished: false,
+    };
+    const mem = memoryStore(initial);
+    const apiFixture = fakeApi(() => cheap);
+    const changed: PassConfig = {
+      ...original,
+      chunkSizes: [...original.chunkSizes],
+      requests: original.requests.map((r) => ({
+        ...r,
+        params: {
+          ...r.params,
+          system: r.params.system.map((block) => ({ ...block })),
+          messages: r.params.messages.map((message) => ({ ...message })),
+        },
+      })),
+    };
+    change(changed);
+
+    await expect(runPass(apiFixture.api, mem.store, changed)).rejects.toThrow(/request fingerprint/);
+    expect(apiFixture.created).toEqual([]);
+    expect(mem.saves).toBe(0);
+    expect(mem.state).toEqual(initial);
+  });
+
+  it('accepts an exact request and configuration resume', async () => {
+    const cfg = config(2, { chunkSizes: [2] }).cfg;
+    const state: PassState = {
+      runFingerprint: fingerprintPassConfig(cfg),
+      ceilingUsd: cfg.ceilingUsd,
+      spentUsd: 0,
+      chunks: [{ index: 0, label: 'chunk-1', ids: cfg.requests.map((r) => r.custom_id), status: 'pending' }],
+      retry: null,
+      stopped: null,
+      finished: false,
+    };
+    const mem = memoryStore(state);
+    const apiFixture = fakeApi(() => cheap);
+    const resumed = await runPass(apiFixture.api, mem.store, cfg);
+
+    expect(resumed.finished).toBe(true);
+    expect(apiFixture.created).toHaveLength(1);
+  });
+});
+
+describe('run manifest identity', () => {
+  it('creates a new manifest exclusively and allows an exact resume without rewriting it', () => {
+    const outDir = mkdtempSync(join(tmpdir(), 'jargon-run-manifest-'));
+    try {
+      const manifest = '{"run_fingerprint":"exact"}\n';
+      ensureRunManifest(outDir, 'exact', manifest);
+      const path = join(outDir, 'requests-manifest.json');
+      const before = readFileSync(path, 'utf8');
+      ensureRunManifest(outDir, 'exact', manifest);
+      expect(readFileSync(path, 'utf8')).toBe(before);
+    } finally {
+      rmSync(outDir, { recursive: true, force: true });
+    }
+  });
+
+  it('refuses a state mismatch without changing the saved state or manifest', () => {
+    const outDir = mkdtempSync(join(tmpdir(), 'jargon-run-mismatch-'));
+    try {
+      const statePath = join(outDir, 'state.json');
+      const manifestPath = join(outDir, 'requests-manifest.json');
+      const state = '{"runFingerprint":"old"}\n';
+      const priorManifest = '{"run_fingerprint":"old"}\n';
+      writeFileSync(statePath, state);
+      writeFileSync(manifestPath, priorManifest);
+
+      expect(() => ensureRunManifest(outDir, 'new', '{"run_fingerprint":"new"}\n')).toThrow(/request fingerprint/);
+      expect(readFileSync(statePath, 'utf8')).toBe(state);
+      expect(readFileSync(manifestPath, 'utf8')).toBe(priorManifest);
+    } finally {
+      rmSync(outDir, { recursive: true, force: true });
+    }
+  });
+
+  it('refuses a state file without its manifest and makes no new files', () => {
+    const outDir = mkdtempSync(join(tmpdir(), 'jargon-run-incomplete-'));
+    try {
+      writeFileSync(join(outDir, 'state.json'), '{"runFingerprint":"exact"}\n');
+      expect(() => ensureRunManifest(outDir, 'exact', '{"run_fingerprint":"exact"}\n')).toThrow(/no matching request manifest/);
+      expect(() => readFileSync(join(outDir, 'requests-manifest.json'), 'utf8')).toThrow();
+    } finally {
+      rmSync(outDir, { recursive: true, force: true });
+    }
   });
 });
 

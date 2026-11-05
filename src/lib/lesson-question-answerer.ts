@@ -5,6 +5,9 @@ import type {
   LessonQuestionInput,
 } from './lesson-question-service';
 
+/** The Edge Function allows 30 seconds for generation, with 5 seconds for transport and parsing. */
+export const LESSON_QUESTION_CLIENT_TIMEOUT_MS = 35_000;
+
 export function createLessonQuestionAnswerer(
   supabaseClient?: SupabaseClient | null,
   options?: {
@@ -14,18 +17,14 @@ export function createLessonQuestionAnswerer(
   return async (input: LessonQuestionInput): Promise<LessonQuestionAnswer | null> => {
     if (supabaseClient) {
       try {
-        const result = await Promise.race([
-          supabaseClient.functions.invoke('answer-lesson-question', {
-            body: {
-              question: input.question,
-              term_id: input.context.termId,
-              cardMode: input.context.cardMode,
-            },
-          }),
-          new Promise<{ data: null; error: Error }>((_, reject) =>
-            setTimeout(() => reject(new Error('timeout')), 300),
-          ),
-        ]);
+        const result = await supabaseClient.functions.invoke('answer-lesson-question', {
+          body: {
+            question: input.question,
+            term_id: input.context.termId,
+            cardMode: input.context.cardMode,
+          },
+          timeout: LESSON_QUESTION_CLIENT_TIMEOUT_MS,
+        });
 
         const data = result?.data;
         const error = result?.error;
@@ -39,6 +38,7 @@ export function createLessonQuestionAnswerer(
         ) {
           return {
             answer: data.answer.trim(),
+            provenance: 'generated',
             lessonUpdateNotice:
               typeof data.lessonUpdateNotice === 'string' && data.lessonUpdateNotice.trim()
                 ? data.lessonUpdateNotice.trim()
@@ -55,6 +55,7 @@ export function createLessonQuestionAnswerer(
       if (def) {
         return {
           answer: `For ${def.term}: ${def.definition}`,
+          provenance: 'dictionary',
           lessonUpdateNotice: `An explanation for ${def.term} is ready based on your dictionary.`,
         };
       }

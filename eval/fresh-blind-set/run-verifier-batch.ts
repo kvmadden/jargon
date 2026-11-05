@@ -22,6 +22,7 @@ import {
   ApiError,
   buildBatchRequests,
   finalCounts,
+  fingerprintPassConfig,
   runPass,
   worstCaseItemUsd,
   type CacheTtl,
@@ -31,7 +32,9 @@ import {
   type StagedTerm,
   type Store,
   type VerifierPin,
+  type PassConfig,
 } from './part-b-lib.ts';
+import { ensureRunManifest } from './run-manifest.ts';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 /** Per-item cost projected before any chunk after the warm-up has finished: the batch price with no cache hits. */
@@ -83,11 +86,11 @@ async function loadPin(pinDir: string, lock: any): Promise<{ pin: VerifierPin; p
 function fileStore(outDir: string): Store {
   const stateFile = join(outDir, 'state.json');
   const resultsDir = join(outDir, 'results');
-  mkdirSync(resultsDir, { recursive: true });
   return {
     loadState: () => (existsSync(stateFile) ? (JSON.parse(readFileSync(stateFile, 'utf8')) as PassState) : null),
     saveState: (s) => writeFileSync(stateFile, JSON.stringify(s, null, 1) + '\n'),
     saveResults: (name, text) => {
+      mkdirSync(resultsDir, { recursive: true });
       const file = join(resultsDir, `${name}.jsonl`);
       // Results are never overwritten. Fetching the same finished batch again gives the same text, which is accepted.
       if (existsSync(file)) {
@@ -142,11 +145,30 @@ async function main() {
       `worst case per request ${worstItem.toFixed(4)} usd, ceiling ${ceiling} usd, chunks ${chunkSizes.join('+')}, cache lifetime ${ttl}`,
   );
 
-  mkdirSync(outDir, { recursive: true });
-  writeFileSync(
-    join(outDir, 'requests-manifest.json'),
-    JSON.stringify({ model: pin.model, max_tokens: pin.maxTokens, ttl, count: requests.length, params_sha256: Object.fromEntries(requests.map((r) => [r.custom_id, sha256(JSON.stringify(r.params))])) }, null, 1) + '\n',
-  );
+  const passConfig: PassConfig = {
+    requests,
+    chunkSizes,
+    warmupChunks,
+    ceilingUsd: ceiling,
+    model: pin.model,
+    fallbackPerItemUsd: FALLBACK_PER_ITEM_USD,
+    worstCasePerItemUsd: worstItem,
+    pollMs,
+    parse: parseVerdict,
+    sleep: (ms) => new Promise((r) => setTimeout(r, ms)),
+    now: () => Date.now(),
+    log: (line) => console.log(`${stamp()} ${line}`),
+  };
+  const runFingerprint = fingerprintPassConfig(passConfig);
+  const manifest = JSON.stringify({
+    run_fingerprint: runFingerprint,
+    model: pin.model,
+    max_tokens: pin.maxTokens,
+    ttl,
+    count: requests.length,
+    params_sha256: Object.fromEntries(requests.map((r) => [r.custom_id, sha256(JSON.stringify(r.params))])),
+  }, null, 1) + '\n';
+  ensureRunManifest(outDir, runFingerprint, manifest);
 
   if (flag('--dry-run')) {
     console.log(`${stamp()} dry run: nothing was sent.`);
@@ -172,20 +194,7 @@ async function main() {
   }
 
   const store = fileStore(outDir);
-  const state = await runPass(api, store, {
-    requests,
-    chunkSizes,
-    warmupChunks,
-    ceilingUsd: ceiling,
-    model: pin.model,
-    fallbackPerItemUsd: FALLBACK_PER_ITEM_USD,
-    worstCasePerItemUsd: worstItem,
-    pollMs,
-    parse: parseVerdict,
-    sleep: (ms) => new Promise((r) => setTimeout(r, ms)),
-    now: () => Date.now(),
-    log: (line) => console.log(`${stamp()} ${line}`),
-  });
+  const state = await runPass(api, store, passConfig);
 
   const counts = finalCounts(store, state, requests.map((r) => r.custom_id), parseVerdict);
   const summary = {

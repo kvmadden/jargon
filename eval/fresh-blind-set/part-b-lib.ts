@@ -7,6 +7,8 @@
 // Nothing here prints or returns item text, replies or verdict content. Only counts, token usage, costs and
 // batch ids leave this module. See RUN-PLAN.md in this folder for the rules this code carries out.
 
+import { createHash } from 'node:crypto';
+
 // ─── Prices ────────────────────────────────────────────────────────────────────
 
 export const PRICES_CHECKED_ON = '2026-11-03';
@@ -333,6 +335,8 @@ export interface ChunkRecord {
 }
 
 export interface PassState {
+  /** Binds resumable state to the exact request payloads and pass configuration. */
+  runFingerprint: string;
   ceilingUsd: number;
   spentUsd: number;
   chunks: ChunkRecord[];
@@ -363,6 +367,32 @@ export interface PassConfig {
   sleep: (ms: number) => Promise<void>;
   now: () => number;
   log: (line: string) => void;
+}
+
+function stableValue(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(stableValue);
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([key, nested]) => [key, stableValue(nested)]),
+    );
+  }
+  return value;
+}
+
+export function fingerprintPassConfig(cfg: PassConfig): string {
+  const identity = {
+    requests: cfg.requests.map(({ custom_id, params }) => ({ custom_id, params })),
+    model: cfg.model,
+    chunkSizes: cfg.chunkSizes,
+    warmupChunks: cfg.warmupChunks,
+    ceilingUsd: cfg.ceilingUsd,
+    fallbackPerItemUsd: cfg.fallbackPerItemUsd,
+    worstCasePerItemUsd: cfg.worstCasePerItemUsd,
+    pollMs: cfg.pollMs,
+  };
+  return createHash('sha256').update(JSON.stringify(stableValue(identity))).digest('hex');
 }
 
 const usd = (x: number) => `$${x.toFixed(4)}`;
@@ -426,6 +456,7 @@ async function readResultsWithRetry(api: BatchApi, id: string, cfg: PassConfig):
 function freshState(cfg: PassConfig): PassState {
   const plan = planChunks(cfg.requests.length, cfg.chunkSizes);
   return {
+    runFingerprint: fingerprintPassConfig(cfg),
     ceilingUsd: cfg.ceilingUsd,
     spentUsd: 0,
     chunks: plan.map((c) => ({ index: c.index, label: `chunk-${c.index + 1}`, ids: cfg.requests.slice(c.start, c.end).map((r) => r.custom_id), status: 'pending' as const })),
@@ -444,7 +475,12 @@ function freshState(cfg: PassConfig): PassState {
  */
 export async function runPass(api: BatchApi, store: Store, cfg: PassConfig): Promise<PassState> {
   const byId = new Map(cfg.requests.map((r) => [r.custom_id, r]));
-  let state = store.loadState() ?? freshState(cfg);
+  const savedState = store.loadState();
+  const expectedFingerprint = fingerprintPassConfig(cfg);
+  if (savedState && savedState.runFingerprint !== expectedFingerprint) {
+    throw new Error('the saved state does not match the request fingerprint');
+  }
+  let state = savedState ?? freshState(cfg);
   if (state.chunks.reduce((n, c) => n + c.ids.length, 0) !== cfg.requests.length) throw new Error('the saved state does not match the requests');
   const save = () => store.saveState(state);
   save();
