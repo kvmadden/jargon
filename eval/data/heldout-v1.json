@@ -1,0 +1,246 @@
+{
+  "seed": 20261031,
+  "provenance": "Synthetic author-written contrast cases, frozen before implementation. Not independent domain-expert labels. No LLM baseline verdicts exist.",
+  "items": [
+    {
+      "id": "heldout-05",
+      "family": "contradiction",
+      "correct": false,
+      "candidate": {
+        "long_definition": "staging is the only environment connected to the real billing system.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      }
+    },
+    {
+      "id": "heldout-06",
+      "family": "access",
+      "correct": false,
+      "candidate": {
+        "long_definition": "a nurse cannot open records from another hospital unit.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      }
+    },
+    {
+      "id": "heldout-07",
+      "family": "artifact",
+      "correct": false,
+      "candidate": {
+        "long_definition": "a tamper-proof dispensing label guarantees the prescription has not changed.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      }
+    },
+    {
+      "id": "heldout-08",
+      "family": "credential",
+      "correct": false,
+      "candidate": {
+        "long_definition": "patients lend their dispensing-record password to another pharmacy.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      }
+    },
+    {
+      "id": "heldout-04",
+      "family": "credential",
+      "correct": false,
+      "candidate": {
+        "long_definition": "the pharmacy transfers records without sharing the patient login to the dispensing chart.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      }
+    },
+    {
+      "id": "heldout-01",
+      "family": "access",
+      "correct": false,
+      "candidate": {
+        "long_definition": "in a hospital, nurses can only view charts on their assigned ward.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      }
+    },
+    {
+      "id": "heldout-13",
+      "family": "plain",
+      "correct": true,
+      "candidate": {
+        "long_definition": "row-level security filters which records a signed-in user may retrieve.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      }
+    },
+    {
+      "id": "heldout-23",
+      "family": "context",
+      "correct": true,
+      "candidate": {
+        "long_definition": "staging can use a sandbox insurance endpoint rather than real claims.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      }
+    },
+    {
+      "id": "heldout-12",
+      "family": "clinical",
+      "correct": false,
+      "candidate": {
+        "long_definition": "every medication interaction is harmless if the dose is low enough.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      }
+    },
+    {
+      "id": "heldout-14",
+      "family": "plain",
+      "correct": true,
+      "candidate": {
+        "long_definition": "a JWT signature helps the receiver detect an altered token.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      }
+    },
+    {
+      "id": "heldout-09",
+      "family": "technical",
+      "correct": false,
+      "candidate": {
+        "long_definition": "two passwords count as two independent authentication factors.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      }
+    },
+    {
+      "id": "heldout-16",
+      "family": "plain",
+      "correct": true,
+      "candidate": {
+        "long_definition": "production serves real users while staging is used for pre-release testing.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      }
+    },
+    {
+      "id": "heldout-21",
+      "family": "hypothetical",
+      "correct": true,
+      "candidate": {
+        "long_definition": "in this fictional hospital demo, row-level security hides records outside the assigned unit.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      }
+    },
+    {
+      "id": "heldout-20",
+      "family": "negation",
+      "correct": true,
+      "candidate": {
+        "long_definition": "a prescription label is not a signed authentication token.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      }
+    },
+    {
+      "id": "heldout-15",
+      "family": "plain",
+      "correct": true,
+      "candidate": {
+        "long_definition": "OAuth can grant an application limited access without handing it your password.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      }
+    },
+    {
+      "id": "heldout-18",
+      "family": "context",
+      "correct": true,
+      "candidate": {
+        "long_definition": "a nurse uses an alert dashboard to notice when a service is down.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      }
+    },
+    {
+      "id": "heldout-02",
+      "family": "access",
+      "correct": false,
+      "candidate": {
+        "long_definition": "the pharmacy system hides all patient profiles outside your store.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      }
+    },
+    {
+      "id": "heldout-22",
+      "family": "hypothetical",
+      "correct": true,
+      "candidate": {
+        "long_definition": "a toy pharmacy application gives each patient a login to a fictional chart.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      }
+    },
+    {
+      "id": "heldout-17",
+      "family": "context",
+      "correct": true,
+      "candidate": {
+        "long_definition": "the pharmacist reports an API error during a fictional stock check.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      }
+    },
+    {
+      "id": "heldout-11",
+      "family": "technical",
+      "correct": false,
+      "candidate": {
+        "long_definition": "an idempotent request must produce a different result every time it is repeated.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      }
+    },
+    {
+      "id": "heldout-24",
+      "family": "context",
+      "correct": true,
+      "candidate": {
+        "long_definition": "patient portal credentials should not be shared with another application.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      }
+    },
+    {
+      "id": "heldout-03",
+      "family": "artifact",
+      "correct": false,
+      "candidate": {
+        "long_definition": "a prescription label is digitally signed so alterations are always detected.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      }
+    },
+    {
+      "id": "heldout-10",
+      "family": "technical",
+      "correct": false,
+      "candidate": {
+        "long_definition": "a JWT encrypts its payload so nobody can read the claims.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      }
+    },
+    {
+      "id": "heldout-19",
+      "family": "negation",
+      "correct": true,
+      "candidate": {
+        "long_definition": "do not assume a hospital system only shows charts from your unit.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      }
+    }
+  ]
+}

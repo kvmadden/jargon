@@ -1,0 +1,35 @@
+[
+  {
+    "width": 1440,
+    "height": 900,
+    "overflow": false,
+    "errors": [],
+    "minimumTarget": 44,
+    "keyboardDialog": true,
+    "disagreements": 5,
+    "replayHolds": 5,
+    "searchResults": 3
+  },
+  {
+    "width": 430,
+    "height": 932,
+    "overflow": false,
+    "errors": [],
+    "minimumTarget": 44,
+    "keyboardDialog": true,
+    "disagreements": 5,
+    "replayHolds": 5,
+    "searchResults": 3
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "overflow": false,
+    "errors": [],
+    "minimumTarget": 44,
+    "keyboardDialog": true,
+    "disagreements": 5,
+    "replayHolds": 5,
+    "searchResults": 3
+  }
+]

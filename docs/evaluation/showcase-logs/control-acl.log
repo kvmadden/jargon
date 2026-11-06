@@ -1,0 +1,5 @@
+
+> jargon@0.5.3 test:ai-spend-acl
+> bash scripts/test-ai-spend-acl.sh
+
+PostgreSQL 17 is required (set PG_BIN to its bin directory).

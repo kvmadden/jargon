@@ -1,0 +1,47 @@
+
+> jargon@0.5.3 build
+> tsc -b && vite build
+
+vite v8.0.16 building client environment for production...
+[2K
+transforming...✓ 544 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/evaluation.html                                0.73 kB │ gzip:  0.38 kB
+dist/index.html                                     2.82 kB │ gzip:  1.21 kB
+dist/assets/evaluation-WA-MDRI7.css                 6.87 kB │ gzip:  2.15 kB
+dist/assets/app-BlSF8FaN.css                       42.01 kB │ gzip:  8.17 kB
+dist/assets/sentry-BvRk9kiK.js                      0.00 kB │ gzip:  0.02 kB
+dist/assets/expert-confirmed-misses-C8RMJaCD.js     0.60 kB │ gzip:  0.37 kB
+dist/assets/rolldown-runtime-QTnfLwEv.js            0.69 kB │ gzip:  0.42 kB
+dist/assets/lesson-question-answerer-DxUGWL5K.js    0.73 kB │ gzip:  0.40 kB
+dist/assets/voice-input-BqFywkLJ.js                 0.84 kB │ gzip:  0.48 kB
+dist/assets/claim-check-Dz1bN4Ke.js                 1.09 kB │ gzip:  0.61 kB
+dist/assets/use-modal-a11y-Bw-6HARz.js              1.26 kB │ gzip:  0.63 kB
+dist/assets/design-Csx47Hyl.js                      1.71 kB │ gzip:  0.85 kB
+dist/assets/user-store-D9Khlhcp.js                  2.00 kB │ gzip:  0.95 kB
+dist/assets/delete-account-BVzJzX38.js              6.26 kB │ gzip:  2.27 kB
+dist/assets/interest-dictionary-CybBvdFv.js         7.21 kB │ gzip:  3.56 kB
+dist/assets/2026-10-30-review-CgRDyu8e.js           7.29 kB │ gzip:  3.07 kB
+dist/assets/mastered-Uy3yW2xO.js                    8.10 kB │ gzip:  2.84 kB
+dist/assets/evaluation-BGgrLPeX.js                 10.27 kB │ gzip:  3.44 kB
+dist/assets/guided-program-ByY_r5Z0.js             10.67 kB │ gzip:  3.23 kB
+dist/assets/questions-CmiV-1w3.js                  13.47 kB │ gzip:  3.42 kB
+dist/assets/transcript-content-DcLwpbYW.js         14.40 kB │ gzip:  5.57 kB
+dist/assets/spotted-6WGUK1ng.js                    16.05 kB │ gzip:  4.77 kB
+dist/assets/feedback-DauFhRon.js                   19.76 kB │ gzip:  4.90 kB
+dist/assets/scenario-content-CCA3MK33.js           20.98 kB │ gzip:  7.81 kB
+dist/assets/onboarding-profile-BZiJGCI2.js         21.83 kB │ gzip:  6.11 kB
+dist/assets/gift-accept-BhapTj3Y.js                24.69 kB │ gzip:  6.87 kB
+dist/assets/data-Vvc0SC2k.js                       41.41 kB │ gzip: 11.42 kB
+dist/assets/lesson-runner-B5KcD0ZP.js              43.98 kB │ gzip: 10.28 kB
+dist/assets/settings-BgryFMvc.js                   47.79 kB │ gzip: 10.54 kB
+dist/assets/gift-send-DbBB23HN.js                  49.24 kB │ gzip: 10.91 kB
+dist/assets/atlas-BbNQR5SX.js                     112.39 kB │ gzip: 36.58 kB
+dist/assets/react-BsozYdCH.js                     183.59 kB │ gzip: 60.56 kB
+dist/assets/app-CJu_YtKv.js                       189.94 kB │ gzip: 49.55 kB
+dist/assets/supabase-CxJdF8Fh.js                  214.58 kB │ gzip: 55.21 kB
+dist/assets/vendor-BVi8bCu4.js                    256.69 kB │ gzip: 66.54 kB
+dist/assets/2026-10-30-BOT4av-e.js                326.70 kB │ gzip: 44.11 kB
+
+✓ built in 1.09s

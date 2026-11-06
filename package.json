@@ -23,7 +23,8 @@
     "test:e2e:ui": "playwright test --ui",
     "pre-deploy": "npm run test:pre-deploy-auth-gate && node scripts/pre-deploy.mjs",
     "test:pre-deploy-auth-gate": "node --test scripts/pre-deploy-auth-gate.test.mjs",
-    "test:visual": "playwright test"
+    "test:visual": "playwright test",
+    "dev:evaluation": "vite --open /evaluation.html"
   },
   "dependencies": {
     "design-tokens": "file:vendor/design-tokens",

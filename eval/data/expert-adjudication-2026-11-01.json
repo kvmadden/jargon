@@ -1,0 +1,17 @@
+{
+  "reviewer": "Kevin Madden, PharmD",
+  "review_date": "2026-11-01",
+  "provenance": "The task assignment dated 2026-11-01 states that Kevin reviewed the seven additional historical holds against their saved text and judged all seven correct. This file records that supplied judgment. It is not a new review session and contains no per-claim notes beyond what was supplied.",
+  "basis": "Saved final_text of each candidate in eval/results/2026-10-30.jsonl, also preserved in eval/results/claim-check-replay-v1.json.",
+  "scope": "Only these seven held outputs. No correctness label is assigned to the 66 accepted outputs that the added policy leaves unchanged.",
+  "label_meaning": "correct means the expert judged the whole saved explanation accurate for its fictional learner. It is an expert truth label and is kept separate from the automated policy decision.",
+  "labels": [
+    { "run_id": "excel-pivot-table::nurse", "expert_label": "correct" },
+    { "run_id": "sec-mfa::pharmacist", "expert_label": "correct" },
+    { "run_id": "sec-mfa::nurse", "expert_label": "correct" },
+    { "run_id": "fabric-data-pipeline::pharmacist", "expert_label": "correct" },
+    { "run_id": "sec-oauth::nurse", "expert_label": "correct" },
+    { "run_id": "sec-rbac::nurse", "expert_label": "correct" },
+    { "run_id": "data-join::nurse", "expert_label": "correct" }
+  ]
+}
