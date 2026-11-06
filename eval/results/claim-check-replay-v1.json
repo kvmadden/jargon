@@ -1,0 +1,1325 @@
+{
+  "method": "Deterministic supplemental-policy replay. No new LLM verdicts or regeneration. Historical model decisions stay fixed. Held-out before/after is policy absent versus present, not an LLM comparison.",
+  "historical_sha256": "04bab18eddd9f57d8594f6d482661a31521b1f3c84ae6194601fbde63e5a92a3",
+  "heldout_sha256": "7f10a0a5a2341d0146950724f038a26c20facea757534a6d166355fc85a6f95b",
+  "historical_summary": {
+    "accepted_before": 78,
+    "expert_confirmed_misses_before": 5,
+    "expert_confirmed_misses_remaining": 0,
+    "additional_unadjudicated_holds": 7,
+    "confirmed_false_rejections": null
+  },
+  "heldout_summary": {
+    "count": 24,
+    "incorrect": 12,
+    "correct": 12,
+    "policy_absent_missed_errors": 12,
+    "policy_present_missed_errors": 4,
+    "policy_absent_false_rejections": 0,
+    "policy_present_false_rejections": 4,
+    "label_source": "Synthetic author labels, not expert adjudication",
+    "llm_before": null,
+    "llm_after": null
+  },
+  "historical": [
+    {
+      "id": "aid-ai::teacher",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "AI — short for artificial intelligence — is the umbrella name for software that does work that used to need a person. The kind of AI most people use today (ChatGPT, Claude, Gemini, Copilot) is good with language: reading, writing, summarizing, explaining, brainstorming. Older tools called \"AI\" were much narrower (a chess program, a spell-checker); today's AI is broad and conversational, which is why it's suddenly in the news, in products, and in district meetings.",
+        "why_it_matters": "When a vendor pitch, a news story, or a student says \"the AI said...\" or \"AI will change teaching,\" knowing what AI actually means lets you cut through the hype and ask the real question on the tech committee: which AI, doing what specifically.",
+        "example_in_sentence": "A student admitted they used AI to draft their lab report conclusion."
+      }
+    },
+    {
+      "id": "aid-ai::pharmacist",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "AI — short for artificial intelligence — is the umbrella name for software that does work that used to need a person. The AI most people use today (ChatGPT, Claude, Gemini, Copilot) is strong with language: reading, writing, summarizing, explaining, answering questions in plain conversation. Older tools also called \"AI\" were much narrower, like a chess program or a spell-checker. Today's AI is broad and conversational, which is why it is suddenly showing up in the news, in products, and in your pharmacy software.",
+        "why_it_matters": "When a release note, a help desk tech, or a CE course says \"the AI flagged it\" or \"AI-powered,\" knowing what AI actually means lets you push past the buzzword and ask the real question: which AI, doing what specifically — screening interactions, suggesting a DUR response, drafting a prior auth letter?",
+        "example_in_sentence": "The new software update says the AI will suggest a response to common insurance rejections before I click through them."
+      }
+    },
+    {
+      "id": "aid-ai::nurse",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "AI — short for artificial intelligence — is the umbrella name for software that does work that used to require a person. The kind of AI showing up in hospitals today (ChatGPT, Claude, Gemini, Copilot, and the ambient documentation tools vendors are pitching) is good with language: reading, writing, summarizing, explaining. Older things also called AI were much narrower — a spell-checker, a chess program. Today's AI is broad and conversational, which is why it's suddenly in every vendor demo and IT email.",
+        "why_it_matters": "When a vendor says \"our AI writes the note for you\" or IT says \"AI will flag sepsis risk,\" knowing what AI actually means lets you cut through the pitch and ask the real question: which AI, doing what specifically, with whose data.",
+        "example_in_sentence": "The vendor said the AI listens to the patient encounter and drafts the progress note for you to review and sign."
+      }
+    },
+    {
+      "id": "bi-calculated-column::teacher",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "a calculated column adds a new column to a table in your data model, where the value in each row is figured out by a small formula (written in a language called DAX) when the data is loaded. once calculated, the value sits in the row like any other piece of data. this is different from a measure, which recomputes on the fly as the user filters or slices the report.",
+        "why_it_matters": "a calculated column is computed once per row and frozen into the table. a measure recalculates every time filters change. mixing them up is the classic Power BI mistake — using a column where you needed a measure gives you totals that just sit there when someone slices the report.",
+        "example_in_sentence": "we used a calculated column for customer segment because the value never changes once the row is loaded."
+      }
+    },
+    {
+      "id": "bi-calculated-column::nurse",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "a calculated column adds a new column to a table in the data model, where the value for each row is figured out once using a formula (written in a Power BI formula language called DAX) and then stored. it's different from a measure, which is a formula that gets recalculated on the fly depending on what the user is filtering or looking at in the report.",
+        "why_it_matters": "a calculated column is computed once per row and frozen in, while a measure recalculates every time someone filters or slices the report. picking the wrong one is a common Power BI mistake — if you use a column where you needed a measure, your totals won't update when the user changes the view, and the numbers in a dashboard can quietly go wrong.",
+        "example_in_sentence": "the analyst built a calculated column to tag each patient visit as inpatient or observation, since that label never changes once the row lands in the table."
+      }
+    },
+    {
+      "id": "bi-calculated-column::pharmacist",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "a calculated column runs a formula once for each row of a table and saves the answer right into that row, like writing a value into a new column on a spreadsheet. the formula is written in DAX, the formula language used in Power BI models. it's different from a measure, which recalculates on the fly depending on what the user is filtering or slicing.",
+        "why_it_matters": "a calculated column is computed once per row and frozen in place. a measure recalculates every time you filter or slice the report. picking the wrong one is a common Power BI mistake — if you use a column where a measure was needed, your totals won't update when you change filters, and the numbers in the report will look stuck or wrong.",
+        "example_in_sentence": "we used a calculated column to tag each prescription as brand or generic, since that label doesn't change once the row is loaded."
+      }
+    },
+    {
+      "id": "sec-attack-surface::nurse",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "attack surface is every way an outsider could try to get in or cause harm: login pages, public web addresses, file uploads, connections to other systems, admin accounts, shared passwords, and any software your system depends on. shrinking the attack surface means closing or removing the ones you don't need, so there are fewer places to probe.",
+        "why_it_matters": "this is the word that explains why every new login, integration, or feature isn't free — each one is another door someone could rattle. once you hear it in meetings, turning off an unused interface or old account stops sounding like tidying up and starts sounding like protecting patients and their records.",
+        "example_in_sentence": "IT said they're disabling the old remote-access tool the vendor left behind because it was just adding to our attack surface."
+      }
+    },
+    {
+      "id": "sec-attack-surface::pharmacist",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "attack surface is every spot where an outsider could try to get in or cause trouble: public web pages, login forms, file uploads, automated messages flowing in from other systems, admin screens, outside software your system depends on, saved passwords, and the edges of your network. shrinking the attack surface means fewer exposed spots for someone to poke at.",
+        "why_it_matters": "this is the word that explains why every new login option, integration, or feature isn't free — each one is another door someone could rattle. once you think this way, turning off an unused feature stops feeling like tidying up and starts feeling like locking a door you forgot was there.",
+        "example_in_sentence": "the release notes said they removed the old fax-in refill portal to reduce the pharmacy system's attack surface."
+      }
+    },
+    {
+      "id": "sec-attack-surface::teacher",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "attack surface is every spot an outsider could poke at to try to break in: login pages, forms students fill out, file uploads, links between systems, admin accounts, and even the outside tools a program depends on. shrinking the attack surface means closing or removing the doors you don't actually need.",
+        "why_it_matters": "this is the term that explains why every new app, integration, or sign-in option the district adopts isn't free — each one is another door someone could rattle. once you think this way, retiring an unused tool stops feeling like tidying up and starts feeling like protecting student data.",
+        "example_in_sentence": "on the tech committee you might ask, \"if we add this third-party quiz tool, how much does it grow our attack surface?\""
+      }
+    },
+    {
+      "id": "sys-cookie::nurse",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "a cookie is a small piece of data a website asks your browser to hold onto. the browser automatically sends it back to that same site on every later request, so the site can recognize you — remember you're logged in, remember your preferences, or track your activity. because cookies ride along silently, they're convenient for staying signed in but also need careful security settings.",
+        "why_it_matters": "cookies are how a site keeps you logged in after you refresh or click around — the browser hands back the little value the site stored. they're tiny and powerful, which is also why they show up in login problems and in all those privacy and consent banners.",
+        "example_in_sentence": "after IT reset the charting system, we had to clear the browser cookies before the login page would stop looping."
+      }
+    },
+    {
+      "id": "sys-cookie::teacher",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "a cookie is a small piece of data a website asks your browser to save. after that, your browser automatically sends it back to that same site on every request. sites use cookies to remember that you're logged in, hold your preferences, or track you across visits. because they ride along automatically, they're handy for staying signed in but have to be configured carefully to avoid security and privacy problems.",
+        "why_it_matters": "cookies are why you stay logged into the gradebook after refreshing — the site stashed a small value in your browser and it gets sent back on every click. they're tiny but powerful, which is also why they come up in login problems, privacy settings, and any district conversation about student data and tracking.",
+        "example_in_sentence": "if the learning management system logs students out every few minutes, it's worth asking IT whether a cookie setting is the cause."
+      }
+    },
+    {
+      "id": "sys-cookie::pharmacist",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "a cookie is a small piece of data a website asks your browser to hold onto, tied to that specific site. the browser then sends it back automatically with every later request to that site, so the site can recognize you — remembering you're logged in, what settings you picked, or tracking what you've clicked.",
+        "why_it_matters": "a cookie is how a site stays signed in after you refresh — the browser stored a small value and keeps handing it back. tiny but powerful, which is why cookies show up constantly in login problems and privacy settings.",
+        "example_in_sentence": "the pharmacy portal logged me out again because the browser update cleared the session cookie."
+      }
+    },
+    {
+      "id": "cloud-alert::nurse",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "an alert is a notification a system sends when something crosses a set limit or a failure happens — basically the software version of a pump alarm. the good ones point to something you can actually act on. the bad ones go off constantly for no real reason, and people learn to tune them out, same way a unit full of nuisance alarms gets ignored.",
+        "why_it_matters": "a dashboard is something someone might glance at. an alert is what actually pages a person at 2 a.m. tuning them matters: too many false ones and real problems get missed — the IT version of alarm fatigue.",
+        "example_in_sentence": "IT set up an alert to fire if the charting system's login time stays above ten seconds for more than five minutes."
+      }
+    },
+    {
+      "id": "cloud-alert::pharmacist",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "an alert is a notification the software sends when something crosses a set limit or hits a failure condition. good alerts tell you something you can actually act on. bad ones fire so often that people start tuning them out, the same way a constant drug-interaction pop-up stops getting a real read.",
+        "why_it_matters": "a dashboard is something you glance at; an alert is what actually gets someone's attention. the tuning matters: too many false ones and the real one gets ignored, which is how outages and errors slip through.",
+        "example_in_sentence": "an alert went off at the help desk when prescription claim rejections stayed above twenty percent for ten straight minutes."
+      }
+    },
+    {
+      "id": "cloud-alert::teacher",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "an alert is an automatic notification a system sends when something crosses a set limit or breaks. good alerts tell you something specific you can act on. bad alerts fire too often for small things, and people learn to tune them out.",
+        "why_it_matters": "a dashboard is something a person has to remember to check. an alert is what actually interrupts someone and says look now. if the district's new software sends too many unimportant alerts, staff will start ignoring all of them, including the one that actually matters.",
+        "example_in_sentence": "the gradebook sent an alert to the IT team when login failures stayed above a certain rate for ten minutes straight."
+      }
+    },
+    {
+      "id": "aid-parameters::pharmacist",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "When you see a model described as \"70B\" or \"405B,\" the \"B\" means billion parameters. Parameters are the internal settings the model adjusted during training — billions of tiny numerical dials that together encode what it knows. More parameters generally mean better answers but slower responses and higher cost each time you use it. The biggest open models (Llama 405B) and frontier models (Claude, GPT-5) sit in the hundreds of billions of parameters.",
+        "why_it_matters": "Product names like \"GPT-5,\" \"Claude Opus 4.7,\" \"Gemini 2.5 Pro,\" or \"Llama 405B\" start to make sense once you know the \"B\" is billions of parameters. It is the simplest rough gauge of a model's heft, though parameter count alone does not fully predict quality.",
+        "example_in_sentence": "Llama 3 70B has 70 billion parameters — smaller than Claude but light enough to run on a laptop."
+      }
+    },
+    {
+      "id": "aid-parameters::nurse",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "When you see a model described as \"70B\" or \"405B,\" that \"B\" means billion parameters. Parameters are the internal settings the model tuned during training — billions of tiny adjustments that together store what it knows. More parameters generally mean better answers but slower responses and higher cost each time you use it. The biggest open models (Llama 405B) and the top frontier models (Claude, GPT-5) are both in the hundreds of billions.",
+        "why_it_matters": "Product names like \"GPT-5,\" \"Claude Opus 4.7,\" \"Gemini 2.5 Pro,\" or \"Llama 405B\" make more sense once you know the \"B\" is billions of parameters. When your IT team or an AI documentation vendor compares models in a meeting, parameter count is the quickest rough measure of size — though it doesn't tell you everything about quality.",
+        "example_in_sentence": "The vendor mentioned their ambient documentation tool runs on a smaller model with fewer parameters so notes come back faster during a patient encounter."
+      }
+    },
+    {
+      "id": "aid-parameters::teacher",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "When you see a model described as \"70B\" or \"405B,\" the \"B\" means billion parameters. Parameters are the internal settings the model tuned during training — billions of tiny numerical adjustments that together encode what it knows. More parameters usually mean better answers but slower responses and higher cost per use. The biggest open models (Llama 405B) and frontier models (Claude, GPT-5) are both in the hundreds of billions of parameters.",
+        "why_it_matters": "Product names like \"GPT-5,\" \"Claude Opus 4.7,\" \"Gemini 2.5 Pro,\" or \"Llama 405B\" start making sense once you know the \"B\" is billions of parameters. At a technology committee meeting, this is the simplest rough gauge of a model's heft — though parameter count alone does not tell you everything about quality.",
+        "example_in_sentence": "The vendor pitched a 7B-parameter model for the district because it is cheaper to run than the 70B version, even if the answers are a bit less sharp."
+      }
+    },
+    {
+      "id": "bi-rls::pharmacist",
+      "label": "expert-confirmed wrong",
+      "before": "accepted by historical LLM pipeline",
+      "after": "held by added policy",
+      "reasons": [
+        "claim check: clinical access or credential claims require domain evidence unavailable here. Rewrite without this analogy or workflow claim."
+      ],
+      "candidate": {
+        "long_definition": "RLS stands for row-level security. In reporting tools like Power BI, it's a rule that filters which rows of data each viewer is allowed to see, so the same report shows different numbers depending on who opens it.",
+        "why_it_matters": "RLS is how one report safely shows each person only their own slice — similar to how your pharmacy system only shows a tech the patients and queues tied to their store, not every store in the chain. when someone asks \"can they see everyone's numbers?\", RLS is the setting that answers it.",
+        "example_in_sentence": "thanks to RLS, every district manager opens the same sales report but only sees the stores in their own district."
+      }
+    },
+    {
+      "id": "bi-rls::teacher",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "RLS stands for row-level security. In Power BI (a reporting tool), it's a setting that filters which rows of data a person can see based on who they are, so the same report shows different numbers to different viewers.",
+        "why_it_matters": "RLS is how one report safely shows each person only the data that belongs to them. Think of a gradebook where every teacher opens the same system but only sees their own students — RLS is the equivalent control for business reports. When someone on the tech committee asks \"can staff see everyone's data or just their own?\", this is the feature that answers it.",
+        "example_in_sentence": "Before the district rolls out that new dashboard, we should ask the vendor whether RLS is set up so each principal only sees their own school's numbers."
+      }
+    },
+    {
+      "id": "bi-rls::nurse",
+      "label": "expert-confirmed wrong",
+      "before": "accepted by historical LLM pipeline",
+      "after": "held by added policy",
+      "reasons": [
+        "claim check: clinical access or credential claims require domain evidence unavailable here. Rewrite without this analogy or workflow claim."
+      ],
+      "candidate": {
+        "long_definition": "RLS stands for row-level security. it's a setting on a report or data tool that filters which rows of data a person can see based on who they are — same report, different slice of data per viewer. think of how you can only open charts for patients on your unit, not the whole hospital: the system knows who you are and hides the rest.",
+        "why_it_matters": "RLS is how one report safely shows each person only the rows they're allowed to see. when a manager asks \"wait, can the night shift see our unit's numbers too?\", RLS is the control that answers it — it's the difference between a dashboard that leaks data and one that respects who's looking.",
+        "example_in_sentence": "the vendor said RLS will make sure each unit manager opens the same quality dashboard but only sees their own unit's fall and infection numbers."
+      }
+    },
+    {
+      "id": "sec-encryption::nurse",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "encryption scrambles readable data into gibberish using a key. only someone with the right key can turn it back into readable form. it protects data moving across a network (like a web browser talking to a server over HTTPS) and data sitting in storage (like a backup drive in a closet).",
+        "why_it_matters": "this is the difference between a stolen laptop full of patient records being a crisis and being a non-event. when IT says traffic is \"protected in transit\" or a backup is \"safe to store,\" encryption is the mechanism doing the work. the flip side: lose the key and the data is gone for good.",
+        "example_in_sentence": "IT reassured the unit that even if a workstation gets stolen, encryption keeps the chart data unreadable without the key."
+      }
+    },
+    {
+      "id": "sec-encryption::pharmacist",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "encryption scrambles readable data into gibberish using a key, so only someone with the matching key can turn it back into something readable. it protects data moving across a network (like a website session) and data sitting in storage (like a backup file). without the key, the scrambled version is useless.",
+        "why_it_matters": "this is what makes a stolen laptop or a lost backup drive a non-event instead of a patient-data breach. when the help desk says traffic is \"protected in transit\" or a backup is \"safe to store,\" encryption is the mechanism doing the work. the flip side: if the key is lost, the data is gone for good too.",
+        "example_in_sentence": "the release notes said patient records are now encrypted at rest, so even if a workstation hard drive is stolen, the data on it can't be read."
+      }
+    },
+    {
+      "id": "sec-encryption::teacher",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "encryption scrambles readable data into gibberish using a key. only someone with the matching key can unscramble it back. it protects data moving across the internet (the lock icon on HTTPS websites) and data sitting in storage, like a backup drive. no key, no readable data — even for the people who built the system.",
+        "why_it_matters": "this is the difference between a stolen district laptop being a real crisis and being a shrug. when a vendor says student data is \"protected in transit\" or backups are \"encrypted at rest,\" this is the actual mechanism. the flip side worth asking about: if they lose the key, the data is gone for good — so key management matters as much as the encryption itself.",
+        "example_in_sentence": "before approving the new gradebook software, the committee asked whether student records are encrypted both when they're sent to the server and when they're stored on it."
+      }
+    },
+    {
+      "id": "sys-http-header::pharmacist",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "an HTTP header is extra information attached to a web request or response, separate from the main content. headers can say things like what format the sender expects back, what login token proves who's asking, whether the answer is allowed to be reused later, or where the request came from. think of it like the label stapled to a prescription bag: the pills are the main thing, but the label carries the patient name, the prescriber, the fill date, and the warnings the next person needs to handle it correctly.",
+        "why_it_matters": "a lot of invisible web behavior lives in headers: which login token is being sent, what content type is accepted, whether a response can be reused from cache, which site the request came from. when something works on one computer and fails on another, a missing or wrong header is often the reason — which is why help desk sometimes asks about them.",
+        "example_in_sentence": "the release notes said the pharmacy system now requires a new authorization HTTP header on every request so the server knows which store is calling."
+      }
+    },
+    {
+      "id": "sys-http-header::teacher",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "an HTTP header is a small piece of extra information attached to a web request or response, separate from the main content. headers can say what format the sender accepts, what login token is attached, where the request came from, whether the response is allowed to be saved and reused, or what cookie should be set in the browser.",
+        "why_it_matters": "a lot of invisible web behavior lives in headers: which login token is being sent, what content type is expected, whether a response can be cached, and which site the request came from. when a tool works for one teacher and breaks for another, a missing or wrong header is often the reason — useful to know when IT explains an outage at a committee meeting.",
+        "example_in_sentence": "the district IT email said the gradebook integration was failing because the authorization HTTP header wasn't being passed through to the vendor."
+      }
+    },
+    {
+      "id": "sys-http-header::nurse",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "an HTTP header is extra information attached to a web request or response, separate from the main content. it's the metadata the two computers need to handle the message correctly: who sent it, what format the content is in, what auth token proves the sender is allowed, whether the response can be reused later, what cookie to set. the main body is the payload; headers are the handling instructions wrapped around it.",
+        "why_it_matters": "a lot of invisible web behavior lives in headers: which login token is being sent, what format the response should be in, whether it can be cached, where the request originated. when a tool works in one environment and breaks in another, a missing or wrong header is often the reason — useful context when IT is troubleshooting the new charting system.",
+        "example_in_sentence": "the vendor explained that the charting app sets an authorization HTTP header on every request so the server knows which nurse is logged in."
+      }
+    },
+    {
+      "id": "cloud-autoscaling::pharmacist",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "autoscaling automatically adds more computing power when a system gets busy and removes it when things calm down. it watches signals like how hard the processors are working or how many requests are piling up waiting to be handled, then spins up extra capacity to match. when demand drops, it scales back down so nobody is paying for machines sitting idle.",
+        "why_it_matters": "this is how a system survives a sudden rush without the company paying for peak capacity around the clock. it also explains the lag you sometimes feel when a system gets slammed: the extra capacity takes a moment to come online before it can start helping.",
+        "example_in_sentence": "the release notes said the claims processing system now uses autoscaling, so it should hold up better during the monday morning refill surge."
+      }
+    },
+    {
+      "id": "cloud-autoscaling::nurse",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "autoscaling means the system automatically adds more computing power when demand goes up, and removes it when demand drops. it watches signals like how busy the processors are, how much memory is being used, or how many requests are waiting in line, and reacts to those numbers. think of how your med-surg unit flexes staffing: census climbs, you call in extra nurses; census drops, people get flexed off. same idea, but with servers instead of people.",
+        "why_it_matters": "this is how a system handles a sudden surge, like every nurse on every unit opening the charting app at 7am shift change, without the hospital paying for that much capacity all night long. it also explains the lag you sometimes feel when things suddenly get slow: new capacity takes a minute to come online before it can help.",
+        "example_in_sentence": "IT said the charting system's autoscaling should kick in at shift change so the app doesn't freeze when everyone logs in at once."
+      }
+    },
+    {
+      "id": "cloud-autoscaling::teacher",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "autoscaling automatically adds more computers (or servers) when demand goes up, then removes them when demand drops. it watches signals like how busy the processors are or how many requests are waiting in line, and adjusts capacity to match.",
+        "why_it_matters": "this is how an app survives a sudden rush — like every student in the district logging in at 8:00 a.m. — without the district paying for that much capacity all night and weekend. it also explains the lag you sometimes feel during a surge: new servers take a moment to come online before they start helping.",
+        "example_in_sentence": "when half the district opened the new learning platform at once on monday morning, autoscaling added servers so the logins didn't stall."
+      }
+    },
+    {
+      "id": "ai-agent::pharmacist",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "a chat AI just answers you. an agent reads your goal, picks an action, uses a tool (looks something up, runs a calculation, sends a message), reads what came back, decides the next step, and keeps looping until the job is done. think of it less like asking a colleague a question and more like handing off a task and getting the finished result. the pattern is LLM + tools + a loop.",
+        "why_it_matters": "the whole industry is shifting from chatbots that talk to agents that do. when your software vendor's release notes start promising that an agent will handle prior auth follow-ups or flag rejected claims on its own, you'll know they mean the AI is actually taking actions in the system, not just suggesting them.",
+        "example_in_sentence": "the vendor says their new agent can work a prior authorization from start to finish without a tech touching it."
+      }
+    },
+    {
+      "id": "ai-agent::nurse",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "A chat AI just answers questions. An agent takes a goal and actually works it. It picks an action, uses a tool (search the web, run code, send a message), reads what came back, decides the next step, and keeps looping until the job is done. The pattern is simple: an AI brain plus tools plus a loop. Products marketed as \"AI does the thing for you\" are agents.",
+        "why_it_matters": "The whole industry is shifting from chatbots you talk to toward agents that do work on your behalf. When vendors at your hospital pitch \"AI documentation\" or \"AI that drafts your note,\" they usually mean an agent — something that pulls from the chart, drafts text, and files it, not just a box you type into. Knowing the word lets you follow what IT and vendors are actually promising.",
+        "example_in_sentence": "The vendor said their new agent can pull vitals from the chart, draft a progress note, and queue it for the provider to sign."
+      }
+    },
+    {
+      "id": "ai-agent::teacher",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "a plain chat AI just answers questions. an agent reads your goal, picks an action, uses a tool (searches the web, runs code, sends an email), reads what came back, decides the next step, and keeps looping until the job is done. the pattern is: AI model + tools it can use + a loop that keeps going. products marketed as \"AI that does the task for you\" are agents.",
+        "why_it_matters": "the whole industry is shifting from chatbots that talk to agents that act. on the technology committee, when a vendor pitches an \"AI agent\" for grading, scheduling, or student support, you'll want to ask what tools it can actually use, what it's allowed to do on its own, and when it stops and checks with a human.",
+        "example_in_sentence": "the vendor claimed their agent could pull attendance data, draft parent emails, and send them without a teacher clicking approve — which is exactly what the committee needed to pause on."
+      }
+    },
+    {
+      "id": "excel-pivot-table::pharmacist",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "a PivotTable summarizes a big spreadsheet by letting you drag field names (like region, drug, month) into rows, columns, values, and filters. it groups and totals the data for you without making you write a formula in every cell.",
+        "why_it_matters": "when you have a year of prescription or immunization data and someone asks for 'flu shots by store by month,' a PivotTable gets you the answer in a few minutes by dragging fields around. it turns a giant data dump into a readable summary without any formula writing.",
+        "example_in_sentence": "I pulled the immunization log into Excel and built a PivotTable to count flu shots by month and insurance type for our year-end report."
+      }
+    },
+    {
+      "id": "excel-pivot-table::nurse",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "held by added policy",
+      "reasons": [
+        "claim check: clinical access or credential claims require domain evidence unavailable here. Rewrite without this analogy or workflow claim."
+      ],
+      "candidate": {
+        "long_definition": "a PivotTable takes a big spreadsheet of raw data and lets you summarize it by dragging field names into row, column, value, and filter boxes. you pick what to group by and what to count, sum, or average, and Excel builds the summary table for you without you writing any formulas.",
+        "why_it_matters": "when you have thousands of rows — think a year of patient admissions or medication scans — and someone in a meeting asks \"how many falls per unit per month,\" a PivotTable gets you the answer in a few clicks instead of counting by hand or writing a formula for every cell. it is the fastest way to turn a data dump into something you can actually talk about.",
+        "example_in_sentence": "the quality nurse pulled the fall data into a PivotTable to show rates by unit and shift at the staff meeting."
+      }
+    },
+    {
+      "id": "sec-mfa::pharmacist",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "held by added policy",
+      "reasons": [
+        "claim check: clinical access or credential claims require domain evidence unavailable here. Rewrite without this analogy or workflow claim."
+      ],
+      "candidate": {
+        "long_definition": "MFA stands for multi-factor authentication. logging in takes two or more kinds of proof, like a password plus a code from an authenticator app, a tap on your phone, a hardware key, or a fingerprint. if someone steals one piece, they still can't get in without the other.",
+        "why_it_matters": "it's the same reason a C-II dispense needs more than one check — one safeguard isn't enough on something that matters. when the help desk says they're enabling MFA on the pharmacy system, they mean your password alone will no longer get you in, and that's on purpose.",
+        "example_in_sentence": "after the last software update, signing into the pharmacy system uses MFA, so i enter my password and then approve a prompt on my phone."
+      }
+    },
+    {
+      "id": "excel-pivot-table::teacher",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "a PivotTable summarizes a big table of raw data by letting you drag field names into rows, columns, values, and filters. instead of writing a formula for every view you want, you rearrange the fields and the totals recalculate automatically.",
+        "why_it_matters": "when you have thousands of raw rows — say, every student's score on every assignment — and someone asks for \"average by class period by unit\" before the next meeting, a PivotTable gets you there in minutes. it turns a data dump into an answer without you writing a formula for every cell.",
+        "example_in_sentence": "I dropped the gradebook export into a PivotTable to see average lab scores by class period and quickly spot which period was struggling."
+      }
+    },
+    {
+      "id": "sec-mfa::nurse",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "held by added policy",
+      "reasons": [
+        "claim check: clinical access or credential claims require domain evidence unavailable here. Rewrite without this analogy or workflow claim."
+      ],
+      "candidate": {
+        "long_definition": "MFA stands for multi-factor authentication. logging in takes two or more kinds of proof — usually a password plus something else like a code from an app, a tap on your phone, a physical key fob, or a fingerprint. that way if one piece gets stolen, the account still holds.",
+        "why_it_matters": "this is why badging into the EHR sometimes also pings your phone, or why your bank texts a code after the right password. when IT says a system is MFA-protected, they mean one leaked password isn't enough to get in — an attacker would also need your phone or fingerprint.",
+        "example_in_sentence": "IT turned on MFA for remote chart access, so logging in from home now needs my password plus a code from the app on my phone."
+      }
+    },
+    {
+      "id": "sec-mfa::teacher",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "MFA stands for multi-factor authentication. logging in requires two or more kinds of proof — usually a password plus something else like a code from an authenticator app, a text message, a tap on your phone, a hardware key, or a fingerprint. the point is that if someone steals one piece, they still can't get in without the other.",
+        "why_it_matters": "this is why the district makes you enter a code from your phone after you already typed your password into the gradebook. when a vendor at a committee meeting says their software supports MFA, they mean a stolen password alone won't open a student's account — a useful question to ask about any tool handling student data.",
+        "example_in_sentence": "the district turned on MFA for our gradebook logins, so now i type my password and then approve a prompt on my phone."
+      }
+    },
+    {
+      "id": "sys-http-response::nurse",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "an HTTP response is the server's answer back after it gets a request. it carries a status code (a short number saying what happened, like 200 for ok or 404 for not found), some headers (extra info about the answer), and usually a body — the actual content, which might be a web page, a chunk of data, an image, or an error message. when someone says \"the API returned 401,\" they're describing the response.",
+        "why_it_matters": "when IT or a vendor says \"the API returned a 500\" or \"we got a 401 back,\" they're reading the response. it's where the server tells you what actually happened: yes, no, not allowed, not found, try again later. knowing this lets you follow why something in the charting system failed instead of just hearing \"it's broken.\"",
+        "example_in_sentence": "the vendor said the documentation tool stopped loading notes because the HTTP response was coming back as a 500 error from their server."
+      }
+    },
+    {
+      "id": "sys-http-response::pharmacist",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "an HTTP response is what the server sends back after it gets a request. it carries a status code (a short number saying what happened), some headers (extra info about the message), and usually a body: the actual content, like a webpage, some data, an image, or an error message. when someone says 'the API returned 401,' they're describing the response.",
+        "why_it_matters": "when the help desk says 'the system returned a 500' or 'we got a 401 back,' they mean the response. it's where the server tells you what actually happened: yes, no, not allowed, not found, try again. knowing this is how you stop guessing why a claim submission or lookup failed.",
+        "example_in_sentence": "the claim went through to the PBM but the HTTP response came back with an error, so the prescription wouldn't adjudicate."
+      }
+    },
+    {
+      "id": "cloud-cdn::pharmacist",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "CDN stands for content delivery network. Instead of every user downloading images, scripts, and other static files from one central server, a CDN keeps copies of those files on servers scattered around the country and world. When you visit a site, your browser grabs the files from whichever location is closest to you, which is faster than reaching back to the original server every time.",
+        "why_it_matters": "when a website suddenly feels snappier after an update, a cdn is often the reason. it also explains a frustrating bug: the vendor pushes a new version of a file, but some users still see the old one because a stale copy is sitting on an edge server near them until it refreshes.",
+        "example_in_sentence": "the release notes said the new pharmacy portal loads faster because the images and logos are now served through a cdn."
+      }
+    },
+    {
+      "id": "cloud-cdn::nurse",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "CDN stands for content delivery network. Instead of every user fetching images, scripts, stylesheets, and downloads from one central server, a CDN keeps copies of those files on servers spread around the world. When you visit a site, you pull those files from whichever copy is physically closest to you, which is much faster.",
+        "why_it_matters": "when a website suddenly feels snappier after a launch, a CDN is often the reason. it also explains a confusing bug: IT updates a file but some users still see the old version, because an outdated copy is still sitting on a nearby CDN server and hasn't refreshed yet.",
+        "example_in_sentence": "the vendor said the new patient education videos will load faster because they're being served from a CDN."
+      }
+    },
+    {
+      "id": "sys-http-response::teacher",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "an HTTP response is the server's answer to a request. it carries a status code (a short number saying how it went, like 200 for success or 404 for not found), headers (extra info about the answer), and usually a body with the actual content: a webpage, data, an image, or an error message.",
+        "why_it_matters": "when IT staff or a vendor says 'the app returned a 401,' they mean the response. it's where the server tells you what actually happened: yes, no, not allowed, not found, try again. knowing this lets you ask sharper questions when software misbehaves instead of just hearing 'it's broken.'",
+        "example_in_sentence": "the gradebook loaded the page but the HTTP response for the roster sync came back as a 500, so IT is checking the server logs."
+      }
+    },
+    {
+      "id": "cloud-cdn::teacher",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "CDN stands for content delivery network. Instead of every user fetching images, scripts, stylesheets, and downloads from one central server, a CDN keeps copies of those files in data centers scattered around the world. When someone opens the page, their browser pulls the files from whichever location is closest to them.",
+        "why_it_matters": "when a site suddenly feels faster after a redesign, a CDN is often the reason. it also explains a frustrating quirk: you update a file but some people still see the old version, because an older copy is still sitting at a location near them and hasn't refreshed yet.",
+        "example_in_sentence": "when the district vendor said the new learning platform uses a CDN, that is why videos load quickly for students at every school in the county."
+      }
+    },
+    {
+      "id": "ai-llm::nurse",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "An LLM (large language model) is a type of AI trained on enormous amounts of written text so it learns to predict what word comes next. That simple trick, done at massive scale, lets it read, write, summarize, answer questions, and hold a conversation. Claude, ChatGPT, Gemini, and Llama are all LLMs.",
+        "why_it_matters": "When IT or a vendor says \"AI\" in a meeting — AI charting, AI summaries of a patient's chart, an AI assistant that drafts your note — there's an LLM doing the actual work underneath. Almost every other AI term you'll hear (prompts, context, hallucinations) is describing how to use or control an LLM.",
+        "example_in_sentence": "The vendor explained that the new ambient documentation tool uses an LLM to listen to the patient visit and draft a progress note for the nurse to review."
+      }
+    },
+    {
+      "id": "ai-llm::pharmacist",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "an LLM (large language model) is an AI trained on enormous amounts of written text so it learns which words tend to follow which. that's how it can read, write, summarize, answer questions, and hold a conversation. Claude, ChatGPT, Gemini, and Llama are all LLMs — they're the engine inside every modern AI chat tool.",
+        "why_it_matters": "when release notes or a trainer mention \"AI\" in your pharmacy software — a chatbot that drafts patient counseling, a tool that summarizes a chart, something that flags interactions — there's almost always an LLM underneath. knowing what an LLM is makes every other AI term you'll hear easier to follow.",
+        "example_in_sentence": "the new help-desk assistant in the pharmacy system is powered by an LLM, so you can type a question in plain English instead of searching the manual."
+      }
+    },
+    {
+      "id": "ai-llm::teacher",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "an LLM is a type of AI trained on enormous amounts of text — books, websites, articles — until it gets very good at predicting what word should come next. that simple skill, scaled up, is enough to let it write, summarize, answer questions, reason through problems, and hold a conversation. Claude, ChatGPT, Gemini, and Llama are all LLMs.",
+        "why_it_matters": "every AI tool your students use and every AI product the district is being pitched runs on an LLM under the hood. once you know what an LLM actually is, the rest of the AI vocabulary you'll hear in committee meetings hangs off it.",
+        "example_in_sentence": "when a vendor demos an AI tutor for the district, it's almost certainly an LLM doing the talking behind the interface."
+      }
+    },
+    {
+      "id": "fabric-data-pipeline::nurse",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "a data pipeline in Fabric is a set of automated steps that moves data from one system to another, often cleaning or reshaping it along the way. it runs on a schedule or trigger, so the same copy-and-transform work happens the same way every time without someone doing it by hand.",
+        "why_it_matters": "a data pipeline is the scheduled plumbing that shuttles data between systems so nobody is exporting spreadsheets by hand every night. when IT or a vendor mentions \"the nightly load\" or \"the overnight job,\" they mean a pipeline quietly doing the work while the unit sleeps.",
+        "example_in_sentence": "IT said a data pipeline pulls admission and discharge data from the EHR into the reporting system every night so the morning dashboards are ready before day shift arrives."
+      }
+    },
+    {
+      "id": "fabric-data-pipeline::pharmacist",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "held by added policy",
+      "reasons": [
+        "claim check: clinical access or credential claims require domain evidence unavailable here. Rewrite without this analogy or workflow claim."
+      ],
+      "candidate": {
+        "long_definition": "a data pipeline in Fabric is a set of automated steps that copies, moves, or reshapes data from one system to another on a schedule. it handles repeatable work like pulling records out of one database, cleaning them up, and loading them into another place where they can be reported on.",
+        "why_it_matters": "a pipeline is the scheduled plumbing that shuffles data between systems so nobody is exporting spreadsheets by hand every night. when the help desk mentions \"the nightly load\" or \"the overnight job,\" they mean a pipeline running on its own while the store is closed.",
+        "example_in_sentence": "the data pipeline pulls prescription fill records from the dispensing system into the reporting database every night so the morning dashboards are ready before open."
+      }
+    },
+    {
+      "id": "fabric-data-pipeline::teacher",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "a data pipeline in Fabric is a defined workflow that copies, transforms, and moves data from one system to another on a schedule. it's how an organization sets up repeatable steps for pulling data in from a source, reshaping it, and dropping it where it needs to go — without someone doing it by hand each time.",
+        "why_it_matters": "a data pipeline is the scheduled plumbing that shuttles data between systems so nobody's exporting spreadsheets by hand every night. when a vendor or IT person says \"the nightly load,\" they mean a pipeline running the job while everyone's asleep.",
+        "example_in_sentence": "a data pipeline pulls attendance and grade data from the gradebook into the district's reporting system every night automatically."
+      }
+    },
+    {
+      "id": "sec-oauth::nurse",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "held by added policy",
+      "reasons": [
+        "claim check: clinical access or credential claims require domain evidence unavailable here. Rewrite without this analogy or workflow claim."
+      ],
+      "candidate": {
+        "long_definition": "OAuth is a standard way for one service to let another service sign you in or access your data without you handing over your actual password. the app bounces you to a trusted sign-in service like Google or Microsoft, you log in there, and that service hands back a token — a short-lived pass that proves who you are to the app.",
+        "why_it_matters": "every \"sign in with Google\" or \"sign in with Microsoft\" button on the hospital's new tools is doing this behind the scenes. when IT talks about a login that redirects you to the Microsoft page and then back into the charting app, OAuth is the rulebook making that handoff work — and the reason the vendor app never sees your actual hospital password.",
+        "example_in_sentence": "IT said the new documentation tool will use OAuth so we can sign in with our hospital Microsoft account instead of creating a separate login."
+      }
+    },
+    {
+      "id": "sec-oauth::pharmacist",
+      "label": "expert-confirmed wrong",
+      "before": "accepted by historical LLM pipeline",
+      "after": "held by added policy",
+      "reasons": [
+        "claim check: clinical access or credential claims require domain evidence unavailable here. Rewrite without this analogy or workflow claim."
+      ],
+      "candidate": {
+        "long_definition": "OAuth lets one app get limited access to your account on another service without ever seeing your password. think of a prescription transfer: the patient authorizes you to pull their rx history from another pharmacy, and that pharmacy hands over just the specific records — never the patient's login to their chart. in an OAuth sign-in, the app sends you to a trusted identity provider like Google, you approve, and the app receives a token (a short proof of permission) instead of your password.",
+        "why_it_matters": "every \"continue with Google\" or \"sign in with Microsoft\" button on your pharmacy tools is OAuth under the hood. when a login bounces you through a redirect and lands you back signed in — or when the help desk asks whether you logged in with your Google account versus a direct password — OAuth is the word that explains the handoff.",
+        "example_in_sentence": "the new CE portal switched to OAuth, so you sign in with your existing Google account instead of creating yet another password."
+      }
+    },
+    {
+      "id": "sec-oauth::teacher",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "OAuth lets one app get limited access to your account on another service without ever seeing your password. When you click \"continue with Google,\" the app sends you to Google, Google checks who you are, and then hands the app a token — a temporary pass that proves Google vouches for you and spells out exactly what the app is allowed to do.",
+        "why_it_matters": "every \"sign in with Google\" or \"sign in with Microsoft\" button a vendor demos to your technology committee is running OAuth underneath. knowing the word lets you ask the right questions: what does the app get access to, how long does the token last, and can the district revoke it — without the vendor ever holding student or staff passwords.",
+        "example_in_sentence": "the new gradebook vendor said teachers can sign in with their district Google accounts through OAuth, so we won't be managing a separate password."
+      }
+    },
+    {
+      "id": "sys-jwt::nurse",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "JWT stands for JSON Web Token. It's a short string of text that carries facts about a user — like who they are and what they're allowed to do — along with a digital signature. When a system receives the token, it checks the signature to make sure nothing was changed along the way. Being encoded doesn't make a JWT safe on its own; it still needs a proper expiration time, careful storage, and real verification on arrival.",
+        "why_it_matters": "JWTs come up constantly in conversations about logins, app security, and how the charting system talks to other tools. Knowing the term helps you follow what IT and vendors are describing — and understand why they care so much about expiration and verification, not just the token existing.",
+        "example_in_sentence": "The vendor explained that once a nurse logs in, the documentation app passes a JWT to the EHR so it knows which user is making each entry."
+      }
+    },
+    {
+      "id": "sys-jwt::pharmacist",
+      "label": "expert-confirmed wrong",
+      "before": "accepted by historical LLM pipeline",
+      "after": "held by added policy",
+      "reasons": [
+        "claim check: clinical access or credential claims require domain evidence unavailable here. Rewrite without this analogy or workflow claim."
+      ],
+      "candidate": {
+        "long_definition": "JWT stands for JSON Web Token. It's a short string of text that carries claims about a user (like their id or what they're allowed to do) and is signed so the server can tell if anyone tampered with it. Think of a signed, tamper-evident script label: the data on it is readable, but the signature proves it hasn't been altered. Being encoded isn't the same as being safe — a JWT still needs a proper expiration, careful storage, and real signature checking on every use.",
+        "why_it_matters": "JWTs show up constantly in auth logs, release notes, and help desk conversations about who is signed in and what they can see. knowing the term demystifies that plumbing, and reminds you that 'it's encoded' doesn't mean 'it's secure' — expiration and verification still have to be done right.",
+        "example_in_sentence": "the help desk said the pharmacy app was rejecting refills because the user's JWT had expired and they needed to sign back in."
+      }
+    },
+    {
+      "id": "cloud-deploy::nurse",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "a deploy takes finished code and actually puts it onto a system where it can run — a test environment, a staging copy, or the real production system that users touch. saving or finishing the code is not the same thing as deploying it; the deploy is the step that swaps in the new version so the running software actually behaves differently.",
+        "why_it_matters": "writing the code and getting it onto the live system are two separate events, and the gap between them is where a lot of confusion hides. once you can hear \"it's finished but not deployed yet,\" you stop wondering why a fix the vendor promised isn't showing up in your charting system during your shift.",
+        "example_in_sentence": "IT finished the new allergy-warning fix last week, but it won't reach our workstations until they deploy it to production on sunday night."
+      }
+    },
+    {
+      "id": "cloud-deploy::pharmacist",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "a deploy takes software that's already been built and puts a specific version onto a system where it can actually run — a test site, a preview environment, or the real live production system your pharmacy uses. saving or finishing the code is not the same thing as deploying it. the deploy is the moment a running system switches over to the new version.",
+        "why_it_matters": "writing code and getting that code onto a live system are two separate events, and the gap between them is where a lot of confusion lives. once you understand this, release notes and help desk explanations like \"the fix is ready but hasn't been deployed to your store yet\" stop being mysterious — the fix exists, it just isn't running where you are.",
+        "example_in_sentence": "the vendor said the claim-rejection fix was finished last week, but it won't reach our workstations until they deploy it to all the stores tonight."
+      }
+    },
+    {
+      "id": "sys-jwt::teacher",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "JWT stands for JSON Web Token. It's a short string of text that carries claims about a user (like their id or what they're allowed to do) and is signed by the server so any tampering can be detected. Software passes it along with requests to prove the user is logged in. Being encoded is not the same as being encrypted or safe — a JWT still needs a sensible expiry, careful storage, and real verification on the receiving end.",
+        "why_it_matters": "JWTs show up constantly in vendor security docs and IT discussions about single sign-on. knowing the term lets you ask sharper questions on the tech committee — like how long tokens stay valid and where they're stored — instead of nodding past the jargon.",
+        "example_in_sentence": "ask the vendor how long the JWT stays valid after a student signs in — a token that lives for days is a different risk than one that expires in an hour."
+      }
+    },
+    {
+      "id": "cloud-deploy::teacher",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "a deploy takes finished code and puts it somewhere it can actually run: a preview site, a staging site, the real production site, or a server. saving the code or even approving it is not the same thing — deploying is the step that swaps in the new version so a real system is running it.",
+        "why_it_matters": "writing code and getting that code onto a live system are two separate events, and the gap between them is where a lot of confusion lives. once you can say \"it's written but not deployed yet,\" you stop wondering why a promised change hasn't shown up in the tool teachers and students actually use.",
+        "example_in_sentence": "the vendor said the gradebook fix was ready last week, but it won't reach our teachers until they deploy it to the district's production system."
+      }
+    },
+    {
+      "id": "aid-accuracy::nurse",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "Accuracy is the simplest score on a model's report card. You take a set of test questions where you already know the right answer, run the AI on every one, and count the fraction it got right. 87 out of 100 correct is 87% accuracy. It is the first number people quote in a release announcement and the first number a team checks when something feels off. The catch: accuracy alone can hide problems. A screening tool that always says 'no sepsis' will look highly accurate on a floor where most patients don't have sepsis — while missing the ones who do. That is why teams pair accuracy with other measures.",
+        "why_it_matters": "Accuracy is the easiest AI quality number to read, which is why vendors put it on the slide. Knowing the word — and knowing it is one number out of several — lets you sit in a rollout meeting and ask the next question, which is always 'accurate at what, and compared to what?'",
+        "example_in_sentence": "The vendor claimed 92% accuracy on their documentation AI, but nobody in the meeting asked what kind of notes they tested it on."
+      }
+    },
+    {
+      "id": "aid-accuracy::pharmacist",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "Accuracy is the simplest score on a model's report card. You take a set of test questions where you already know the right answer, run the AI on every one, and count what fraction it got right. 87 out of 100 correct is 87% accuracy. It is the first number people cite in a release, and the first number teams check when something feels off. The catch: accuracy alone can hide problems. A model that always says \"no interaction\" could look highly accurate on a drug-interaction test if most drug pairs genuinely have no interaction — but it would miss every real one. That is why teams pair accuracy with other measures.",
+        "why_it_matters": "Accuracy is the easiest AI quality number to read, which is why it headlines every release note. Knowing the word — and knowing it is one number out of several — lets you read a vendor announcement about your pharmacy software and ask the next question, which is always \"accurate at what, and compared to what?\"",
+        "example_in_sentence": "The release notes claimed the new allergy-checking model hit 94% accuracy, up from 90% in the previous version."
+      }
+    },
+    {
+      "id": "data-backfill::nurse",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "a backfill updates data that already exists in a system. if a new field is added to a chart, a backfill might fill it in for old patient records. if older entries used inconsistent labels, a backfill might clean them up to match. because it changes historical data, it's done carefully.",
+        "why_it_matters": "there's a real difference between changing how a system behaves going forward and fixing records that are already in it. a backfill is the second one. since it touches history — the stuff already charted, already signed, already reported on — it's the kind of job people scope carefully and watch while it runs.",
+        "example_in_sentence": "IT said they'd run a backfill overnight to add the new allergy severity field to patient charts created before the upgrade."
+      }
+    },
+    {
+      "id": "data-backfill::teacher",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "a backfill updates data that already exists. if a new field is added to records, a backfill can fill it in for old entries. if old records used inconsistent labels, a backfill can standardize them. because backfills touch historical data, they need to be scoped and reviewed carefully.",
+        "why_it_matters": "there's a real difference between changing how a system behaves going forward and fixing records that are already in it. a backfill is the second kind of change, and because it rewrites history it's the kind of job you plan carefully and watch while it runs.",
+        "example_in_sentence": "when the district added a new 'preferred name' field to the gradebook, IT ran a backfill to populate it for every student already enrolled."
+      }
+    },
+    {
+      "id": "data-backfill::pharmacist",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "a backfill is a one-time update that goes back and fixes or fills in data that already exists. if a new field gets added to the system, a backfill can populate it for old records. if old entries used inconsistent labels, a backfill can clean them up. because it touches historical data, backfills are planned and watched carefully.",
+        "why_it_matters": "there's a real difference between changing how the software behaves going forward and reaching back to fix records that are already on file. a backfill is the second one, and since it rewrites history, it's the kind of job that gets scoped carefully — the same way you'd treat any correction to records that have already been dispensed or billed.",
+        "example_in_sentence": "the release notes said a backfill would add the new generic-equivalent flag to prescriptions filled before the update."
+      }
+    },
+    {
+      "id": "sec-rbac::nurse",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "held by added policy",
+      "reasons": [
+        "claim check: clinical access or credential claims require domain evidence unavailable here. Rewrite without this analogy or workflow claim."
+      ],
+      "candidate": {
+        "long_definition": "RBAC stands for role-based access control. Instead of deciding permissions one person at a time, the system defines roles — like how your EHR gives nurses, physicians, pharmacists, and unit clerks each a different set of things they can see and do — and every user gets assigned a role that carries those permissions. RBAC is the standard pattern in admin tools, dashboards, enterprise software, and cloud consoles.",
+        "why_it_matters": "when an access conversation starts going in circles — who can chart what, why is this person locked out — naming RBAC gets everyone on the same page. once you hear it in a vendor meeting, you know access is being handed out by role, not person by person, so the fix is usually 'change their role' or 'adjust what the role allows,' not a one-off override.",
+        "example_in_sentence": "the vendor explained that the new AI documentation tool uses RBAC, so nurses, residents, and attendings each see a different set of actions when they open a note."
+      }
+    },
+    {
+      "id": "sec-rbac::pharmacist",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "RBAC stands for role-based access control. instead of deciding one by one what each individual person is allowed to do in the software, the system defines roles — pharmacist, technician, cashier, manager — and attaches permissions to the role. then each person gets a role, and the software checks the role, not the person. it's the standard setup in pharmacy systems, admin dashboards, and cloud tools.",
+        "why_it_matters": "when a help desk call turns into \"why can't my tech do this, but the one at the other store can\" — it's almost always RBAC. knowing the term lets you ask the right question: is this a role permission issue, or is my account on the wrong role? it also explains why the fix is usually \"we'll update your role,\" not \"we'll flip a switch just for you.\"",
+        "example_in_sentence": "the trainer explained that RBAC is why technicians can enter prescriptions but can't complete the final verification — that step is only enabled for the pharmacist role."
+      }
+    },
+    {
+      "id": "sec-rbac::teacher",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "RBAC stands for role-based access control. instead of deciding what each individual person can do in a system, the software defines roles — like teacher, student, principal, parent — and attaches permissions to those roles. then everyone gets assigned a role and inherits whatever that role is allowed to do. it's the standard setup in admin dashboards, cloud tools, and most district software.",
+        "why_it_matters": "when the technology committee is debating who should see grades, who can post announcements, who can change settings, naming RBAC puts everyone on the same page. it tells you access is being granted by role, not person by person — so the right question becomes which roles exist and what each one can do, not whether to toggle something for one specific teacher.",
+        "example_in_sentence": "the vendor explained their LMS uses RBAC, so once we define the teacher, student, and parent roles, permissions apply automatically to everyone in those groups."
+      }
+    },
+    {
+      "id": "sys-payload::nurse",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "a payload is the actual useful data being carried inside something larger. an API request, a webhook, a token, or a log entry all have an outer wrapper (addressing info, headers, routing details) plus the real contents the receiver cares about. the payload is those real contents. think of it like the SBAR content inside a handoff: the shift, room number, and sender are the wrapper; the patient info is what the next nurse actually needs.",
+        "why_it_matters": "payload is the short word for 'the actual data inside the thing.' once IT or vendor folks say it, you can skip 'the data part' and point directly at what matters. it shows up constantly when they discuss charting integrations, event messages between systems, and troubleshooting logs.",
+        "example_in_sentence": "the vendor said the payload from the monitor includes the vitals and the timestamp, which is what gets written into the chart."
+      }
+    },
+    {
+      "id": "sys-payload::pharmacist",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "the payload is the actual contents being delivered, as opposed to the wrapping around it. think of a prescription bag: the bag, label, and stapled receipt are the envelope, but the vial and the drug inside are the payload — that's what the patient actually needs. in software, when one system sends data to another, the payload is the meaningful data part the receiver reads and acts on.",
+        "why_it_matters": "payload is the short word for 'the actual data inside the message.' when the help desk says 'check the payload' or release notes mention 'the claim payload,' they mean the real contents, not the wrapper around it. once you know the word, you can follow those conversations without guessing which part they're pointing at.",
+        "example_in_sentence": "the release notes said the insurance rejection payload now includes the reject code and the plan's reason text, so techs can see why a claim bounced without calling the help desk."
+      }
+    },
+    {
+      "id": "sys-payload::teacher",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "the payload is the actual contents being delivered. when one computer system sends something to another, part of the message is addressing and packaging, and part is the useful data the receiver actually cares about. that useful data is the payload. in a request from an app to a server it might be the form a user filled out. in a notification sent from one system to another it is the event details. the wrapper is how it travels; the payload is what gets read and used.",
+        "why_it_matters": "payload is the short word for 'the actual data inside the thing.' it comes up in vendor documentation, IT emails, and tech committee discussions about what information a system sends or receives. once you know it, you can stop saying 'the data part' and ask directly: what is in the payload, who sees it, and is any student information in there.",
+        "example_in_sentence": "the vendor confirmed that the payload sent to the gradebook includes student names and scores but not dates of birth."
+      }
+    },
+    {
+      "id": "cloud-environment::nurse",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "an environment is one place where the software runs, with its own web address, settings, database, passwords, and rules about how careful you have to be. developers run a local copy on their own laptop, a preview copy for quick review, a staging copy that mimics the real thing for testing, and production, which is the live system real users (or real nurses and patients) are actually using.",
+        "why_it_matters": "when something \"works for the vendor but not for us,\" it almost always means it worked in one environment and broke in another. knowing the word lets you ask the useful question in a meeting: which environment did this break in, with which settings and which patient data?",
+        "example_in_sentence": "the vendor said the new ai scribe worked fine in their test environment, but it's dropping allergies in our staging environment before we turn it on in production."
+      }
+    },
+    {
+      "id": "cloud-environment::pharmacist",
+      "label": "expert-confirmed wrong",
+      "before": "accepted by historical LLM pipeline",
+      "after": "held by added policy",
+      "reasons": [
+        "claim check: clinical access or credential claims require domain evidence unavailable here. Rewrite without this analogy or workflow claim.",
+        "claim check: staging described as the exclusive connection to a real system. Remove the unsupported exclusivity and preserve the production versus testing distinction."
+      ],
+      "candidate": {
+        "long_definition": "an environment is one separate place where the app runs, with its own web address, settings, database, passwords, and rules about who can touch it. local is a developer's own machine, preview is a quick throwaway copy for review, staging is a near-copy of the real system used for testing, and production is the live version your patients and staff actually use.",
+        "why_it_matters": "when the help desk says \"it works on my machine\" or \"we couldn't reproduce it,\" they almost always mean it worked in one environment and not another. knowing the word lets you ask the question that actually unblocks the call: which environment did it break in, with which settings and which data?",
+        "example_in_sentence": "the e-prescription bug only shows up in the staging environment because that's the only place connected to the real insurance claim system."
+      }
+    },
+    {
+      "id": "cloud-environment::teacher",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "an environment is one place the app runs, with its own web address, settings, database, passwords, and rules about who can touch it. local runs on a developer's laptop, preview is a throwaway copy for reviewing a change, staging is a near-identical rehearsal of the real thing, and production is what actual users see.",
+        "why_it_matters": "\"it works on my machine\" almost always means it works in one environment and not another. knowing the word lets you ask the useful question at a committee meeting: which environment, with which settings and which data, did it break in?",
+        "example_in_sentence": "the district IT email said the gradebook outage only happened in the production environment, not in the test environment they had been checking."
+      }
+    },
+    {
+      "id": "aid-hallucination::nurse",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "AI tools generate text that sounds confident even when the model does not actually know the answer. Made-up facts, fake citations, invented drug interactions, references to studies that do not exist — these are all hallucinations. They happen because the model is built to produce text that sounds right, not to check whether it is true.",
+        "why_it_matters": "Every AI user gets burned by this eventually. If an AI scribe or chatbot gives you a dose, a citation, a policy, or a patient detail that matters, you have to verify it against the real source. The tool will not warn you when it is guessing.",
+        "example_in_sentence": "The vendor admitted the AI note sometimes hallucinates findings the patient never reported, so nurses still have to read every line before signing."
+      }
+    },
+    {
+      "id": "aid-hallucination::pharmacist",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "AI models produce text that sounds confident even when they don't actually know the answer. Invented facts, fake citations, drug interactions that don't exist, made-up dosing guidelines — these are hallucinations. They happen because the model is built to generate plausible-sounding text, not to verify that what it says is true.",
+        "why_it_matters": "Every AI user gets burned by a hallucination eventually. Knowing the term reminds you to verify anything that matters — a cited study, a dose, a drug name, an interaction, a billing code. The AI will not warn you when it's guessing.",
+        "example_in_sentence": "That drug interaction the chatbot cited is a hallucination — the reference it named doesn't exist in the literature."
+      }
+    },
+    {
+      "id": "aid-hallucination::teacher",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "unchanged acceptance",
+      "reasons": [],
+      "candidate": {
+        "long_definition": "AI models generate text that sounds confident even when they don't actually know the answer. Made-up facts, fake citations, invented sources, nonexistent studies — these are hallucinations. They happen because the model is trained to produce plausible-sounding text, not to check whether what it says is true.",
+        "why_it_matters": "Every AI user gets burned by one eventually. Students turn in essays citing journal articles that don't exist. Knowing the term gives you the right warning to verify anything that matters — citations, names, dates, numbers — and a clear word to use when the technology committee is weighing new tools.",
+        "example_in_sentence": "A student cited a 2019 study on monarch migration that turned out to be a hallucination — the authors and journal were invented by the chatbot."
+      }
+    },
+    {
+      "id": "data-join::nurse",
+      "label": "not expert adjudicated",
+      "before": "accepted by historical LLM pipeline",
+      "after": "held by added policy",
+      "reasons": [
+        "claim check: clinical access or credential claims require domain evidence unavailable here. Rewrite without this analogy or workflow claim."
+      ],
+      "candidate": {
+        "long_definition": "a join combines rows from two separate tables by matching them on a shared piece of information. think of how the EHR links a patient's room number to their full chart: the room assignment list and the patient chart live in different places, but they share a patient ID, so the system can pull them together into one view.",
+        "why_it_matters": "databases store information in slim, separate tables to avoid repeating data — one table for patients, another for medications, another for vitals. a join is what stitches them back together so a single screen can show the patient's name next to their current meds and latest vitals. almost every useful EHR screen is built on joins happening behind the scenes.",
+        "example_in_sentence": "the vendor explained that the new dashboard runs a join to show each patient's name alongside their pending orders, instead of making the nurse open two screens."
+      }
+    }
+  ],
+  "heldout": [
+    {
+      "id": "heldout-05",
+      "family": "contradiction",
+      "correct": false,
+      "candidate": {
+        "long_definition": "staging is the only environment connected to the real billing system.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      },
+      "before": "no LLM baseline measured",
+      "after": "hold",
+      "reasons": [
+        "claim check: staging described as the exclusive connection to a real system. Remove the unsupported exclusivity and preserve the production versus testing distinction."
+      ]
+    },
+    {
+      "id": "heldout-06",
+      "family": "access",
+      "correct": false,
+      "candidate": {
+        "long_definition": "a nurse cannot open records from another hospital unit.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      },
+      "before": "no LLM baseline measured",
+      "after": "hold",
+      "reasons": [
+        "claim check: clinical access or credential claims require domain evidence unavailable here. Rewrite without this analogy or workflow claim."
+      ]
+    },
+    {
+      "id": "heldout-07",
+      "family": "artifact",
+      "correct": false,
+      "candidate": {
+        "long_definition": "a tamper-proof dispensing label guarantees the prescription has not changed.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      },
+      "before": "no LLM baseline measured",
+      "after": "hold",
+      "reasons": [
+        "claim check: clinical access or credential claims require domain evidence unavailable here. Rewrite without this analogy or workflow claim."
+      ]
+    },
+    {
+      "id": "heldout-08",
+      "family": "credential",
+      "correct": false,
+      "candidate": {
+        "long_definition": "patients lend their dispensing-record password to another pharmacy.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      },
+      "before": "no LLM baseline measured",
+      "after": "hold",
+      "reasons": [
+        "claim check: clinical access or credential claims require domain evidence unavailable here. Rewrite without this analogy or workflow claim."
+      ]
+    },
+    {
+      "id": "heldout-04",
+      "family": "credential",
+      "correct": false,
+      "candidate": {
+        "long_definition": "the pharmacy transfers records without sharing the patient login to the dispensing chart.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      },
+      "before": "no LLM baseline measured",
+      "after": "hold",
+      "reasons": [
+        "claim check: clinical access or credential claims require domain evidence unavailable here. Rewrite without this analogy or workflow claim."
+      ]
+    },
+    {
+      "id": "heldout-01",
+      "family": "access",
+      "correct": false,
+      "candidate": {
+        "long_definition": "in a hospital, nurses can only view charts on their assigned ward.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      },
+      "before": "no LLM baseline measured",
+      "after": "hold",
+      "reasons": [
+        "claim check: clinical access or credential claims require domain evidence unavailable here. Rewrite without this analogy or workflow claim."
+      ]
+    },
+    {
+      "id": "heldout-13",
+      "family": "plain",
+      "correct": true,
+      "candidate": {
+        "long_definition": "row-level security filters which records a signed-in user may retrieve.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      },
+      "before": "no LLM baseline measured",
+      "after": "pass",
+      "reasons": []
+    },
+    {
+      "id": "heldout-23",
+      "family": "context",
+      "correct": true,
+      "candidate": {
+        "long_definition": "staging can use a sandbox insurance endpoint rather than real claims.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      },
+      "before": "no LLM baseline measured",
+      "after": "pass",
+      "reasons": []
+    },
+    {
+      "id": "heldout-12",
+      "family": "clinical",
+      "correct": false,
+      "candidate": {
+        "long_definition": "every medication interaction is harmless if the dose is low enough.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      },
+      "before": "no LLM baseline measured",
+      "after": "pass",
+      "reasons": []
+    },
+    {
+      "id": "heldout-14",
+      "family": "plain",
+      "correct": true,
+      "candidate": {
+        "long_definition": "a JWT signature helps the receiver detect an altered token.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      },
+      "before": "no LLM baseline measured",
+      "after": "pass",
+      "reasons": []
+    },
+    {
+      "id": "heldout-09",
+      "family": "technical",
+      "correct": false,
+      "candidate": {
+        "long_definition": "two passwords count as two independent authentication factors.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      },
+      "before": "no LLM baseline measured",
+      "after": "pass",
+      "reasons": []
+    },
+    {
+      "id": "heldout-16",
+      "family": "plain",
+      "correct": true,
+      "candidate": {
+        "long_definition": "production serves real users while staging is used for pre-release testing.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      },
+      "before": "no LLM baseline measured",
+      "after": "pass",
+      "reasons": []
+    },
+    {
+      "id": "heldout-21",
+      "family": "hypothetical",
+      "correct": true,
+      "candidate": {
+        "long_definition": "in this fictional hospital demo, row-level security hides records outside the assigned unit.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      },
+      "before": "no LLM baseline measured",
+      "after": "hold",
+      "reasons": [
+        "claim check: clinical access or credential claims require domain evidence unavailable here. Rewrite without this analogy or workflow claim."
+      ]
+    },
+    {
+      "id": "heldout-20",
+      "family": "negation",
+      "correct": true,
+      "candidate": {
+        "long_definition": "a prescription label is not a signed authentication token.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      },
+      "before": "no LLM baseline measured",
+      "after": "hold",
+      "reasons": [
+        "claim check: clinical access or credential claims require domain evidence unavailable here. Rewrite without this analogy or workflow claim."
+      ]
+    },
+    {
+      "id": "heldout-15",
+      "family": "plain",
+      "correct": true,
+      "candidate": {
+        "long_definition": "OAuth can grant an application limited access without handing it your password.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      },
+      "before": "no LLM baseline measured",
+      "after": "pass",
+      "reasons": []
+    },
+    {
+      "id": "heldout-18",
+      "family": "context",
+      "correct": true,
+      "candidate": {
+        "long_definition": "a nurse uses an alert dashboard to notice when a service is down.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      },
+      "before": "no LLM baseline measured",
+      "after": "pass",
+      "reasons": []
+    },
+    {
+      "id": "heldout-02",
+      "family": "access",
+      "correct": false,
+      "candidate": {
+        "long_definition": "the pharmacy system hides all patient profiles outside your store.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      },
+      "before": "no LLM baseline measured",
+      "after": "hold",
+      "reasons": [
+        "claim check: clinical access or credential claims require domain evidence unavailable here. Rewrite without this analogy or workflow claim."
+      ]
+    },
+    {
+      "id": "heldout-22",
+      "family": "hypothetical",
+      "correct": true,
+      "candidate": {
+        "long_definition": "a toy pharmacy application gives each patient a login to a fictional chart.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      },
+      "before": "no LLM baseline measured",
+      "after": "hold",
+      "reasons": [
+        "claim check: clinical access or credential claims require domain evidence unavailable here. Rewrite without this analogy or workflow claim."
+      ]
+    },
+    {
+      "id": "heldout-17",
+      "family": "context",
+      "correct": true,
+      "candidate": {
+        "long_definition": "the pharmacist reports an API error during a fictional stock check.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      },
+      "before": "no LLM baseline measured",
+      "after": "pass",
+      "reasons": []
+    },
+    {
+      "id": "heldout-11",
+      "family": "technical",
+      "correct": false,
+      "candidate": {
+        "long_definition": "an idempotent request must produce a different result every time it is repeated.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      },
+      "before": "no LLM baseline measured",
+      "after": "pass",
+      "reasons": []
+    },
+    {
+      "id": "heldout-24",
+      "family": "context",
+      "correct": true,
+      "candidate": {
+        "long_definition": "patient portal credentials should not be shared with another application.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      },
+      "before": "no LLM baseline measured",
+      "after": "pass",
+      "reasons": []
+    },
+    {
+      "id": "heldout-03",
+      "family": "artifact",
+      "correct": false,
+      "candidate": {
+        "long_definition": "a prescription label is digitally signed so alterations are always detected.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      },
+      "before": "no LLM baseline measured",
+      "after": "hold",
+      "reasons": [
+        "claim check: clinical access or credential claims require domain evidence unavailable here. Rewrite without this analogy or workflow claim."
+      ]
+    },
+    {
+      "id": "heldout-10",
+      "family": "technical",
+      "correct": false,
+      "candidate": {
+        "long_definition": "a JWT encrypts its payload so nobody can read the claims.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      },
+      "before": "no LLM baseline measured",
+      "after": "pass",
+      "reasons": []
+    },
+    {
+      "id": "heldout-19",
+      "family": "negation",
+      "correct": true,
+      "candidate": {
+        "long_definition": "do not assume a hospital system only shows charts from your unit.",
+        "why_it_matters": "understanding the mechanism helps you ask clearer questions.",
+        "example_in_sentence": "we discussed this concept in a fictional software meeting."
+      },
+      "before": "no LLM baseline measured",
+      "after": "hold",
+      "reasons": [
+        "claim check: clinical access or credential claims require domain evidence unavailable here. Rewrite without this analogy or workflow claim."
+      ]
+    }
+  ]
+}
