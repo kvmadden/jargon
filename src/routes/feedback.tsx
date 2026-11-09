@@ -327,7 +327,7 @@ function FeedbackCard({ row }: { row: FeedbackRow }) {
           <img
             src={row.screenshot_data}
             alt="screenshot attached to feedback"
-            className="max-h-48 w-full rounded-sm object-cover object-top"
+            className="max-h-[192px] w-full rounded-sm object-cover object-top"
           />
           <span className="mt-2 block text-xs text-accent-jargon-hi">open screenshot</span>
         </a>
@@ -569,7 +569,7 @@ function OwnerFeedbackCard({
           <img
             src={row.screenshot_data}
             alt="feedback screenshot"
-            className="max-h-56 w-full rounded-md border border-border-default object-cover object-top"
+            className="max-h-[224px] w-full rounded-md border border-border-default object-cover object-top"
           />
         </a>
       )}

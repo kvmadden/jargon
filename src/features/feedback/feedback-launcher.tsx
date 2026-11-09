@@ -333,7 +333,7 @@ export function FeedbackLauncher() {
             <img
               src={draft.screenshotData}
               alt="screen attached to this feedback"
-              className="mt-3 max-h-40 w-full rounded-md border border-border-default object-cover object-top"
+              className="mt-3 max-h-[160px] w-full rounded-md border border-border-default object-cover object-top"
             />
           )}
 

@@ -2,11 +2,12 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-// Tailwind's spacing scale is intentionally replaced in tailwind.config.js.
-// Stock sizes like w-5, h-10, gap-1.5 therefore compile to *no CSS*.
-// These auxiliary surfaces are independent of the stacked lesson redesign PRs.
-// Keep navigation and feedback controls on supported sizes or the explicit
-// 44px touch-target exception. This test does not claim screenshot QA.
+// The project's tailwind.config.js *replaces* the stock spacing scale.
+// Numeric padding, margin, size, gap, space and min/max-size utilities
+// therefore must be drawn from this finite set. A missing class silently
+// creates no CSS. Keep this list aligned with theme.spacing in the config.
+// Avoid touching lessons, editorial seeds, scoring or verifier policy.
+const supportedNumericSpacing = new Set(['0', '1', '2', '3', '4', '6', '8', '12', '16']);
 const surfaces = [
   'src/routes/profile.tsx',
   'src/components/command-palette.tsx',
@@ -17,14 +18,17 @@ const surfaces = [
   'src/routes/path-detail.tsx',
 ] as const;
 
-// Include responsive and arbitrary-media-query prefixes; match whole sizes,
-// not the valid w-12 or the deliberate arbitrary w-[44px] exception.
-const unsupportedSpacing = /(?:^|[\s:"'])((?:w|h|gap|px|py)-(?:1\.5|2\.5|5|7|9|10|11|14))(?=[\s"'\x60])/gm;
+// Captures responsive-class suffixes, including [@media(...)]:py-1,
+// negative margins and image max-height caps. Does not mistake arbitrary
+// px values such as h-[44px] for invalid named theme spacing.
+const numericSpacingUtility = /(?:^|[\s:'"\x60])(-?(?:(?:min|max)-(?:w|h)|(?:w|h)|gap(?:-[xy])?|space-[xy]|[mp](?:[trblxy])?)-(\d+(?:\.\d+)?))(?=$|[\s'"\x60])/gm;
 
 describe('navigation and feedback spacing utility contract', () => {
-  it.each(surfaces)('%s uses supported named sizes', (filename) => {
+  it.each(surfaces)('%s uses supported numeric sizes', (filename) => {
     const content = readFileSync(join(process.cwd(), filename), 'utf8');
-    const unmatched = [...content.matchAll(unsupportedSpacing)].map((match) => match[1]);
-    expect(unmatched).toEqual([]);
+    const missing = [...content.matchAll(numericSpacingUtility)]
+      .filter((match) => !supportedNumericSpacing.has(match[2]))
+      .map((match) => match[1]);
+    expect(missing).toEqual([]);
   });
 });
