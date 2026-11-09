@@ -93,12 +93,11 @@ export function CommandPalette({ open, onClose, commands, onSelectAction }: Prop
     }
   }
 
-  function handleKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
-    if (e.key === 'Escape') {
-      e.preventDefault();
-      onClose();
-      return;
-    }
+  // Only the combobox owns result navigation. When keyboard focus moves to
+  // the mobile Close button, Enter must press Close, not open a highlighted
+  // command via a bubbling dialog-level keydown. useModalA11y owns Escape.
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (results.length === 0) return;
     if (e.key === 'ArrowDown') {
       e.preventDefault();
       setActiveIndex((i) => Math.min(results.length - 1, i + 1));
@@ -132,7 +131,6 @@ export function CommandPalette({ open, onClose, commands, onSelectAction }: Prop
         aria-label="command palette"
         className="w-full h-full sm:h-auto max-w-xl bg-surface-card border-0 sm:border border-border-default rounded-none sm:rounded-xl overflow-hidden shadow-2xl focus:outline-none flex flex-col"
         onClick={(e) => e.stopPropagation()}
-        onKeyDown={handleKeyDown}
       >
         <div className="relative flex items-center border-b border-border-default px-4">
           <input
@@ -150,6 +148,7 @@ export function CommandPalette({ open, onClose, commands, onSelectAction }: Prop
               setQuery(e.target.value);
               setActiveIndex(0);
             }}
+            onKeyDown={handleKeyDown}
             placeholder="type a term, route, or action…"
             className="w-full bg-transparent py-4 pr-2 text-base text-text-primary placeholder:text-text-muted focus:outline-none"
             autoComplete="off"
