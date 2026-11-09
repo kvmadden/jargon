@@ -230,4 +230,61 @@ describe('Feedback route', () => {
     expect(listProductFeedback).toHaveBeenCalledTimes(2);
   });
 
+
+  it('keeps a check-in draft through failed save, question navigation and tab changes', async () => {
+    vi.mocked(isJargonOwner).mockResolvedValue(false);
+    vi.mocked(listProductFeedback).mockResolvedValue([
+      row({
+        id: 'question-1',
+        kind: 'question',
+        category: 'question',
+        message: 'What was confusing in lesson one?',
+        author_user_id: 'owner-1',
+        asked_user_id: 'pilot-1',
+      }),
+      row({
+        id: 'question-2',
+        kind: 'question',
+        category: 'question',
+        message: 'What would make lesson two clearer?',
+        author_user_id: 'owner-1',
+        asked_user_id: 'pilot-1',
+      }),
+    ]);
+    vi.mocked(answerProductFeedback)
+      .mockRejectedValueOnce(new Error('network unavailable'))
+      .mockResolvedValueOnce(undefined);
+
+    render(
+      <MemoryRouter>
+        <FeedbackRoute />
+      </MemoryRouter>,
+    );
+
+    fireEvent.click(await screen.findByRole('tab', { name: 'check-in 2' }));
+    fireEvent.change(screen.getByPlaceholderText('just ramble. no polish needed.'), {
+      target: { value: 'Show the example before introducing the term.' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'save answer' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('network unavailable');
+
+    fireEvent.click(screen.getByRole('button', { name: 'next' }));
+    expect(screen.getByText('What would make lesson two clearer?')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'previous' }));
+    expect(screen.getByDisplayValue('Show the example before introducing the term.')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('tab', { name: 'my loop' }));
+    fireEvent.click(screen.getByRole('tab', { name: 'check-in 2' }));
+    expect(screen.getByDisplayValue('Show the example before introducing the term.')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'save answer' }));
+    await waitFor(() => {
+      expect(answerProductFeedback).toHaveBeenCalledTimes(2);
+      expect(answerProductFeedback).toHaveBeenLastCalledWith(
+        'question-1',
+        'Show the example before introducing the term.',
+      );
+    });
+  });
+
 });
