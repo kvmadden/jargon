@@ -74,6 +74,8 @@ function FeedbackCenter() {
   const [view, setView] = useState<View>('mine');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  // Keep unsent check-in answers while moving between questions or feedback tabs.
+  const [answerDrafts, setAnswerDrafts] = useState<Record<string, string>>({});
 
   const refresh = useCallback(async () => {
     if (!user) return;
@@ -209,6 +211,10 @@ function FeedbackCenter() {
             {view === 'check-in' && (
               <CheckIn
                 rows={myQuestions}
+                drafts={answerDrafts}
+                onDraftChange={(id, answer) => {
+                  setAnswerDrafts((previous) => ({ ...previous, [id]: answer }));
+                }}
                 onSaved={async () => {
                   pushToast('answer saved', 'success');
                   await refresh();
@@ -369,9 +375,13 @@ function FeedbackCard({ row }: { row: FeedbackRow }) {
 
 function CheckIn({
   rows,
+  drafts,
+  onDraftChange,
   onSaved,
 }: {
   rows: FeedbackRow[];
+  drafts: Record<string, string>;
+  onDraftChange: (id: string, answer: string) => void;
   onSaved: () => Promise<void>;
 }) {
   const ordered = useMemo(
@@ -416,7 +426,13 @@ function CheckIn({
         <span>{answered}/{rows.length} answered</span>
         <span>{index + 1}/{ordered.length}</span>
       </div>
-      <QuestionCard key={current.id} row={current} onSaved={onSaved} />
+      <QuestionCard
+        key={current.id}
+        row={current}
+        answer={drafts[current.id] ?? current.answer ?? ''}
+        onAnswerChange={(answer) => onDraftChange(current.id, answer)}
+        onSaved={onSaved}
+      />
       <div className="mt-3 grid grid-cols-2 gap-3">
         <button
           type="button"
@@ -443,12 +459,15 @@ function CheckIn({
 
 function QuestionCard({
   row,
+  answer,
+  onAnswerChange,
   onSaved,
 }: {
   row: FeedbackRow;
+  answer: string;
+  onAnswerChange: (answer: string) => void;
   onSaved: () => Promise<void>;
 }) {
-  const [answer, setAnswer] = useState(row.answer ?? '');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
@@ -480,7 +499,7 @@ function QuestionCard({
         <span className="text-xs uppercase tracking-wider text-text-muted">your answer</span>
         <textarea
           value={answer}
-          onChange={(event) => setAnswer(event.target.value)}
+          onChange={(event) => onAnswerChange(event.target.value)}
           maxLength={4000}
           rows={7}
           placeholder="just ramble. no polish needed."
