@@ -192,11 +192,11 @@ function ProfileContent() {
           <h1 className="text-base font-semibold text-text-primary lowercase">
             profile
           </h1>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => navigate('/settings')}
-              className="px-3 py-2 text-xs font-medium rounded-md text-text-secondary hover:text-text-primary hover:bg-surface-card active:bg-surface-card-hi transition-colors min-w-[44px] min-h-[44px] flex items-center gap-1.5"
+              className="px-3 py-2 text-xs font-medium rounded-md text-text-secondary hover:text-text-primary hover:bg-surface-card active:bg-surface-card-hi transition-colors min-w-[44px] min-h-[44px] flex items-center gap-2"
               aria-label="settings"
             >
               <span>settings</span>
@@ -205,7 +205,7 @@ function ProfileContent() {
               type="button"
               onClick={() => setOverflowOpen(true)}
               // 44pt × 44pt touch target. Glyph is 3 dots — accessible name = "more options".
-              className="w-11 h-11 rounded-md flex items-center justify-center text-text-secondary active:bg-surface-card transition-colors min-w-[44px] min-h-[44px]"
+              className="w-[44px] h-[44px] rounded-md flex items-center justify-center text-text-secondary active:bg-surface-card transition-colors min-w-[44px] min-h-[44px]"
               aria-label="more options"
             >
               {/* triple dots glyph — built inline so we don't take a dep on an icon set */}

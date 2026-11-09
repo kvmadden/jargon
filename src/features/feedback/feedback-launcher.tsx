@@ -297,7 +297,7 @@ export function FeedbackLauncher() {
           <div className="mt-4 space-y-2">
             <label className="flex min-h-[48px] items-center justify-between gap-3 rounded-md border border-border-default bg-surface-card px-3">
               <span className="flex min-w-0 items-center gap-2 text-sm text-text-primary">
-                <CameraIcon className="h-5 w-5 shrink-0" />
+                <CameraIcon className="h-6 w-6 shrink-0" />
                 attach this screen
                 {!draft.screenshotData && <span className="text-xs text-text-muted">unavailable</span>}
               </span>
@@ -311,7 +311,7 @@ export function FeedbackLauncher() {
                     includeScreenshot: event.target.checked,
                   }))
                 }
-                className="h-5 w-5 accent-accent-jargon"
+                className="h-6 w-6 accent-accent-jargon"
               />
             </label>
             <label className="flex min-h-[48px] items-center justify-between gap-3 rounded-md border border-border-default bg-surface-card px-3">
@@ -324,7 +324,7 @@ export function FeedbackLauncher() {
                 onChange={(event) =>
                   setDraft((current) => ({ ...current, includeContext: event.target.checked }))
                 }
-                className="h-5 w-5 accent-accent-jargon"
+                className="h-6 w-6 accent-accent-jargon"
               />
             </label>
           </div>

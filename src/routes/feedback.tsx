@@ -602,7 +602,7 @@ function OwnerFeedbackCard({
           type="checkbox"
           checked={close}
           onChange={(event) => setClose(event.target.checked)}
-          className="h-5 w-5 accent-accent-jargon"
+          className="h-6 w-6 accent-accent-jargon"
         />
       </label>
       {error && <p role="alert" className="mt-3 text-sm text-accent-triage">{error}</p>}

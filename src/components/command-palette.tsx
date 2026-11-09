@@ -159,7 +159,7 @@ export function CommandPalette({ open, onClose, commands, onSelectAction }: Prop
             type="button"
             onClick={onClose}
             aria-label="close command palette"
-            className="sm:hidden flex items-center justify-center w-11 h-11 text-text-secondary hover:text-text-primary min-w-[44px] min-h-[44px] select-none shrink-0"
+            className="sm:hidden flex items-center justify-center w-[44px] h-[44px] text-text-secondary hover:text-text-primary min-w-[44px] min-h-[44px] select-none shrink-0"
           >
             ✕
           </button>
@@ -252,7 +252,7 @@ function KindPill({ kind }: { kind: Command['kind'] }) {
   const label =
     kind === 'route' ? 'go' : kind === 'action' ? 'do' : 'term';
   return (
-    <span className="text-2xs font-mono uppercase tracking-wider text-text-muted shrink-0 w-9 text-right">
+    <span className="text-2xs font-mono uppercase tracking-wider text-text-muted shrink-0 w-8 text-right">
       {label}
     </span>
   );

@@ -123,7 +123,7 @@ function PathDetailContent() {
           <button
             type="button"
             onClick={() => handleBack(navigate, location, '/home')}
-            className="w-10 h-10 min-w-[44px] min-h-[44px] rounded-md flex items-center justify-center text-text-secondary text-lg active:bg-surface-card transition-colors"
+            className="w-[44px] h-[44px] min-w-[44px] min-h-[44px] rounded-md flex items-center justify-center text-text-secondary text-lg active:bg-surface-card transition-colors"
             aria-label="back"
           >
             ‹
@@ -160,7 +160,7 @@ function PathDetailContent() {
           <button
             type="button"
             onClick={() => handleBack(navigate, location, '/home')}
-            className="w-10 h-10 rounded-md flex items-center justify-center text-text-secondary text-lg active:bg-surface-card transition-colors min-w-[44px] min-h-[44px]"
+            className="w-[44px] h-[44px] rounded-md flex items-center justify-center text-text-secondary text-lg active:bg-surface-card transition-colors min-w-[44px] min-h-[44px]"
             aria-label="back"
           >
             ‹
