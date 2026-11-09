@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import Profile from './profile';
+import Profile, { getProfileActivityCells } from './profile';
 import { useUserStore } from '../stores/user-store';
 import {
   fetchAllTerms,
@@ -40,6 +40,34 @@ const MOCK_TERMS = [
   },
 ];
 
+describe('Profile local-day activity rendering', () => {
+  it('places an evening lesson in today, not tomorrow when UTC has already rolled over', () => {
+    // 11:30pm May 4 in New York is May 5 in UTC.
+    const cells = getProfileActivityCells(
+      [{ local_date: '2026-05-04', lessons_completed: 3 }],
+      new Date('2026-05-05T03:30:00Z'),
+      'America/New_York',
+    );
+    expect(cells).toHaveLength(28);
+    expect(cells[27]).toBe(3);
+    expect(cells[26]).toBe(0);
+  });
+
+  it('keeps both adjacent local calendar days across the fall DST transition', () => {
+    // 11:30pm Nov 1 EST; the previous local day was Oct 31 EDT.
+    const cells = getProfileActivityCells(
+      [
+        { local_date: '2026-10-31', lessons_completed: 4 },
+        { local_date: '2026-11-01', lessons_completed: 2 },
+      ],
+      new Date('2026-11-02T04:30:00Z'),
+      'America/New_York',
+    );
+    expect(cells[26]).toBe(4);
+    expect(cells[27]).toBe(2);
+  });
+});
+
 describe('Profile route', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -73,6 +101,30 @@ describe('Profile route', () => {
     );
 
     expect(screen.getByText('loading…')).toBeInTheDocument();
+  });
+
+  it('renders the latest real activity count in the strip', async () => {
+    const today = new Intl.DateTimeFormat('en-CA', {
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).format(new Date());
+    vi.mocked(fetchStreakLog).mockResolvedValue([
+      { local_date: today, lessons_completed: 2 },
+    ] as any);
+
+    render(
+      <MemoryRouter>
+        <Profile />
+      </MemoryRouter>,
+    );
+
+    await waitFor(() => {
+      const strip = screen.getByLabelText('28-day activity heatmap');
+      expect(strip.children).toHaveLength(28);
+      expect(strip.lastElementChild?.classList.contains('bg-accent-jargon/[0.60]')).toBe(true);
+    });
   });
 
   it('renders profile overview when loaded', async () => {
