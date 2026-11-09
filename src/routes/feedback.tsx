@@ -185,14 +185,25 @@ function FeedbackCenter() {
         </div>
 
         {error && (
-          <p role="alert" className="mt-3 rounded-md border border-accent-triage/50 bg-surface-card p-3 text-sm text-accent-triage">
-            {error}
-          </p>
+          <div role="alert" className="mt-3 rounded-md border border-accent-triage/50 bg-surface-card p-3 text-sm text-accent-triage">
+            <p>{error}</p>
+            <button
+              type="button"
+              onClick={() => {
+                setError('');
+                setLoading(true);
+                void refresh();
+              }}
+              className="mt-3 min-h-[44px] rounded-md border border-border-default px-4 text-sm font-semibold text-text-primary hover:border-accent-jargon focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-jargon"
+            >
+              try again
+            </button>
+          </div>
         )}
 
         {loading ? (
           <p className="py-16 text-center text-sm text-text-muted">loading the loop…</p>
-        ) : (
+        ) : error && rows.length === 0 ? null : (
           <div className="mt-4">
             {view === 'mine' && <MyLoop rows={mySubmissions} />}
             {view === 'check-in' && (
