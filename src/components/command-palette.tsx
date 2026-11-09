@@ -74,7 +74,9 @@ export function CommandPalette({ open, onClose, commands, onSelectAction }: Prop
     const list = listRef.current;
     if (!list) return;
     const row = list.querySelector<HTMLElement>(`[data-index="${activeIndex}"]`);
-    row?.scrollIntoView({ block: 'nearest' });
+    // Some embedded webviews (and JSDOM) do not implement this API.
+    // Keep keyboard navigation functional even when auto-scrolling is unavailable.
+    row?.scrollIntoView?.({ block: 'nearest' });
   }, [activeIndex]);
 
   function handleSelect(cmd: RankedCommand) {
