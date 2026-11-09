@@ -208,4 +208,26 @@ describe('Feedback route', () => {
       );
     });
   });
+  it('offers recovery on a failed initial load instead of falsely claiming the inbox is empty', async () => {
+    vi.mocked(isJargonOwner).mockResolvedValue(false);
+    vi.mocked(listProductFeedback)
+      .mockRejectedValueOnce(new Error('feedback temporarily unavailable'))
+      .mockResolvedValueOnce([row({ message: 'Recovered feedback note.' })]);
+
+    render(
+      <MemoryRouter>
+        <FeedbackRoute />
+      </MemoryRouter>,
+    );
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('feedback temporarily unavailable');
+    expect(screen.queryByText('no notes yet')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'try again' }));
+
+    expect(await screen.findByText('Recovered feedback note.')).toBeInTheDocument();
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(listProductFeedback).toHaveBeenCalledTimes(2);
+  });
+
 });
