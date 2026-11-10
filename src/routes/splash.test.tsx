@@ -149,6 +149,40 @@ describe('Splash route', () => {
     });
   });
 
+  it('keeps a pending invite check active when auth refreshes the same user', async () => {
+    let resolveCheck: ((result: { allowed: boolean }) => void) | undefined;
+    vi.mocked(checkAllowlist).mockImplementationOnce(
+      () => new Promise<{ allowed: boolean }>((resolve) => { resolveCheck = resolve; }),
+    );
+    useUserStore.setState({
+      user: { id: 'same-user', email: 'member@example.com' } as any,
+      session: null,
+      loading: false,
+    });
+
+    render(
+      <MemoryRouter>
+        <Splash />
+      </MemoryRouter>,
+    );
+    await waitFor(() => expect(checkAllowlist).toHaveBeenCalledTimes(1));
+
+    // INITIAL_SESSION / TOKEN_REFRESHED can replace the user object even
+    // when its id did not change. The original check must still complete.
+    act(() => {
+      useUserStore.setState({
+        user: { id: 'same-user', email: 'member@example.com' } as any,
+      });
+    });
+    expect(checkAllowlist).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      resolveCheck?.({ allowed: true });
+    });
+    expect(mockNavigate).toHaveBeenCalledWith('/home', { replace: true });
+    expect(supabase.auth.signOut).not.toHaveBeenCalled();
+  });
+
   it('shows denied state when user is not allowlisted', async () => {
     useUserStore.setState({
       user: { id: 'curator' } as any,
