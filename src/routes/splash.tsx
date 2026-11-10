@@ -235,9 +235,9 @@ function SplashContent() {
         {/* Brand v0.1: large signature mark + locked tagline. The wordmark renders
             as `// jargon` in IBM Plex Mono Medium at 64px (brand-sheet hero spec). */}
         <Wordmark size={64} className="mb-6 text-accent-jargon" />
-        <p className="text-2xl font-light italic text-text-primary text-center tracking-tight leading-tight">
+        <h1 className="text-2xl font-light italic text-text-primary text-center tracking-tight leading-tight">
           Speak the room.
-        </p>
+        </h1>
 
         <div className="w-full mt-12">
           {mode === 'denied' ? (
@@ -357,6 +357,8 @@ function SplashContent() {
               <form onSubmit={sendLink} className="flex flex-col gap-3">
                 <input
                   type="email"
+                  aria-label="your email"
+                  autoFocus
                   inputMode="email"
                   autoComplete="email"
                   value={email}
