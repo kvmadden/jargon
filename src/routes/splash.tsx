@@ -148,7 +148,10 @@ function SplashContent() {
       active = false;
       clearTimeout(timeoutTimer);
     };
-  }, [user, loading, navigate, retryToken]);
+  // Auth can refresh the User object without changing the authenticated account.
+  // Key by id so that refresh cannot cancel the in-flight check and strand the
+  // screen behind checkedRef with neither navigation nor a retry timeout.
+  }, [user?.id, loading, navigate, retryToken]);
 
   async function sendLink(e: React.FormEvent) {
     e.preventDefault();
