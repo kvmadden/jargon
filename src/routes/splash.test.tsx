@@ -200,7 +200,7 @@ describe('Splash route', () => {
   it('ignores a delayed denial from a previous user session', async () => {
     let resolveOld: ((result: { allowed: boolean }) => void) | undefined;
     vi.mocked(checkAllowlist)
-      .mockImplementationOnce(() => new Promise((resolve) => { resolveOld = resolve; }))
+      .mockImplementationOnce(() => new Promise<{ allowed: boolean }>((resolve) => { resolveOld = resolve; }))
       .mockResolvedValueOnce({ allowed: true });
 
     useUserStore.setState({
