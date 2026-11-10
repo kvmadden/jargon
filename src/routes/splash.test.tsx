@@ -1,3 +1,4 @@
+import { StrictMode } from 'react';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -147,6 +148,44 @@ describe('Splash route', () => {
     await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledWith('/home', { replace: true });
     });
+  });
+
+  it('restarts an authenticated check after StrictMode cleanup', async () => {
+    useUserStore.setState({ user: { id: 'strict-user' } as any, loading: false });
+    vi.mocked(checkAllowlist).mockResolvedValue({ allowed: true });
+
+    render(
+      <StrictMode>
+        <MemoryRouter><Splash /></MemoryRouter>
+      </StrictMode>,
+    );
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith('/home', { replace: true });
+    });
+    expect(checkAllowlist).toHaveBeenCalledTimes(2);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(supabase.auth.signOut).not.toHaveBeenCalled();
+  });
+
+  it('restarts a cancelled check when auth loading settles for the same account', async () => {
+    let resolveOld: ((result: { allowed: boolean }) => void) | undefined;
+    vi.mocked(checkAllowlist)
+      .mockImplementationOnce(() => new Promise<{ allowed: boolean }>((resolve) => { resolveOld = resolve; }))
+      .mockResolvedValueOnce({ allowed: true });
+    useUserStore.setState({ user: { id: 'loading-user' } as any, loading: false });
+
+    render(<MemoryRouter><Splash /></MemoryRouter>);
+    await waitFor(() => expect(checkAllowlist).toHaveBeenCalledTimes(1));
+    act(() => { useUserStore.setState({ loading: true }); });
+    act(() => { useUserStore.setState({ loading: false }); });
+
+    await waitFor(() => {
+      expect(checkAllowlist).toHaveBeenCalledTimes(2);
+      expect(mockNavigate).toHaveBeenCalledWith('/home', { replace: true });
+    });
+    await act(async () => { resolveOld?.({ allowed: false }); });
+    expect(supabase.auth.signOut).not.toHaveBeenCalled();
   });
 
   it('keeps a pending invite check active when auth refreshes the same user', async () => {

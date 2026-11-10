@@ -147,6 +147,9 @@ function SplashContent() {
     return () => {
       active = false;
       clearTimeout(timeoutTimer);
+      // Cleanup cancels this attempt, so replay (StrictMode or auth loading)
+      // must be allowed to start a fresh check for the same account.
+      if (checkedRef.current === user.id) checkedRef.current = null;
     };
   // Auth can refresh the User object without changing the authenticated account.
   // Key by id so that refresh cannot cancel the in-flight check and strand the
