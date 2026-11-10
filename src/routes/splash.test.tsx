@@ -67,7 +67,23 @@ describe('Splash route', () => {
     );
 
     fireEvent.click(screen.getByRole('button', { name: /let.*s go/i }));
-    expect(screen.getByPlaceholderText('your email')).toBeInTheDocument();
+    const emailInput = screen.getByRole('textbox', { name: 'your email' });
+    expect(emailInput).toBeInTheDocument();
+    expect(emailInput).toHaveFocus();
+    expect(screen.getByRole('heading', { level: 1, name: /speak the room/i })).toBeInTheDocument();
+  });
+
+  it('labels the sign-in form when a returning visitor bypasses landing', () => {
+    window.localStorage.setItem('jargon-seen-landing', '1');
+
+    render(
+      <MemoryRouter>
+        <Splash />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByRole('heading', { level: 1, name: /speak the room/i })).toBeInTheDocument();
+    expect(screen.getByRole('textbox', { name: 'your email' })).toBeInTheDocument();
   });
 
   it('sends magic link and shows check email state', async () => {
