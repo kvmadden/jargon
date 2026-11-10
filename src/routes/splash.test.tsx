@@ -197,6 +197,41 @@ describe('Splash route', () => {
     expect(supabase.auth.signOut).not.toHaveBeenCalled();
   });
 
+  it('ignores a delayed denial from a previous user session', async () => {
+    let resolveOld: ((result: { allowed: boolean }) => void) | undefined;
+    vi.mocked(checkAllowlist)
+      .mockImplementationOnce(() => new Promise((resolve) => { resolveOld = resolve; }))
+      .mockResolvedValueOnce({ allowed: true });
+
+    useUserStore.setState({
+      user: { id: 'first-user' } as any,
+      session: null,
+      loading: false,
+    });
+    render(
+      <MemoryRouter>
+        <Splash />
+      </MemoryRouter>,
+    );
+    await waitFor(() => expect(checkAllowlist).toHaveBeenCalledTimes(1));
+
+    // An account switch invalidates the first check even if its response
+    // arrives after the new account has already been admitted.
+    act(() => {
+      useUserStore.setState({ user: { id: 'second-user' } as any });
+    });
+    await waitFor(() => {
+      expect(checkAllowlist).toHaveBeenCalledTimes(2);
+      expect(mockNavigate).toHaveBeenCalledWith('/home', { replace: true });
+    });
+
+    await act(async () => {
+      resolveOld?.({ allowed: false });
+    });
+    expect(supabase.auth.signOut).not.toHaveBeenCalled();
+    expect(screen.queryByRole('heading', { name: /invite-only/i })).not.toBeInTheDocument();
+  });
+
   it('provides resend link with cooldown and use a different email button in sent state', async () => {
     window.localStorage.setItem('jargon-seen-landing', '1');
     vi.mocked(supabase.auth.signInWithOtp).mockResolvedValue({ data: {}, error: null } as any);
