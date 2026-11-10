@@ -168,6 +168,35 @@ describe('Splash route', () => {
     });
   });
 
+  it('distinguishes an allowlist network failure from a denied invite and retries without signing out', async () => {
+    useUserStore.setState({
+      user: { id: 'curator' } as any,
+      session: null,
+      loading: false,
+    });
+    vi.mocked(checkAllowlist)
+      .mockRejectedValueOnce(new Error('network offline'))
+      .mockResolvedValueOnce({ allowed: true });
+
+    render(
+      <MemoryRouter>
+        <Splash />
+      </MemoryRouter>,
+    );
+
+    expect(await screen.findByRole('heading', { name: /couldn't check your invite/i })).toBeInTheDocument();
+    expect(screen.getByRole('alert')).toHaveTextContent(/check your connection and try again/i);
+    expect(screen.queryByRole('heading', { name: /invite-only/i })).not.toBeInTheDocument();
+    expect(supabase.auth.signOut).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole('button', { name: /try again/i }));
+    await waitFor(() => {
+      expect(checkAllowlist).toHaveBeenCalledTimes(2);
+      expect(mockNavigate).toHaveBeenCalledWith('/home', { replace: true });
+    });
+    expect(supabase.auth.signOut).not.toHaveBeenCalled();
+  });
+
   it('provides resend link with cooldown and use a different email button in sent state', async () => {
     window.localStorage.setItem('jargon-seen-landing', '1');
     vi.mocked(supabase.auth.signInWithOtp).mockResolvedValue({ data: {}, error: null } as any);

@@ -12,7 +12,7 @@ import { ErrorBoundary } from './error-boundary';
 const SEEN_LANDING_KEY = 'jargon-seen-landing';
 const GOOGLE_AUTH_ENABLED = import.meta.env.VITE_GOOGLE_AUTH_ENABLED === 'true';
 
-type Mode = 'landing' | 'idle' | 'sending' | 'sent' | 'error' | 'denied' | 'checking' | 'check_timed_out';
+type Mode = 'landing' | 'idle' | 'sending' | 'sent' | 'error' | 'denied' | 'checking' | 'check_timed_out' | 'check_failed';
 
 export default function Splash() {
   return (
@@ -134,7 +134,7 @@ function SplashContent() {
         // (network hiccup, cold function), not a refusal. Evicting a legitimate
         // user on a transient error would cost them a fresh magic link, and the
         // RLS predicate already denies data to anyone off the allowlist.
-        setMode('denied');
+        setMode('check_failed');
       }
     })();
 
@@ -304,11 +304,15 @@ function SplashContent() {
                 </button>
               </div>
             </div>
-          ) : mode === 'check_timed_out' ? (
+          ) : (mode === 'check_timed_out' || mode === 'check_failed') ? (
             <div className="bg-surface-card border border-border-default rounded-lg p-4 text-center">
-              <h2 className="text-base font-semibold text-text-primary">taking longer than expected</h2>
-              <p className="text-sm text-text-secondary mt-2">
-                checking your invite timed out. check your connection or try again.
+              <h2 className="text-base font-semibold text-text-primary">
+                {mode === 'check_failed' ? "couldn't check your invite" : 'taking longer than expected'}
+              </h2>
+              <p role="alert" className="text-sm text-text-secondary mt-2">
+                {mode === 'check_failed'
+                  ? "we couldn't verify your invite right now. check your connection and try again."
+                  : 'checking your invite timed out. check your connection or try again.'}
               </p>
               <div className="flex flex-col gap-2 mt-4">
                 <button
