@@ -105,14 +105,18 @@ function SplashContent() {
     checkedRef.current = user.id;
     setMode('checking');
 
+    // Ignore completion of a superseded check (retry, user switch, unmount).
+    // A stale denial must never sign out a newer authenticated session.
+    let active = true;
     const timeoutTimer = setTimeout(() => {
-      setMode('check_timed_out');
+      if (active) setMode('check_timed_out');
     }, 8000);
 
     (async () => {
       try {
         const result = await checkAllowlist();
         clearTimeout(timeoutTimer);
+        if (!active) return;
         if (result.allowed) {
           navigate('/home', { replace: true });
         } else {
@@ -123,13 +127,15 @@ function SplashContent() {
           // the real boundary; revoking the credential here is what stops a
           // refused account from holding one at all.
           await supabase.auth.signOut();
+          if (!active) return;
           checkedRef.current = null;
           setMode('denied');
         }
       } catch (err) {
+        clearTimeout(timeoutTimer);
+        if (!active) return;
         // eslint-disable-next-line no-console
         console.error('[splash] allowlist check failed', err);
-        clearTimeout(timeoutTimer);
         // Deliberately NO sign-out here: this branch is an INCONCLUSIVE check
         // (network hiccup, cold function), not a refusal. Evicting a legitimate
         // user on a transient error would cost them a fresh magic link, and the
@@ -139,6 +145,7 @@ function SplashContent() {
     })();
 
     return () => {
+      active = false;
       clearTimeout(timeoutTimer);
     };
   }, [user, loading, navigate, retryToken]);
