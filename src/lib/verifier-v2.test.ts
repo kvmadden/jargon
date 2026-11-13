@@ -1,0 +1,173 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { describe, expect, it } from 'vitest';
+import {
+  CLAIM_TYPES,
+  METERED_KEY_VARS,
+  assertClaudeSubscription,
+  decideV2,
+  expertFor,
+  parseV2,
+  scoreArm,
+  subscriptionEnv,
+  v2SystemPrompt,
+  v2UserMessage,
+  type GoldRow,
+  type V2Verdict,
+} from '../../eval/verifier-v2/lib';
+
+const ROOT = join(__dirname, '..', '..');
+const readJson = (p: string) => JSON.parse(readFileSync(join(ROOT, p), 'utf8'));
+
+const verdict = (claims: Array<[string, string]>, signoff: 'yes' | 'no' = 'yes'): V2Verdict => ({
+  claims: claims.map(([type, v]) => ({ type: type as any, claim: 'c', verdict: v as any, reason: 'r' })),
+  expert: 'licensed pharmacist',
+  signoff,
+  signoff_reason: 'r',
+});
+
+describe('verifier v2 decision rule', () => {
+  it('passes only when every claim is supported or unverifiable and the expert signs off', () => {
+    expect(decideV2(verdict([['TECH', 'supported'], ['EXTERNAL', 'unverifiable']]))).toBe('pass');
+  });
+  it('fails on a wrong claim under both rules', () => {
+    const v = verdict([['TECH', 'supported'], ['PRACTICE', 'wrong']]);
+    expect(decideV2(v, 'primary')).toBe('fail');
+    expect(decideV2(v, 'lenient')).toBe('fail');
+  });
+  it('fails on a misleading claim under primary but not lenient', () => {
+    const v = verdict([['MAPPING', 'misleading']]);
+    expect(decideV2(v, 'primary')).toBe('fail');
+    expect(decideV2(v, 'lenient')).toBe('pass');
+  });
+  it('fails when the expert would not sign off, even with all claims supported', () => {
+    expect(decideV2(verdict([['TECH', 'supported']], 'no'), 'lenient')).toBe('fail');
+  });
+});
+
+describe('verifier v2 parser', () => {
+  const good = JSON.stringify(verdict([['SCENARIO', 'wrong']]));
+  it('parses a plain or fenced JSON verdict and an already parsed object', () => {
+    expect(parseV2(good)?.claims[0].verdict).toBe('wrong');
+    expect(parseV2('```json\n' + good + '\n```')?.signoff).toBe('yes');
+    expect(parseV2(JSON.parse(good))?.claims).toHaveLength(1);
+  });
+  it('rejects malformed verdicts instead of guessing', () => {
+    expect(parseV2(null)).toBeNull();
+    expect(parseV2('not json')).toBeNull();
+    expect(parseV2({ ...JSON.parse(good), signoff: 'maybe' })).toBeNull();
+    expect(parseV2({ ...JSON.parse(good), claims: [] })).toBeNull();
+    expect(parseV2({ ...JSON.parse(good), claims: [{ type: 'OPINION', claim: 'c', verdict: 'wrong', reason: 'r' }] })).toBeNull();
+    expect(parseV2({ ...JSON.parse(good), claims: [{ type: 'TECH', claim: 'c', verdict: 'fine', reason: 'r' }] })).toBeNull();
+  });
+});
+
+describe('subscription-only guard', () => {
+  it('removes every metered key variable and keeps the rest', () => {
+    const env: Record<string, string> = { PATH: '/bin', HOME: '/h' };
+    for (const k of METERED_KEY_VARS) env[k] = 'secret';
+    const out = subscriptionEnv(env);
+    expect(out).toEqual({ PATH: '/bin', HOME: '/h' });
+  });
+  it('covers the keys the three CLIs read', () => {
+    for (const k of ['ANTHROPIC_API_KEY', 'XAI_API_KEY', 'GEMINI_API_KEY', 'OPENAI_API_KEY']) {
+      expect(METERED_KEY_VARS).toContain(k);
+    }
+  });
+  it('accepts only apiKeySource "none" from the claude CLI', () => {
+    expect(() => assertClaudeSubscription({ apiKeySource: 'none' })).not.toThrow();
+    expect(() => assertClaudeSubscription({ apiKeySource: 'ANTHROPIC_API_KEY' })).toThrow(/only the subscription/);
+    expect(() => assertClaudeSubscription({})).toThrow();
+    expect(() => assertClaudeSubscription(null)).toThrow(/auth source is unknown/);
+  });
+});
+
+describe('scoring', () => {
+  const gold: GoldRow[] = [
+    { id: 'm1', group: 'A-confirmed-miss', label: 'wrong', label_status: 'confirmed' },
+    { id: 'm2', group: 'A-confirmed-miss', label: 'wrong', label_status: 'confirmed' },
+    { id: 'c1', group: 'B-reported-correct', label: 'correct', label_status: 'proposed', prior_ruling: { label: 'correct' } },
+    { id: 'c2', group: 'D-pharmacist', label: 'correct', label_status: 'proposed' },
+    { id: 'x1', group: 'C-borderline', label: 'misleading', label_status: 'proposed' },
+  ];
+  it('counts catches, false alarms and missing verdicts without rewarding a broken run', () => {
+    const s = scoreArm(gold, [
+      { id: 'm1', decision: 'fail' },
+      { id: 'm2', decision: null },
+      { id: 'c1', decision: 'fail' },
+      { id: 'c2', decision: 'pass' },
+      { id: 'x1', decision: 'fail' },
+    ]);
+    expect(s.confirmed_misses).toEqual({ caught: 1, of: 2 });
+    expect(s.proposed_flawed).toEqual({ caught: 2, of: 3 });
+    expect(s.proposed_correct).toEqual({ false_alarms: 1, of: 2 });
+    expect(s.reported_correct).toEqual({ false_alarms: 1, of: 1 });
+    expect(s.no_verdict).toBe(1);
+  });
+  it('treats an item with no result as no verdict', () => {
+    expect(scoreArm(gold, []).no_verdict).toBe(5);
+  });
+  it('refuses a confirmed-miss row that is not a confirmed flawed label', () => {
+    expect(() => scoreArm([{ id: 'z', group: 'A-confirmed-miss', label: 'correct', label_status: 'confirmed' }], [])).toThrow();
+  });
+});
+
+describe('verifier v2 prompt', () => {
+  it('lists every claim type and warns that the canonical can be wrong', () => {
+    const p = v2SystemPrompt();
+    for (const k of Object.keys(CLAIM_TYPES)) expect(p).toContain(`- ${k}:`);
+    expect(p).toMatch(/not ground truth/);
+  });
+  it('names a pharmacist as the sign-off expert for the pharmacist learner', () => {
+    expect(expertFor('pharmacist')).toBe('licensed pharmacist');
+    const msg = v2UserMessage({
+      canonical: { term: 't', one_line_definition: 'o', long_definition: 'l', why_it_matters: 'w', example_in_sentence: 'e' },
+      candidate: { long_definition: 'L', why_it_matters: 'W', example_in_sentence: 'E' },
+      profileId: 'pharmacist',
+      profile: { label: 'retail pharmacist', job: 'staff pharmacist' },
+    });
+    expect(msg).toContain('EXPERT WHO MUST SIGN OFF: licensed pharmacist');
+    expect(() => expertFor('chef')).toThrow();
+  });
+});
+
+describe('gold set files', () => {
+  const items = readJson('eval/verifier-v2/gold/items.json');
+  const confirm = readJson('eval/verifier-v2/gold/confirm.json');
+  it('holds 50 items with matching ids and text in both files', () => {
+    expect(items.items).toHaveLength(50);
+    expect(confirm.items.map((r: any) => r.id)).toEqual(items.items.map((r: any) => r.id));
+    for (let i = 0; i < 50; i++) expect(confirm.items[i].text).toEqual(items.items[i].candidate);
+  });
+  it('marks exactly the five known misses confirmed wrong and everything else proposed', () => {
+    const confirmed = confirm.items.filter((r: any) => r.label_status === 'confirmed');
+    expect(confirmed.map((r: any) => r.id).sort()).toEqual(
+      [
+        'bi-rls::nurse::final',
+        'bi-rls::pharmacist::final',
+        'cloud-environment::pharmacist::final',
+        'sec-oauth::pharmacist::final',
+        'sys-jwt::pharmacist::final',
+      ].sort(),
+    );
+    for (const r of confirmed) expect(r.label).toBe('wrong');
+    for (const r of confirm.items) {
+      if (r.label_status !== 'confirmed') expect(r.label_status).toBe('proposed');
+      expect(['correct', 'wrong', 'misleading']).toContain(r.label);
+      expect(r.reason.length).toBeGreaterThan(0);
+    }
+  });
+  it('traces every item to the saved 2026-10-30 run text', () => {
+    const run = readFileSync(join(ROOT, 'eval/results/2026-10-30.jsonl'), 'utf8')
+      .trim()
+      .split('\n')
+      .map((l) => JSON.parse(l));
+    const byRun = new Map(run.map((r: any) => [r.run_id, r]));
+    for (const it of items.items) {
+      const r: any = byRun.get(it.run_id);
+      const src = it.variant === 'pass1' ? r.pass1_candidate : r.final_text;
+      expect(it.candidate.long_definition).toBe(src.long_definition);
+      expect(it.candidate.example_in_sentence).toBe(src.example_in_sentence);
+    }
+  });
+});
