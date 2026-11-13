@@ -105,13 +105,19 @@ export function TermQuickPeek({ termId, onClose, onSeeFull }: Props) {
         // background's onClick (which dismisses).
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Drag handle — visual hint that this is dismissible. */}
+        {/* Keep the slim visual handle, but make its touch target 48 × 44px.
+            Pull the hit area into the sheet padding so the term stays in place. */}
         <button
           type="button"
           onClick={onClose}
-          className="block w-12 h-1 rounded-full bg-border-default mx-auto mb-4 hover:bg-text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-jargon transition-colors"
-          aria-label="close"
-        />
+          className="group mx-auto -mt-[20px] flex min-h-[44px] w-12 items-center justify-center rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-jargon"
+          aria-label="close quick peek"
+        >
+          <span
+            aria-hidden="true"
+            className="block h-1 w-12 rounded-full bg-border-default transition-colors group-hover:bg-text-muted"
+          />
+        </button>
 
         {loading && (
           <p role="status" aria-live="polite" className="text-sm text-text-muted text-center py-6">loading…</p>
