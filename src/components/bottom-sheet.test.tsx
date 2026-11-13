@@ -52,6 +52,27 @@ describe('BottomSheet', () => {
     expect(onClose).not.toHaveBeenCalled();
   });
 
+  it('constrains a tall sheet to the viewport while keeping its actions reachable', () => {
+    const onClose = vi.fn();
+    render(
+      <BottomSheet open={true} onClose={onClose} ariaLabel="Tall Sheet">
+        <div style={{ height: 1800 }}>Long explanation</div>
+        <button type="button">Last action</button>
+      </BottomSheet>
+    );
+
+    const dialog = screen.getByRole('dialog', { name: 'Tall Sheet' });
+    // JSDOM cannot measure scroll geometry, so assert the actual Tailwind
+    // overflow/viewport contract. Browser viewport acceptance is separate.
+    expect(dialog).toHaveClass('max-h-[calc(100dvh-1rem)]', 'overflow-y-auto', 'overscroll-contain');
+    expect(screen.getByRole('button', { name: 'Last action' })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Last action' }));
+    expect(onClose).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('presentation'));
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
   it('applies scroll lock to document.body when open, and restores it on unmount', () => {
     document.body.style.overflow = 'auto';
     const onClose = vi.fn();

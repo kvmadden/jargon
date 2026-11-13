@@ -74,6 +74,8 @@ function FeedbackCenter() {
   const [view, setView] = useState<View>('mine');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  // Keep unsent check-in answers while moving between questions or feedback tabs.
+  const [answerDrafts, setAnswerDrafts] = useState<Record<string, string>>({});
 
   const refresh = useCallback(async () => {
     if (!user) return;
@@ -185,19 +187,34 @@ function FeedbackCenter() {
         </div>
 
         {error && (
-          <p role="alert" className="mt-3 rounded-md border border-accent-triage/50 bg-surface-card p-3 text-sm text-accent-triage">
-            {error}
-          </p>
+          <div role="alert" className="mt-3 rounded-md border border-accent-triage/50 bg-surface-card p-3 text-sm text-accent-triage">
+            <p>{error}</p>
+            <button
+              type="button"
+              onClick={() => {
+                setError('');
+                setLoading(true);
+                void refresh();
+              }}
+              className="mt-3 min-h-[44px] rounded-md border border-border-default px-4 text-sm font-semibold text-text-primary hover:border-accent-jargon focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-jargon"
+            >
+              try again
+            </button>
+          </div>
         )}
 
         {loading ? (
           <p className="py-16 text-center text-sm text-text-muted">loading the loop…</p>
-        ) : (
+        ) : error && rows.length === 0 ? null : (
           <div className="mt-4">
             {view === 'mine' && <MyLoop rows={mySubmissions} />}
             {view === 'check-in' && (
               <CheckIn
                 rows={myQuestions}
+                drafts={answerDrafts}
+                onDraftChange={(id, answer) => {
+                  setAnswerDrafts((previous) => ({ ...previous, [id]: answer }));
+                }}
                 onSaved={async () => {
                   pushToast('answer saved', 'success');
                   await refresh();
@@ -327,7 +344,7 @@ function FeedbackCard({ row }: { row: FeedbackRow }) {
           <img
             src={row.screenshot_data}
             alt="screenshot attached to feedback"
-            className="max-h-48 w-full rounded-sm object-cover object-top"
+            className="max-h-[192px] w-full rounded-sm object-cover object-top"
           />
           <span className="mt-2 block text-xs text-accent-jargon-hi">open screenshot</span>
         </a>
@@ -358,9 +375,13 @@ function FeedbackCard({ row }: { row: FeedbackRow }) {
 
 function CheckIn({
   rows,
+  drafts,
+  onDraftChange,
   onSaved,
 }: {
   rows: FeedbackRow[];
+  drafts: Record<string, string>;
+  onDraftChange: (id: string, answer: string) => void;
   onSaved: () => Promise<void>;
 }) {
   const ordered = useMemo(
@@ -405,7 +426,13 @@ function CheckIn({
         <span>{answered}/{rows.length} answered</span>
         <span>{index + 1}/{ordered.length}</span>
       </div>
-      <QuestionCard key={current.id} row={current} onSaved={onSaved} />
+      <QuestionCard
+        key={current.id}
+        row={current}
+        answer={drafts[current.id] ?? current.answer ?? ''}
+        onAnswerChange={(answer) => onDraftChange(current.id, answer)}
+        onSaved={onSaved}
+      />
       <div className="mt-3 grid grid-cols-2 gap-3">
         <button
           type="button"
@@ -432,12 +459,15 @@ function CheckIn({
 
 function QuestionCard({
   row,
+  answer,
+  onAnswerChange,
   onSaved,
 }: {
   row: FeedbackRow;
+  answer: string;
+  onAnswerChange: (answer: string) => void;
   onSaved: () => Promise<void>;
 }) {
-  const [answer, setAnswer] = useState(row.answer ?? '');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
@@ -469,7 +499,7 @@ function QuestionCard({
         <span className="text-xs uppercase tracking-wider text-text-muted">your answer</span>
         <textarea
           value={answer}
-          onChange={(event) => setAnswer(event.target.value)}
+          onChange={(event) => onAnswerChange(event.target.value)}
           maxLength={4000}
           rows={7}
           placeholder="just ramble. no polish needed."
@@ -569,7 +599,7 @@ function OwnerFeedbackCard({
           <img
             src={row.screenshot_data}
             alt="feedback screenshot"
-            className="max-h-56 w-full rounded-md border border-border-default object-cover object-top"
+            className="max-h-[224px] w-full rounded-md border border-border-default object-cover object-top"
           />
         </a>
       )}
@@ -602,7 +632,7 @@ function OwnerFeedbackCard({
           type="checkbox"
           checked={close}
           onChange={(event) => setClose(event.target.checked)}
-          className="h-5 w-5 accent-accent-jargon"
+          className="h-6 w-6 accent-accent-jargon"
         />
       </label>
       {error && <p role="alert" className="mt-3 text-sm text-accent-triage">{error}</p>}

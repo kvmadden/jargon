@@ -9,7 +9,7 @@ import {
   fetchSpottedStats,
   type SpottedStats,
 } from '../lib/data';
-import { computeCurrentStreak } from '../lib/streak-engine';
+import { computeCurrentStreak, getUserTimeZone, shiftDate, todayLocalDate } from '../lib/streak-engine';
 import { streakVoice } from '../lib/streak-voice';
 import { isMastered } from '../lib/lesson-engine';
 import { PATH_META } from '../lib/database.types';
@@ -42,6 +42,27 @@ const ACTIVITY_INTENSITY_BG: Record<0 | 1 | 2 | 3 | 4, string> = {
   3: 'bg-accent-jargon',
   4: 'bg-accent-jargon-hi',
 };
+
+/**
+ * The activity strip and the stored streak log must use the SAME local
+ * calendar date. Converting a local Date to ISO/UTC skips a user's "today"
+ * cell in the evening in American time zones (and before dawn elsewhere).
+ * This changes only the profile display; it does not change streak rules.
+ */
+export function getProfileActivityCells(
+  rows: Pick<StreakLogRow, 'local_date' | 'lessons_completed'>[],
+  now: Date = new Date(),
+  timeZone: string = getUserTimeZone(),
+): Array<0 | 1 | 2 | 3 | 4> {
+  const byDate = new Map<string, number>();
+  for (const row of rows) byDate.set(row.local_date, row.lessons_completed);
+  const today = todayLocalDate(now, timeZone);
+  return Array.from({ length: ACTIVITY_DAYS }, (_, index) => {
+    const day = shiftDate(today, index - (ACTIVITY_DAYS - 1), timeZone);
+    const count = byDate.get(day) ?? 0;
+    return count <= 0 ? 0 : count >= 4 ? 4 : (count as 1 | 2 | 3);
+  });
+}
 
 export default function Profile() {
   return (
@@ -156,22 +177,10 @@ function ProfileContent() {
    * left-to-right like a calendar. Intensity bins on `lessons_completed`:
    *   0 = no lesson, 1 = 1 lesson, 2 = 2, 3 = 3, 4 = 4+ ("PR day").
    */
-  const activityCells = useMemo(() => {
-    const byDate = new Map<string, number>();
-    for (const r of streakRows) byDate.set(r.local_date, r.lessons_completed);
-    const cells: Array<0 | 1 | 2 | 3 | 4> = [];
-    const today = new Date();
-    for (let i = ACTIVITY_DAYS - 1; i >= 0; i--) {
-      const d = new Date(today);
-      d.setDate(d.getDate() - i);
-      const key = d.toISOString().slice(0, 10);
-      const count = byDate.get(key) ?? 0;
-      const bin: 0 | 1 | 2 | 3 | 4 =
-        count <= 0 ? 0 : count >= 4 ? 4 : (count as 1 | 2 | 3);
-      cells.push(bin);
-    }
-    return cells;
-  }, [streakRows]);
+  const activityCells = useMemo(
+    () => getProfileActivityCells(streakRows),
+    [streakRows],
+  );
 
   if (loading) {
     return (
@@ -192,11 +201,11 @@ function ProfileContent() {
           <h1 className="text-base font-semibold text-text-primary lowercase">
             profile
           </h1>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => navigate('/settings')}
-              className="px-3 py-2 text-xs font-medium rounded-md text-text-secondary hover:text-text-primary hover:bg-surface-card active:bg-surface-card-hi transition-colors min-w-[44px] min-h-[44px] flex items-center gap-1.5"
+              className="px-3 py-2 text-xs font-medium rounded-md text-text-secondary hover:text-text-primary hover:bg-surface-card active:bg-surface-card-hi transition-colors min-w-[44px] min-h-[44px] flex items-center gap-2"
               aria-label="settings"
             >
               <span>settings</span>
@@ -205,7 +214,7 @@ function ProfileContent() {
               type="button"
               onClick={() => setOverflowOpen(true)}
               // 44pt × 44pt touch target. Glyph is 3 dots — accessible name = "more options".
-              className="w-11 h-11 rounded-md flex items-center justify-center text-text-secondary active:bg-surface-card transition-colors min-w-[44px] min-h-[44px]"
+              className="w-[44px] h-[44px] rounded-md flex items-center justify-center text-text-secondary active:bg-surface-card transition-colors min-w-[44px] min-h-[44px]"
               aria-label="more options"
             >
               {/* triple dots glyph — built inline so we don't take a dep on an icon set */}

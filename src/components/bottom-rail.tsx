@@ -53,7 +53,7 @@ export const BottomRail = forwardRef<HTMLButtonElement, Props>(function BottomRa
       ref={ref}
       type="button"
       onClick={() => navigate('/profile')}
-      className="group fixed left-0 right-0 bottom-0 safe-bottom bg-surface-card border-t border-border-default px-4 py-3 [@media(max-height:500px)]:py-1.5 hover:bg-surface-card-hi hover:border-accent-jargon/30 active:bg-surface-card-hi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-jargon transition-colors z-30 min-h-[44px]"
+      className="group fixed left-0 right-0 bottom-0 safe-bottom bg-surface-card border-t border-border-default px-4 py-3 [@media(max-height:500px)]:py-1 hover:bg-surface-card-hi hover:border-accent-jargon/30 active:bg-surface-card-hi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-jargon transition-colors z-30 min-h-[44px]"
       aria-label={`Open profile. ${mastered} mastered, ${pathsTouched} of ${pathsTotal} paths, ${spottedThisWeek} spotted this week.`}
     >
       {/* Inner container mirrors home's content max-w so the cluster anchors

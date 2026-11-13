@@ -12,7 +12,7 @@ import { ErrorBoundary } from './error-boundary';
 const SEEN_LANDING_KEY = 'jargon-seen-landing';
 const GOOGLE_AUTH_ENABLED = import.meta.env.VITE_GOOGLE_AUTH_ENABLED === 'true';
 
-type Mode = 'landing' | 'idle' | 'sending' | 'sent' | 'error' | 'denied' | 'checking' | 'check_timed_out';
+type Mode = 'landing' | 'idle' | 'sending' | 'sent' | 'error' | 'denied' | 'checking' | 'check_timed_out' | 'check_failed';
 
 export default function Splash() {
   return (
@@ -105,14 +105,18 @@ function SplashContent() {
     checkedRef.current = user.id;
     setMode('checking');
 
+    // Ignore completion of a superseded check (retry, user switch, unmount).
+    // A stale denial must never sign out a newer authenticated session.
+    let active = true;
     const timeoutTimer = setTimeout(() => {
-      setMode('check_timed_out');
+      if (active) setMode('check_timed_out');
     }, 8000);
 
     (async () => {
       try {
         const result = await checkAllowlist();
         clearTimeout(timeoutTimer);
+        if (!active) return;
         if (result.allowed) {
           navigate('/home', { replace: true });
         } else {
@@ -123,25 +127,34 @@ function SplashContent() {
           // the real boundary; revoking the credential here is what stops a
           // refused account from holding one at all.
           await supabase.auth.signOut();
+          if (!active) return;
           checkedRef.current = null;
           setMode('denied');
         }
       } catch (err) {
+        clearTimeout(timeoutTimer);
+        if (!active) return;
         // eslint-disable-next-line no-console
         console.error('[splash] allowlist check failed', err);
-        clearTimeout(timeoutTimer);
         // Deliberately NO sign-out here: this branch is an INCONCLUSIVE check
         // (network hiccup, cold function), not a refusal. Evicting a legitimate
         // user on a transient error would cost them a fresh magic link, and the
         // RLS predicate already denies data to anyone off the allowlist.
-        setMode('denied');
+        setMode('check_failed');
       }
     })();
 
     return () => {
+      active = false;
       clearTimeout(timeoutTimer);
+      // Cleanup cancels this attempt, so replay (StrictMode or auth loading)
+      // must be allowed to start a fresh check for the same account.
+      if (checkedRef.current === user.id) checkedRef.current = null;
     };
-  }, [user, loading, navigate, retryToken]);
+  // Auth can refresh the User object without changing the authenticated account.
+  // Key by id so that refresh cannot cancel the in-flight check and strand the
+  // screen behind checkedRef with neither navigation nor a retry timeout.
+  }, [user?.id, loading, navigate, retryToken]);
 
   async function sendLink(e: React.FormEvent) {
     e.preventDefault();
@@ -235,9 +248,9 @@ function SplashContent() {
         {/* Brand v0.1: large signature mark + locked tagline. The wordmark renders
             as `// jargon` in IBM Plex Mono Medium at 64px (brand-sheet hero spec). */}
         <Wordmark size={64} className="mb-6 text-accent-jargon" />
-        <p className="text-2xl font-light italic text-text-primary text-center tracking-tight leading-tight">
+        <h1 className="text-2xl font-light italic text-text-primary text-center tracking-tight leading-tight">
           Speak the room.
-        </p>
+        </h1>
 
         <div className="w-full mt-12">
           {mode === 'denied' ? (
@@ -304,11 +317,15 @@ function SplashContent() {
                 </button>
               </div>
             </div>
-          ) : mode === 'check_timed_out' ? (
+          ) : (mode === 'check_timed_out' || mode === 'check_failed') ? (
             <div className="bg-surface-card border border-border-default rounded-lg p-4 text-center">
-              <h2 className="text-base font-semibold text-text-primary">taking longer than expected</h2>
-              <p className="text-sm text-text-secondary mt-2">
-                checking your invite timed out. check your connection or try again.
+              <h2 className="text-base font-semibold text-text-primary">
+                {mode === 'check_failed' ? "couldn't check your invite" : 'taking longer than expected'}
+              </h2>
+              <p role="alert" className="text-sm text-text-secondary mt-2">
+                {mode === 'check_failed'
+                  ? "we couldn't verify your invite right now. check your connection and try again."
+                  : 'checking your invite timed out. check your connection or try again.'}
               </p>
               <div className="flex flex-col gap-2 mt-4">
                 <button
@@ -357,6 +374,8 @@ function SplashContent() {
               <form onSubmit={sendLink} className="flex flex-col gap-3">
                 <input
                   type="email"
+                  aria-label="your email"
+                  autoFocus
                   inputMode="email"
                   autoComplete="email"
                   value={email}

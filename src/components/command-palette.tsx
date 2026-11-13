@@ -74,7 +74,9 @@ export function CommandPalette({ open, onClose, commands, onSelectAction }: Prop
     const list = listRef.current;
     if (!list) return;
     const row = list.querySelector<HTMLElement>(`[data-index="${activeIndex}"]`);
-    row?.scrollIntoView({ block: 'nearest' });
+    // Some embedded webviews (and JSDOM) do not implement this API.
+    // Keep keyboard navigation functional even when auto-scrolling is unavailable.
+    row?.scrollIntoView?.({ block: 'nearest' });
   }, [activeIndex]);
 
   function handleSelect(cmd: RankedCommand) {
@@ -93,12 +95,11 @@ export function CommandPalette({ open, onClose, commands, onSelectAction }: Prop
     }
   }
 
-  function handleKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
-    if (e.key === 'Escape') {
-      e.preventDefault();
-      onClose();
-      return;
-    }
+  // Only the combobox owns result navigation. When keyboard focus moves to
+  // the mobile Close button, Enter must press Close, not open a highlighted
+  // command via a bubbling dialog-level keydown. useModalA11y owns Escape.
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (results.length === 0) return;
     if (e.key === 'ArrowDown') {
       e.preventDefault();
       setActiveIndex((i) => Math.min(results.length - 1, i + 1));
@@ -132,7 +133,6 @@ export function CommandPalette({ open, onClose, commands, onSelectAction }: Prop
         aria-label="command palette"
         className="w-full h-full sm:h-auto max-w-xl bg-surface-card border-0 sm:border border-border-default rounded-none sm:rounded-xl overflow-hidden shadow-2xl focus:outline-none flex flex-col"
         onClick={(e) => e.stopPropagation()}
-        onKeyDown={handleKeyDown}
       >
         <div className="relative flex items-center border-b border-border-default px-4">
           <input
@@ -150,6 +150,7 @@ export function CommandPalette({ open, onClose, commands, onSelectAction }: Prop
               setQuery(e.target.value);
               setActiveIndex(0);
             }}
+            onKeyDown={handleKeyDown}
             placeholder="type a term, route, or action…"
             className="w-full bg-transparent py-4 pr-2 text-base text-text-primary placeholder:text-text-muted focus:outline-none"
             autoComplete="off"
@@ -159,7 +160,7 @@ export function CommandPalette({ open, onClose, commands, onSelectAction }: Prop
             type="button"
             onClick={onClose}
             aria-label="close command palette"
-            className="sm:hidden flex items-center justify-center w-11 h-11 text-text-secondary hover:text-text-primary min-w-[44px] min-h-[44px] select-none shrink-0"
+            className="sm:hidden flex items-center justify-center w-[44px] h-[44px] text-text-secondary hover:text-text-primary min-w-[44px] min-h-[44px] select-none shrink-0"
           >
             ✕
           </button>
@@ -252,7 +253,7 @@ function KindPill({ kind }: { kind: Command['kind'] }) {
   const label =
     kind === 'route' ? 'go' : kind === 'action' ? 'do' : 'term';
   return (
-    <span className="text-2xs font-mono uppercase tracking-wider text-text-muted shrink-0 w-9 text-right">
+    <span className="text-2xs font-mono uppercase tracking-wider text-text-muted shrink-0 w-8 text-right">
       {label}
     </span>
   );
