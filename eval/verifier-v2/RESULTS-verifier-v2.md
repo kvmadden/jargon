@@ -1,68 +1,70 @@
-# Verifier v2: results on the 50-item gold set (2026-11-13)
+# Verifier v2: results (2026-11-13)
 
-**Headline: a checker that pulls out each factual claim and asks whether a pharmacist would sign off caught 5 of the 5 errors the original checker approved (it caught 0 of 5), but only on the same model family, and how many correct explanations it wrongly flags (2 or 15 of 37, depending on the decision rule) waits on Kevin's labels.**
+**Headline: a two-family consensus verifier (Claude Opus 5.5 and Gemini 3.8 Flash must both object) caught all 5 errors the original verifier approved, with 3 false alarms in 37 on the development set, and the held-out test could not run because the locked Part B set can no longer be found.**
 
 ```
-Known misses caught (5 confirmed wrong by Kevin Madden, PharmD)
-v1 original, 10/30          ·····   0 of 5
-v1 rerun, today             ·····   0 of 5
-v2 same model, primary      ✓✓✓✓✓   5 of 5   false alarms 15 of 37
-v2 same model, lenient      ✓✓✓✓·   4 of 5   false alarms  2 of 37
-v2 Grok, primary            ✓✓✓✓×   4 of 5   false alarms 34 of 37   (× = no verdict)
+Development set, 50 items (5 confirmed misses, 37 proposed correct)
+
+                                   known misses   false alarms
+v1 original, 10/30                 ·····  0/5      1/37
+v2, Opus 4.7, lenient       it0    ✓✓✓✓·  4/5      2/37
+v2, Grok                    it0    ✓✓✓✓×  4/5     34/37
+v2, Opus 5.5, lenient       it3    ✓✓✓✓✓  5/5     18/37
+v3 two-pass, Opus 5.5       it4    ✓✓✓✓✓  5/5      5/37
+v2, Gemini Flash            it5    ✓✓✓✓✓  5/5     10/37
+FROZEN: it4 AND it5         it6    ✓✓✓✓✓  5/5      3/37   target: ≥4/5 and ≤3/37
 ```
 
-## The table
+## The frozen rule
 
-Labels: 5 items are confirmed by Kevin. The other 45 carry **proposed** labels (an AI read, not ground truth), so every column except the first is provisional.
+Fail an explanation only when both verifiers fail it:
+- **v3 on claude-opus-5-5.** Pass one extracts typed claims. Pass two checks each claim against a 15-fact reference list and general knowledge, with an abstain option.
+- **v2 on Gemini 3.8 Flash (High), lenient rule.** A single pass extracts claims, and the explanation fails on a wrong claim or no expert sign-off.
 
-| verifier | known misses caught | all flawed caught (13, provisional) | false alarms on proposed-correct (37, provisional) | false alarms on the 7 Kevin reportedly judged correct | no verdict |
-|---|---|---|---|---|---|
-| v1 original (stored 10/30 verdicts) | 0/5 | 1/13 | 1/37 | 0/7 | 0 |
-| v1 rerun today, same prompt and model | 0/5 | 0/13 | 1/37 | 0/7 | 0 |
-| **v2, same model as v1, primary rule** | **5/5** | 12/13 | 15/37 | 6/7 | 0 |
-| **v2, same model as v1, lenient rule** | **4/5** | 8/13 | 2/37 | 1/7 | 0 |
-| v2, Grok, primary rule | 4/5 | 11/13 | 34/37 | 7/7 | 4 |
-| v2, Grok, lenient rule | 4/5 | 11/13 | 33/37 | 7/7 | 4 |
+If either verdict is missing or abstains, the rule abstains, so a broken call can never pass an explanation. The rule is frozen with prompt hashes in [`FROZEN-RULE.json`](FROZEN-RULE.json), and a test fails if any frozen prompt changes.
 
-Both decision rules were written into `lib.ts` and committed (0f513c2) before any scored call:
-- **primary:** fail if any claim is wrong or misleading, or the expert would not sign off.
-- **lenient:** fail only if a claim is wrong or the expert would not sign off.
+## Development set table (all runs)
 
-## What it means
+`node eval/verifier-v2/score.ts` prints this table and writes `results/summary.json`. "Flawed" and "false alarms" use proposed labels.
 
-1. **The rubric is what helps, not the second family.** Every v1 verdict on the 5 known misses was a pass, both on 10/30 and today. On the same model, v2 found the exact error in each one: the unit-only chart access claim, the claim that staging is wired to real claims, store-scoped patient profiles, a "signed script label", and the prescription-transfer comparison.
-2. **The primary rule is too strict to ship.** Its false alarms are pedantic "misleading" calls on ordinary workplace details (whether a staff pharmacist would see claims-system release notes, for example). It also flags 6 of the 7 explanations Kevin reportedly judged correct.
-3. **The lenient rule is the candidate.** It caught 4 of 5 known misses with 2 false alarms (sec-mfa for the nurse and cloud-alert for the pharmacist). It missed the OAuth prescription-transfer miss, which it rated misleading while the expert still signed off.
-4. **Grok is not a usable verifier at this rubric.** It said "no sign-off" on nearly everything, including "Claude, ChatGPT, Gemini, and Llama are all LLMs". It passed none of the 5 known misses (4 fails, 1 no verdict). 17 of its 50 first calls returned no verdict, and one retry recovered 13. In the 4 that failed twice, almost all output tokens were reasoning, so no answer came back. That cause is inferred, because the first run did not save the CLI output, and the fixed runner saved only its tail.
+| run | known misses | flawed caught | false alarms | on 7 reported correct |
+|---|---|---|---|---|
+| v1 original (stored 10/30 verdicts) | 0/5 | 1/13 | 1/37 | 0/7 |
+| v1 rerun, claude-opus-4-7 | 0/5 | 0/13 | 1/37 | 0/7 |
+| it0 v2, claude-opus-4-7, primary | 5/5 | 12/13 | 15/37 | 6/7 |
+| it0 v2, claude-opus-4-7, lenient | 4/5 | 8/13 | 2/37 | 1/7 |
+| it0 v2, grok-4.7-build, primary (4 no verdict) | 4/5 | 11/13 | 34/37 | 7/7 |
+| it3 v2, claude-opus-5-5, lenient | 5/5 | 13/13 | 18/37 | 2/7 |
+| it4 v3, claude-opus-5-5 | 5/5 | 13/13 | 5/37 | 0/7 |
+| it5 v2, Gemini 3.8 Flash, lenient | 5/5 | 12/13 | 10/37 | 3/7 |
+| **it6 frozen consensus (it4 AND it5)** | **5/5** | **12/13** | **3/37** | **0/7** |
 
-## Limits, stated plainly
+Every iteration, including the smoke-only it2a and it2b and the offline rule search in it1, is in [`ITERATIONS.jsonl`](ITERATIONS.jsonl).
 
-- **Not an independent family.** The best result runs on the same model that wrote the explanations and ran v1.
-- **In-sample.** The claim types were designed after reading the 5 misses. The prompt names none of them, but it is still tuned on the set it is scored on.
-- **The proposed labels are Claude's.** The model family that labeled the set also wrote the rubric and ran the best arm.
-- **The real held-out test has not been run.** The locked Part B blind set in `eval/fresh-blind-set/` was not touched, and it is scored once, after Kevin's form.
-- **The v1 rerun used `claude -p`, not the API.** That means no max_tokens or temperature control. It still reproduced 0 of 5.
+What the iterations showed:
+1. **The claim rubric is what finds the misses.** The original verifier passed all 5 both times. Every v2 and v3 run on a capable model caught at least 4.
+2. **Each model alone is either too strict or too lenient.** Opus 5.5 signs off on almost nothing, and Grok on nothing. In the two-pass design, Opus 4.7 excused real errors as "imprecise" even when its own reasons named the error.
+3. **Requiring two families to agree cuts the false alarms.** v3 on Opus 5.5 and Gemini Flash disagreed on most of their false alarms but agreed on all 5 known misses.
+4. **The remaining errors.** The 3 consensus false alarms are aid-accuracy (pharmacist), sys-payload (pharmacist) and sec-mfa (teacher). The one flawed item it passes is bi-calculated-column (pharmacist).
+
+## Part B (held-out): not run
+
+- **The set is missing.** The locked Part B set (345 renderings, manifest sha256 `9294113…0995` in `eval/fresh-blind-set/lock.json`) was staged in a session scratchpad that no longer exists. The evidence folder of the 11/3 pass keeps only request hashes and verdicts. Searches of the evidence drive, the working folders and the file index found no copy.
+- **No expert labels are on record.** The repository applies no amendment from Kevin's 30-item clinical review, so Part B has no labels Kevin ruled on.
+- **No numbers exist.** With no renderings, not even a flag rate could be produced. The frozen rule was not run, and nothing was scored. Finding a copy (checked against the manifest hash) or recording the set as lost is queued as an agent task. It also blocks the pre-registered scoring of the original 11/3 pass.
+
+## Limits
+
+- **Dev-set numbers are optimistic by construction.** The rule was chosen after searching 6 decision rules and 2 combinations on these 50 items. The rubric was written after reading the 5 misses. The reference list leaves out every fact behind those misses, and a test enforces that.
+- **The labels are noisy.** 45 of the 50 labels are proposals by Claude, the family behind one of the two verifiers. Some objections counted as false alarms are defensible, for example that fall rates need patient-days. The labels were frozen before any run (hash checked by a test) and were not changed after seeing verdicts.
+- **No outside expert has checked anything.** Only the 5 known misses carry an expert ruling.
 
 ## How it ran
 
-| arm | path | model reported | calls | median time | metered spend |
-|---|---|---|---|---|---|
-| v1 rerun | `claude -p`, Claude subscription | claude-opus-4-7 | 50 | 9 s | $0 (apiKeySource none on every call) |
-| v2 same model | `claude -p`, Claude subscription | claude-opus-4-7 | 50 | 23 s | $0 (apiKeySource none on every call) |
-| v2 Grok | `grok` CLI, X subscription (grok.com login) | grok-4.7-build | 67 (50 + 17 retries) | 140 s | $0 expected, no API key in env |
-
-The CLIs print notional token prices ($1.56, $3.88 and $7.42). Those prices are not charges. Claude auth is verified per call. For Grok, the login and the absence of a key are verified, and that the plan does not bill per token is inferred. The Gemini sub-pools (Flash, Hydrogen) were out of quota until about 11/15, the Argon pool was skipped under the no-bulk ruling, and the OpenAI pool was out until 11/14. Calls ran one at a time. A load check before each call paused the run whenever the 1-minute load went over 150.
-
-Reproduce:
+Calls went one at a time through subscription CLIs, with no metered key. Claude calls ran through `claude -p` and reported `apiKeySource: none` on every call. Gemini ran through `agy` on the Google login, and Grok through the grok.com login. The runner removes metered-key variables from the environment and pauses whenever the 1-minute load is over 150. Runs ran in visible terminal tabs with saved logs.
 
 ```sh
-node eval/verifier-v2/build-gold.mjs        # same 50 items, deterministic
-node eval/verifier-v2/run-verifiers.ts --arm v2-claude
-node eval/verifier-v2/score.ts              # table and results/summary.json
+node eval/verifier-v2/run-verifiers.ts --arm v3-claude --model claude-opus-5-5 --tag <name>
+node eval/verifier-v2/run-verifiers.ts --arm v2-gemini --tag <name>
+node eval/verifier-v2/score.ts
 ```
-
-## What still needs Kevin
-
-1. **Label 45 items** in `gold/confirm.json`. Set `kevin_label` on each, and the scorer picks it up. The 7 items with a `prior_ruling` were recorded as correct on the unmerged PR #1 branch from a task brief, so they need confirming here.
-2. **The 2 lenient false alarms and the 5 proposed misleading items** decide the real false-alarm rate. Start with those: sec-mfa (nurse), cloud-alert (pharmacist), sys-http-header (pharmacist), sys-payload (nurse), aid-parameters (pharmacist), sys-http-response (pharmacist) and ai-llm (pharmacist).
-3. **Decide whether v2 lenient runs on the Part B blind set.** That is the only out-of-sample test available.
