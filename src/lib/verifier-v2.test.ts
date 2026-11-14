@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -8,6 +9,13 @@ import {
   decideV2,
   expertFor,
   firstAndLatest,
+  decideConsensus,
+  decideV3,
+  parseV3Checks,
+  parseV3Claims,
+  REFERENCE_FACTS,
+  v3VerifySystemPrompt,
+  v3ExtractSystemPrompt,
   parseV2,
   scoreArm,
   subscriptionEnv,
@@ -113,6 +121,90 @@ describe('scoring', () => {
   });
 });
 
+describe('v2 mapping rule', () => {
+  it('fails on a misleading comparison but not on a misleading scenario', () => {
+    expect(decideV2(verdict([['MAPPING', 'misleading']]), 'mapping')).toBe('fail');
+    expect(decideV2(verdict([['SCENARIO', 'misleading']]), 'mapping')).toBe('pass');
+    expect(decideV2(verdict([['TECH', 'wrong']]), 'mapping')).toBe('fail');
+    expect(decideV2(verdict([['TECH', 'supported']], 'no'), 'mapping')).toBe('fail');
+  });
+});
+
+describe('v3 two-pass verifier', () => {
+  const claims = [
+    { type: 'PRACTICE' as const, claim: 'a', load_bearing: true },
+    { type: 'TECH' as const, claim: 'b', load_bearing: false },
+  ];
+  const checks = (v0: string, v1: string, signoff = 'yes') => ({
+    checks: [
+      { index: 0, verdict: v0, basis: '', reason: 'r' },
+      { index: 1, verdict: v1, basis: '', reason: 'r' },
+    ],
+    signoff,
+    signoff_reason: 'r',
+  });
+  it('parses claims and requires every claim to be checked exactly once', () => {
+    expect(parseV3Claims({ claims })).toHaveLength(2);
+    expect(parseV3Claims({ claims: [] })).toBeNull();
+    expect(parseV3Checks(checks('supported', 'imprecise'), 2)).not.toBeNull();
+    expect(parseV3Checks(checks('supported', 'imprecise'), 3)).toBeNull();
+    expect(parseV3Checks({ ...checks('supported', 'supported'), checks: [{ index: 0, verdict: 'supported', basis: '', reason: 'r' }, { index: 0, verdict: 'supported', basis: '', reason: 'r' }] }, 2)).toBeNull();
+    expect(parseV3Checks(checks('false', 'supported'), 2)).toBeNull();
+  });
+  it('fails on a contradicted load-bearing claim, not on an incidental one or imprecision', () => {
+    const r = (v0: string, v1: string, signoff = 'yes') => ({ claims, ...(parseV3Checks(checks(v0, v1, signoff), 2) as any) });
+    expect(decideV3(r('contradicted', 'supported'))).toBe('fail');
+    expect(decideV3(r('supported', 'contradicted'))).toBe('pass');
+    expect(decideV3(r('imprecise', 'imprecise'))).toBe('pass');
+    expect(decideV3(r('supported', 'supported', 'no'))).toBe('fail');
+    expect(decideV3(r('supported', 'supported', 'unsure'))).toBe('abstain');
+  });
+  it('keeps every fact behind the five confirmed misses out of the reference list', () => {
+    const text = REFERENCE_FACTS.map((f) => f.fact).join(' ').toLowerCase();
+    for (const banned of ['break-the-glass', 'staging', 'production', 'patient profile', 'transfer', 'label', 'tamper']) {
+      expect(text).not.toContain(banned);
+    }
+    expect(v3VerifySystemPrompt()).toContain('R1 (pharmacy)');
+  });
+  it('counts abstains apart from catches and false alarms', () => {
+    const s = scoreArm(
+      [
+        { id: 'm', group: 'A-confirmed-miss', label: 'wrong', label_status: 'confirmed' },
+        { id: 'c', group: 'D-pharmacist', label: 'correct', label_status: 'proposed' },
+      ],
+      [
+        { id: 'm', decision: 'abstain' },
+        { id: 'c', decision: 'abstain' },
+      ],
+    );
+    expect(s.confirmed_misses.caught).toBe(0);
+    expect(s.proposed_correct.false_alarms).toBe(0);
+    expect(s.abstained).toEqual({ on_flawed: 1, on_correct: 1 });
+  });
+});
+
+describe('frozen consensus rule', () => {
+  it('fails only when both families fail and abstains on any missing verdict', () => {
+    expect(decideConsensus('fail', 'fail')).toBe('fail');
+    expect(decideConsensus('fail', 'pass')).toBe('pass');
+    expect(decideConsensus('pass', 'fail')).toBe('pass');
+    expect(decideConsensus('abstain', 'fail')).toBe('abstain');
+    expect(decideConsensus(null, 'fail')).toBe('abstain');
+    expect(decideConsensus('fail', null)).toBe('abstain');
+  });
+});
+
+describe('frozen rule file', () => {
+  it('matches the prompts that ran, so a later edit cannot change the frozen rule silently', () => {
+    const frozen = readJson('eval/verifier-v2/FROZEN-RULE.json');
+    const h = (t: string) => createHash('sha256').update(t).digest('hex');
+    expect(h(v3ExtractSystemPrompt())).toBe(frozen.components.claude_v3.pass_1_system_prompt_sha256);
+    expect(h(v3VerifySystemPrompt())).toBe(frozen.components.claude_v3.pass_2_system_prompt_sha256);
+    expect(h(v2SystemPrompt())).toBe(frozen.components.gemini_v2.system_prompt_sha256);
+    expect(h(readFileSync(join(ROOT, 'eval/verifier-v2/gold/confirm.json'), 'utf8'))).toBe(frozen.files_sha256_at_freeze['eval/verifier-v2/gold/confirm.json']);
+  });
+});
+
 describe('retried results', () => {
   it('scores the latest row per item and keeps the first attempt separately', () => {
     const rows = [
@@ -144,6 +236,7 @@ describe('verifier v2 prompt', () => {
     });
     expect(msg).toContain('EXPERT WHO MUST SIGN OFF: licensed pharmacist');
     expect(() => expertFor('chef')).toThrow();
+    expect(expertFor('p-04', 'line cook')).toBe("experienced practitioner in the learner's job (line cook)");
   });
 });
 

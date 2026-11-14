@@ -1,10 +1,18 @@
 {
-  "kevin_labeled": 0,
   "gold_size": 50,
+  "kevin_labeled": 0,
   "meta": {
     "v1-claude": {
       "model": [
         "claude-opus-4-7"
+      ],
+      "rows": 50,
+      "first_attempt_no_verdict": 0,
+      "final_no_verdict": 0
+    },
+    "v2-claude-it3-opus55": {
+      "model": [
+        "claude-opus-5-5"
       ],
       "rows": 50,
       "first_attempt_no_verdict": 0,
@@ -18,6 +26,14 @@
       "first_attempt_no_verdict": 0,
       "final_no_verdict": 0
     },
+    "v2-gemini-it5-flash": {
+      "model": [
+        "Gemini 3.8 Flash (High)"
+      ],
+      "rows": 50,
+      "first_attempt_no_verdict": 0,
+      "final_no_verdict": 0
+    },
     "v2-grok": {
       "model": [
         "grok-4.7-build"
@@ -25,6 +41,14 @@
       "rows": 67,
       "first_attempt_no_verdict": 17,
       "final_no_verdict": 4
+    },
+    "v3-claude-it4-opus55": {
+      "model": [
+        "claude-opus-5-5"
+      ],
+      "rows": 50,
+      "first_attempt_no_verdict": 0,
+      "final_no_verdict": 0
     }
   },
   "scores": {
@@ -46,6 +70,10 @@
       "reported_correct": {
         "false_alarms": 0,
         "of": 7
+      },
+      "abstained": {
+        "on_flawed": 0,
+        "on_correct": 0
       }
     },
     "v1-claude": {
@@ -66,9 +94,85 @@
       "reported_correct": {
         "false_alarms": 0,
         "of": 7
+      },
+      "abstained": {
+        "on_flawed": 0,
+        "on_correct": 0
       }
     },
-    "v2-claude": {
+    "v2-claude-it3-opus55 [primary]": {
+      "n": 50,
+      "no_verdict": 0,
+      "confirmed_misses": {
+        "caught": 5,
+        "of": 5
+      },
+      "proposed_flawed": {
+        "caught": 13,
+        "of": 13
+      },
+      "proposed_correct": {
+        "false_alarms": 25,
+        "of": 37
+      },
+      "reported_correct": {
+        "false_alarms": 6,
+        "of": 7
+      },
+      "abstained": {
+        "on_flawed": 0,
+        "on_correct": 0
+      }
+    },
+    "v2-claude-it3-opus55 [lenient]": {
+      "n": 50,
+      "no_verdict": 0,
+      "confirmed_misses": {
+        "caught": 5,
+        "of": 5
+      },
+      "proposed_flawed": {
+        "caught": 13,
+        "of": 13
+      },
+      "proposed_correct": {
+        "false_alarms": 18,
+        "of": 37
+      },
+      "reported_correct": {
+        "false_alarms": 2,
+        "of": 7
+      },
+      "abstained": {
+        "on_flawed": 0,
+        "on_correct": 0
+      }
+    },
+    "v2-claude-it3-opus55 [mapping]": {
+      "n": 50,
+      "no_verdict": 0,
+      "confirmed_misses": {
+        "caught": 5,
+        "of": 5
+      },
+      "proposed_flawed": {
+        "caught": 13,
+        "of": 13
+      },
+      "proposed_correct": {
+        "false_alarms": 20,
+        "of": 37
+      },
+      "reported_correct": {
+        "false_alarms": 4,
+        "of": 7
+      },
+      "abstained": {
+        "on_flawed": 0,
+        "on_correct": 0
+      }
+    },
+    "v2-claude [primary]": {
       "n": 50,
       "no_verdict": 0,
       "confirmed_misses": {
@@ -86,9 +190,13 @@
       "reported_correct": {
         "false_alarms": 6,
         "of": 7
+      },
+      "abstained": {
+        "on_flawed": 0,
+        "on_correct": 0
       }
     },
-    "v2-claude-lenient": {
+    "v2-claude [lenient]": {
       "n": 50,
       "no_verdict": 0,
       "confirmed_misses": {
@@ -106,9 +214,109 @@
       "reported_correct": {
         "false_alarms": 1,
         "of": 7
+      },
+      "abstained": {
+        "on_flawed": 0,
+        "on_correct": 0
       }
     },
-    "v2-grok": {
+    "v2-claude [mapping]": {
+      "n": 50,
+      "no_verdict": 0,
+      "confirmed_misses": {
+        "caught": 5,
+        "of": 5
+      },
+      "proposed_flawed": {
+        "caught": 10,
+        "of": 13
+      },
+      "proposed_correct": {
+        "false_alarms": 3,
+        "of": 37
+      },
+      "reported_correct": {
+        "false_alarms": 1,
+        "of": 7
+      },
+      "abstained": {
+        "on_flawed": 0,
+        "on_correct": 0
+      }
+    },
+    "v2-gemini-it5-flash [primary]": {
+      "n": 50,
+      "no_verdict": 0,
+      "confirmed_misses": {
+        "caught": 5,
+        "of": 5
+      },
+      "proposed_flawed": {
+        "caught": 12,
+        "of": 13
+      },
+      "proposed_correct": {
+        "false_alarms": 10,
+        "of": 37
+      },
+      "reported_correct": {
+        "false_alarms": 3,
+        "of": 7
+      },
+      "abstained": {
+        "on_flawed": 0,
+        "on_correct": 0
+      }
+    },
+    "v2-gemini-it5-flash [lenient]": {
+      "n": 50,
+      "no_verdict": 0,
+      "confirmed_misses": {
+        "caught": 5,
+        "of": 5
+      },
+      "proposed_flawed": {
+        "caught": 12,
+        "of": 13
+      },
+      "proposed_correct": {
+        "false_alarms": 10,
+        "of": 37
+      },
+      "reported_correct": {
+        "false_alarms": 3,
+        "of": 7
+      },
+      "abstained": {
+        "on_flawed": 0,
+        "on_correct": 0
+      }
+    },
+    "v2-gemini-it5-flash [mapping]": {
+      "n": 50,
+      "no_verdict": 0,
+      "confirmed_misses": {
+        "caught": 5,
+        "of": 5
+      },
+      "proposed_flawed": {
+        "caught": 12,
+        "of": 13
+      },
+      "proposed_correct": {
+        "false_alarms": 10,
+        "of": 37
+      },
+      "reported_correct": {
+        "false_alarms": 3,
+        "of": 7
+      },
+      "abstained": {
+        "on_flawed": 0,
+        "on_correct": 0
+      }
+    },
+    "v2-grok [primary]": {
       "n": 50,
       "no_verdict": 4,
       "confirmed_misses": {
@@ -126,9 +334,13 @@
       "reported_correct": {
         "false_alarms": 7,
         "of": 7
+      },
+      "abstained": {
+        "on_flawed": 0,
+        "on_correct": 0
       }
     },
-    "v2-grok-lenient": {
+    "v2-grok [lenient]": {
       "n": 50,
       "no_verdict": 4,
       "confirmed_misses": {
@@ -146,9 +358,37 @@
       "reported_correct": {
         "false_alarms": 7,
         "of": 7
+      },
+      "abstained": {
+        "on_flawed": 0,
+        "on_correct": 0
       }
     },
-    "v2-grok-first-attempt": {
+    "v2-grok [mapping]": {
+      "n": 50,
+      "no_verdict": 4,
+      "confirmed_misses": {
+        "caught": 4,
+        "of": 5
+      },
+      "proposed_flawed": {
+        "caught": 11,
+        "of": 13
+      },
+      "proposed_correct": {
+        "false_alarms": 33,
+        "of": 37
+      },
+      "reported_correct": {
+        "false_alarms": 7,
+        "of": 7
+      },
+      "abstained": {
+        "on_flawed": 0,
+        "on_correct": 0
+      }
+    },
+    "v2-grok-first-attempt [primary]": {
       "n": 50,
       "no_verdict": 17,
       "confirmed_misses": {
@@ -166,9 +406,13 @@
       "reported_correct": {
         "false_alarms": 5,
         "of": 7
+      },
+      "abstained": {
+        "on_flawed": 0,
+        "on_correct": 0
       }
     },
-    "v2-grok-first-attempt-lenient": {
+    "v2-grok-first-attempt [lenient]": {
       "n": 50,
       "no_verdict": 17,
       "confirmed_misses": {
@@ -186,6 +430,82 @@
       "reported_correct": {
         "false_alarms": 5,
         "of": 7
+      },
+      "abstained": {
+        "on_flawed": 0,
+        "on_correct": 0
+      }
+    },
+    "v2-grok-first-attempt [mapping]": {
+      "n": 50,
+      "no_verdict": 17,
+      "confirmed_misses": {
+        "caught": 4,
+        "of": 5
+      },
+      "proposed_flawed": {
+        "caught": 9,
+        "of": 13
+      },
+      "proposed_correct": {
+        "false_alarms": 23,
+        "of": 37
+      },
+      "reported_correct": {
+        "false_alarms": 5,
+        "of": 7
+      },
+      "abstained": {
+        "on_flawed": 0,
+        "on_correct": 0
+      }
+    },
+    "v3-claude-it4-opus55": {
+      "n": 50,
+      "no_verdict": 0,
+      "confirmed_misses": {
+        "caught": 5,
+        "of": 5
+      },
+      "proposed_flawed": {
+        "caught": 13,
+        "of": 13
+      },
+      "proposed_correct": {
+        "false_alarms": 5,
+        "of": 37
+      },
+      "reported_correct": {
+        "false_alarms": 0,
+        "of": 7
+      },
+      "abstained": {
+        "on_flawed": 0,
+        "on_correct": 0
+      }
+    },
+    "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": {
+      "n": 50,
+      "no_verdict": 0,
+      "confirmed_misses": {
+        "caught": 5,
+        "of": 5
+      },
+      "proposed_flawed": {
+        "caught": 12,
+        "of": 13
+      },
+      "proposed_correct": {
+        "false_alarms": 3,
+        "of": 37
+      },
+      "reported_correct": {
+        "false_alarms": 0,
+        "of": 7
+      },
+      "abstained": {
+        "on_flawed": 0,
+        "on_correct": 0
       }
     }
   },
@@ -196,12 +516,23 @@
       "status": "confirmed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "fail",
-      "v2-claude-lenient": "fail",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": "fail",
-      "v2-grok-first-attempt-lenient": "fail"
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "fail",
+      "v2-claude-it3-opus55 [mapping]": "fail",
+      "v2-claude [primary]": "fail",
+      "v2-claude [lenient]": "fail",
+      "v2-claude [mapping]": "fail",
+      "v2-gemini-it5-flash [primary]": "fail",
+      "v2-gemini-it5-flash [lenient]": "fail",
+      "v2-gemini-it5-flash [mapping]": "fail",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": "fail",
+      "v2-grok-first-attempt [lenient]": "fail",
+      "v2-grok-first-attempt [mapping]": "fail",
+      "v3-claude-it4-opus55": "fail",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "fail"
     },
     {
       "id": "cloud-environment::pharmacist::final",
@@ -209,12 +540,23 @@
       "status": "confirmed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "fail",
-      "v2-claude-lenient": "fail",
-      "v2-grok": null,
-      "v2-grok-lenient": null,
-      "v2-grok-first-attempt": null,
-      "v2-grok-first-attempt-lenient": null
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "fail",
+      "v2-claude-it3-opus55 [mapping]": "fail",
+      "v2-claude [primary]": "fail",
+      "v2-claude [lenient]": "fail",
+      "v2-claude [mapping]": "fail",
+      "v2-gemini-it5-flash [primary]": "fail",
+      "v2-gemini-it5-flash [lenient]": "fail",
+      "v2-gemini-it5-flash [mapping]": "fail",
+      "v2-grok [primary]": null,
+      "v2-grok [lenient]": null,
+      "v2-grok [mapping]": null,
+      "v2-grok-first-attempt [primary]": null,
+      "v2-grok-first-attempt [lenient]": null,
+      "v2-grok-first-attempt [mapping]": null,
+      "v3-claude-it4-opus55": "fail",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "fail"
     },
     {
       "id": "bi-rls::pharmacist::final",
@@ -222,12 +564,23 @@
       "status": "confirmed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "fail",
-      "v2-claude-lenient": "fail",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": "fail",
-      "v2-grok-first-attempt-lenient": "fail"
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "fail",
+      "v2-claude-it3-opus55 [mapping]": "fail",
+      "v2-claude [primary]": "fail",
+      "v2-claude [lenient]": "fail",
+      "v2-claude [mapping]": "fail",
+      "v2-gemini-it5-flash [primary]": "fail",
+      "v2-gemini-it5-flash [lenient]": "fail",
+      "v2-gemini-it5-flash [mapping]": "fail",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": "fail",
+      "v2-grok-first-attempt [lenient]": "fail",
+      "v2-grok-first-attempt [mapping]": "fail",
+      "v3-claude-it4-opus55": "fail",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "fail"
     },
     {
       "id": "sys-jwt::pharmacist::final",
@@ -235,12 +588,23 @@
       "status": "confirmed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "fail",
-      "v2-claude-lenient": "fail",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": "fail",
-      "v2-grok-first-attempt-lenient": "fail"
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "fail",
+      "v2-claude-it3-opus55 [mapping]": "fail",
+      "v2-claude [primary]": "fail",
+      "v2-claude [lenient]": "fail",
+      "v2-claude [mapping]": "fail",
+      "v2-gemini-it5-flash [primary]": "fail",
+      "v2-gemini-it5-flash [lenient]": "fail",
+      "v2-gemini-it5-flash [mapping]": "fail",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": "fail",
+      "v2-grok-first-attempt [lenient]": "fail",
+      "v2-grok-first-attempt [mapping]": "fail",
+      "v3-claude-it4-opus55": "fail",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "fail"
     },
     {
       "id": "sec-oauth::pharmacist::final",
@@ -248,12 +612,23 @@
       "status": "confirmed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "fail",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": "fail",
-      "v2-grok-first-attempt-lenient": "fail"
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "fail",
+      "v2-claude-it3-opus55 [mapping]": "fail",
+      "v2-claude [primary]": "fail",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "fail",
+      "v2-gemini-it5-flash [primary]": "fail",
+      "v2-gemini-it5-flash [lenient]": "fail",
+      "v2-gemini-it5-flash [mapping]": "fail",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": "fail",
+      "v2-grok-first-attempt [lenient]": "fail",
+      "v2-grok-first-attempt [mapping]": "fail",
+      "v3-claude-it4-opus55": "fail",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "fail"
     },
     {
       "id": "excel-pivot-table::nurse::final",
@@ -261,12 +636,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "fail",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": "fail",
-      "v2-grok-first-attempt-lenient": "fail"
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "fail",
+      "v2-claude-it3-opus55 [mapping]": "fail",
+      "v2-claude [primary]": "fail",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "fail",
+      "v2-gemini-it5-flash [lenient]": "fail",
+      "v2-gemini-it5-flash [mapping]": "fail",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": "fail",
+      "v2-grok-first-attempt [lenient]": "fail",
+      "v2-grok-first-attempt [mapping]": "fail",
+      "v3-claude-it4-opus55": "pass",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "pass"
     },
     {
       "id": "sec-mfa::pharmacist::final",
@@ -274,12 +660,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "pass",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": null,
-      "v2-grok-first-attempt-lenient": null
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "pass",
+      "v2-claude-it3-opus55 [mapping]": "pass",
+      "v2-claude [primary]": "pass",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "pass",
+      "v2-gemini-it5-flash [lenient]": "pass",
+      "v2-gemini-it5-flash [mapping]": "pass",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": null,
+      "v2-grok-first-attempt [lenient]": null,
+      "v2-grok-first-attempt [mapping]": null,
+      "v3-claude-it4-opus55": "pass",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "pass"
     },
     {
       "id": "sec-mfa::nurse::final",
@@ -287,12 +684,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "fail",
-      "v2-claude-lenient": "fail",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": "fail",
-      "v2-grok-first-attempt-lenient": "fail"
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "fail",
+      "v2-claude-it3-opus55 [mapping]": "fail",
+      "v2-claude [primary]": "fail",
+      "v2-claude [lenient]": "fail",
+      "v2-claude [mapping]": "fail",
+      "v2-gemini-it5-flash [primary]": "fail",
+      "v2-gemini-it5-flash [lenient]": "fail",
+      "v2-gemini-it5-flash [mapping]": "fail",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": "fail",
+      "v2-grok-first-attempt [lenient]": "fail",
+      "v2-grok-first-attempt [mapping]": "fail",
+      "v3-claude-it4-opus55": "pass",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "pass"
     },
     {
       "id": "fabric-data-pipeline::pharmacist::final",
@@ -300,12 +708,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "fail",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": "fail",
-      "v2-grok-first-attempt-lenient": "fail"
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "pass",
+      "v2-claude-it3-opus55 [mapping]": "fail",
+      "v2-claude [primary]": "fail",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "pass",
+      "v2-gemini-it5-flash [lenient]": "pass",
+      "v2-gemini-it5-flash [mapping]": "pass",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": "fail",
+      "v2-grok-first-attempt [lenient]": "fail",
+      "v2-grok-first-attempt [mapping]": "fail",
+      "v3-claude-it4-opus55": "pass",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "pass"
     },
     {
       "id": "sec-oauth::nurse::final",
@@ -313,12 +732,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "fail",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": null,
-      "v2-grok-first-attempt-lenient": null
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "pass",
+      "v2-claude-it3-opus55 [mapping]": "fail",
+      "v2-claude [primary]": "fail",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "fail",
+      "v2-gemini-it5-flash [lenient]": "fail",
+      "v2-gemini-it5-flash [mapping]": "fail",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": null,
+      "v2-grok-first-attempt [lenient]": null,
+      "v2-grok-first-attempt [mapping]": null,
+      "v3-claude-it4-opus55": "pass",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "pass"
     },
     {
       "id": "sec-rbac::nurse::final",
@@ -326,12 +756,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "fail",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": "fail",
-      "v2-grok-first-attempt-lenient": "fail"
+      "v2-claude-it3-opus55 [primary]": "pass",
+      "v2-claude-it3-opus55 [lenient]": "pass",
+      "v2-claude-it3-opus55 [mapping]": "pass",
+      "v2-claude [primary]": "fail",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "pass",
+      "v2-gemini-it5-flash [lenient]": "pass",
+      "v2-gemini-it5-flash [mapping]": "pass",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": "fail",
+      "v2-grok-first-attempt [lenient]": "fail",
+      "v2-grok-first-attempt [mapping]": "fail",
+      "v3-claude-it4-opus55": "pass",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "pass"
     },
     {
       "id": "data-join::nurse::final",
@@ -339,12 +780,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "fail",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": "fail",
-      "v2-grok-first-attempt-lenient": "fail"
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "pass",
+      "v2-claude-it3-opus55 [mapping]": "pass",
+      "v2-claude [primary]": "fail",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "pass",
+      "v2-gemini-it5-flash [lenient]": "pass",
+      "v2-gemini-it5-flash [mapping]": "pass",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": "fail",
+      "v2-grok-first-attempt [lenient]": "fail",
+      "v2-grok-first-attempt [mapping]": "fail",
+      "v3-claude-it4-opus55": "pass",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "pass"
     },
     {
       "id": "sys-http-header::pharmacist::final",
@@ -352,12 +804,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "fail",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": "fail",
-      "v2-grok-first-attempt-lenient": "fail"
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "fail",
+      "v2-claude-it3-opus55 [mapping]": "fail",
+      "v2-claude [primary]": "fail",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "fail",
+      "v2-gemini-it5-flash [lenient]": "fail",
+      "v2-gemini-it5-flash [mapping]": "fail",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": "fail",
+      "v2-grok-first-attempt [lenient]": "fail",
+      "v2-grok-first-attempt [mapping]": "fail",
+      "v3-claude-it4-opus55": "fail",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "fail"
     },
     {
       "id": "sys-payload::nurse::final",
@@ -365,12 +828,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "fail",
-      "v2-claude-lenient": "pass",
-      "v2-grok": null,
-      "v2-grok-lenient": null,
-      "v2-grok-first-attempt": null,
-      "v2-grok-first-attempt-lenient": null
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "fail",
+      "v2-claude-it3-opus55 [mapping]": "fail",
+      "v2-claude [primary]": "fail",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "fail",
+      "v2-gemini-it5-flash [primary]": "fail",
+      "v2-gemini-it5-flash [lenient]": "fail",
+      "v2-gemini-it5-flash [mapping]": "fail",
+      "v2-grok [primary]": null,
+      "v2-grok [lenient]": null,
+      "v2-grok [mapping]": null,
+      "v2-grok-first-attempt [primary]": null,
+      "v2-grok-first-attempt [lenient]": null,
+      "v2-grok-first-attempt [mapping]": null,
+      "v3-claude-it4-opus55": "fail",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "fail"
     },
     {
       "id": "aid-parameters::pharmacist::final",
@@ -378,12 +852,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "fail",
-      "v2-claude-lenient": "fail",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": "fail",
-      "v2-grok-first-attempt-lenient": "fail"
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "fail",
+      "v2-claude-it3-opus55 [mapping]": "fail",
+      "v2-claude [primary]": "fail",
+      "v2-claude [lenient]": "fail",
+      "v2-claude [mapping]": "fail",
+      "v2-gemini-it5-flash [primary]": "fail",
+      "v2-gemini-it5-flash [lenient]": "fail",
+      "v2-gemini-it5-flash [mapping]": "fail",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": "fail",
+      "v2-grok-first-attempt [lenient]": "fail",
+      "v2-grok-first-attempt [mapping]": "fail",
+      "v3-claude-it4-opus55": "fail",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "fail"
     },
     {
       "id": "bi-calculated-column::nurse::final",
@@ -391,12 +876,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "fail",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": "fail",
-      "v2-grok-first-attempt-lenient": "fail"
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "fail",
+      "v2-claude-it3-opus55 [mapping]": "fail",
+      "v2-claude [primary]": "fail",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "fail",
+      "v2-gemini-it5-flash [lenient]": "fail",
+      "v2-gemini-it5-flash [mapping]": "fail",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": "fail",
+      "v2-grok-first-attempt [lenient]": "fail",
+      "v2-grok-first-attempt [mapping]": "fail",
+      "v3-claude-it4-opus55": "fail",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "fail"
     },
     {
       "id": "sys-http-header::nurse::pass1",
@@ -404,12 +900,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "fail",
       "v1-claude": "pass",
-      "v2-claude": "fail",
-      "v2-claude-lenient": "fail",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": null,
-      "v2-grok-first-attempt-lenient": null
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "fail",
+      "v2-claude-it3-opus55 [mapping]": "fail",
+      "v2-claude [primary]": "fail",
+      "v2-claude [lenient]": "fail",
+      "v2-claude [mapping]": "fail",
+      "v2-gemini-it5-flash [primary]": "fail",
+      "v2-gemini-it5-flash [lenient]": "fail",
+      "v2-gemini-it5-flash [mapping]": "fail",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": null,
+      "v2-grok-first-attempt [lenient]": null,
+      "v2-grok-first-attempt [mapping]": null,
+      "v3-claude-it4-opus55": "fail",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "fail"
     },
     {
       "id": "sys-jwt::teacher::pass1",
@@ -417,12 +924,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "fail",
       "v1-claude": "fail",
-      "v2-claude": "pass",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": "fail",
-      "v2-grok-first-attempt-lenient": "fail"
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "fail",
+      "v2-claude-it3-opus55 [mapping]": "fail",
+      "v2-claude [primary]": "pass",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "pass",
+      "v2-gemini-it5-flash [lenient]": "pass",
+      "v2-gemini-it5-flash [mapping]": "pass",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": "fail",
+      "v2-grok-first-attempt [lenient]": "fail",
+      "v2-grok-first-attempt [mapping]": "fail",
+      "v3-claude-it4-opus55": "pass",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "pass"
     },
     {
       "id": "aid-ai::pharmacist::final",
@@ -430,12 +948,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "fail",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": null,
-      "v2-grok-first-attempt-lenient": null
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "fail",
+      "v2-claude-it3-opus55 [mapping]": "fail",
+      "v2-claude [primary]": "fail",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "pass",
+      "v2-gemini-it5-flash [lenient]": "pass",
+      "v2-gemini-it5-flash [mapping]": "pass",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": null,
+      "v2-grok-first-attempt [lenient]": null,
+      "v2-grok-first-attempt [mapping]": null,
+      "v3-claude-it4-opus55": "fail",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "pass"
     },
     {
       "id": "bi-calculated-column::pharmacist::final",
@@ -443,12 +972,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "pass",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": "fail",
-      "v2-grok-first-attempt-lenient": "fail"
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "fail",
+      "v2-claude-it3-opus55 [mapping]": "fail",
+      "v2-claude [primary]": "pass",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "pass",
+      "v2-gemini-it5-flash [lenient]": "pass",
+      "v2-gemini-it5-flash [mapping]": "pass",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": "fail",
+      "v2-grok-first-attempt [lenient]": "fail",
+      "v2-grok-first-attempt [mapping]": "fail",
+      "v3-claude-it4-opus55": "fail",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "pass"
     },
     {
       "id": "sec-attack-surface::pharmacist::final",
@@ -456,12 +996,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "fail",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": null,
-      "v2-grok-first-attempt-lenient": null
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "fail",
+      "v2-claude-it3-opus55 [mapping]": "fail",
+      "v2-claude [primary]": "fail",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "fail",
+      "v2-gemini-it5-flash [lenient]": "fail",
+      "v2-gemini-it5-flash [mapping]": "fail",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": null,
+      "v2-grok-first-attempt [lenient]": null,
+      "v2-grok-first-attempt [mapping]": null,
+      "v3-claude-it4-opus55": "pass",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "pass"
     },
     {
       "id": "sys-cookie::pharmacist::final",
@@ -469,12 +1020,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "pass",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": null,
-      "v2-grok-first-attempt-lenient": null
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "fail",
+      "v2-claude-it3-opus55 [mapping]": "fail",
+      "v2-claude [primary]": "pass",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "pass",
+      "v2-gemini-it5-flash [lenient]": "pass",
+      "v2-gemini-it5-flash [mapping]": "pass",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": null,
+      "v2-grok-first-attempt [lenient]": null,
+      "v2-grok-first-attempt [mapping]": null,
+      "v3-claude-it4-opus55": "pass",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "pass"
     },
     {
       "id": "cloud-alert::pharmacist::final",
@@ -482,12 +1044,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "fail",
-      "v2-claude-lenient": "fail",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": "fail",
-      "v2-grok-first-attempt-lenient": "fail"
+      "v2-claude-it3-opus55 [primary]": "pass",
+      "v2-claude-it3-opus55 [lenient]": "pass",
+      "v2-claude-it3-opus55 [mapping]": "pass",
+      "v2-claude [primary]": "fail",
+      "v2-claude [lenient]": "fail",
+      "v2-claude [mapping]": "fail",
+      "v2-gemini-it5-flash [primary]": "pass",
+      "v2-gemini-it5-flash [lenient]": "pass",
+      "v2-gemini-it5-flash [mapping]": "pass",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": "fail",
+      "v2-grok-first-attempt [lenient]": "fail",
+      "v2-grok-first-attempt [mapping]": "fail",
+      "v3-claude-it4-opus55": "pass",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "pass"
     },
     {
       "id": "sec-encryption::pharmacist::final",
@@ -495,12 +1068,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "pass",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": null,
-      "v2-grok-first-attempt-lenient": null
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "fail",
+      "v2-claude-it3-opus55 [mapping]": "fail",
+      "v2-claude [primary]": "pass",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "pass",
+      "v2-gemini-it5-flash [lenient]": "pass",
+      "v2-gemini-it5-flash [mapping]": "pass",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": null,
+      "v2-grok-first-attempt [lenient]": null,
+      "v2-grok-first-attempt [mapping]": null,
+      "v3-claude-it4-opus55": "fail",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "pass"
     },
     {
       "id": "cloud-autoscaling::pharmacist::final",
@@ -508,12 +1092,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "fail",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": "fail",
-      "v2-grok-first-attempt-lenient": "fail"
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "pass",
+      "v2-claude-it3-opus55 [mapping]": "pass",
+      "v2-claude [primary]": "fail",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "pass",
+      "v2-gemini-it5-flash [lenient]": "pass",
+      "v2-gemini-it5-flash [mapping]": "pass",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": "fail",
+      "v2-grok-first-attempt [lenient]": "fail",
+      "v2-grok-first-attempt [mapping]": "fail",
+      "v3-claude-it4-opus55": "pass",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "pass"
     },
     {
       "id": "ai-agent::pharmacist::final",
@@ -521,12 +1116,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "fail",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": "fail",
-      "v2-grok-first-attempt-lenient": "fail"
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "fail",
+      "v2-claude-it3-opus55 [mapping]": "fail",
+      "v2-claude [primary]": "fail",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "fail",
+      "v2-gemini-it5-flash [lenient]": "fail",
+      "v2-gemini-it5-flash [mapping]": "fail",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": "fail",
+      "v2-grok-first-attempt [lenient]": "fail",
+      "v2-grok-first-attempt [mapping]": "fail",
+      "v3-claude-it4-opus55": "pass",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "pass"
     },
     {
       "id": "excel-pivot-table::pharmacist::final",
@@ -534,12 +1140,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "fail",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": "fail",
-      "v2-grok-first-attempt-lenient": "fail"
+      "v2-claude-it3-opus55 [primary]": "pass",
+      "v2-claude-it3-opus55 [lenient]": "pass",
+      "v2-claude-it3-opus55 [mapping]": "pass",
+      "v2-claude [primary]": "fail",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "pass",
+      "v2-gemini-it5-flash [lenient]": "pass",
+      "v2-gemini-it5-flash [mapping]": "pass",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": "fail",
+      "v2-grok-first-attempt [lenient]": "fail",
+      "v2-grok-first-attempt [mapping]": "fail",
+      "v3-claude-it4-opus55": "pass",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "pass"
     },
     {
       "id": "sys-http-response::pharmacist::final",
@@ -547,12 +1164,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "fail",
-      "v2-claude-lenient": "fail",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": "fail",
-      "v2-grok-first-attempt-lenient": "fail"
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "fail",
+      "v2-claude-it3-opus55 [mapping]": "fail",
+      "v2-claude [primary]": "fail",
+      "v2-claude [lenient]": "fail",
+      "v2-claude [mapping]": "fail",
+      "v2-gemini-it5-flash [primary]": "fail",
+      "v2-gemini-it5-flash [lenient]": "fail",
+      "v2-gemini-it5-flash [mapping]": "fail",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": "fail",
+      "v2-grok-first-attempt [lenient]": "fail",
+      "v2-grok-first-attempt [mapping]": "fail",
+      "v3-claude-it4-opus55": "fail",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "fail"
     },
     {
       "id": "cloud-cdn::pharmacist::final",
@@ -560,12 +1188,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "pass",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": "fail",
-      "v2-grok-first-attempt-lenient": "fail"
+      "v2-claude-it3-opus55 [primary]": "pass",
+      "v2-claude-it3-opus55 [lenient]": "pass",
+      "v2-claude-it3-opus55 [mapping]": "pass",
+      "v2-claude [primary]": "pass",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "pass",
+      "v2-gemini-it5-flash [lenient]": "pass",
+      "v2-gemini-it5-flash [mapping]": "pass",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": "fail",
+      "v2-grok-first-attempt [lenient]": "fail",
+      "v2-grok-first-attempt [mapping]": "fail",
+      "v3-claude-it4-opus55": "pass",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "pass"
     },
     {
       "id": "ai-llm::pharmacist::final",
@@ -573,12 +1212,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "fail",
-      "v2-claude-lenient": "fail",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": null,
-      "v2-grok-first-attempt-lenient": null
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "fail",
+      "v2-claude-it3-opus55 [mapping]": "fail",
+      "v2-claude [primary]": "fail",
+      "v2-claude [lenient]": "fail",
+      "v2-claude [mapping]": "fail",
+      "v2-gemini-it5-flash [primary]": "fail",
+      "v2-gemini-it5-flash [lenient]": "fail",
+      "v2-gemini-it5-flash [mapping]": "fail",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": null,
+      "v2-grok-first-attempt [lenient]": null,
+      "v2-grok-first-attempt [mapping]": null,
+      "v3-claude-it4-opus55": "fail",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "fail"
     },
     {
       "id": "cloud-deploy::pharmacist::final",
@@ -586,12 +1236,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "pass",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": "fail",
-      "v2-grok-first-attempt-lenient": "fail"
+      "v2-claude-it3-opus55 [primary]": "pass",
+      "v2-claude-it3-opus55 [lenient]": "pass",
+      "v2-claude-it3-opus55 [mapping]": "pass",
+      "v2-claude [primary]": "pass",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "pass",
+      "v2-gemini-it5-flash [lenient]": "pass",
+      "v2-gemini-it5-flash [mapping]": "pass",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": "fail",
+      "v2-grok-first-attempt [lenient]": "fail",
+      "v2-grok-first-attempt [mapping]": "fail",
+      "v3-claude-it4-opus55": "pass",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "pass"
     },
     {
       "id": "aid-accuracy::pharmacist::final",
@@ -599,12 +1260,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "pass",
-      "v2-claude-lenient": "pass",
-      "v2-grok": null,
-      "v2-grok-lenient": null,
-      "v2-grok-first-attempt": null,
-      "v2-grok-first-attempt-lenient": null
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "fail",
+      "v2-claude-it3-opus55 [mapping]": "fail",
+      "v2-claude [primary]": "pass",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "fail",
+      "v2-gemini-it5-flash [lenient]": "fail",
+      "v2-gemini-it5-flash [mapping]": "fail",
+      "v2-grok [primary]": null,
+      "v2-grok [lenient]": null,
+      "v2-grok [mapping]": null,
+      "v2-grok-first-attempt [primary]": null,
+      "v2-grok-first-attempt [lenient]": null,
+      "v2-grok-first-attempt [mapping]": null,
+      "v3-claude-it4-opus55": "fail",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "fail"
     },
     {
       "id": "data-backfill::pharmacist::final",
@@ -612,12 +1284,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "fail",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": "fail",
-      "v2-grok-first-attempt-lenient": "fail"
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "fail",
+      "v2-claude-it3-opus55 [mapping]": "fail",
+      "v2-claude [primary]": "fail",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "pass",
+      "v2-gemini-it5-flash [lenient]": "pass",
+      "v2-gemini-it5-flash [mapping]": "pass",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": "fail",
+      "v2-grok-first-attempt [lenient]": "fail",
+      "v2-grok-first-attempt [mapping]": "fail",
+      "v3-claude-it4-opus55": "pass",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "pass"
     },
     {
       "id": "sec-rbac::pharmacist::final",
@@ -625,12 +1308,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "pass",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": "fail",
-      "v2-grok-first-attempt-lenient": "fail"
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "fail",
+      "v2-claude-it3-opus55 [mapping]": "fail",
+      "v2-claude [primary]": "pass",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "pass",
+      "v2-gemini-it5-flash [lenient]": "pass",
+      "v2-gemini-it5-flash [mapping]": "pass",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": "fail",
+      "v2-grok-first-attempt [lenient]": "fail",
+      "v2-grok-first-attempt [mapping]": "fail",
+      "v3-claude-it4-opus55": "pass",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "pass"
     },
     {
       "id": "sys-payload::pharmacist::final",
@@ -638,12 +1332,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "fail",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": "fail",
-      "v2-grok-first-attempt-lenient": "fail"
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "fail",
+      "v2-claude-it3-opus55 [mapping]": "fail",
+      "v2-claude [primary]": "fail",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "fail",
+      "v2-gemini-it5-flash [primary]": "fail",
+      "v2-gemini-it5-flash [lenient]": "fail",
+      "v2-gemini-it5-flash [mapping]": "fail",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": "fail",
+      "v2-grok-first-attempt [lenient]": "fail",
+      "v2-grok-first-attempt [mapping]": "fail",
+      "v3-claude-it4-opus55": "fail",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "fail"
     },
     {
       "id": "aid-hallucination::pharmacist::final",
@@ -651,12 +1356,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "pass",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": "fail",
-      "v2-grok-first-attempt-lenient": "fail"
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "fail",
+      "v2-claude-it3-opus55 [mapping]": "fail",
+      "v2-claude [primary]": "pass",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "pass",
+      "v2-gemini-it5-flash [lenient]": "pass",
+      "v2-gemini-it5-flash [mapping]": "pass",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": "fail",
+      "v2-grok-first-attempt [lenient]": "fail",
+      "v2-grok-first-attempt [mapping]": "fail",
+      "v3-claude-it4-opus55": "pass",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "pass"
     },
     {
       "id": "cloud-alert::nurse::final",
@@ -664,12 +1380,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "pass",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": "fail",
-      "v2-grok-first-attempt-lenient": "fail"
+      "v2-claude-it3-opus55 [primary]": "pass",
+      "v2-claude-it3-opus55 [lenient]": "pass",
+      "v2-claude-it3-opus55 [mapping]": "pass",
+      "v2-claude [primary]": "pass",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "pass",
+      "v2-gemini-it5-flash [lenient]": "pass",
+      "v2-gemini-it5-flash [mapping]": "pass",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": "fail",
+      "v2-grok-first-attempt [lenient]": "fail",
+      "v2-grok-first-attempt [mapping]": "fail",
+      "v3-claude-it4-opus55": "pass",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "pass"
     },
     {
       "id": "bi-rls::teacher::final",
@@ -677,12 +1404,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "pass",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "pass",
-      "v2-grok-lenient": "pass",
-      "v2-grok-first-attempt": null,
-      "v2-grok-first-attempt-lenient": null
+      "v2-claude-it3-opus55 [primary]": "pass",
+      "v2-claude-it3-opus55 [lenient]": "pass",
+      "v2-claude-it3-opus55 [mapping]": "pass",
+      "v2-claude [primary]": "pass",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "pass",
+      "v2-gemini-it5-flash [lenient]": "pass",
+      "v2-gemini-it5-flash [mapping]": "pass",
+      "v2-grok [primary]": "pass",
+      "v2-grok [lenient]": "pass",
+      "v2-grok [mapping]": "pass",
+      "v2-grok-first-attempt [primary]": null,
+      "v2-grok-first-attempt [lenient]": null,
+      "v2-grok-first-attempt [mapping]": null,
+      "v3-claude-it4-opus55": "pass",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "pass"
     },
     {
       "id": "cloud-autoscaling::nurse::final",
@@ -690,12 +1428,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "pass",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": "fail",
-      "v2-grok-first-attempt-lenient": "fail"
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "pass",
+      "v2-claude-it3-opus55 [mapping]": "pass",
+      "v2-claude [primary]": "pass",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "pass",
+      "v2-gemini-it5-flash [lenient]": "pass",
+      "v2-gemini-it5-flash [mapping]": "pass",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": "fail",
+      "v2-grok-first-attempt [lenient]": "fail",
+      "v2-grok-first-attempt [mapping]": "fail",
+      "v3-claude-it4-opus55": "pass",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "pass"
     },
     {
       "id": "aid-accuracy::nurse::final",
@@ -703,12 +1452,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "pass",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "pass",
-      "v2-grok-first-attempt": "fail",
-      "v2-grok-first-attempt-lenient": "pass"
+      "v2-claude-it3-opus55 [primary]": "pass",
+      "v2-claude-it3-opus55 [lenient]": "pass",
+      "v2-claude-it3-opus55 [mapping]": "pass",
+      "v2-claude [primary]": "pass",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "pass",
+      "v2-gemini-it5-flash [lenient]": "pass",
+      "v2-gemini-it5-flash [mapping]": "pass",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "pass",
+      "v2-grok [mapping]": "pass",
+      "v2-grok-first-attempt [primary]": "fail",
+      "v2-grok-first-attempt [lenient]": "pass",
+      "v2-grok-first-attempt [mapping]": "pass",
+      "v3-claude-it4-opus55": "pass",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "pass"
     },
     {
       "id": "sys-http-response::nurse::final",
@@ -716,12 +1476,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "pass",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": "fail",
-      "v2-grok-first-attempt-lenient": "fail"
+      "v2-claude-it3-opus55 [primary]": "pass",
+      "v2-claude-it3-opus55 [lenient]": "pass",
+      "v2-claude-it3-opus55 [mapping]": "pass",
+      "v2-claude [primary]": "pass",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "pass",
+      "v2-gemini-it5-flash [lenient]": "pass",
+      "v2-gemini-it5-flash [mapping]": "pass",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": "fail",
+      "v2-grok-first-attempt [lenient]": "fail",
+      "v2-grok-first-attempt [mapping]": "fail",
+      "v3-claude-it4-opus55": "pass",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "pass"
     },
     {
       "id": "ai-llm::nurse::final",
@@ -729,12 +1500,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "fail",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": "fail",
-      "v2-grok-first-attempt-lenient": "fail"
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "fail",
+      "v2-claude-it3-opus55 [mapping]": "fail",
+      "v2-claude [primary]": "fail",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "fail",
+      "v2-gemini-it5-flash [lenient]": "fail",
+      "v2-gemini-it5-flash [mapping]": "fail",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": "fail",
+      "v2-grok-first-attempt [lenient]": "fail",
+      "v2-grok-first-attempt [mapping]": "fail",
+      "v3-claude-it4-opus55": "pass",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "pass"
     },
     {
       "id": "ai-agent::teacher::final",
@@ -742,12 +1524,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "pass",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": "fail",
-      "v2-grok-first-attempt-lenient": "fail"
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "pass",
+      "v2-claude-it3-opus55 [mapping]": "pass",
+      "v2-claude [primary]": "pass",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "pass",
+      "v2-gemini-it5-flash [lenient]": "pass",
+      "v2-gemini-it5-flash [mapping]": "pass",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": "fail",
+      "v2-grok-first-attempt [lenient]": "fail",
+      "v2-grok-first-attempt [mapping]": "fail",
+      "v3-claude-it4-opus55": "pass",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "pass"
     },
     {
       "id": "sec-encryption::teacher::final",
@@ -755,12 +1548,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "pass",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": null,
-      "v2-grok-first-attempt-lenient": null
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "fail",
+      "v2-claude-it3-opus55 [mapping]": "fail",
+      "v2-claude [primary]": "pass",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "pass",
+      "v2-gemini-it5-flash [lenient]": "pass",
+      "v2-gemini-it5-flash [mapping]": "pass",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": null,
+      "v2-grok-first-attempt [lenient]": null,
+      "v2-grok-first-attempt [mapping]": null,
+      "v3-claude-it4-opus55": "pass",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "pass"
     },
     {
       "id": "fabric-data-pipeline::teacher::final",
@@ -768,12 +1572,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "pass",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": null,
-      "v2-grok-first-attempt-lenient": null
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "fail",
+      "v2-claude-it3-opus55 [mapping]": "fail",
+      "v2-claude [primary]": "pass",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "pass",
+      "v2-gemini-it5-flash [lenient]": "pass",
+      "v2-gemini-it5-flash [mapping]": "pass",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": null,
+      "v2-grok-first-attempt [lenient]": null,
+      "v2-grok-first-attempt [mapping]": null,
+      "v3-claude-it4-opus55": "pass",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "pass"
     },
     {
       "id": "sec-attack-surface::teacher::final",
@@ -781,12 +1596,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "pass",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": "fail",
-      "v2-grok-first-attempt-lenient": "fail"
+      "v2-claude-it3-opus55 [primary]": "pass",
+      "v2-claude-it3-opus55 [lenient]": "pass",
+      "v2-claude-it3-opus55 [mapping]": "pass",
+      "v2-claude [primary]": "pass",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "pass",
+      "v2-gemini-it5-flash [lenient]": "pass",
+      "v2-gemini-it5-flash [mapping]": "pass",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": "fail",
+      "v2-grok-first-attempt [lenient]": "fail",
+      "v2-grok-first-attempt [mapping]": "fail",
+      "v3-claude-it4-opus55": "pass",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "pass"
     },
     {
       "id": "data-backfill::teacher::final",
@@ -794,12 +1620,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "pass",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": "fail",
-      "v2-grok-first-attempt-lenient": "fail"
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "fail",
+      "v2-claude-it3-opus55 [mapping]": "fail",
+      "v2-claude [primary]": "pass",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "fail",
+      "v2-gemini-it5-flash [lenient]": "fail",
+      "v2-gemini-it5-flash [mapping]": "fail",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": "fail",
+      "v2-grok-first-attempt [lenient]": "fail",
+      "v2-grok-first-attempt [mapping]": "fail",
+      "v3-claude-it4-opus55": "pass",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "pass"
     },
     {
       "id": "sec-mfa::teacher::final",
@@ -807,12 +1644,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "pass",
-      "v2-claude-lenient": "pass",
-      "v2-grok": null,
-      "v2-grok-lenient": null,
-      "v2-grok-first-attempt": null,
-      "v2-grok-first-attempt-lenient": null
+      "v2-claude-it3-opus55 [primary]": "fail",
+      "v2-claude-it3-opus55 [lenient]": "fail",
+      "v2-claude-it3-opus55 [mapping]": "fail",
+      "v2-claude [primary]": "pass",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "fail",
+      "v2-gemini-it5-flash [lenient]": "fail",
+      "v2-gemini-it5-flash [mapping]": "fail",
+      "v2-grok [primary]": null,
+      "v2-grok [lenient]": null,
+      "v2-grok [mapping]": null,
+      "v2-grok-first-attempt [primary]": null,
+      "v2-grok-first-attempt [lenient]": null,
+      "v2-grok-first-attempt [mapping]": null,
+      "v3-claude-it4-opus55": "fail",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "fail"
     },
     {
       "id": "cloud-deploy::nurse::final",
@@ -820,12 +1668,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "pass",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": null,
-      "v2-grok-first-attempt-lenient": null
+      "v2-claude-it3-opus55 [primary]": "pass",
+      "v2-claude-it3-opus55 [lenient]": "pass",
+      "v2-claude-it3-opus55 [mapping]": "pass",
+      "v2-claude [primary]": "pass",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "pass",
+      "v2-gemini-it5-flash [lenient]": "pass",
+      "v2-gemini-it5-flash [mapping]": "pass",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": null,
+      "v2-grok-first-attempt [lenient]": null,
+      "v2-grok-first-attempt [mapping]": null,
+      "v3-claude-it4-opus55": "pass",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "pass"
     },
     {
       "id": "sec-rbac::teacher::final",
@@ -833,12 +1692,23 @@
       "status": "proposed",
       "v1-original-2026-10-30": "pass",
       "v1-claude": "pass",
-      "v2-claude": "pass",
-      "v2-claude-lenient": "pass",
-      "v2-grok": "fail",
-      "v2-grok-lenient": "fail",
-      "v2-grok-first-attempt": null,
-      "v2-grok-first-attempt-lenient": null
+      "v2-claude-it3-opus55 [primary]": "pass",
+      "v2-claude-it3-opus55 [lenient]": "pass",
+      "v2-claude-it3-opus55 [mapping]": "pass",
+      "v2-claude [primary]": "pass",
+      "v2-claude [lenient]": "pass",
+      "v2-claude [mapping]": "pass",
+      "v2-gemini-it5-flash [primary]": "pass",
+      "v2-gemini-it5-flash [lenient]": "pass",
+      "v2-gemini-it5-flash [mapping]": "pass",
+      "v2-grok [primary]": "fail",
+      "v2-grok [lenient]": "fail",
+      "v2-grok [mapping]": "fail",
+      "v2-grok-first-attempt [primary]": null,
+      "v2-grok-first-attempt [lenient]": null,
+      "v2-grok-first-attempt [mapping]": null,
+      "v3-claude-it4-opus55": "pass",
+      "FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)": "pass"
     }
   ]
 }

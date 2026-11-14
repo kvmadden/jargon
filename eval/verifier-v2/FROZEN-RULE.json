@@ -1,0 +1,43 @@
+{
+  "schema": "jargon-verifier-frozen-rule@1",
+  "frozen_on": "2026-11-13",
+  "rule": "Fail an explanation only when both verifiers fail it: v3 two-pass on claude-opus-5-5 (decideV3) AND v2 single-pass on Gemini 3.8 Flash (High) under the lenient rule (decideV2 'lenient'). Any missing or abstained verdict makes the result abstain.",
+  "decision_function": "decideConsensus in eval/verifier-v2/lib.ts",
+  "components": {
+    "claude_v3": {
+      "arm": "v3-claude",
+      "cli": "claude -p (Claude subscription, apiKeySource must be none)",
+      "model": "claude-opus-5-5",
+      "pass_1_system_prompt_sha256": "e3d3463efb5d804a3fff0a3606b88166372b5b77968cb8ae6148c3c8b8d19bd4",
+      "pass_2_system_prompt_sha256": "5e4d5ef8c43d1ee1e2c4c6a4e3ce1ce6cc611304e1771335647ed19c8d904b21",
+      "decision": "decideV3"
+    },
+    "gemini_v2": {
+      "arm": "v2-gemini",
+      "cli": "agy (Antigravity, Google subscription login)",
+      "model": "Gemini 3.8 Flash (High)",
+      "system_prompt_sha256": "191bec9cbe9befd68bc5fccb7c7960185fe6e33b056577dbe0704622591debc6",
+      "decision": "decideV2 lenient"
+    }
+  },
+  "files_sha256_at_freeze": {
+    "eval/verifier-v2/lib.ts": "305672f208d81f8f1e9aed880d3ca19c1f7d189c7edde726efc4317bb13cc8a4",
+    "eval/verifier-v2/run-verifiers.ts": "553998ed141588238f5cb486bbea5090e03eefe1a7ba8076d068ae1f4efe00be",
+    "eval/verifier-v2/gold/confirm.json": "8d2d98f09c70fff5332491fe2ca46e4100deeaf3fccfe854f0f5489b9a6894da"
+  },
+  "dev_set_result": {
+    "set": "eval/verifier-v2/gold (50 items from the 2026-10-30 run)",
+    "known_misses_caught": "5/5",
+    "flawed_caught_provisional": "12/13",
+    "false_alarms_provisional": "3/37",
+    "false_alarms_on_7_reported_correct": "0/7",
+    "abstained": 0,
+    "no_verdict": 0
+  },
+  "how_it_was_chosen": "Seven iterations on the dev set, logged in ITERATIONS.jsonl. Six decision rules were searched in it1 and two consensus combinations in it6. The dev numbers are optimistic by construction.",
+  "known_limits": [
+    "Dev-set only. The rubric and reference list were written after reading the five known misses, though the list leaves out every fact behind them.",
+    "45 of 50 labels were proposed by Claude, the same family as one of the two verifiers.",
+    "The held-out Part B set could not be run (see RESULTS-verifier-v2.md)."
+  ]
+}

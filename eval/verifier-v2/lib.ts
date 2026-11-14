@@ -65,10 +65,13 @@ export interface LearnerProfile {
 }
 
 /** The expert whose sign-off is asked for, by learner profile id. */
-export function expertFor(profileId: string): string {
+export function expertFor(profileId: string, job?: string | null): string {
   if (profileId === 'pharmacist') return 'licensed pharmacist';
   if (profileId === 'nurse') return 'registered nurse';
   if (profileId === 'teacher') return 'experienced high-school teacher';
+  // Added before the freeze so the rule applies to any learner. The three dev
+  // profiles above are unchanged.
+  if (job && job.trim()) return `experienced practitioner in the learner's job (${job.trim()})`;
   throw new Error(`no expert defined for profile ${profileId}`);
 }
 
@@ -104,7 +107,7 @@ export function v2UserMessage(args: {
 }): string {
   const { canonical, candidate, profileId, profile } = args;
   return `LEARNER: ${profile.label}${profile.job ? ` (${profile.job})` : ''}
-EXPERT WHO MUST SIGN OFF: ${expertFor(profileId)}
+EXPERT WHO MUST SIGN OFF: ${expertFor(profileId, profile.job)}
 
 CANONICAL REFERENCE (may itself contain errors):
 - term: ${canonical.term}
@@ -188,10 +191,19 @@ export function parseV2(raw: string | object | null | undefined): V2Verdict | nu
  *   lenient: fail only if a claim is wrong or the expert would not sign off.
  * Unverifiable claims never fail an explanation on their own.
  */
-export type DecisionRule = 'primary' | 'lenient';
+export type DecisionRule = 'primary' | 'lenient' | 'mapping';
+/**
+ * 'mapping' was added on 2026-11-13 after iteration 1 searched six rules over
+ * stored verdicts on the dev set: fail if the expert would not sign off, a
+ * claim is wrong, or a MAPPING claim is wrong or misleading. It was chosen
+ * on the dev set, so its dev numbers are optimistic by construction.
+ */
 export function decideV2(v: V2Verdict, rule: DecisionRule = 'primary'): 'pass' | 'fail' {
-  const failing: ClaimVerdict[] = rule === 'primary' ? ['wrong', 'misleading'] : ['wrong'];
   if (v.signoff === 'no') return 'fail';
+  if (rule === 'mapping') {
+    return v.claims.some((c) => c.verdict === 'wrong' || (c.type === 'MAPPING' && c.verdict === 'misleading')) ? 'fail' : 'pass';
+  }
+  const failing: ClaimVerdict[] = rule === 'primary' ? ['wrong', 'misleading'] : ['wrong'];
   return v.claims.some((c) => failing.includes(c.verdict)) ? 'fail' : 'pass';
 }
 
@@ -243,7 +255,7 @@ export interface GoldRow {
 }
 export interface ArmResult {
   id: string;
-  decision: 'pass' | 'fail' | null; // null = no usable verdict
+  decision: 'pass' | 'fail' | 'abstain' | null; // null = no usable verdict
 }
 
 export interface ArmScore {
@@ -253,6 +265,7 @@ export interface ArmScore {
   proposed_flawed: { caught: number; of: number }; // label wrong or misleading, any status
   proposed_correct: { false_alarms: number; of: number };
   reported_correct: { false_alarms: number; of: number }; // prior expert ruling "correct"
+  abstained: { on_flawed: number; on_correct: number };
 }
 
 const flawed = (l: GoldLabel) => l === 'wrong' || l === 'misleading';
@@ -272,11 +285,16 @@ export function scoreArm(gold: GoldRow[], results: ArmResult[]): ArmScore {
     proposed_flawed: { caught: 0, of: 0 },
     proposed_correct: { false_alarms: 0, of: 0 },
     reported_correct: { false_alarms: 0, of: 0 },
+    abstained: { on_flawed: 0, on_correct: 0 },
   };
   for (const g of gold) {
     const d = byId.get(g.id)?.decision ?? null;
     if (d === null) s.no_verdict++;
     const fail = d === 'fail';
+    if (d === 'abstain') {
+      if (flawed(g.label)) s.abstained.on_flawed++;
+      else s.abstained.on_correct++;
+    }
     if (g.group === 'A-confirmed-miss') {
       if (g.label_status !== 'confirmed' || !flawed(g.label)) {
         throw new Error(`${g.id} is in the confirmed-miss group but is not a confirmed wrong or misleading label`);
@@ -311,4 +329,208 @@ export function firstAndLatest<T extends { id: string }>(rows: T[]): { first: Ma
     latest.set(r.id, r);
   }
   return { first, latest };
+}
+
+// ─── v3: two passes (extract, then verify against a reference list), with abstain ───
+//
+// Pass 1 extracts atomic claims and types them, with no judgment.
+// Pass 2 checks each claim against REFERENCE_FACTS and general professional
+// knowledge. "contradicted" needs a specific fact that the claim gets wrong.
+// Imprecise or simplified wording is "imprecise", which never fails an
+// explanation. That targets v2's main false-alarm source: pedantic
+// "misleading" calls. The sign-off has a third answer, "unsure", which
+// makes the verifier abstain instead of guessing.
+//
+// The reference list deliberately leaves out every fact behind the five
+// confirmed misses (EHR chart access, environments, chain patient profiles,
+// prescription labels and transfers), so it cannot hand the verifier those
+// catches. Facts that touch a proposed-label dev item are tagged dev_item.
+
+export interface ReferenceFact { id: string; area: string; fact: string; dev_item?: string }
+export const REFERENCE_FACTS: ReferenceFact[] = [
+  { id: 'R1', area: 'pharmacy', fact: 'In US pharmacies, final product verification of a filled prescription is limited to a licensed pharmacist. Technicians may enter and fill prescriptions.' },
+  { id: 'R2', area: 'pharmacy', fact: 'Drug-interaction and DUR screening in pharmacy systems runs on licensed clinical knowledge bases (such as First Databank or Medi-Span) with rules, not on large language models.', dev_item: 'ai-llm::pharmacist' },
+  { id: 'R3', area: 'pharmacy', fact: 'Retail pharmacy claims adjudicate in real time with the PBM using the NCPDP Telecommunication Standard, usually through a switch. A rejected claim comes back as an NCPDP reject code inside a normal response, not as a transport or HTTP error.', dev_item: 'sys-http-response::pharmacist' },
+  { id: 'R4', area: 'pharmacy', fact: 'Alert fatigue from frequent, low-value drug-interaction alerts is well documented, and pharmacists override most of them.' },
+  { id: 'R5', area: 'pharmacy', fact: 'Schedule II controlled substances need a valid prescription and carry extra record-keeping and inventory rules. More checks on a C-II is a safeguard practice, not an authentication factor.' },
+  { id: 'R6', area: 'nursing', fact: 'SBAR (Situation, Background, Assessment, Recommendation) is a structured verbal or written handoff communication format. Patient identification and location belong to its Situation section. It is a way of speaking or writing a handoff, not a document attached to a chart.', dev_item: 'sys-payload::nurse, sys-http-header::nurse' },
+  { id: 'R7', area: 'nursing', fact: 'Clinical alarm fatigue (for example from pumps and monitors) is well documented, and The Joint Commission issued a sentinel event alert on it in 2013.' },
+  { id: 'R8', area: 'nursing', fact: 'Hospital nurse staffing flexes with census: extra staff are called in when census rises and staff are flexed off or called off when it falls.' },
+  { id: 'R9', area: 'nursing', fact: 'EHRs assign permissions by role (nurse, physician, pharmacist, unit clerk). Each role can see and do different things.' },
+  { id: 'R10', area: 'schools', fact: 'Student information systems and gradebooks usually show a teacher only the students in their own sections, and principals see their own school.' },
+  { id: 'R11', area: 'tech', fact: 'In Power BI, a calculated column is computed per row at data refresh and stored. When a visual aggregates a calculated column, the total still responds to slicers and filters. What does not respond is the stored per-row value.', dev_item: 'bi-calculated-column::*' },
+  { id: 'R12', area: 'tech', fact: 'Anthropic and OpenAI have not published parameter counts for Claude or GPT-5 models. Running a 70B open model on a laptop needs quantization and a high-memory machine.', dev_item: 'aid-parameters::pharmacist' },
+  { id: 'R13', area: 'tech', fact: 'OAuth 2.0 is an authorization framework that issues access tokens. Sign-in on top of it is usually OpenID Connect. Learner-level explanations commonly describe both as OAuth, which is acceptable simplification.' },
+  { id: 'R14', area: 'tech', fact: 'Under HIPAA, loss of properly encrypted protected health information is generally not a reportable breach (the encryption safe harbor).' },
+  { id: 'R15', area: 'tech', fact: 'Session cookies with no expiry are cleared when the browser session ends, including a restart for an update.' },
+];
+
+export const V3_VERDICTS = ['supported', 'imprecise', 'contradicted', 'abstain'] as const;
+export type V3Verdict = (typeof V3_VERDICTS)[number];
+
+export function v3ExtractSystemPrompt(): string {
+  const types = Object.entries(CLAIM_TYPES).map(([k, v]) => `- ${k}: ${v}`).join('\n');
+  return `You extract factual claims from a short plain-language explanation of a technical term written for a working professional. Do not judge them.
+
+List every checkable factual claim in long_definition, why_it_matters and example_in_sentence, one atomic claim per item, in your own words. Include claims a comparison or the example implies without stating them, for example how a workplace system behaves, who can see or do what, or what an artifact carries. Skip pure opinion and pure advice.
+
+Give each claim one type:
+${types}
+
+Mark load_bearing true when the explanation's teaching depends on the claim (the definition, the central comparison, or the example's cause and effect), and false for incidental detail.
+
+Reply with ONLY one JSON object: {"claims":[{"type":"TECH|PRACTICE|MAPPING|SCENARIO|EXTERNAL","claim":"...","load_bearing":true|false}]}`;
+}
+
+export function v3VerifySystemPrompt(): string {
+  const refs = REFERENCE_FACTS.map((r) => `${r.id} (${r.area}): ${r.fact}`).join('\n');
+  return `You verify a list of factual claims taken from a plain-language explanation written for one learner. A careful expert in the learner's field will read the explanation, and they will reject it only for a claim that is actually false.
+
+TRUSTED REFERENCE FACTS (United States practice). When a claim touches one of these, the fact decides:
+${refs}
+
+For each claim choose one verdict:
+- supported: true as stated.
+- imprecise: loosely worded or slightly overstated, but the stated fact is still true.
+- contradicted: as stated, the claim is false. Name the fact that shows it. A publicly unknown number stated as certain counts as contradicted.
+- abstain: you cannot tell whether it is true.
+
+Two standards, by claim type:
+- TECH and EXTERNAL claims may simplify the technology for a newcomer. A simplification is imprecise, not contradicted, if what the learner ends up believing is still true.
+- PRACTICE, MAPPING and SCENARIO claims describe the learner's own field, which the learner and the expert know well. They get no simplification leeway. If typical United States practice differs from what the claim says (who can access what, what a system is connected to, what an artifact carries, how a process works between people), the claim is contradicted, even when a nearby simplified version would be true. Do not excuse such a claim as illustrative, simplified or sandbox-like. A plausible, ordinary scenario that matches how the field works is supported.
+Use contradicted only when you can state the fact that makes the claim false. Never use it for wording, emphasis or tone.
+
+Then answer the expert sign-off: would the named expert publish this explanation to a colleague as written? "yes", "no" (only if at least one claim is contradicted) or "unsure".
+
+The CANONICAL entry is a reference written by the product team and can itself be wrong.
+
+Reply with ONLY one JSON object: {"checks":[{"index":0,"verdict":"supported|imprecise|contradicted|abstain","basis":"reference id, fact, or empty","reason":"one sentence"}],"signoff":"yes|no|unsure","signoff_reason":"one sentence"}`;
+}
+
+export interface V3Claim { type: ClaimType; claim: string; load_bearing: boolean }
+export interface V3Check { index: number; verdict: V3Verdict; basis: string; reason: string }
+export interface V3Result { claims: V3Claim[]; checks: V3Check[]; signoff: 'yes' | 'no' | 'unsure'; signoff_reason: string }
+
+export function v3VerifyUserMessage(args: {
+  canonical: CanonicalTerm;
+  candidate: CandidateText;
+  profileId: string;
+  profile: LearnerProfile;
+  claims: V3Claim[];
+}): string {
+  const list = args.claims.map((c, i) => `${i}. [${c.type}${c.load_bearing ? ', load-bearing' : ''}] ${c.claim}`).join('\n');
+  return `${v2UserMessage(args)}
+
+CLAIMS TO VERIFY:
+${list}
+
+Return a check for every claim index, then the sign-off. JSON only.`;
+}
+
+export const V3_EXTRACT_SCHEMA = {
+  type: 'object',
+  properties: {
+    claims: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          type: { type: 'string', enum: Object.keys(CLAIM_TYPES) },
+          claim: { type: 'string' },
+          load_bearing: { type: 'boolean' },
+        },
+        required: ['type', 'claim', 'load_bearing'],
+      },
+    },
+  },
+  required: ['claims'],
+} as const;
+
+export const V3_VERIFY_SCHEMA = {
+  type: 'object',
+  properties: {
+    checks: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          index: { type: 'integer' },
+          verdict: { type: 'string', enum: [...V3_VERDICTS] },
+          basis: { type: 'string' },
+          reason: { type: 'string' },
+        },
+        required: ['index', 'verdict', 'basis', 'reason'],
+      },
+    },
+    signoff: { type: 'string', enum: ['yes', 'no', 'unsure'] },
+    signoff_reason: { type: 'string' },
+  },
+  required: ['checks', 'signoff', 'signoff_reason'],
+} as const;
+
+function asObject(raw: unknown): any {
+  if (raw == null) return null;
+  if (typeof raw !== 'string') return raw;
+  try {
+    return JSON.parse(stripFence(raw));
+  } catch {
+    return null;
+  }
+}
+
+export function parseV3Claims(raw: unknown): V3Claim[] | null {
+  const o = asObject(raw);
+  if (!o || !Array.isArray(o.claims) || o.claims.length === 0) return null;
+  for (const c of o.claims) {
+    if (!c || !(c.type in CLAIM_TYPES) || typeof c.claim !== 'string' || typeof c.load_bearing !== 'boolean') return null;
+  }
+  return o.claims.map((c: any) => ({ type: c.type, claim: c.claim, load_bearing: c.load_bearing }));
+}
+
+/** Parse pass 2. Every claim index must be checked exactly once. */
+export function parseV3Checks(raw: unknown, nClaims: number): Omit<V3Result, 'claims'> | null {
+  const o = asObject(raw);
+  if (!o || !Array.isArray(o.checks)) return null;
+  if (!['yes', 'no', 'unsure'].includes(o.signoff) || typeof o.signoff_reason !== 'string') return null;
+  const seen = new Set<number>();
+  for (const c of o.checks) {
+    if (!c || !Number.isInteger(c.index) || c.index < 0 || c.index >= nClaims || seen.has(c.index)) return null;
+    if (!(V3_VERDICTS as readonly string[]).includes(c.verdict)) return null;
+    if (typeof c.reason !== 'string' || typeof c.basis !== 'string') return null;
+    seen.add(c.index);
+  }
+  if (seen.size !== nClaims) return null;
+  return {
+    checks: o.checks.map((c: any) => ({ index: c.index, verdict: c.verdict, basis: c.basis, reason: c.reason })),
+    signoff: o.signoff,
+    signoff_reason: o.signoff_reason,
+  };
+}
+
+/**
+ * v3 decision. fail: a load-bearing claim is contradicted, or the expert
+ * would not sign off. abstain: nothing fails but the expert is unsure. pass:
+ * otherwise. Imprecise claims and contradicted incidental details alone never
+ * fail an explanation.
+ */
+export function decideV3(r: V3Result): 'pass' | 'fail' | 'abstain' {
+  const contradictedLoadBearing = r.checks.some((c) => c.verdict === 'contradicted' && r.claims[c.index]?.load_bearing);
+  if (contradictedLoadBearing || r.signoff === 'no') return 'fail';
+  if (r.signoff === 'unsure') return 'abstain';
+  return 'pass';
+}
+
+/**
+ * The frozen rule (FROZEN-RULE.json): cross-family consensus. An explanation
+ * fails only when both verifiers fail it: v3 two-pass on a Claude model and
+ * v2 single-pass (lenient rule) on a Gemini model. Any missing or abstained
+ * verdict on either side makes the consensus abstain, so a broken call can
+ * never pass an explanation silently.
+ */
+export function decideConsensus(
+  v3: 'pass' | 'fail' | 'abstain' | null,
+  v2Gemini: 'pass' | 'fail' | null,
+): 'pass' | 'fail' | 'abstain' {
+  if (v3 === null || v3 === 'abstain' || v2Gemini === null) return 'abstain';
+  return v3 === 'fail' && v2Gemini === 'fail' ? 'fail' : 'pass';
 }

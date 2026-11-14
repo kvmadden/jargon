@@ -45,6 +45,15 @@ import {
   subscriptionEnv,
   v2SystemPrompt,
   v2UserMessage,
+  V3_EXTRACT_SCHEMA,
+  V3_VERIFY_SCHEMA,
+  decideV3,
+  parseV3Checks,
+  parseV3Claims,
+  v3ExtractSystemPrompt,
+  v3VerifySystemPrompt,
+  v3VerifyUserMessage,
+  type V3Result,
 } from './lib.ts';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -52,6 +61,8 @@ const HERE = join(ROOT, 'eval/verifier-v2');
 const LOAD_CEILING = 150;
 const CALL_TIMEOUT_MS = 6 * 60_000;
 const GROK_MODEL = 'grok-4.7';
+// Antigravity's Gemini Flash pool (Kevin's rulings allow Flash for bulk checks, never Argon).
+const GEMINI_MODEL = 'Gemini 3.8 Flash (High)';
 
 const args = process.argv.slice(2);
 const flag = (name: string) => {
@@ -59,12 +70,16 @@ const flag = (name: string) => {
   return i >= 0 ? args[i + 1] : undefined;
 };
 const arm = flag('--arm');
-if (arm !== 'v1-claude' && arm !== 'v2-grok' && arm !== 'v2-claude') {
-  console.error('usage: --arm v1-claude|v2-grok|v2-claude [--limit N] [--out file]');
+if (arm !== 'v1-claude' && arm !== 'v2-grok' && arm !== 'v2-claude' && arm !== 'v3-claude' && arm !== 'v2-gemini') {
+  console.error('usage: --arm v1-claude|v2-grok|v2-claude|v3-claude|v2-gemini [--model M] [--tag T] [--limit N] [--out file]');
   process.exit(2);
 }
 const limit = flag('--limit') ? Number(flag('--limit')) : Infinity;
-const outPath = flag('--out') ?? join(HERE, 'results', `${arm}.jsonl`);
+// --model picks the Claude model for claude arms (default: the shipped PERSONALIZE_MODEL).
+// --tag names an iteration, so each one gets its own results file.
+const claudeModel = flag('--model') ?? PERSONALIZE_MODEL;
+const tag = flag('--tag');
+const outPath = flag('--out') ?? join(HERE, 'results', `${arm}${tag ? `-${tag}` : ''}.jsonl`);
 mkdirSync(dirname(outPath), { recursive: true });
 
 const gold = JSON.parse(readFileSync(join(HERE, 'gold/items.json'), 'utf8'));
@@ -124,7 +139,7 @@ interface CallResult {
   exit_code: number | null;
 }
 
-function runClaude(system: string, user: string, schema?: object): CallResult {
+function runClaude(system: string, user: string, schema?: object, model: string = claudeModel): CallResult {
   const cliArgs = [
     '-p', user,
     '--system-prompt', system,
@@ -132,7 +147,7 @@ function runClaude(system: string, user: string, schema?: object): CallResult {
     '--setting-sources', '',
     '--strict-mcp-config',
     '--no-session-persistence',
-    '--model', PERSONALIZE_MODEL,
+    '--model', model,
     '--output-format', 'stream-json',
     '--verbose',
   ];
@@ -199,6 +214,46 @@ function runGrok(system: string, user: string): CallResult {
   };
 }
 
+// agy has no system-prompt flag, so the system prompt leads the single prompt.
+// It runs from an empty folder and is told not to use tools.
+function runGemini(system: string, user: string): CallResult {
+  const prompt = `${system}\n\nDo not use any tools and do not read or write files. Answer from your own knowledge.\n\n${user}`;
+  const cliArgs = ['--model', GEMINI_MODEL, '--print-timeout', '5m', '--output-format', 'json', '--json-schema', JSON.stringify(V2_JSON_SCHEMA), '-p', prompt];
+  const t0 = Date.now();
+  const r = spawnSync('agy', cliArgs, {
+    cwd: sandbox, env: childEnv, encoding: 'utf8', timeout: CALL_TIMEOUT_MS, stdio: ['ignore', 'pipe', 'pipe'], maxBuffer: 64 * 1024 * 1024,
+  });
+  const latency = Date.now() - t0;
+  let out: any = null;
+  try { out = JSON.parse(r.stdout ?? ''); } catch { /* recorded below */ }
+  const ok = out?.status === 'SUCCESS' && typeof out?.response === 'string' && out.response.length > 0;
+  // agy in json mode with --json-schema can print the structured answer more
+  // than once, one copy per line. Accept it only when every copy is identical.
+  let text: string | null = ok ? out.response : null;
+  let dupNote = '';
+  if (text) {
+    const copies = text.split('\n').map((l: string) => l.trim()).filter(Boolean);
+    if (copies.length > 1) {
+      text = copies.every((c: string) => c === copies[0]) ? copies[0] : null;
+      dupNote = text ? '' : `agy returned ${copies.length} differing JSON copies`;
+    }
+  }
+  // Prefer agy's schema-validated structured_output. The response text can
+  // also hold the model's free-text answer ahead of the JSON.
+  const structured = out?.status === 'SUCCESS' && out?.structured_output && typeof out.structured_output === 'object' ? out.structured_output : null;
+  if (structured) dupNote = '';
+  return {
+    text,
+    structured,
+    model_reported: [GEMINI_MODEL],
+    auth: 'agy CLI, Google subscription login (metered key variables removed from env)',
+    notional_cost_usd: null,
+    latency_ms: latency,
+    error: ok && !dupNote ? null : dupNote || `exit ${r.status} | status ${out?.status} ${out?.error ?? ''} | stdout: ${(r.stdout ?? '').slice(-400)} | stderr: ${(r.stderr ?? '').slice(-400)}`,
+    exit_code: r.status,
+  };
+}
+
 async function main() {
   console.log(`arm ${arm} -> ${outPath} (${done.size} already done), sandbox ${sandbox}`);
   let n = 0;
@@ -213,16 +268,32 @@ async function main() {
     const started = new Date().toISOString();
     let call: CallResult;
     let verdict: unknown = null;
-    let decision: 'pass' | 'fail' | null = null;
+    let decision: 'pass' | 'fail' | 'abstain' | null = null;
     let decisionLenient: 'pass' | 'fail' | null = null;
     if (arm === 'v1-claude') {
       call = runClaude(PASS2_SYSTEM_PROMPT, buildPass2UserMessage(term, it.candidate, profile, knownVocabulary));
       const v = call.text ? parseVerdict(call.text) : null;
       verdict = v;
       decision = v ? v.overall : null;
+    } else if (arm === 'v3-claude') {
+      const ctx = { canonical: term, candidate: it.candidate, profileId: it.profile_id, profile };
+      const extract = runClaude(v3ExtractSystemPrompt(), v2UserMessage(ctx), V3_EXTRACT_SCHEMA);
+      const claims = parseV3Claims(extract.structured ?? extract.text);
+      if (!claims) {
+        call = extract;
+      } else {
+        const check = runClaude(v3VerifySystemPrompt(), v3VerifyUserMessage({ ...ctx, claims }), V3_VERIFY_SCHEMA);
+        const parsed = parseV3Checks(check.structured ?? check.text, claims.length);
+        call = { ...check, latency_ms: extract.latency_ms + check.latency_ms, notional_cost_usd: (extract.notional_cost_usd ?? 0) + (check.notional_cost_usd ?? 0) };
+        if (parsed) {
+          const v: V3Result = { claims, ...parsed };
+          verdict = v;
+          decision = decideV3(v) as any;
+        }
+      }
     } else {
       const user = v2UserMessage({ canonical: term, candidate: it.candidate, profileId: it.profile_id, profile });
-      call = arm === 'v2-grok' ? runGrok(v2SystemPrompt(), user) : runClaude(v2SystemPrompt(), user, V2_JSON_SCHEMA);
+      call = arm === 'v2-grok' ? runGrok(v2SystemPrompt(), user) : arm === 'v2-gemini' ? runGemini(v2SystemPrompt(), user) : runClaude(v2SystemPrompt(), user, V2_JSON_SCHEMA);
       const v = parseV2((call.structured as object | null) ?? call.text);
       verdict = v;
       decision = v ? decideV2(v, 'primary') : null;
@@ -234,7 +305,8 @@ async function main() {
       attempt: (attempts.get(it.id) ?? 0) + 1,
       started_at: started,
       load_1m_at_start: load,
-      model_requested: arm === 'v2-grok' ? GROK_MODEL : PERSONALIZE_MODEL,
+      model_requested: arm === 'v2-grok' ? GROK_MODEL : arm === 'v2-gemini' ? GEMINI_MODEL : claudeModel,
+      tag: tag ?? null,
       model_reported: call.model_reported,
       auth: call.auth,
       notional_cost_usd: call.notional_cost_usd,

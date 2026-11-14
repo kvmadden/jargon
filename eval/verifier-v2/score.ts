@@ -1,17 +1,22 @@
-// Score every verifier arm against the gold labels.
+// Score every verifier run against the dev-set labels.
 //
 //   node eval/verifier-v2/score.ts
 //
-// Reads gold/confirm.json and results/<arm>.jsonl, writes results/summary.json
-// and prints a Markdown table. Labels: kevin_label when Kevin has set one,
-// otherwise the proposed label. Until Kevin labels the set, every number
-// except the five confirmed misses is provisional.
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+// Reads gold/confirm.json and every results/*.jsonl, writes results/summary.json
+// and prints a Markdown table. Decisions are recomputed from each stored
+// verdict, so a rule added later scores earlier runs the same way:
+//   v1 files: the verdict's own "overall".
+//   v2 files: decideV2 under the primary, lenient and mapping rules.
+//   v3 files: decideV3 (pass, fail or abstain).
+// Labels: 5 confirmed by Kevin, 45 proposed by Claude. Everything except the
+// confirmed-miss column rests on proposed labels.
+import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { firstAndLatest, scoreArm, type ArmResult, type GoldRow } from './lib.ts';
+import { decideConsensus, decideV2, decideV3, firstAndLatest, parseV2, scoreArm, type ArmResult, type GoldRow } from './lib.ts';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
+const RESULTS = join(HERE, 'results');
 const confirm = JSON.parse(readFileSync(join(HERE, 'gold/confirm.json'), 'utf8'));
 
 const gold: GoldRow[] = confirm.items.map((r: any) => ({
@@ -21,47 +26,69 @@ const gold: GoldRow[] = confirm.items.map((r: any) => ({
   label_status: r.kevin_label ? 'confirmed' : r.label_status,
   prior_ruling: r.prior_ruling,
 }));
-const kevinLabeled = confirm.items.filter((r: any) => r.kevin_label).length;
 
-// The stored original verdicts from the 2026-10-30 run (same prompt, same
-// model, API key path) are scored as their own arm.
 const items = JSON.parse(readFileSync(join(HERE, 'gold/items.json'), 'utf8')).items;
 const arms: Record<string, ArmResult[]> = {
   'v1-original-2026-10-30': items.map((it: any) => ({ id: it.id, decision: it.original_verdict_overall })),
 };
-// A results file can hold more than one row per item when no-verdict items
-// were retried (run-verifiers.ts --retry-missing). The main score uses each
-// item's latest row. When retries exist, a "-first-attempt" arm scores each
-// item's first row as well, so the retry's effect is visible.
 const meta: Record<string, { model: string[]; rows: number; first_attempt_no_verdict: number; final_no_verdict: number }> = {};
-for (const arm of ['v1-claude', 'v2-claude', 'v2-grok']) {
-  const p = join(HERE, 'results', `${arm}.jsonl`);
-  if (!existsSync(p)) continue;
-  const rows = readFileSync(p, 'utf8').trim().split('\n').filter(Boolean).map((l) => JSON.parse(l));
-  const { first, latest } = firstAndLatest(rows);
-  const views: Array<[string, Map<string, any>]> = [[arm, latest]];
-  if (rows.length > latest.size) views.push([`${arm}-first-attempt`, first]);
-  for (const [name, view] of views) {
-    const vr = [...view.values()];
-    arms[name] = vr.map((r) => ({ id: r.id, decision: r.decision }));
-    if (arm.startsWith('v2')) arms[`${name}-lenient`] = vr.map((r) => ({ id: r.id, decision: r.decision_lenient }));
+
+type Decision = ArmResult['decision'];
+function decisionsFor(row: any): Record<string, Decision> {
+  if (!row.verdict) {
+    return row.arm?.startsWith('v2') ? { primary: null, lenient: null, mapping: null } : { '': null };
   }
-  meta[arm] = {
+  if (row.arm === 'v1-claude') return { '': row.verdict.overall };
+  if (row.arm === 'v3-claude') return { '': decideV3(row.verdict) };
+  const v = parseV2(row.verdict);
+  return v
+    ? { primary: decideV2(v, 'primary'), lenient: decideV2(v, 'lenient'), mapping: decideV2(v, 'mapping') }
+    : { primary: null, lenient: null, mapping: null };
+}
+
+const files = existsSync(RESULTS) ? readdirSync(RESULTS).filter((f) => f.endsWith('.jsonl')).sort() : [];
+for (const f of files) {
+  const name = f.replace(/\.jsonl$/, '');
+  const rows = readFileSync(join(RESULTS, f), 'utf8').trim().split('\n').filter(Boolean).map((l) => JSON.parse(l));
+  const { first, latest } = firstAndLatest(rows);
+  const views: Array<[string, Map<string, any>]> = [[name, latest]];
+  if (rows.length > latest.size) views.push([`${name}-first-attempt`, first]);
+  for (const [view, m] of views) {
+    const perRule: Record<string, ArmResult[]> = {};
+    for (const r of m.values()) {
+      for (const [rule, d] of Object.entries(decisionsFor(r))) {
+        (perRule[rule] ??= []).push({ id: r.id, decision: d });
+      }
+    }
+    for (const [rule, res] of Object.entries(perRule)) arms[rule ? `${view} [${rule}]` : view] = res;
+  }
+  meta[name] = {
     model: [...new Set(rows.flatMap((r) => r.model_reported))],
     rows: rows.length,
-    first_attempt_no_verdict: [...first.values()].filter((r) => r.decision === null).length,
-    final_no_verdict: [...latest.values()].filter((r) => r.decision === null).length,
+    first_attempt_no_verdict: [...first.values()].filter((r) => !r.verdict).length,
+    final_no_verdict: [...latest.values()].filter((r) => !r.verdict).length,
   };
 }
 
+// The frozen rule (FROZEN-RULE.json) on the dev set, from the two runs it combines.
+const V3_RUN = 'v3-claude-it4-opus55';
+const GEMINI_RUN = 'v2-gemini-it5-flash [lenient]';
+if (arms[V3_RUN] && arms[GEMINI_RUN]) {
+  const g = new Map(arms[GEMINI_RUN].map((r) => [r.id, r.decision]));
+  arms['FROZEN consensus (v3 Opus 5.5 AND v2 Gemini Flash)'] = arms[V3_RUN].map((r) => ({
+    id: r.id,
+    decision: decideConsensus(r.decision as any, (g.get(r.id) ?? null) as any),
+  }));
+}
+
 const scores = Object.fromEntries(Object.entries(arms).map(([k, v]) => [k, scoreArm(gold, v)]));
-const pct = (a: number, b: number) => (b ? `${a}/${b} (${Math.round((100 * a) / b)}%)` : 'n/a');
+const frac = (a: number, b: number) => `${a}/${b}`;
 const lines = [
-  '| arm | confirmed misses caught | all flawed caught (provisional) | false alarms on proposed correct (provisional) | false alarms on the 7 reported correct | no verdict |',
-  '|---|---|---|---|---|---|',
+  '| run [rule] | known misses caught | flawed caught (provisional) | false alarms (provisional) | false alarms on 7 reported correct | abstained (flawed / correct) | no verdict |',
+  '|---|---|---|---|---|---|---|',
   ...Object.entries(scores).map(
     ([k, s]) =>
-      `| ${k} | ${pct(s.confirmed_misses.caught, s.confirmed_misses.of)} | ${pct(s.proposed_flawed.caught, s.proposed_flawed.of)} | ${pct(s.proposed_correct.false_alarms, s.proposed_correct.of)} | ${pct(s.reported_correct.false_alarms, s.reported_correct.of)} | ${s.no_verdict} |`,
+      `| ${k} | ${frac(s.confirmed_misses.caught, s.confirmed_misses.of)} | ${frac(s.proposed_flawed.caught, s.proposed_flawed.of)} | ${frac(s.proposed_correct.false_alarms, s.proposed_correct.of)} | ${frac(s.reported_correct.false_alarms, s.reported_correct.of)} | ${s.abstained.on_flawed} / ${s.abstained.on_correct} | ${s.no_verdict} |`,
   ),
 ];
 const perItem = items.map((it: any) => {
@@ -71,9 +98,7 @@ const perItem = items.map((it: any) => {
   return row;
 });
 writeFileSync(
-  join(HERE, 'results', 'summary.json'),
-  JSON.stringify({ kevin_labeled: kevinLabeled, gold_size: gold.length, meta, scores, per_item: perItem }, null, 2) + '\n',
+  join(RESULTS, 'summary.json'),
+  JSON.stringify({ gold_size: gold.length, kevin_labeled: confirm.items.filter((r: any) => r.kevin_label).length, meta, scores, per_item: perItem }, null, 2) + '\n',
 );
-console.log(`gold items ${gold.length}, labeled by Kevin in confirm.json: ${kevinLabeled}`);
-console.log(JSON.stringify(meta));
 console.log(lines.join('\n'));
