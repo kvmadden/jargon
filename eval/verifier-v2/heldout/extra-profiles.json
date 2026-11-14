@@ -1,0 +1,21 @@
+{
+  "note": "One synthetic learner added for the held-out set so 13 unseen terms give 39 items. Fictional person, no real data. The nurse and retail pharmacist come unchanged from eval/data/profiles.json. Field names match the user_profile row read by personalize-term.",
+  "profiles": [
+    {
+      "id": "hospital-pharmacist",
+      "label": "hospital pharmacist",
+      "user_id": "eval-hospital-pharmacist",
+      "education_level": "doctorate",
+      "job": "clinical pharmacist at a 300-bed community hospital",
+      "heritage": null,
+      "roles": ["antimicrobial stewardship committee member", "precepts pharmacy residents"],
+      "interests": ["running", "board games"],
+      "goals_freeform": "our hospital keeps adding new clinical software and I want to follow what IT and the vendors are saying in project meetings",
+      "goals_extended": null,
+      "encounter_contexts": ["EHR upgrade meetings", "vendor demos", "IT downtime notices"],
+      "background_text": "PharmD with a residency, eight years in inpatient pharmacy. daily work includes order verification, pharmacokinetic dosing, IV compounding oversight, antimicrobial stewardship and code response. no programming background.",
+      "personalization_enabled": true,
+      "profile_version": 1
+    }
+  ]
+}

@@ -1,0 +1,959 @@
+{
+  "schema": "jargon-verifier-v2-gold-items@1",
+  "source": "eval/results/2026-10-30.jsonl",
+  "source_sha256": "04bab18eddd9f57d8594f6d482661a31521b1f3c84ae6194601fbde63e5a92a3",
+  "size": 50,
+  "selection": "See the header of eval/verifier-v2/build-gold.mjs. Labels are not in this file; they live in gold/confirm.json.",
+  "items": [
+    {
+      "id": "bi-rls::nurse::final",
+      "run_id": "bi-rls::nurse",
+      "variant": "final",
+      "group": "A-confirmed-miss",
+      "term_id": "bi-rls",
+      "term": "RLS",
+      "category": "data",
+      "profile_id": "nurse",
+      "profile_label": "hospital nurse",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "RLS stands for row-level security. it's a setting on a report or data tool that filters which rows of data a person can see based on who they are — same report, different slice of data per viewer. think of how you can only open charts for patients on your unit, not the whole hospital: the system knows who you are and hides the rest.",
+        "why_it_matters": "RLS is how one report safely shows each person only the rows they're allowed to see. when a manager asks \"wait, can the night shift see our unit's numbers too?\", RLS is the control that answers it — it's the difference between a dashboard that leaks data and one that respects who's looking.",
+        "example_in_sentence": "the vendor said RLS will make sure each unit manager opens the same quality dashboard but only sees their own unit's fall and infection numbers."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": true
+    },
+    {
+      "id": "cloud-environment::pharmacist::final",
+      "run_id": "cloud-environment::pharmacist",
+      "variant": "final",
+      "group": "A-confirmed-miss",
+      "term_id": "cloud-environment",
+      "term": "environment",
+      "category": "cloud",
+      "profile_id": "pharmacist",
+      "profile_label": "retail pharmacist",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "an environment is one separate place where the app runs, with its own web address, settings, database, passwords, and rules about who can touch it. local is a developer's own machine, preview is a quick throwaway copy for review, staging is a near-copy of the real system used for testing, and production is the live version your patients and staff actually use.",
+        "why_it_matters": "when the help desk says \"it works on my machine\" or \"we couldn't reproduce it,\" they almost always mean it worked in one environment and not another. knowing the word lets you ask the question that actually unblocks the call: which environment did it break in, with which settings and which data?",
+        "example_in_sentence": "the e-prescription bug only shows up in the staging environment because that's the only place connected to the real insurance claim system."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": false
+    },
+    {
+      "id": "bi-rls::pharmacist::final",
+      "run_id": "bi-rls::pharmacist",
+      "variant": "final",
+      "group": "A-confirmed-miss",
+      "term_id": "bi-rls",
+      "term": "RLS",
+      "category": "data",
+      "profile_id": "pharmacist",
+      "profile_label": "retail pharmacist",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "RLS stands for row-level security. In reporting tools like Power BI, it's a rule that filters which rows of data each viewer is allowed to see, so the same report shows different numbers depending on who opens it.",
+        "why_it_matters": "RLS is how one report safely shows each person only their own slice — similar to how your pharmacy system only shows a tech the patients and queues tied to their store, not every store in the chain. when someone asks \"can they see everyone's numbers?\", RLS is the setting that answers it.",
+        "example_in_sentence": "thanks to RLS, every district manager opens the same sales report but only sees the stores in their own district."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": true
+    },
+    {
+      "id": "sys-jwt::pharmacist::final",
+      "run_id": "sys-jwt::pharmacist",
+      "variant": "final",
+      "group": "A-confirmed-miss",
+      "term_id": "sys-jwt",
+      "term": "JWT",
+      "category": "apis",
+      "profile_id": "pharmacist",
+      "profile_label": "retail pharmacist",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "JWT stands for JSON Web Token. It's a short string of text that carries claims about a user (like their id or what they're allowed to do) and is signed so the server can tell if anyone tampered with it. Think of a signed, tamper-evident script label: the data on it is readable, but the signature proves it hasn't been altered. Being encoded isn't the same as being safe — a JWT still needs a proper expiration, careful storage, and real signature checking on every use.",
+        "why_it_matters": "JWTs show up constantly in auth logs, release notes, and help desk conversations about who is signed in and what they can see. knowing the term demystifies that plumbing, and reminds you that 'it's encoded' doesn't mean 'it's secure' — expiration and verification still have to be done right.",
+        "example_in_sentence": "the help desk said the pharmacy app was rejecting refills because the user's JWT had expired and they needed to sign back in."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": true
+    },
+    {
+      "id": "sec-oauth::pharmacist::final",
+      "run_id": "sec-oauth::pharmacist",
+      "variant": "final",
+      "group": "A-confirmed-miss",
+      "term_id": "sec-oauth",
+      "term": "OAuth",
+      "category": "security",
+      "profile_id": "pharmacist",
+      "profile_label": "retail pharmacist",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "OAuth lets one app get limited access to your account on another service without ever seeing your password. think of a prescription transfer: the patient authorizes you to pull their rx history from another pharmacy, and that pharmacy hands over just the specific records — never the patient's login to their chart. in an OAuth sign-in, the app sends you to a trusted identity provider like Google, you approve, and the app receives a token (a short proof of permission) instead of your password.",
+        "why_it_matters": "every \"continue with Google\" or \"sign in with Microsoft\" button on your pharmacy tools is OAuth under the hood. when a login bounces you through a redirect and lands you back signed in — or when the help desk asks whether you logged in with your Google account versus a direct password — OAuth is the word that explains the handoff.",
+        "example_in_sentence": "the new CE portal switched to OAuth, so you sign in with your existing Google account instead of creating yet another password."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": true
+    },
+    {
+      "id": "excel-pivot-table::nurse::final",
+      "run_id": "excel-pivot-table::nurse",
+      "variant": "final",
+      "group": "B-reported-correct",
+      "term_id": "excel-pivot-table",
+      "term": "PivotTable",
+      "category": "data",
+      "profile_id": "nurse",
+      "profile_label": "hospital nurse",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "a PivotTable takes a big spreadsheet of raw data and lets you summarize it by dragging field names into row, column, value, and filter boxes. you pick what to group by and what to count, sum, or average, and Excel builds the summary table for you without you writing any formulas.",
+        "why_it_matters": "when you have thousands of rows — think a year of patient admissions or medication scans — and someone in a meeting asks \"how many falls per unit per month,\" a PivotTable gets you the answer in a few clicks instead of counting by hand or writing a formula for every cell. it is the fastest way to turn a data dump into something you can actually talk about.",
+        "example_in_sentence": "the quality nurse pulled the fall data into a PivotTable to show rates by unit and shift at the staff meeting."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": false
+    },
+    {
+      "id": "sec-mfa::pharmacist::final",
+      "run_id": "sec-mfa::pharmacist",
+      "variant": "final",
+      "group": "B-reported-correct",
+      "term_id": "sec-mfa",
+      "term": "MFA",
+      "category": "security",
+      "profile_id": "pharmacist",
+      "profile_label": "retail pharmacist",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "MFA stands for multi-factor authentication. logging in takes two or more kinds of proof, like a password plus a code from an authenticator app, a tap on your phone, a hardware key, or a fingerprint. if someone steals one piece, they still can't get in without the other.",
+        "why_it_matters": "it's the same reason a C-II dispense needs more than one check — one safeguard isn't enough on something that matters. when the help desk says they're enabling MFA on the pharmacy system, they mean your password alone will no longer get you in, and that's on purpose.",
+        "example_in_sentence": "after the last software update, signing into the pharmacy system uses MFA, so i enter my password and then approve a prompt on my phone."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": true
+    },
+    {
+      "id": "sec-mfa::nurse::final",
+      "run_id": "sec-mfa::nurse",
+      "variant": "final",
+      "group": "B-reported-correct",
+      "term_id": "sec-mfa",
+      "term": "MFA",
+      "category": "security",
+      "profile_id": "nurse",
+      "profile_label": "hospital nurse",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "MFA stands for multi-factor authentication. logging in takes two or more kinds of proof — usually a password plus something else like a code from an app, a tap on your phone, a physical key fob, or a fingerprint. that way if one piece gets stolen, the account still holds.",
+        "why_it_matters": "this is why badging into the EHR sometimes also pings your phone, or why your bank texts a code after the right password. when IT says a system is MFA-protected, they mean one leaked password isn't enough to get in — an attacker would also need your phone or fingerprint.",
+        "example_in_sentence": "IT turned on MFA for remote chart access, so logging in from home now needs my password plus a code from the app on my phone."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": false
+    },
+    {
+      "id": "fabric-data-pipeline::pharmacist::final",
+      "run_id": "fabric-data-pipeline::pharmacist",
+      "variant": "final",
+      "group": "B-reported-correct",
+      "term_id": "fabric-data-pipeline",
+      "term": "data pipeline",
+      "category": "data",
+      "profile_id": "pharmacist",
+      "profile_label": "retail pharmacist",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "a data pipeline in Fabric is a set of automated steps that copies, moves, or reshapes data from one system to another on a schedule. it handles repeatable work like pulling records out of one database, cleaning them up, and loading them into another place where they can be reported on.",
+        "why_it_matters": "a pipeline is the scheduled plumbing that shuffles data between systems so nobody is exporting spreadsheets by hand every night. when the help desk mentions \"the nightly load\" or \"the overnight job,\" they mean a pipeline running on its own while the store is closed.",
+        "example_in_sentence": "the data pipeline pulls prescription fill records from the dispensing system into the reporting database every night so the morning dashboards are ready before open."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": false
+    },
+    {
+      "id": "sec-oauth::nurse::final",
+      "run_id": "sec-oauth::nurse",
+      "variant": "final",
+      "group": "B-reported-correct",
+      "term_id": "sec-oauth",
+      "term": "OAuth",
+      "category": "security",
+      "profile_id": "nurse",
+      "profile_label": "hospital nurse",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "OAuth is a standard way for one service to let another service sign you in or access your data without you handing over your actual password. the app bounces you to a trusted sign-in service like Google or Microsoft, you log in there, and that service hands back a token — a short-lived pass that proves who you are to the app.",
+        "why_it_matters": "every \"sign in with Google\" or \"sign in with Microsoft\" button on the hospital's new tools is doing this behind the scenes. when IT talks about a login that redirects you to the Microsoft page and then back into the charting app, OAuth is the rulebook making that handoff work — and the reason the vendor app never sees your actual hospital password.",
+        "example_in_sentence": "IT said the new documentation tool will use OAuth so we can sign in with our hospital Microsoft account instead of creating a separate login."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": false
+    },
+    {
+      "id": "sec-rbac::nurse::final",
+      "run_id": "sec-rbac::nurse",
+      "variant": "final",
+      "group": "B-reported-correct",
+      "term_id": "sec-rbac",
+      "term": "RBAC",
+      "category": "security",
+      "profile_id": "nurse",
+      "profile_label": "hospital nurse",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "RBAC stands for role-based access control. Instead of deciding permissions one person at a time, the system defines roles — like how your EHR gives nurses, physicians, pharmacists, and unit clerks each a different set of things they can see and do — and every user gets assigned a role that carries those permissions. RBAC is the standard pattern in admin tools, dashboards, enterprise software, and cloud consoles.",
+        "why_it_matters": "when an access conversation starts going in circles — who can chart what, why is this person locked out — naming RBAC gets everyone on the same page. once you hear it in a vendor meeting, you know access is being handed out by role, not person by person, so the fix is usually 'change their role' or 'adjust what the role allows,' not a one-off override.",
+        "example_in_sentence": "the vendor explained that the new AI documentation tool uses RBAC, so nurses, residents, and attendings each see a different set of actions when they open a note."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": true
+    },
+    {
+      "id": "data-join::nurse::final",
+      "run_id": "data-join::nurse",
+      "variant": "final",
+      "group": "B-reported-correct",
+      "term_id": "data-join",
+      "term": "join",
+      "category": "data",
+      "profile_id": "nurse",
+      "profile_label": "hospital nurse",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "a join combines rows from two separate tables by matching them on a shared piece of information. think of how the EHR links a patient's room number to their full chart: the room assignment list and the patient chart live in different places, but they share a patient ID, so the system can pull them together into one view.",
+        "why_it_matters": "databases store information in slim, separate tables to avoid repeating data — one table for patients, another for medications, another for vitals. a join is what stitches them back together so a single screen can show the patient's name next to their current meds and latest vitals. almost every useful EHR screen is built on joins happening behind the scenes.",
+        "example_in_sentence": "the vendor explained that the new dashboard runs a join to show each patient's name alongside their pending orders, instead of making the nurse open two screens."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": true
+    },
+    {
+      "id": "sys-http-header::pharmacist::final",
+      "run_id": "sys-http-header::pharmacist",
+      "variant": "final",
+      "group": "C-borderline",
+      "term_id": "sys-http-header",
+      "term": "HTTP header",
+      "category": "apis",
+      "profile_id": "pharmacist",
+      "profile_label": "retail pharmacist",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "an HTTP header is extra information attached to a web request or response, separate from the main content. headers can say things like what format the sender expects back, what login token proves who's asking, whether the answer is allowed to be reused later, or where the request came from. think of it like the label stapled to a prescription bag: the pills are the main thing, but the label carries the patient name, the prescriber, the fill date, and the warnings the next person needs to handle it correctly.",
+        "why_it_matters": "a lot of invisible web behavior lives in headers: which login token is being sent, what content type is accepted, whether a response can be reused from cache, which site the request came from. when something works on one computer and fails on another, a missing or wrong header is often the reason — which is why help desk sometimes asks about them.",
+        "example_in_sentence": "the release notes said the pharmacy system now requires a new authorization HTTP header on every request so the server knows which store is calling."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": true
+    },
+    {
+      "id": "sys-payload::nurse::final",
+      "run_id": "sys-payload::nurse",
+      "variant": "final",
+      "group": "C-borderline",
+      "term_id": "sys-payload",
+      "term": "payload",
+      "category": "apis",
+      "profile_id": "nurse",
+      "profile_label": "hospital nurse",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "a payload is the actual useful data being carried inside something larger. an API request, a webhook, a token, or a log entry all have an outer wrapper (addressing info, headers, routing details) plus the real contents the receiver cares about. the payload is those real contents. think of it like the SBAR content inside a handoff: the shift, room number, and sender are the wrapper; the patient info is what the next nurse actually needs.",
+        "why_it_matters": "payload is the short word for 'the actual data inside the thing.' once IT or vendor folks say it, you can skip 'the data part' and point directly at what matters. it shows up constantly when they discuss charting integrations, event messages between systems, and troubleshooting logs.",
+        "example_in_sentence": "the vendor said the payload from the monitor includes the vitals and the timestamp, which is what gets written into the chart."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": true
+    },
+    {
+      "id": "aid-parameters::pharmacist::final",
+      "run_id": "aid-parameters::pharmacist",
+      "variant": "final",
+      "group": "C-borderline",
+      "term_id": "aid-parameters",
+      "term": "parameters",
+      "category": "ai-llm",
+      "profile_id": "pharmacist",
+      "profile_label": "retail pharmacist",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "When you see a model described as \"70B\" or \"405B,\" the \"B\" means billion parameters. Parameters are the internal settings the model adjusted during training — billions of tiny numerical dials that together encode what it knows. More parameters generally mean better answers but slower responses and higher cost each time you use it. The biggest open models (Llama 405B) and frontier models (Claude, GPT-5) sit in the hundreds of billions of parameters.",
+        "why_it_matters": "Product names like \"GPT-5,\" \"Claude Opus 4.7,\" \"Gemini 2.5 Pro,\" or \"Llama 405B\" start to make sense once you know the \"B\" is billions of parameters. It is the simplest rough gauge of a model's heft, though parameter count alone does not fully predict quality.",
+        "example_in_sentence": "Llama 3 70B has 70 billion parameters — smaller than Claude but light enough to run on a laptop."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": false
+    },
+    {
+      "id": "bi-calculated-column::nurse::final",
+      "run_id": "bi-calculated-column::nurse",
+      "variant": "final",
+      "group": "C-borderline",
+      "term_id": "bi-calculated-column",
+      "term": "calculated column",
+      "category": "data",
+      "profile_id": "nurse",
+      "profile_label": "hospital nurse",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "a calculated column adds a new column to a table in the data model, where the value for each row is figured out once using a formula (written in a Power BI formula language called DAX) and then stored. it's different from a measure, which is a formula that gets recalculated on the fly depending on what the user is filtering or looking at in the report.",
+        "why_it_matters": "a calculated column is computed once per row and frozen in, while a measure recalculates every time someone filters or slices the report. picking the wrong one is a common Power BI mistake — if you use a column where you needed a measure, your totals won't update when the user changes the view, and the numbers in a dashboard can quietly go wrong.",
+        "example_in_sentence": "the analyst built a calculated column to tag each patient visit as inpatient or observation, since that label never changes once the row lands in the table."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": false
+    },
+    {
+      "id": "sys-http-header::nurse::pass1",
+      "run_id": "sys-http-header::nurse",
+      "variant": "pass1",
+      "group": "C-borderline",
+      "term_id": "sys-http-header",
+      "term": "HTTP header",
+      "category": "apis",
+      "profile_id": "nurse",
+      "profile_label": "hospital nurse",
+      "final_status": "accepted_after_retry",
+      "candidate": {
+        "long_definition": "an HTTP header is extra information attached to a web request or response, separate from the main content. think of the SBAR label and routing info stapled to a patient chart: it tells the receiver who sent it, what format to expect, what permissions apply, and how to handle it. headers can carry an auth token, say what content types are accepted, control caching, set cookies, or identify where the request came from.",
+        "why_it_matters": "a lot of invisible web behavior lives in headers: which login token is being sent, what format the response should be in, whether it can be cached, where the request originated. when a tool works in one environment and breaks in another, a missing or wrong header is often the reason — useful context when IT is troubleshooting the new charting system.",
+        "example_in_sentence": "the vendor explained that the charting app sets an authorization HTTP header on every request so the server knows which nurse is logged in."
+      },
+      "original_verdict_overall": "fail",
+      "original_uses_analogy": true
+    },
+    {
+      "id": "sys-jwt::teacher::pass1",
+      "run_id": "sys-jwt::teacher",
+      "variant": "pass1",
+      "group": "C-borderline",
+      "term_id": "sys-jwt",
+      "term": "JWT",
+      "category": "apis",
+      "profile_id": "teacher",
+      "profile_label": "high-school teacher",
+      "final_status": "accepted_after_retry",
+      "candidate": {
+        "long_definition": "JWT stands for JSON Web Token. It's a short string of text that carries claims about a user (like their id or what they're allowed to do) and is signed by the server so any tampering can be detected. Software passes it along with requests to prove the user is logged in. Being encoded is not the same as being encrypted or safe — a JWT still needs a sensible expiry, careful storage, and real verification on the receiving end.",
+        "why_it_matters": "JWTs show up constantly in vendor security docs and IT discussions about single sign-on. Knowing the term lets you ask sharper questions on the tech committee — like how long tokens stay valid and where they're stored — instead of nodding past the jargon.",
+        "example_in_sentence": "The vendor explained that once a student signs in through the district's SSO, the app uses a JWT to confirm their identity on every page load."
+      },
+      "original_verdict_overall": "fail",
+      "original_uses_analogy": false
+    },
+    {
+      "id": "aid-ai::pharmacist::final",
+      "run_id": "aid-ai::pharmacist",
+      "variant": "final",
+      "group": "D-pharmacist",
+      "term_id": "aid-ai",
+      "term": "AI",
+      "category": "ai-llm",
+      "profile_id": "pharmacist",
+      "profile_label": "retail pharmacist",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "AI — short for artificial intelligence — is the umbrella name for software that does work that used to need a person. The AI most people use today (ChatGPT, Claude, Gemini, Copilot) is strong with language: reading, writing, summarizing, explaining, answering questions in plain conversation. Older tools also called \"AI\" were much narrower, like a chess program or a spell-checker. Today's AI is broad and conversational, which is why it is suddenly showing up in the news, in products, and in your pharmacy software.",
+        "why_it_matters": "When a release note, a help desk tech, or a CE course says \"the AI flagged it\" or \"AI-powered,\" knowing what AI actually means lets you push past the buzzword and ask the real question: which AI, doing what specifically — screening interactions, suggesting a DUR response, drafting a prior auth letter?",
+        "example_in_sentence": "The new software update says the AI will suggest a response to common insurance rejections before I click through them."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": false
+    },
+    {
+      "id": "bi-calculated-column::pharmacist::final",
+      "run_id": "bi-calculated-column::pharmacist",
+      "variant": "final",
+      "group": "D-pharmacist",
+      "term_id": "bi-calculated-column",
+      "term": "calculated column",
+      "category": "data",
+      "profile_id": "pharmacist",
+      "profile_label": "retail pharmacist",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "a calculated column runs a formula once for each row of a table and saves the answer right into that row, like writing a value into a new column on a spreadsheet. the formula is written in DAX, the formula language used in Power BI models. it's different from a measure, which recalculates on the fly depending on what the user is filtering or slicing.",
+        "why_it_matters": "a calculated column is computed once per row and frozen in place. a measure recalculates every time you filter or slice the report. picking the wrong one is a common Power BI mistake — if you use a column where a measure was needed, your totals won't update when you change filters, and the numbers in the report will look stuck or wrong.",
+        "example_in_sentence": "we used a calculated column to tag each prescription as brand or generic, since that label doesn't change once the row is loaded."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": true
+    },
+    {
+      "id": "sec-attack-surface::pharmacist::final",
+      "run_id": "sec-attack-surface::pharmacist",
+      "variant": "final",
+      "group": "D-pharmacist",
+      "term_id": "sec-attack-surface",
+      "term": "attack surface",
+      "category": "security",
+      "profile_id": "pharmacist",
+      "profile_label": "retail pharmacist",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "attack surface is every spot where an outsider could try to get in or cause trouble: public web pages, login forms, file uploads, automated messages flowing in from other systems, admin screens, outside software your system depends on, saved passwords, and the edges of your network. shrinking the attack surface means fewer exposed spots for someone to poke at.",
+        "why_it_matters": "this is the word that explains why every new login option, integration, or feature isn't free — each one is another door someone could rattle. once you think this way, turning off an unused feature stops feeling like tidying up and starts feeling like locking a door you forgot was there.",
+        "example_in_sentence": "the release notes said they removed the old fax-in refill portal to reduce the pharmacy system's attack surface."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": false
+    },
+    {
+      "id": "sys-cookie::pharmacist::final",
+      "run_id": "sys-cookie::pharmacist",
+      "variant": "final",
+      "group": "D-pharmacist",
+      "term_id": "sys-cookie",
+      "term": "cookie",
+      "category": "apis",
+      "profile_id": "pharmacist",
+      "profile_label": "retail pharmacist",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "a cookie is a small piece of data a website asks your browser to hold onto, tied to that specific site. the browser then sends it back automatically with every later request to that site, so the site can recognize you — remembering you're logged in, what settings you picked, or tracking what you've clicked.",
+        "why_it_matters": "a cookie is how a site stays signed in after you refresh — the browser stored a small value and keeps handing it back. tiny but powerful, which is why cookies show up constantly in login problems and privacy settings.",
+        "example_in_sentence": "the pharmacy portal logged me out again because the browser update cleared the session cookie."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": false
+    },
+    {
+      "id": "cloud-alert::pharmacist::final",
+      "run_id": "cloud-alert::pharmacist",
+      "variant": "final",
+      "group": "D-pharmacist",
+      "term_id": "cloud-alert",
+      "term": "alert",
+      "category": "cloud",
+      "profile_id": "pharmacist",
+      "profile_label": "retail pharmacist",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "an alert is a notification the software sends when something crosses a set limit or hits a failure condition. good alerts tell you something you can actually act on. bad ones fire so often that people start tuning them out, the same way a constant drug-interaction pop-up stops getting a real read.",
+        "why_it_matters": "a dashboard is something you glance at; an alert is what actually gets someone's attention. the tuning matters: too many false ones and the real one gets ignored, which is how outages and errors slip through.",
+        "example_in_sentence": "an alert went off at the help desk when prescription claim rejections stayed above twenty percent for ten straight minutes."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": true
+    },
+    {
+      "id": "sec-encryption::pharmacist::final",
+      "run_id": "sec-encryption::pharmacist",
+      "variant": "final",
+      "group": "D-pharmacist",
+      "term_id": "sec-encryption",
+      "term": "encryption",
+      "category": "security",
+      "profile_id": "pharmacist",
+      "profile_label": "retail pharmacist",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "encryption scrambles readable data into gibberish using a key, so only someone with the matching key can turn it back into something readable. it protects data moving across a network (like a website session) and data sitting in storage (like a backup file). without the key, the scrambled version is useless.",
+        "why_it_matters": "this is what makes a stolen laptop or a lost backup drive a non-event instead of a patient-data breach. when the help desk says traffic is \"protected in transit\" or a backup is \"safe to store,\" encryption is the mechanism doing the work. the flip side: if the key is lost, the data is gone for good too.",
+        "example_in_sentence": "the release notes said patient records are now encrypted at rest, so even if a workstation hard drive is stolen, the data on it can't be read."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": false
+    },
+    {
+      "id": "cloud-autoscaling::pharmacist::final",
+      "run_id": "cloud-autoscaling::pharmacist",
+      "variant": "final",
+      "group": "D-pharmacist",
+      "term_id": "cloud-autoscaling",
+      "term": "autoscaling",
+      "category": "cloud",
+      "profile_id": "pharmacist",
+      "profile_label": "retail pharmacist",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "autoscaling automatically adds more computing power when a system gets busy and removes it when things calm down. it watches signals like how hard the processors are working or how many requests are piling up waiting to be handled, then spins up extra capacity to match. when demand drops, it scales back down so nobody is paying for machines sitting idle.",
+        "why_it_matters": "this is how a system survives a sudden rush without the company paying for peak capacity around the clock. it also explains the lag you sometimes feel when a system gets slammed: the extra capacity takes a moment to come online before it can start helping.",
+        "example_in_sentence": "the release notes said the claims processing system now uses autoscaling, so it should hold up better during the monday morning refill surge."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": false
+    },
+    {
+      "id": "ai-agent::pharmacist::final",
+      "run_id": "ai-agent::pharmacist",
+      "variant": "final",
+      "group": "D-pharmacist",
+      "term_id": "ai-agent",
+      "term": "agent",
+      "category": "ai-llm",
+      "profile_id": "pharmacist",
+      "profile_label": "retail pharmacist",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "a chat AI just answers you. an agent reads your goal, picks an action, uses a tool (looks something up, runs a calculation, sends a message), reads what came back, decides the next step, and keeps looping until the job is done. think of it less like asking a colleague a question and more like handing off a task and getting the finished result. the pattern is LLM + tools + a loop.",
+        "why_it_matters": "the whole industry is shifting from chatbots that talk to agents that do. when your software vendor's release notes start promising that an agent will handle prior auth follow-ups or flag rejected claims on its own, you'll know they mean the AI is actually taking actions in the system, not just suggesting them.",
+        "example_in_sentence": "the vendor says their new agent can work a prior authorization from start to finish without a tech touching it."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": false
+    },
+    {
+      "id": "excel-pivot-table::pharmacist::final",
+      "run_id": "excel-pivot-table::pharmacist",
+      "variant": "final",
+      "group": "D-pharmacist",
+      "term_id": "excel-pivot-table",
+      "term": "PivotTable",
+      "category": "data",
+      "profile_id": "pharmacist",
+      "profile_label": "retail pharmacist",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "a PivotTable summarizes a big spreadsheet by letting you drag field names (like region, drug, month) into rows, columns, values, and filters. it groups and totals the data for you without making you write a formula in every cell.",
+        "why_it_matters": "when you have a year of prescription or immunization data and someone asks for 'flu shots by store by month,' a PivotTable gets you the answer in a few minutes by dragging fields around. it turns a giant data dump into a readable summary without any formula writing.",
+        "example_in_sentence": "I pulled the immunization log into Excel and built a PivotTable to count flu shots by month and insurance type for our year-end report."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": false
+    },
+    {
+      "id": "sys-http-response::pharmacist::final",
+      "run_id": "sys-http-response::pharmacist",
+      "variant": "final",
+      "group": "D-pharmacist",
+      "term_id": "sys-http-response",
+      "term": "HTTP response",
+      "category": "apis",
+      "profile_id": "pharmacist",
+      "profile_label": "retail pharmacist",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "an HTTP response is what the server sends back after it gets a request. it carries a status code (a short number saying what happened), some headers (extra info about the message), and usually a body: the actual content, like a webpage, some data, an image, or an error message. when someone says 'the API returned 401,' they're describing the response.",
+        "why_it_matters": "when the help desk says 'the system returned a 500' or 'we got a 401 back,' they mean the response. it's where the server tells you what actually happened: yes, no, not allowed, not found, try again. knowing this is how you stop guessing why a claim submission or lookup failed.",
+        "example_in_sentence": "the claim went through to the PBM but the HTTP response came back with an error, so the prescription wouldn't adjudicate."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": false
+    },
+    {
+      "id": "cloud-cdn::pharmacist::final",
+      "run_id": "cloud-cdn::pharmacist",
+      "variant": "final",
+      "group": "D-pharmacist",
+      "term_id": "cloud-cdn",
+      "term": "CDN",
+      "category": "cloud",
+      "profile_id": "pharmacist",
+      "profile_label": "retail pharmacist",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "CDN stands for content delivery network. Instead of every user downloading images, scripts, and other static files from one central server, a CDN keeps copies of those files on servers scattered around the country and world. When you visit a site, your browser grabs the files from whichever location is closest to you, which is faster than reaching back to the original server every time.",
+        "why_it_matters": "when a website suddenly feels snappier after an update, a cdn is often the reason. it also explains a frustrating bug: the vendor pushes a new version of a file, but some users still see the old one because a stale copy is sitting on an edge server near them until it refreshes.",
+        "example_in_sentence": "the release notes said the new pharmacy portal loads faster because the images and logos are now served through a cdn."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": false
+    },
+    {
+      "id": "ai-llm::pharmacist::final",
+      "run_id": "ai-llm::pharmacist",
+      "variant": "final",
+      "group": "D-pharmacist",
+      "term_id": "ai-llm",
+      "term": "LLM",
+      "category": "ai-llm",
+      "profile_id": "pharmacist",
+      "profile_label": "retail pharmacist",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "an LLM (large language model) is an AI trained on enormous amounts of written text so it learns which words tend to follow which. that's how it can read, write, summarize, answer questions, and hold a conversation. Claude, ChatGPT, Gemini, and Llama are all LLMs — they're the engine inside every modern AI chat tool.",
+        "why_it_matters": "when release notes or a trainer mention \"AI\" in your pharmacy software — a chatbot that drafts patient counseling, a tool that summarizes a chart, something that flags interactions — there's almost always an LLM underneath. knowing what an LLM is makes every other AI term you'll hear easier to follow.",
+        "example_in_sentence": "the new help-desk assistant in the pharmacy system is powered by an LLM, so you can type a question in plain English instead of searching the manual."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": false
+    },
+    {
+      "id": "cloud-deploy::pharmacist::final",
+      "run_id": "cloud-deploy::pharmacist",
+      "variant": "final",
+      "group": "D-pharmacist",
+      "term_id": "cloud-deploy",
+      "term": "deploy",
+      "category": "cloud",
+      "profile_id": "pharmacist",
+      "profile_label": "retail pharmacist",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "a deploy takes software that's already been built and puts a specific version onto a system where it can actually run — a test site, a preview environment, or the real live production system your pharmacy uses. saving or finishing the code is not the same thing as deploying it. the deploy is the moment a running system switches over to the new version.",
+        "why_it_matters": "writing code and getting that code onto a live system are two separate events, and the gap between them is where a lot of confusion lives. once you understand this, release notes and help desk explanations like \"the fix is ready but hasn't been deployed to your store yet\" stop being mysterious — the fix exists, it just isn't running where you are.",
+        "example_in_sentence": "the vendor said the claim-rejection fix was finished last week, but it won't reach our workstations until they deploy it to all the stores tonight."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": false
+    },
+    {
+      "id": "aid-accuracy::pharmacist::final",
+      "run_id": "aid-accuracy::pharmacist",
+      "variant": "final",
+      "group": "D-pharmacist",
+      "term_id": "aid-accuracy",
+      "term": "accuracy",
+      "category": "ai-llm",
+      "profile_id": "pharmacist",
+      "profile_label": "retail pharmacist",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "Accuracy is the simplest score on a model's report card. You take a set of test questions where you already know the right answer, run the AI on every one, and count what fraction it got right. 87 out of 100 correct is 87% accuracy. It is the first number people cite in a release, and the first number teams check when something feels off. The catch: accuracy alone can hide problems. A model that always says \"no interaction\" could look highly accurate on a drug-interaction test if most drug pairs genuinely have no interaction — but it would miss every real one. That is why teams pair accuracy with other measures.",
+        "why_it_matters": "Accuracy is the easiest AI quality number to read, which is why it headlines every release note. Knowing the word — and knowing it is one number out of several — lets you read a vendor announcement about your pharmacy software and ask the next question, which is always \"accurate at what, and compared to what?\"",
+        "example_in_sentence": "The release notes claimed the new allergy-checking model hit 94% accuracy, up from 90% in the previous version."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": true
+    },
+    {
+      "id": "data-backfill::pharmacist::final",
+      "run_id": "data-backfill::pharmacist",
+      "variant": "final",
+      "group": "D-pharmacist",
+      "term_id": "data-backfill",
+      "term": "backfill",
+      "category": "data",
+      "profile_id": "pharmacist",
+      "profile_label": "retail pharmacist",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "a backfill is a one-time update that goes back and fixes or fills in data that already exists. if a new field gets added to the system, a backfill can populate it for old records. if old entries used inconsistent labels, a backfill can clean them up. because it touches historical data, backfills are planned and watched carefully.",
+        "why_it_matters": "there's a real difference between changing how the software behaves going forward and reaching back to fix records that are already on file. a backfill is the second one, and since it rewrites history, it's the kind of job that gets scoped carefully — the same way you'd treat any correction to records that have already been dispensed or billed.",
+        "example_in_sentence": "the release notes said a backfill would add the new generic-equivalent flag to prescriptions filled before the update."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": true
+    },
+    {
+      "id": "sec-rbac::pharmacist::final",
+      "run_id": "sec-rbac::pharmacist",
+      "variant": "final",
+      "group": "D-pharmacist",
+      "term_id": "sec-rbac",
+      "term": "RBAC",
+      "category": "security",
+      "profile_id": "pharmacist",
+      "profile_label": "retail pharmacist",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "RBAC stands for role-based access control. instead of deciding one by one what each individual person is allowed to do in the software, the system defines roles — pharmacist, technician, cashier, manager — and attaches permissions to the role. then each person gets a role, and the software checks the role, not the person. it's the standard setup in pharmacy systems, admin dashboards, and cloud tools.",
+        "why_it_matters": "when a help desk call turns into \"why can't my tech do this, but the one at the other store can\" — it's almost always RBAC. knowing the term lets you ask the right question: is this a role permission issue, or is my account on the wrong role? it also explains why the fix is usually \"we'll update your role,\" not \"we'll flip a switch just for you.\"",
+        "example_in_sentence": "the trainer explained that RBAC is why technicians can enter prescriptions but can't complete the final verification — that step is only enabled for the pharmacist role."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": false
+    },
+    {
+      "id": "sys-payload::pharmacist::final",
+      "run_id": "sys-payload::pharmacist",
+      "variant": "final",
+      "group": "D-pharmacist",
+      "term_id": "sys-payload",
+      "term": "payload",
+      "category": "apis",
+      "profile_id": "pharmacist",
+      "profile_label": "retail pharmacist",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "the payload is the actual contents being delivered, as opposed to the wrapping around it. think of a prescription bag: the bag, label, and stapled receipt are the envelope, but the vial and the drug inside are the payload — that's what the patient actually needs. in software, when one system sends data to another, the payload is the meaningful data part the receiver reads and acts on.",
+        "why_it_matters": "payload is the short word for 'the actual data inside the message.' when the help desk says 'check the payload' or release notes mention 'the claim payload,' they mean the real contents, not the wrapper around it. once you know the word, you can follow those conversations without guessing which part they're pointing at.",
+        "example_in_sentence": "the release notes said the insurance rejection payload now includes the reject code and the plan's reason text, so techs can see why a claim bounced without calling the help desk."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": true
+    },
+    {
+      "id": "aid-hallucination::pharmacist::final",
+      "run_id": "aid-hallucination::pharmacist",
+      "variant": "final",
+      "group": "D-pharmacist",
+      "term_id": "aid-hallucination",
+      "term": "hallucination",
+      "category": "ai-llm",
+      "profile_id": "pharmacist",
+      "profile_label": "retail pharmacist",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "AI models produce text that sounds confident even when they don't actually know the answer. Invented facts, fake citations, drug interactions that don't exist, made-up dosing guidelines — these are hallucinations. They happen because the model is built to generate plausible-sounding text, not to verify that what it says is true.",
+        "why_it_matters": "Every AI user gets burned by a hallucination eventually. Knowing the term reminds you to verify anything that matters — a cited study, a dose, a drug name, an interaction, a billing code. The AI will not warn you when it's guessing.",
+        "example_in_sentence": "That drug interaction the chatbot cited is a hallucination — the reference it named doesn't exist in the literature."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": false
+    },
+    {
+      "id": "cloud-alert::nurse::final",
+      "run_id": "cloud-alert::nurse",
+      "variant": "final",
+      "group": "E-analogy",
+      "term_id": "cloud-alert",
+      "term": "alert",
+      "category": "cloud",
+      "profile_id": "nurse",
+      "profile_label": "hospital nurse",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "an alert is a notification a system sends when something crosses a set limit or a failure happens — basically the software version of a pump alarm. the good ones point to something you can actually act on. the bad ones go off constantly for no real reason, and people learn to tune them out, same way a unit full of nuisance alarms gets ignored.",
+        "why_it_matters": "a dashboard is something someone might glance at. an alert is what actually pages a person at 2 a.m. tuning them matters: too many false ones and real problems get missed — the IT version of alarm fatigue.",
+        "example_in_sentence": "IT set up an alert to fire if the charting system's login time stays above ten seconds for more than five minutes."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": true
+    },
+    {
+      "id": "bi-rls::teacher::final",
+      "run_id": "bi-rls::teacher",
+      "variant": "final",
+      "group": "E-analogy",
+      "term_id": "bi-rls",
+      "term": "RLS",
+      "category": "data",
+      "profile_id": "teacher",
+      "profile_label": "high-school teacher",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "RLS stands for row-level security. In Power BI (a reporting tool), it's a setting that filters which rows of data a person can see based on who they are, so the same report shows different numbers to different viewers.",
+        "why_it_matters": "RLS is how one report safely shows each person only the data that belongs to them. Think of a gradebook where every teacher opens the same system but only sees their own students — RLS is the equivalent control for business reports. When someone on the tech committee asks \"can staff see everyone's data or just their own?\", this is the feature that answers it.",
+        "example_in_sentence": "Before the district rolls out that new dashboard, we should ask the vendor whether RLS is set up so each principal only sees their own school's numbers."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": true
+    },
+    {
+      "id": "cloud-autoscaling::nurse::final",
+      "run_id": "cloud-autoscaling::nurse",
+      "variant": "final",
+      "group": "E-analogy",
+      "term_id": "cloud-autoscaling",
+      "term": "autoscaling",
+      "category": "cloud",
+      "profile_id": "nurse",
+      "profile_label": "hospital nurse",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "autoscaling means the system automatically adds more computing power when demand goes up, and removes it when demand drops. it watches signals like how busy the processors are, how much memory is being used, or how many requests are waiting in line, and reacts to those numbers. think of how your med-surg unit flexes staffing: census climbs, you call in extra nurses; census drops, people get flexed off. same idea, but with servers instead of people.",
+        "why_it_matters": "this is how a system handles a sudden surge, like every nurse on every unit opening the charting app at 7am shift change, without the hospital paying for that much capacity all night long. it also explains the lag you sometimes feel when things suddenly get slow: new capacity takes a minute to come online before it can help.",
+        "example_in_sentence": "IT said the charting system's autoscaling should kick in at shift change so the app doesn't freeze when everyone logs in at once."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": true
+    },
+    {
+      "id": "aid-accuracy::nurse::final",
+      "run_id": "aid-accuracy::nurse",
+      "variant": "final",
+      "group": "E-analogy",
+      "term_id": "aid-accuracy",
+      "term": "accuracy",
+      "category": "ai-llm",
+      "profile_id": "nurse",
+      "profile_label": "hospital nurse",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "Accuracy is the simplest score on a model's report card. You take a set of test questions where you already know the right answer, run the AI on every one, and count the fraction it got right. 87 out of 100 correct is 87% accuracy. It is the first number people quote in a release announcement and the first number a team checks when something feels off. The catch: accuracy alone can hide problems. A screening tool that always says 'no sepsis' will look highly accurate on a floor where most patients don't have sepsis — while missing the ones who do. That is why teams pair accuracy with other measures.",
+        "why_it_matters": "Accuracy is the easiest AI quality number to read, which is why vendors put it on the slide. Knowing the word — and knowing it is one number out of several — lets you sit in a rollout meeting and ask the next question, which is always 'accurate at what, and compared to what?'",
+        "example_in_sentence": "The vendor claimed 92% accuracy on their documentation AI, but nobody in the meeting asked what kind of notes they tested it on."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": true
+    },
+    {
+      "id": "sys-http-response::nurse::final",
+      "run_id": "sys-http-response::nurse",
+      "variant": "final",
+      "group": "F-fill",
+      "term_id": "sys-http-response",
+      "term": "HTTP response",
+      "category": "apis",
+      "profile_id": "nurse",
+      "profile_label": "hospital nurse",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "an HTTP response is the server's answer back after it gets a request. it carries a status code (a short number saying what happened, like 200 for ok or 404 for not found), some headers (extra info about the answer), and usually a body — the actual content, which might be a web page, a chunk of data, an image, or an error message. when someone says \"the API returned 401,\" they're describing the response.",
+        "why_it_matters": "when IT or a vendor says \"the API returned a 500\" or \"we got a 401 back,\" they're reading the response. it's where the server tells you what actually happened: yes, no, not allowed, not found, try again later. knowing this lets you follow why something in the charting system failed instead of just hearing \"it's broken.\"",
+        "example_in_sentence": "the vendor said the documentation tool stopped loading notes because the HTTP response was coming back as a 500 error from their server."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": false
+    },
+    {
+      "id": "ai-llm::nurse::final",
+      "run_id": "ai-llm::nurse",
+      "variant": "final",
+      "group": "F-fill",
+      "term_id": "ai-llm",
+      "term": "LLM",
+      "category": "ai-llm",
+      "profile_id": "nurse",
+      "profile_label": "hospital nurse",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "An LLM (large language model) is a type of AI trained on enormous amounts of written text so it learns to predict what word comes next. That simple trick, done at massive scale, lets it read, write, summarize, answer questions, and hold a conversation. Claude, ChatGPT, Gemini, and Llama are all LLMs.",
+        "why_it_matters": "When IT or a vendor says \"AI\" in a meeting — AI charting, AI summaries of a patient's chart, an AI assistant that drafts your note — there's an LLM doing the actual work underneath. Almost every other AI term you'll hear (prompts, context, hallucinations) is describing how to use or control an LLM.",
+        "example_in_sentence": "The vendor explained that the new ambient documentation tool uses an LLM to listen to the patient visit and draft a progress note for the nurse to review."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": false
+    },
+    {
+      "id": "ai-agent::teacher::final",
+      "run_id": "ai-agent::teacher",
+      "variant": "final",
+      "group": "F-fill",
+      "term_id": "ai-agent",
+      "term": "agent",
+      "category": "ai-llm",
+      "profile_id": "teacher",
+      "profile_label": "high-school teacher",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "a plain chat AI just answers questions. an agent reads your goal, picks an action, uses a tool (searches the web, runs code, sends an email), reads what came back, decides the next step, and keeps looping until the job is done. the pattern is: AI model + tools it can use + a loop that keeps going. products marketed as \"AI that does the task for you\" are agents.",
+        "why_it_matters": "the whole industry is shifting from chatbots that talk to agents that act. on the technology committee, when a vendor pitches an \"AI agent\" for grading, scheduling, or student support, you'll want to ask what tools it can actually use, what it's allowed to do on its own, and when it stops and checks with a human.",
+        "example_in_sentence": "the vendor claimed their agent could pull attendance data, draft parent emails, and send them without a teacher clicking approve — which is exactly what the committee needed to pause on."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": false
+    },
+    {
+      "id": "sec-encryption::teacher::final",
+      "run_id": "sec-encryption::teacher",
+      "variant": "final",
+      "group": "F-fill",
+      "term_id": "sec-encryption",
+      "term": "encryption",
+      "category": "security",
+      "profile_id": "teacher",
+      "profile_label": "high-school teacher",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "encryption scrambles readable data into gibberish using a key. only someone with the matching key can unscramble it back. it protects data moving across the internet (the lock icon on HTTPS websites) and data sitting in storage, like a backup drive. no key, no readable data — even for the people who built the system.",
+        "why_it_matters": "this is the difference between a stolen district laptop being a real crisis and being a shrug. when a vendor says student data is \"protected in transit\" or backups are \"encrypted at rest,\" this is the actual mechanism. the flip side worth asking about: if they lose the key, the data is gone for good — so key management matters as much as the encryption itself.",
+        "example_in_sentence": "before approving the new gradebook software, the committee asked whether student records are encrypted both when they're sent to the server and when they're stored on it."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": false
+    },
+    {
+      "id": "fabric-data-pipeline::teacher::final",
+      "run_id": "fabric-data-pipeline::teacher",
+      "variant": "final",
+      "group": "F-fill",
+      "term_id": "fabric-data-pipeline",
+      "term": "data pipeline",
+      "category": "data",
+      "profile_id": "teacher",
+      "profile_label": "high-school teacher",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "a data pipeline in Fabric is a defined workflow that copies, transforms, and moves data from one system to another on a schedule. it's how an organization sets up repeatable steps for pulling data in from a source, reshaping it, and dropping it where it needs to go — without someone doing it by hand each time.",
+        "why_it_matters": "a data pipeline is the scheduled plumbing that shuttles data between systems so nobody's exporting spreadsheets by hand every night. when a vendor or IT person says \"the nightly load,\" they mean a pipeline running the job while everyone's asleep.",
+        "example_in_sentence": "a data pipeline pulls attendance and grade data from the gradebook into the district's reporting system every night automatically."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": false
+    },
+    {
+      "id": "sec-attack-surface::teacher::final",
+      "run_id": "sec-attack-surface::teacher",
+      "variant": "final",
+      "group": "F-fill",
+      "term_id": "sec-attack-surface",
+      "term": "attack surface",
+      "category": "security",
+      "profile_id": "teacher",
+      "profile_label": "high-school teacher",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "attack surface is every spot an outsider could poke at to try to break in: login pages, forms students fill out, file uploads, links between systems, admin accounts, and even the outside tools a program depends on. shrinking the attack surface means closing or removing the doors you don't actually need.",
+        "why_it_matters": "this is the term that explains why every new app, integration, or sign-in option the district adopts isn't free — each one is another door someone could rattle. once you think this way, retiring an unused tool stops feeling like tidying up and starts feeling like protecting student data.",
+        "example_in_sentence": "on the tech committee you might ask, \"if we add this third-party quiz tool, how much does it grow our attack surface?\""
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": false
+    },
+    {
+      "id": "data-backfill::teacher::final",
+      "run_id": "data-backfill::teacher",
+      "variant": "final",
+      "group": "F-fill",
+      "term_id": "data-backfill",
+      "term": "backfill",
+      "category": "data",
+      "profile_id": "teacher",
+      "profile_label": "high-school teacher",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "a backfill updates data that already exists. if a new field is added to records, a backfill can fill it in for old entries. if old records used inconsistent labels, a backfill can standardize them. because backfills touch historical data, they need to be scoped and reviewed carefully.",
+        "why_it_matters": "there's a real difference between changing how a system behaves going forward and fixing records that are already in it. a backfill is the second kind of change, and because it rewrites history it's the kind of job you plan carefully and watch while it runs.",
+        "example_in_sentence": "when the district added a new 'preferred name' field to the gradebook, IT ran a backfill to populate it for every student already enrolled."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": false
+    },
+    {
+      "id": "sec-mfa::teacher::final",
+      "run_id": "sec-mfa::teacher",
+      "variant": "final",
+      "group": "F-fill",
+      "term_id": "sec-mfa",
+      "term": "MFA",
+      "category": "security",
+      "profile_id": "teacher",
+      "profile_label": "high-school teacher",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "MFA stands for multi-factor authentication. logging in requires two or more kinds of proof — usually a password plus something else like a code from an authenticator app, a text message, a tap on your phone, a hardware key, or a fingerprint. the point is that if someone steals one piece, they still can't get in without the other.",
+        "why_it_matters": "this is why the district makes you enter a code from your phone after you already typed your password into the gradebook. when a vendor at a committee meeting says their software supports MFA, they mean a stolen password alone won't open a student's account — a useful question to ask about any tool handling student data.",
+        "example_in_sentence": "the district turned on MFA for our gradebook logins, so now i type my password and then approve a prompt on my phone."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": false
+    },
+    {
+      "id": "cloud-deploy::nurse::final",
+      "run_id": "cloud-deploy::nurse",
+      "variant": "final",
+      "group": "F-fill",
+      "term_id": "cloud-deploy",
+      "term": "deploy",
+      "category": "cloud",
+      "profile_id": "nurse",
+      "profile_label": "hospital nurse",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "a deploy takes finished code and actually puts it onto a system where it can run — a test environment, a staging copy, or the real production system that users touch. saving or finishing the code is not the same thing as deploying it; the deploy is the step that swaps in the new version so the running software actually behaves differently.",
+        "why_it_matters": "writing the code and getting it onto the live system are two separate events, and the gap between them is where a lot of confusion hides. once you can hear \"it's finished but not deployed yet,\" you stop wondering why a fix the vendor promised isn't showing up in your charting system during your shift.",
+        "example_in_sentence": "IT finished the new allergy-warning fix last week, but it won't reach our workstations until they deploy it to production on sunday night."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": false
+    },
+    {
+      "id": "sec-rbac::teacher::final",
+      "run_id": "sec-rbac::teacher",
+      "variant": "final",
+      "group": "F-fill",
+      "term_id": "sec-rbac",
+      "term": "RBAC",
+      "category": "security",
+      "profile_id": "teacher",
+      "profile_label": "high-school teacher",
+      "final_status": "accepted_first_try",
+      "candidate": {
+        "long_definition": "RBAC stands for role-based access control. instead of deciding what each individual person can do in a system, the software defines roles — like teacher, student, principal, parent — and attaches permissions to those roles. then everyone gets assigned a role and inherits whatever that role is allowed to do. it's the standard setup in admin dashboards, cloud tools, and most district software.",
+        "why_it_matters": "when the technology committee is debating who should see grades, who can post announcements, who can change settings, naming RBAC puts everyone on the same page. it tells you access is being granted by role, not person by person — so the right question becomes which roles exist and what each one can do, not whether to toggle something for one specific teacher.",
+        "example_in_sentence": "the vendor explained their LMS uses RBAC, so once we define the teacher, student, and parent roles, permissions apply automatically to everyone in those groups."
+      },
+      "original_verdict_overall": "pass",
+      "original_uses_analogy": false
+    }
+  ]
+}

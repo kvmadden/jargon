@@ -1,0 +1,150 @@
+{
+  "schema": "jargon-heldout-planted@1",
+  "note": "Each planted error replaces one exact substring in one generated explanation. Written by Claude on 2026-11-13. Kinds follow the 5 confirmed misses (access scope, environment, invented artifact property, broken comparison) plus workflow, regulation and drug-fact errors. No plant contradicts a fact in the verifier reference list.",
+  "plants": [
+    {
+      "run_id": "aid-chain-of-thought::nurse",
+      "field": "long_definition",
+      "find": "Like asking a new grad to walk through their reasoning out loud before pulling a med",
+      "replace": "Like the independent double check a second nurse must do before every oral medication is given",
+      "kind": "workflow",
+      "reason": "Independent double checks are required for selected high-alert medications, not every oral medication."
+    },
+    {
+      "run_id": "aid-chain-of-thought::pharmacist",
+      "field": "long_definition",
+      "find": "the same way writing out a weight-based pediatric dose on paper catches errors you'd miss doing it in your head",
+      "replace": "the same way state boards of pharmacy require the pharmacist to write every weight-based pediatric dose calculation on the prescription before it can be dispensed",
+      "kind": "regulation",
+      "reason": "No such general board requirement exists to write the calculation on the prescription."
+    },
+    {
+      "run_id": "aid-prompt-template::nurse",
+      "field": "example_in_sentence",
+      "find": "the vendor showed us a prompt template that turns a shift's worth of nursing notes into a tidy handoff summary once you paste the notes in.",
+      "replace": "the vendor showed us a prompt template that turns a shift's worth of nursing notes into a tidy handoff summary, and because it is a template the summary can go into the chart without a nurse reviewing it.",
+      "kind": "workflow",
+      "reason": "AI-drafted documentation still needs clinician review before it enters the record. Being a template does not change that."
+    },
+    {
+      "run_id": "aid-prompt-template::hospital-pharmacist",
+      "field": "long_definition",
+      "find": "a lot like a vancomycin dosing protocol where the framework is fixed and you just drop in the patient's weight, CrCl, and indication.",
+      "replace": "a lot like a vancomycin dosing protocol where the framework is fixed and you just drop in the patient's weight and indication, since the maintenance dose does not depend on kidney function.",
+      "kind": "drug fact",
+      "reason": "Vancomycin is renally cleared, and maintenance dosing depends on kidney function."
+    },
+    {
+      "run_id": "data-row::nurse",
+      "field": "long_definition",
+      "find": "sitting together on that line. the table itself is the whole list; a row is one entry on it.",
+      "replace": "sitting together on that line. the EHR only loads the rows for patients on your own unit, which is why you cannot open a chart from another floor. the table itself is the whole list; a row is one entry on it.",
+      "kind": "access scope",
+      "reason": "Hospital EHRs generally let clinicians open charts outside their unit, with access audited. They do not hide other units' patients."
+    },
+    {
+      "run_id": "data-row::hospital-pharmacist",
+      "field": "example_in_sentence",
+      "find": "the vendor said the upgrade script accidentally updated every row in the allergy table instead of just the one they meant to fix.",
+      "replace": "the vendor said the upgrade script only ran in the test environment, which is why it changed every row in the live allergy table pharmacists see on the floor.",
+      "kind": "environment",
+      "reason": "A script run only in the test environment cannot change the live table. The sentence contradicts itself."
+    },
+    {
+      "run_id": "sys-enum::nurse",
+      "field": "example_in_sentence",
+      "find": "the vendor said patient acuity will be an enum in the new chart so the field only accepts the four approved levels instead of free-typed notes.",
+      "replace": "the vendor said patient acuity will be an enum in the new chart so the field only accepts the four levels The Joint Commission requires every hospital to use.",
+      "kind": "regulation",
+      "reason": "The Joint Commission does not mandate a fixed set of four acuity levels. Acuity systems vary by hospital."
+    },
+    {
+      "run_id": "sys-enum::pharmacist",
+      "field": "long_definition",
+      "find": "an enum is a field locked to a fixed list of allowed values.",
+      "replace": "an enum is a field locked to a fixed list of allowed values. NDC numbers work the same way: there is a short fixed list of a few dozen standard drug codes, and every prescription has to use one of them.",
+      "kind": "drug fact",
+      "reason": "There are hundreds of thousands of NDC codes, and the list changes constantly. It is not a short fixed list."
+    },
+    {
+      "run_id": "sec-secret::nurse",
+      "field": "long_definition",
+      "find": "like a narcotics cabinet code or an Epic login, it only protects anything as long as it stays with the people who need it.",
+      "replace": "like the narcotics cabinet code, which every nurse on the unit shares so anyone can get in during an emergency, it only protects anything as long as it stays with the people who need it.",
+      "kind": "artifact",
+      "reason": "Automated dispensing cabinets use individual credentials. A shared unit code is not standard and would defeat controlled-substance accountability."
+    },
+    {
+      "run_id": "sec-sso::nurse",
+      "field": "why_it_matters",
+      "find": "without typing a new password for each one.",
+      "replace": "without typing a new password for each one. it is also why the EHR automatically shows you only the patients assigned to you that shift.",
+      "kind": "access scope",
+      "reason": "SSO handles sign-in. It does not limit chart access to assigned patients, and EHRs generally do not hide unassigned patients."
+    },
+    {
+      "run_id": "sec-sso::pharmacist",
+      "field": "long_definition",
+      "find": "the identity provider vouches for who you are; the apps trust that vouching.",
+      "replace": "the identity provider vouches for who you are; the apps trust that vouching, the same way a patient's insurance card lets any pharmacy fill their medications without a new prescription.",
+      "kind": "broken comparison",
+      "reason": "An insurance card covers payment. It never stands in for a prescription, so the comparison's clinical side is false."
+    },
+    {
+      "run_id": "sec-vulnerability::nurse",
+      "field": "example_in_sentence",
+      "find": "IT delayed the charting upgrade rollout by a week after the vendor disclosed a vulnerability that could have exposed patient records.",
+      "replace": "IT delayed the charting upgrade rollout by a week after the vendor disclosed a vulnerability in the training environment, which is the copy connected to real patient records.",
+      "kind": "environment",
+      "reason": "The training environment uses test patients. The live production system holds real records."
+    },
+    {
+      "run_id": "sys-route::nurse",
+      "field": "example_in_sentence",
+      "find": "the vendor said the lab results page isn't loading because the route for it wasn't added in the latest build.",
+      "replace": "the vendor said the lab results page isn't loading because the route for it wasn't added in the latest build, so until then pharmacy will call critical lab values to the unit.",
+      "kind": "workflow",
+      "reason": "Critical lab values are called by the laboratory, not pharmacy."
+    },
+    {
+      "run_id": "web-domain::nurse",
+      "field": "long_definition",
+      "find": "like epic.com or your hospital's intranet address.",
+      "replace": "like epic.com or your hospital's intranet address. patient portals like MyChart all share one domain, mychart.com, for every hospital.",
+      "kind": "external",
+      "reason": "Each organization runs MyChart at its own address. There is no single shared domain for every hospital."
+    },
+    {
+      "run_id": "web-status-code::nurse",
+      "field": "why_it_matters",
+      "find": "the status code is the first clue they look at",
+      "replace": "the status code is the first clue they look at, much like the red allergy wristband, which lists each of the patient's allergies so anyone can read them at the bedside,",
+      "kind": "artifact",
+      "reason": "An allergy wristband flags that allergies exist. It does not list every allergy. The list lives in the chart."
+    },
+    {
+      "run_id": "cloud-kubernetes::nurse",
+      "field": "long_definition",
+      "find": "think of it as the charge nurse for software: it assigns each container to a machine",
+      "replace": "think of it as the charge nurse for software: just as the charge nurse writes the admission orders for each new patient, it assigns each container to a machine",
+      "kind": "broken comparison",
+      "reason": "Admission orders are written by a provider, not the charge nurse."
+    },
+    {
+      "run_id": "cloud-log::pharmacist",
+      "field": "long_definition",
+      "find": "the audit trail your pharmacy system keeps on a controlled-substance transaction — every action gets a line with who, what, and when.",
+      "replace": "the audit trail your pharmacy system keeps on a controlled-substance transaction, which the pharmacist can edit afterward to fix a miscount — every action gets a line with who, what, and when.",
+      "kind": "artifact",
+      "reason": "Controlled-substance audit trails cannot be edited after the fact. Corrections are new, documented entries."
+    },
+    {
+      "run_id": "cloud-observability::pharmacist",
+      "field": "why_it_matters",
+      "find": "the same way you do controlled-substance counts on a schedule rather than waiting for a discrepancy.",
+      "replace": "the same way federal law requires a full count of every controlled substance at the end of each shift.",
+      "kind": "regulation",
+      "reason": "Federal rules require a biennial inventory. End-of-shift counts are state or company policy, not a federal requirement."
+    }
+  ]
+}

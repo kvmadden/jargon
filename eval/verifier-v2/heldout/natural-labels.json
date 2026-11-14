@@ -1,0 +1,26 @@
+{
+  "note": "Proposed labels for the 21 generated explanations that carry no planted error, read by Claude on 2026-11-13. Not expert labels.",
+  "labels": {
+    "aid-chain-of-thought::hospital-pharmacist": ["correct", "Accurate. Working a vancomycin calculation on paper is a fair comparison."],
+    "aid-prompt-template::pharmacist": ["correct", "Accurate. A counseling script with fill-in fields is a fair comparison."],
+    "data-row::pharmacist": ["correct", "Accurate. One row in an allergy table maps to one patient's allergy entry."],
+    "sys-enum::hospital-pharmacist": ["misleading", "An allergy field limited to four values (NKDA, penicillin, sulfa, latex) is not realistic. Allergy fields draw on large coded allergen lists."],
+    "sec-secret::pharmacist": ["wrong", "A DEA number is not a secret. It is printed on prescriptions and shared with pharmacies routinely, so the comparison is false."],
+    "sec-secret::hospital-pharmacist": ["misleading", "Automated dispensing cabinet override is a function tied to a user's own credentials, not a shared 'Pyxis override code' or combination."],
+    "sec-sso::hospital-pharmacist": ["correct", "Accurate. Badge-tap single sign-on into clinical systems is common."],
+    "sec-vulnerability::pharmacist": ["correct", "Accurate."],
+    "sec-vulnerability::hospital-pharmacist": ["correct", "The drug-interaction comparison for urgency is loose but not false."],
+    "sys-route::pharmacist": ["correct", "Accurate."],
+    "sys-route::hospital-pharmacist": ["correct", "Accurate."],
+    "web-domain::pharmacist": ["correct", "Accurate."],
+    "web-domain::hospital-pharmacist": ["correct", "Accurate. A domain change is a reasonable hint that a system moved."],
+    "web-status-code::pharmacist": ["misleading", "Paid claims carry no reject code. Paid or rejected is a separate response status, and reject codes explain rejections (75 means prior authorization required)."],
+    "web-status-code::hospital-pharmacist": ["correct", "Accurate."],
+    "cloud-kubernetes::pharmacist": ["correct", "Accurate."],
+    "cloud-kubernetes::hospital-pharmacist": ["correct", "Accurate."],
+    "cloud-log::nurse": ["misleading", "Compares logs to nursing charting that is careful not to include anything sensitive, but charting is full of protected health information by necessity."],
+    "cloud-log::hospital-pharmacist": ["misleading", "Same comparison: chart entries are described as made without exposing anything sensitive, which is not how clinical documentation works."],
+    "cloud-observability::nurse": ["correct", "Accurate. Continuous monitoring is a fair comparison."],
+    "cloud-observability::hospital-pharmacist": ["correct", "Accurate. Vitals and trends for a septic patient are a fair comparison."]
+  }
+}
