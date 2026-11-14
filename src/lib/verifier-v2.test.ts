@@ -280,3 +280,38 @@ describe('gold set files', () => {
     }
   });
 });
+
+describe('held-out set', () => {
+  const H = 'eval/verifier-v2/heldout';
+  const items = readJson(`${H}/items.json`).items;
+  const labels = readJson(`${H}/labels.json`).labels;
+  const plants = readJson(`${H}/planted.json`).plants;
+  const devTerms = new Set(readJson('eval/verifier-v2/gold/items.json').items.map((i: any) => i.term_id));
+
+  it('uses only terms no dev-set item uses, 39 items, one label each', () => {
+    expect(items).toHaveLength(39);
+    for (const it of items) expect(devTerms.has(it.term_id)).toBe(false);
+    expect(labels.map((l: any) => l.id)).toEqual(items.map((i: any) => i.id));
+  });
+  it('applies every planted error and labels it wrong', () => {
+    const byId = new Map(items.map((i: any) => [i.id, i]));
+    for (const p of plants) {
+      const it: any = byId.get(p.run_id);
+      expect(it.candidate[p.field]).toContain(p.replace);
+      if (!p.replace.includes(p.find)) expect(it.candidate[p.field]).not.toContain(p.find);
+      const l = labels.find((x: any) => x.id === p.run_id);
+      expect(l.origin).toBe('planted');
+      expect(l.label).toBe('wrong');
+    }
+    expect(labels.filter((l: any) => l.origin === 'planted')).toHaveLength(plants.length);
+  });
+  it('matches every hash in FREEZE.json once the set is frozen', () => {
+    const p = join(ROOT, `${H}/FREEZE.json`);
+    let freeze: any = null;
+    try { freeze = JSON.parse(readFileSync(p, 'utf8')); } catch { return; }
+    for (const [file, hash] of Object.entries(freeze.sha256)) {
+      const h = createHash('sha256').update(readFileSync(join(ROOT, 'eval/verifier-v2', file))).digest('hex');
+      expect(`${file} ${h}`).toBe(`${file} ${hash}`);
+    }
+  });
+});

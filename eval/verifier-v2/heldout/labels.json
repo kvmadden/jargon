@@ -1,0 +1,297 @@
+{
+  "schema": "jargon-heldout-labels@1",
+  "labeled_by": "Claude (AI), proposed 2026-11-13. Not expert labels.",
+  "labels": [
+    {
+      "id": "aid-chain-of-thought::nurse",
+      "label": "wrong",
+      "origin": "planted",
+      "kind": "workflow",
+      "reason": "Independent double checks are required for selected high-alert medications, not every oral medication.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "aid-chain-of-thought::pharmacist",
+      "label": "wrong",
+      "origin": "planted",
+      "kind": "regulation",
+      "reason": "No such general board requirement exists to write the calculation on the prescription.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "aid-chain-of-thought::hospital-pharmacist",
+      "label": "correct",
+      "origin": "generated",
+      "reason": "Accurate. Working a vancomycin calculation on paper is a fair comparison.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "aid-prompt-template::nurse",
+      "label": "wrong",
+      "origin": "planted",
+      "kind": "workflow",
+      "reason": "AI-drafted documentation still needs clinician review before it enters the record. Being a template does not change that.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "aid-prompt-template::pharmacist",
+      "label": "correct",
+      "origin": "generated",
+      "reason": "Accurate. A counseling script with fill-in fields is a fair comparison.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "aid-prompt-template::hospital-pharmacist",
+      "label": "wrong",
+      "origin": "planted",
+      "kind": "drug fact",
+      "reason": "Vancomycin is renally cleared, and maintenance dosing depends on kidney function.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "data-row::nurse",
+      "label": "wrong",
+      "origin": "planted",
+      "kind": "access scope",
+      "reason": "Hospital EHRs generally let clinicians open charts outside their unit, with access audited. They do not hide other units' patients.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "data-row::pharmacist",
+      "label": "correct",
+      "origin": "generated",
+      "reason": "Accurate. One row in an allergy table maps to one patient's allergy entry.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "data-row::hospital-pharmacist",
+      "label": "wrong",
+      "origin": "planted",
+      "kind": "environment",
+      "reason": "A script run only in the test environment cannot change the live table. The sentence contradicts itself.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "sys-enum::nurse",
+      "label": "wrong",
+      "origin": "planted",
+      "kind": "regulation",
+      "reason": "The Joint Commission does not mandate a fixed set of four acuity levels. Acuity systems vary by hospital.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "sys-enum::pharmacist",
+      "label": "wrong",
+      "origin": "planted",
+      "kind": "drug fact",
+      "reason": "There are hundreds of thousands of NDC codes, and the list changes constantly. It is not a short fixed list.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "sys-enum::hospital-pharmacist",
+      "label": "misleading",
+      "origin": "generated",
+      "reason": "An allergy field limited to four values (NKDA, penicillin, sulfa, latex) is not realistic. Allergy fields draw on large coded allergen lists.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "sec-secret::nurse",
+      "label": "wrong",
+      "origin": "planted",
+      "kind": "artifact",
+      "reason": "Automated dispensing cabinets use individual credentials. A shared unit code is not standard and would defeat controlled-substance accountability.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "sec-secret::pharmacist",
+      "label": "wrong",
+      "origin": "generated",
+      "reason": "A DEA number is not a secret. It is printed on prescriptions and shared with pharmacies routinely, so the comparison is false.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "sec-secret::hospital-pharmacist",
+      "label": "misleading",
+      "origin": "generated",
+      "reason": "Automated dispensing cabinet override is a function tied to a user's own credentials, not a shared 'Pyxis override code' or combination.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "sec-sso::nurse",
+      "label": "wrong",
+      "origin": "planted",
+      "kind": "access scope",
+      "reason": "SSO handles sign-in. It does not limit chart access to assigned patients, and EHRs generally do not hide unassigned patients.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "sec-sso::pharmacist",
+      "label": "wrong",
+      "origin": "planted",
+      "kind": "broken comparison",
+      "reason": "An insurance card covers payment. It never stands in for a prescription, so the comparison's clinical side is false.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "sec-sso::hospital-pharmacist",
+      "label": "correct",
+      "origin": "generated",
+      "reason": "Accurate. Badge-tap single sign-on into clinical systems is common.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "sec-vulnerability::nurse",
+      "label": "wrong",
+      "origin": "planted",
+      "kind": "environment",
+      "reason": "The training environment uses test patients. The live production system holds real records.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "sec-vulnerability::pharmacist",
+      "label": "correct",
+      "origin": "generated",
+      "reason": "Accurate.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "sec-vulnerability::hospital-pharmacist",
+      "label": "correct",
+      "origin": "generated",
+      "reason": "The drug-interaction comparison for urgency is loose but not false.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "sys-route::nurse",
+      "label": "wrong",
+      "origin": "planted",
+      "kind": "workflow",
+      "reason": "Critical lab values are called by the laboratory, not pharmacy.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "sys-route::pharmacist",
+      "label": "correct",
+      "origin": "generated",
+      "reason": "Accurate.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "sys-route::hospital-pharmacist",
+      "label": "correct",
+      "origin": "generated",
+      "reason": "Accurate.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "web-domain::nurse",
+      "label": "wrong",
+      "origin": "planted",
+      "kind": "external",
+      "reason": "Each organization runs MyChart at its own address. There is no single shared domain for every hospital.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "web-domain::pharmacist",
+      "label": "correct",
+      "origin": "generated",
+      "reason": "Accurate.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "web-domain::hospital-pharmacist",
+      "label": "correct",
+      "origin": "generated",
+      "reason": "Accurate. A domain change is a reasonable hint that a system moved.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "web-status-code::nurse",
+      "label": "wrong",
+      "origin": "planted",
+      "kind": "artifact",
+      "reason": "An allergy wristband flags that allergies exist. It does not list every allergy. The list lives in the chart.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "web-status-code::pharmacist",
+      "label": "misleading",
+      "origin": "generated",
+      "reason": "Paid claims carry no reject code. Paid or rejected is a separate response status, and reject codes explain rejections (75 means prior authorization required).",
+      "label_status": "proposed"
+    },
+    {
+      "id": "web-status-code::hospital-pharmacist",
+      "label": "correct",
+      "origin": "generated",
+      "reason": "Accurate.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "cloud-kubernetes::nurse",
+      "label": "wrong",
+      "origin": "planted",
+      "kind": "broken comparison",
+      "reason": "Admission orders are written by a provider, not the charge nurse.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "cloud-kubernetes::pharmacist",
+      "label": "correct",
+      "origin": "generated",
+      "reason": "Accurate.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "cloud-kubernetes::hospital-pharmacist",
+      "label": "correct",
+      "origin": "generated",
+      "reason": "Accurate.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "cloud-log::nurse",
+      "label": "misleading",
+      "origin": "generated",
+      "reason": "Compares logs to nursing charting that is careful not to include anything sensitive, but charting is full of protected health information by necessity.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "cloud-log::pharmacist",
+      "label": "wrong",
+      "origin": "planted",
+      "kind": "artifact",
+      "reason": "Controlled-substance audit trails cannot be edited after the fact. Corrections are new, documented entries.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "cloud-log::hospital-pharmacist",
+      "label": "misleading",
+      "origin": "generated",
+      "reason": "Same comparison: chart entries are described as made without exposing anything sensitive, which is not how clinical documentation works.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "cloud-observability::nurse",
+      "label": "correct",
+      "origin": "generated",
+      "reason": "Accurate. Continuous monitoring is a fair comparison.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "cloud-observability::pharmacist",
+      "label": "wrong",
+      "origin": "planted",
+      "kind": "regulation",
+      "reason": "Federal rules require a biennial inventory. End-of-shift counts are state or company policy, not a federal requirement.",
+      "label_status": "proposed"
+    },
+    {
+      "id": "cloud-observability::hospital-pharmacist",
+      "label": "correct",
+      "origin": "generated",
+      "reason": "Accurate. Vitals and trends for a septic patient are a fair comparison.",
+      "label_status": "proposed"
+    }
+  ]
+}

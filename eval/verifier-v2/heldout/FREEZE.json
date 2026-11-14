@@ -1,0 +1,59 @@
+{
+  "schema": "jargon-heldout-freeze@1",
+  "frozen_at": "2026-11-14T05:05:16.213Z",
+  "verifier_has_seen_items": false,
+  "set": {
+    "items": 39,
+    "terms": "the 13 terms in eval/data/terms.json that no dev-set item uses",
+    "learners": "nurse and retail pharmacist (eval/data/profiles.json), hospital pharmacist (extra-profiles.json)",
+    "generation": "shipped Pass 1 prompt on claude-opus-4-7 through claude -p (subscription)",
+    "planted_wrong": 18,
+    "generated_flawed": 6,
+    "generated_correct": 15,
+    "proposed_labels_by": "Claude (AI). Not expert labels."
+  },
+  "label_check": {
+    "labeler": "ollama local qwen3.8:27b, blind to the proposed labels",
+    "items": 39,
+    "checked": 39,
+    "missing": 0,
+    "binary_agree": 29,
+    "binary_disagree": 10,
+    "exact_disagree": 12,
+    "disagreements_by_origin": {
+      "generated": 6,
+      "planted": 4
+    },
+    "note": "Grok was the intended second family. All 39 Grok calls on 2026-11-13 returned 402 \"Grok Build usage balance exhausted\". Gemini was not used because it is half of the frozen rule. OpenAI was out until 2026-11-14 06:36 PT. The check used the local qwen3.8:27b (Alibaba family) through Ollama, blind to the proposed labels."
+  },
+  "rule_under_test": "eval/verifier-v2/FROZEN-RULE.json (cross-family consensus, unchanged)",
+  "bar": {
+    "planted_catch_rate_min": 0.9,
+    "false_alarm_rate_on_labeled_correct_max": 0.1
+  },
+  "single_run": [
+    "node eval/verifier-v2/run-verifiers.ts --arm v3-claude --model claude-opus-5-5 --items eval/verifier-v2/heldout/items.json --extra-profiles eval/verifier-v2/heldout/extra-profiles.json --out eval/verifier-v2/heldout/results/v3-claude-heldout.jsonl",
+    "node eval/verifier-v2/run-verifiers.ts --arm v2-gemini --items eval/verifier-v2/heldout/items.json --extra-profiles eval/verifier-v2/heldout/extra-profiles.json --out eval/verifier-v2/heldout/results/v2-gemini-heldout.jsonl",
+    "node eval/verifier-v2/run-verifiers.ts --arm v1-claude --items eval/verifier-v2/heldout/items.json --extra-profiles eval/verifier-v2/heldout/extra-profiles.json --out eval/verifier-v2/heldout/results/v1-claude-heldout.jsonl   (baseline, not the rule under test)",
+    "node eval/verifier-v2/heldout/score-heldout.ts"
+  ],
+  "run_rule": "Run once. If Gemini is unavailable, do not substitute a model: the run waits. Transport failures may be retried once with --retry-missing, and the first-attempt rows are kept.",
+  "sha256": {
+    "heldout/generated.jsonl": "ccc74ce26c6f0afbd5115357085d54c1ba0bd0e0774e5d630987f9db65d0390e",
+    "heldout/extra-profiles.json": "2091ec4ee0437acd2175601b11b03ca5717491aa33cca70ce0e5c5592085adad",
+    "heldout/planted.json": "8bb2fdcb876b02a4bc1654ff1f2ea72bdc0d493a17460ea5148fb96fd45affc8",
+    "heldout/natural-labels.json": "e49e04b4b19f146f64404c7e0ee8d017ac2141b92e37d02bebad02dd99bea74e",
+    "heldout/items.json": "8fc39749c3cf7699273a7aec29964d071bb3055d199a668ca2943080dd74f19f",
+    "heldout/labels.json": "96f0f35405268700e3472b323f3dcd9c1ab3748dfd57a7c5678e2c26498d6f6a",
+    "heldout/label-check.jsonl": "418f091ba5ef62e02fd4b3010d8b4d3d411503220edc967fc594d1fe1f8b43a8",
+    "heldout/label-agreement.json": "fc06dc020c221ee95dd01733a5471bf2b1590bbf4b6ca8ba749a500082c43821",
+    "heldout/KEVIN-REVIEW.md": "cc5de1a4ae68478d521b40b2718557aa406d9798fa1982d57708b00a556b2082",
+    "heldout/build-heldout.mjs": "5eb7d28ec8c79eb9c4a153b6d51b63340d4838bd7565baa6e0764f66289ba537",
+    "heldout/generate.ts": "a36256b77529db91b0378e4837a39789dcbb9f9515099ea447cbd3819a2e1f45",
+    "heldout/label-check.ts": "4b555b0742da2bd24518c50a847f2ce4034601eae1e6c75f2a26c7174dc044bd",
+    "heldout/compare-labels.mjs": "ca766acfca3cc50492548dcf16f4b9c38ff70846f7d6d9a0f7e46eca6dd4b67a",
+    "heldout/score-heldout.ts": "37bc935db194e35805c0e6894ebc09593cf9288ba987c444078571959cce423c",
+    "FROZEN-RULE.json": "f512f0575b69ec346c043497ee747929f88a90816ea70acc07ddfd503bc057b6",
+    "lib.ts": "305672f208d81f8f1e9aed880d3ca19c1f7d189c7edde726efc4317bb13cc8a4"
+  }
+}

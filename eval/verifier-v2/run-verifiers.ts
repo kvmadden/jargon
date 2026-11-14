@@ -4,7 +4,8 @@
 //   node eval/verifier-v2/run-verifiers.ts --arm v2-grok
 //   node eval/verifier-v2/run-verifiers.ts --arm v2-claude
 //   options: --limit N (smoke test), --out <file> (default results/<arm>.jsonl),
-//            --retry-missing (run again only items whose latest row has no verdict)
+//            --retry-missing (run again only items whose latest row has no verdict),
+//            --items <file> --extra-profiles <file> (run on another item set, such as heldout/)
 //
 // Arms:
 //   v1-claude  The original verifier: the shipped Pass 2 system prompt and user
@@ -82,11 +83,15 @@ const tag = flag('--tag');
 const outPath = flag('--out') ?? join(HERE, 'results', `${arm}${tag ? `-${tag}` : ''}.jsonl`);
 mkdirSync(dirname(outPath), { recursive: true });
 
-const gold = JSON.parse(readFileSync(join(HERE, 'gold/items.json'), 'utf8'));
+// --items and --extra-profiles point the runner at another item set (the
+// held-out set) without touching any prompt or decision rule.
+const itemsPath = flag('--items') ?? join(HERE, 'gold/items.json');
+const gold = JSON.parse(readFileSync(itemsPath, 'utf8'));
 const terms = JSON.parse(readFileSync(join(ROOT, 'eval/data/terms.json'), 'utf8')).terms;
 const profilesFile = JSON.parse(readFileSync(join(ROOT, 'eval/data/profiles.json'), 'utf8'));
 const termById = new Map<string, any>(terms.map((t: any) => [t.id, t]));
-const profileById = new Map<string, any>(profilesFile.profiles.map((p: any) => [p.id, p]));
+const extraProfiles = flag('--extra-profiles') ? JSON.parse(readFileSync(flag('--extra-profiles')!, 'utf8')).profiles : [];
+const profileById = new Map<string, any>([...profilesFile.profiles, ...extraProfiles].map((p: any) => [p.id, p]));
 const knownVocabulary: string[] = profilesFile.known_vocabulary;
 
 // --retry-missing: run again only the items whose latest row has no verdict.
