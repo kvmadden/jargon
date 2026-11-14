@@ -298,3 +298,17 @@ export function scoreArm(gold: GoldRow[], results: ArmResult[]): ArmScore {
   }
   return s;
 }
+
+/**
+ * Split a results file's rows into each item's first and latest row. A file
+ * holds more than one row per item only when no-verdict items were retried.
+ */
+export function firstAndLatest<T extends { id: string }>(rows: T[]): { first: Map<string, T>; latest: Map<string, T> } {
+  const first = new Map<string, T>();
+  const latest = new Map<string, T>();
+  for (const r of rows) {
+    if (!first.has(r.id)) first.set(r.id, r);
+    latest.set(r.id, r);
+  }
+  return { first, latest };
+}

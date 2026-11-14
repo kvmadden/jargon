@@ -3,7 +3,8 @@
 //   node eval/verifier-v2/run-verifiers.ts --arm v1-claude
 //   node eval/verifier-v2/run-verifiers.ts --arm v2-grok
 //   node eval/verifier-v2/run-verifiers.ts --arm v2-claude
-//   options: --limit N (smoke test), --out <file> (default results/<arm>.jsonl)
+//   options: --limit N (smoke test), --out <file> (default results/<arm>.jsonl),
+//            --retry-missing (run again only items whose latest row has no verdict)
 //
 // Arms:
 //   v1-claude  The original verifier: the shipped Pass 2 system prompt and user
@@ -73,10 +74,22 @@ const termById = new Map<string, any>(terms.map((t: any) => [t.id, t]));
 const profileById = new Map<string, any>(profilesFile.profiles.map((p: any) => [p.id, p]));
 const knownVocabulary: string[] = profilesFile.known_vocabulary;
 
+// --retry-missing: run again only the items whose latest row has no verdict.
+// The new row is appended with the next attempt number. Earlier rows are kept,
+// so first-attempt results stay visible.
+const retryMissing = args.includes('--retry-missing');
 const done = new Set<string>();
+const attempts = new Map<string, number>();
 if (existsSync(outPath)) {
+  const latest = new Map<string, any>();
   for (const line of readFileSync(outPath, 'utf8').split('\n')) {
-    if (line.trim()) done.add(JSON.parse(line).id);
+    if (!line.trim()) continue;
+    const row = JSON.parse(line);
+    latest.set(row.id, row);
+    attempts.set(row.id, (attempts.get(row.id) ?? 0) + 1);
+  }
+  for (const [id, row] of latest) {
+    if (!retryMissing || row.decision !== null) done.add(id);
   }
 }
 
@@ -178,7 +191,10 @@ function runGrok(system: string, user: string): CallResult {
     auth: 'grok CLI, grok.com login (metered key variables removed from env)',
     notional_cost_usd: typeof out?.total_cost_usd === 'number' ? out.total_cost_usd : null,
     latency_ms: latency,
-    error: r.error ? String(r.error) : !out ? `unparseable stdout: ${(r.stdout ?? '').slice(0, 300)} | stderr: ${(r.stderr ?? '').slice(0, 300)}` : null,
+    error:
+      r.error || r.status !== 0 || !out || (!out.text && !out.structuredOutput)
+        ? `exit ${r.status}${r.error ? ` ${String(r.error)}` : ''} | stdout: ${(r.stdout ?? '').slice(-600)} | stderr: ${(r.stderr ?? '').slice(-600)}`
+        : null,
     exit_code: r.status,
   };
 }
@@ -215,6 +231,7 @@ async function main() {
     const row = {
       id: it.id,
       arm,
+      attempt: (attempts.get(it.id) ?? 0) + 1,
       started_at: started,
       load_1m_at_start: load,
       model_requested: arm === 'v2-grok' ? GROK_MODEL : PERSONALIZE_MODEL,

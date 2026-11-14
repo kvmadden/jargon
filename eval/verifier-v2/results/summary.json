@@ -1,0 +1,844 @@
+{
+  "kevin_labeled": 0,
+  "gold_size": 50,
+  "meta": {
+    "v1-claude": {
+      "model": [
+        "claude-opus-4-7"
+      ],
+      "rows": 50,
+      "first_attempt_no_verdict": 0,
+      "final_no_verdict": 0
+    },
+    "v2-claude": {
+      "model": [
+        "claude-opus-4-7"
+      ],
+      "rows": 50,
+      "first_attempt_no_verdict": 0,
+      "final_no_verdict": 0
+    },
+    "v2-grok": {
+      "model": [
+        "grok-4.7-build"
+      ],
+      "rows": 67,
+      "first_attempt_no_verdict": 17,
+      "final_no_verdict": 4
+    }
+  },
+  "scores": {
+    "v1-original-2026-10-30": {
+      "n": 50,
+      "no_verdict": 0,
+      "confirmed_misses": {
+        "caught": 0,
+        "of": 5
+      },
+      "proposed_flawed": {
+        "caught": 1,
+        "of": 13
+      },
+      "proposed_correct": {
+        "false_alarms": 1,
+        "of": 37
+      },
+      "reported_correct": {
+        "false_alarms": 0,
+        "of": 7
+      }
+    },
+    "v1-claude": {
+      "n": 50,
+      "no_verdict": 0,
+      "confirmed_misses": {
+        "caught": 0,
+        "of": 5
+      },
+      "proposed_flawed": {
+        "caught": 0,
+        "of": 13
+      },
+      "proposed_correct": {
+        "false_alarms": 1,
+        "of": 37
+      },
+      "reported_correct": {
+        "false_alarms": 0,
+        "of": 7
+      }
+    },
+    "v2-claude": {
+      "n": 50,
+      "no_verdict": 0,
+      "confirmed_misses": {
+        "caught": 5,
+        "of": 5
+      },
+      "proposed_flawed": {
+        "caught": 12,
+        "of": 13
+      },
+      "proposed_correct": {
+        "false_alarms": 15,
+        "of": 37
+      },
+      "reported_correct": {
+        "false_alarms": 6,
+        "of": 7
+      }
+    },
+    "v2-claude-lenient": {
+      "n": 50,
+      "no_verdict": 0,
+      "confirmed_misses": {
+        "caught": 4,
+        "of": 5
+      },
+      "proposed_flawed": {
+        "caught": 8,
+        "of": 13
+      },
+      "proposed_correct": {
+        "false_alarms": 2,
+        "of": 37
+      },
+      "reported_correct": {
+        "false_alarms": 1,
+        "of": 7
+      }
+    },
+    "v2-grok": {
+      "n": 50,
+      "no_verdict": 4,
+      "confirmed_misses": {
+        "caught": 4,
+        "of": 5
+      },
+      "proposed_flawed": {
+        "caught": 11,
+        "of": 13
+      },
+      "proposed_correct": {
+        "false_alarms": 34,
+        "of": 37
+      },
+      "reported_correct": {
+        "false_alarms": 7,
+        "of": 7
+      }
+    },
+    "v2-grok-lenient": {
+      "n": 50,
+      "no_verdict": 4,
+      "confirmed_misses": {
+        "caught": 4,
+        "of": 5
+      },
+      "proposed_flawed": {
+        "caught": 11,
+        "of": 13
+      },
+      "proposed_correct": {
+        "false_alarms": 33,
+        "of": 37
+      },
+      "reported_correct": {
+        "false_alarms": 7,
+        "of": 7
+      }
+    },
+    "v2-grok-first-attempt": {
+      "n": 50,
+      "no_verdict": 17,
+      "confirmed_misses": {
+        "caught": 4,
+        "of": 5
+      },
+      "proposed_flawed": {
+        "caught": 9,
+        "of": 13
+      },
+      "proposed_correct": {
+        "false_alarms": 24,
+        "of": 37
+      },
+      "reported_correct": {
+        "false_alarms": 5,
+        "of": 7
+      }
+    },
+    "v2-grok-first-attempt-lenient": {
+      "n": 50,
+      "no_verdict": 17,
+      "confirmed_misses": {
+        "caught": 4,
+        "of": 5
+      },
+      "proposed_flawed": {
+        "caught": 9,
+        "of": 13
+      },
+      "proposed_correct": {
+        "false_alarms": 23,
+        "of": 37
+      },
+      "reported_correct": {
+        "false_alarms": 5,
+        "of": 7
+      }
+    }
+  },
+  "per_item": [
+    {
+      "id": "bi-rls::nurse::final",
+      "label": "wrong",
+      "status": "confirmed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "fail",
+      "v2-claude-lenient": "fail",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": "fail",
+      "v2-grok-first-attempt-lenient": "fail"
+    },
+    {
+      "id": "cloud-environment::pharmacist::final",
+      "label": "wrong",
+      "status": "confirmed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "fail",
+      "v2-claude-lenient": "fail",
+      "v2-grok": null,
+      "v2-grok-lenient": null,
+      "v2-grok-first-attempt": null,
+      "v2-grok-first-attempt-lenient": null
+    },
+    {
+      "id": "bi-rls::pharmacist::final",
+      "label": "wrong",
+      "status": "confirmed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "fail",
+      "v2-claude-lenient": "fail",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": "fail",
+      "v2-grok-first-attempt-lenient": "fail"
+    },
+    {
+      "id": "sys-jwt::pharmacist::final",
+      "label": "wrong",
+      "status": "confirmed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "fail",
+      "v2-claude-lenient": "fail",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": "fail",
+      "v2-grok-first-attempt-lenient": "fail"
+    },
+    {
+      "id": "sec-oauth::pharmacist::final",
+      "label": "wrong",
+      "status": "confirmed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "fail",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": "fail",
+      "v2-grok-first-attempt-lenient": "fail"
+    },
+    {
+      "id": "excel-pivot-table::nurse::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "fail",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": "fail",
+      "v2-grok-first-attempt-lenient": "fail"
+    },
+    {
+      "id": "sec-mfa::pharmacist::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "pass",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": null,
+      "v2-grok-first-attempt-lenient": null
+    },
+    {
+      "id": "sec-mfa::nurse::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "fail",
+      "v2-claude-lenient": "fail",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": "fail",
+      "v2-grok-first-attempt-lenient": "fail"
+    },
+    {
+      "id": "fabric-data-pipeline::pharmacist::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "fail",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": "fail",
+      "v2-grok-first-attempt-lenient": "fail"
+    },
+    {
+      "id": "sec-oauth::nurse::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "fail",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": null,
+      "v2-grok-first-attempt-lenient": null
+    },
+    {
+      "id": "sec-rbac::nurse::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "fail",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": "fail",
+      "v2-grok-first-attempt-lenient": "fail"
+    },
+    {
+      "id": "data-join::nurse::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "fail",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": "fail",
+      "v2-grok-first-attempt-lenient": "fail"
+    },
+    {
+      "id": "sys-http-header::pharmacist::final",
+      "label": "misleading",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "fail",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": "fail",
+      "v2-grok-first-attempt-lenient": "fail"
+    },
+    {
+      "id": "sys-payload::nurse::final",
+      "label": "misleading",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "fail",
+      "v2-claude-lenient": "pass",
+      "v2-grok": null,
+      "v2-grok-lenient": null,
+      "v2-grok-first-attempt": null,
+      "v2-grok-first-attempt-lenient": null
+    },
+    {
+      "id": "aid-parameters::pharmacist::final",
+      "label": "misleading",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "fail",
+      "v2-claude-lenient": "fail",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": "fail",
+      "v2-grok-first-attempt-lenient": "fail"
+    },
+    {
+      "id": "bi-calculated-column::nurse::final",
+      "label": "wrong",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "fail",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": "fail",
+      "v2-grok-first-attempt-lenient": "fail"
+    },
+    {
+      "id": "sys-http-header::nurse::pass1",
+      "label": "wrong",
+      "status": "proposed",
+      "v1-original-2026-10-30": "fail",
+      "v1-claude": "pass",
+      "v2-claude": "fail",
+      "v2-claude-lenient": "fail",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": null,
+      "v2-grok-first-attempt-lenient": null
+    },
+    {
+      "id": "sys-jwt::teacher::pass1",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "fail",
+      "v1-claude": "fail",
+      "v2-claude": "pass",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": "fail",
+      "v2-grok-first-attempt-lenient": "fail"
+    },
+    {
+      "id": "aid-ai::pharmacist::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "fail",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": null,
+      "v2-grok-first-attempt-lenient": null
+    },
+    {
+      "id": "bi-calculated-column::pharmacist::final",
+      "label": "wrong",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "pass",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": "fail",
+      "v2-grok-first-attempt-lenient": "fail"
+    },
+    {
+      "id": "sec-attack-surface::pharmacist::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "fail",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": null,
+      "v2-grok-first-attempt-lenient": null
+    },
+    {
+      "id": "sys-cookie::pharmacist::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "pass",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": null,
+      "v2-grok-first-attempt-lenient": null
+    },
+    {
+      "id": "cloud-alert::pharmacist::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "fail",
+      "v2-claude-lenient": "fail",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": "fail",
+      "v2-grok-first-attempt-lenient": "fail"
+    },
+    {
+      "id": "sec-encryption::pharmacist::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "pass",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": null,
+      "v2-grok-first-attempt-lenient": null
+    },
+    {
+      "id": "cloud-autoscaling::pharmacist::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "fail",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": "fail",
+      "v2-grok-first-attempt-lenient": "fail"
+    },
+    {
+      "id": "ai-agent::pharmacist::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "fail",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": "fail",
+      "v2-grok-first-attempt-lenient": "fail"
+    },
+    {
+      "id": "excel-pivot-table::pharmacist::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "fail",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": "fail",
+      "v2-grok-first-attempt-lenient": "fail"
+    },
+    {
+      "id": "sys-http-response::pharmacist::final",
+      "label": "misleading",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "fail",
+      "v2-claude-lenient": "fail",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": "fail",
+      "v2-grok-first-attempt-lenient": "fail"
+    },
+    {
+      "id": "cloud-cdn::pharmacist::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "pass",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": "fail",
+      "v2-grok-first-attempt-lenient": "fail"
+    },
+    {
+      "id": "ai-llm::pharmacist::final",
+      "label": "misleading",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "fail",
+      "v2-claude-lenient": "fail",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": null,
+      "v2-grok-first-attempt-lenient": null
+    },
+    {
+      "id": "cloud-deploy::pharmacist::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "pass",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": "fail",
+      "v2-grok-first-attempt-lenient": "fail"
+    },
+    {
+      "id": "aid-accuracy::pharmacist::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "pass",
+      "v2-claude-lenient": "pass",
+      "v2-grok": null,
+      "v2-grok-lenient": null,
+      "v2-grok-first-attempt": null,
+      "v2-grok-first-attempt-lenient": null
+    },
+    {
+      "id": "data-backfill::pharmacist::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "fail",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": "fail",
+      "v2-grok-first-attempt-lenient": "fail"
+    },
+    {
+      "id": "sec-rbac::pharmacist::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "pass",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": "fail",
+      "v2-grok-first-attempt-lenient": "fail"
+    },
+    {
+      "id": "sys-payload::pharmacist::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "fail",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": "fail",
+      "v2-grok-first-attempt-lenient": "fail"
+    },
+    {
+      "id": "aid-hallucination::pharmacist::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "pass",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": "fail",
+      "v2-grok-first-attempt-lenient": "fail"
+    },
+    {
+      "id": "cloud-alert::nurse::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "pass",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": "fail",
+      "v2-grok-first-attempt-lenient": "fail"
+    },
+    {
+      "id": "bi-rls::teacher::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "pass",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "pass",
+      "v2-grok-lenient": "pass",
+      "v2-grok-first-attempt": null,
+      "v2-grok-first-attempt-lenient": null
+    },
+    {
+      "id": "cloud-autoscaling::nurse::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "pass",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": "fail",
+      "v2-grok-first-attempt-lenient": "fail"
+    },
+    {
+      "id": "aid-accuracy::nurse::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "pass",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "pass",
+      "v2-grok-first-attempt": "fail",
+      "v2-grok-first-attempt-lenient": "pass"
+    },
+    {
+      "id": "sys-http-response::nurse::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "pass",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": "fail",
+      "v2-grok-first-attempt-lenient": "fail"
+    },
+    {
+      "id": "ai-llm::nurse::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "fail",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": "fail",
+      "v2-grok-first-attempt-lenient": "fail"
+    },
+    {
+      "id": "ai-agent::teacher::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "pass",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": "fail",
+      "v2-grok-first-attempt-lenient": "fail"
+    },
+    {
+      "id": "sec-encryption::teacher::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "pass",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": null,
+      "v2-grok-first-attempt-lenient": null
+    },
+    {
+      "id": "fabric-data-pipeline::teacher::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "pass",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": null,
+      "v2-grok-first-attempt-lenient": null
+    },
+    {
+      "id": "sec-attack-surface::teacher::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "pass",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": "fail",
+      "v2-grok-first-attempt-lenient": "fail"
+    },
+    {
+      "id": "data-backfill::teacher::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "pass",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": "fail",
+      "v2-grok-first-attempt-lenient": "fail"
+    },
+    {
+      "id": "sec-mfa::teacher::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "pass",
+      "v2-claude-lenient": "pass",
+      "v2-grok": null,
+      "v2-grok-lenient": null,
+      "v2-grok-first-attempt": null,
+      "v2-grok-first-attempt-lenient": null
+    },
+    {
+      "id": "cloud-deploy::nurse::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "pass",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": null,
+      "v2-grok-first-attempt-lenient": null
+    },
+    {
+      "id": "sec-rbac::teacher::final",
+      "label": "correct",
+      "status": "proposed",
+      "v1-original-2026-10-30": "pass",
+      "v1-claude": "pass",
+      "v2-claude": "pass",
+      "v2-claude-lenient": "pass",
+      "v2-grok": "fail",
+      "v2-grok-lenient": "fail",
+      "v2-grok-first-attempt": null,
+      "v2-grok-first-attempt-lenient": null
+    }
+  ]
+}

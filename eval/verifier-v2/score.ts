@@ -9,7 +9,7 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { scoreArm, type ArmResult, type GoldRow } from './lib.ts';
+import { firstAndLatest, scoreArm, type ArmResult, type GoldRow } from './lib.ts';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const confirm = JSON.parse(readFileSync(join(HERE, 'gold/confirm.json'), 'utf8'));
@@ -29,17 +29,28 @@ const items = JSON.parse(readFileSync(join(HERE, 'gold/items.json'), 'utf8')).it
 const arms: Record<string, ArmResult[]> = {
   'v1-original-2026-10-30': items.map((it: any) => ({ id: it.id, decision: it.original_verdict_overall })),
 };
-const meta: Record<string, { model: string[]; rows: number; errors: number }> = {};
+// A results file can hold more than one row per item when no-verdict items
+// were retried (run-verifiers.ts --retry-missing). The main score uses each
+// item's latest row. When retries exist, a "-first-attempt" arm scores each
+// item's first row as well, so the retry's effect is visible.
+const meta: Record<string, { model: string[]; rows: number; first_attempt_no_verdict: number; final_no_verdict: number }> = {};
 for (const arm of ['v1-claude', 'v2-claude', 'v2-grok']) {
   const p = join(HERE, 'results', `${arm}.jsonl`);
   if (!existsSync(p)) continue;
   const rows = readFileSync(p, 'utf8').trim().split('\n').filter(Boolean).map((l) => JSON.parse(l));
-  arms[arm] = rows.map((r) => ({ id: r.id, decision: r.decision }));
-  if (arm.startsWith('v2')) arms[`${arm}-lenient`] = rows.map((r) => ({ id: r.id, decision: r.decision_lenient }));
+  const { first, latest } = firstAndLatest(rows);
+  const views: Array<[string, Map<string, any>]> = [[arm, latest]];
+  if (rows.length > latest.size) views.push([`${arm}-first-attempt`, first]);
+  for (const [name, view] of views) {
+    const vr = [...view.values()];
+    arms[name] = vr.map((r) => ({ id: r.id, decision: r.decision }));
+    if (arm.startsWith('v2')) arms[`${name}-lenient`] = vr.map((r) => ({ id: r.id, decision: r.decision_lenient }));
+  }
   meta[arm] = {
     model: [...new Set(rows.flatMap((r) => r.model_reported))],
     rows: rows.length,
-    errors: rows.filter((r) => r.decision === null).length,
+    first_attempt_no_verdict: [...first.values()].filter((r) => r.decision === null).length,
+    final_no_verdict: [...latest.values()].filter((r) => r.decision === null).length,
   };
 }
 

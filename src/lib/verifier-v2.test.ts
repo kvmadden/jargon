@@ -7,6 +7,7 @@ import {
   assertClaudeSubscription,
   decideV2,
   expertFor,
+  firstAndLatest,
   parseV2,
   scoreArm,
   subscriptionEnv,
@@ -109,6 +110,21 @@ describe('scoring', () => {
   });
   it('refuses a confirmed-miss row that is not a confirmed flawed label', () => {
     expect(() => scoreArm([{ id: 'z', group: 'A-confirmed-miss', label: 'correct', label_status: 'confirmed' }], [])).toThrow();
+  });
+});
+
+describe('retried results', () => {
+  it('scores the latest row per item and keeps the first attempt separately', () => {
+    const rows = [
+      { id: 'a', decision: null },
+      { id: 'b', decision: 'pass' },
+      { id: 'a', decision: 'fail' },
+    ];
+    const { first, latest } = firstAndLatest(rows);
+    expect(first.get('a')?.decision).toBeNull();
+    expect(latest.get('a')?.decision).toBe('fail');
+    expect(latest.get('b')?.decision).toBe('pass');
+    expect(latest.size).toBe(2);
   });
 });
 
