@@ -31,7 +31,7 @@ import {
   buildPass3UserMessage,
   estimatePersonalizeCost,
   parseRendering,
-  parseVerdict,
+  readVerdict,
   pass1SystemPrompt,
   pass3SystemPrompt,
 } from './prompts.ts';
@@ -138,6 +138,25 @@ export function isTimeoutError(err: unknown): boolean {
 
 /** Longest feedback block the regeneration prompt gets. The eval's worst-case budget uses it as a bound. */
 export const RETRY_FEEDBACK_MAX_CHARS = 8000;
+
+function verdictOrNull(rawText: string): VerifierVerdict | null {
+  if (!rawText) return null;
+  const reading = readVerdict(rawText);
+  return reading.kind === 'ok' ? reading.verdict : null;
+}
+
+/**
+ * The logged reason a verifier reply could not be used. A contradiction is
+ * held exactly like an unreadable reply, but the log says which way the
+ * model's overall disagreed with its own criteria.
+ */
+function unusableVerdictText(pass: string, rawText: string): string {
+  const reading = rawText ? readVerdict(rawText) : null;
+  if (reading?.kind === 'contradiction') {
+    return `${pass} overall contradicts its criteria: model said ${reading.model_overall}, criteria give ${reading.criteria_overall}`;
+  }
+  return `${pass} unparseable: ${rawText.slice(0, 200)}`;
+}
 
 function verdictPasses(v: VerifierVerdict): boolean {
   return v.overall === 'pass';
@@ -261,8 +280,8 @@ export async function runPersonalization(
   } catch (err) {
     return failFromError('pass2', err);
   }
-  out.pass1Verdict = reply.rawText ? parseVerdict(reply.rawText) : null;
-  if (!out.pass1Verdict) return fail('fallback-pass2-parse', `pass2 unparseable: ${reply.rawText.slice(0, 200)}`);
+  out.pass1Verdict = verdictOrNull(reply.rawText);
+  if (!out.pass1Verdict) return fail('fallback-pass2-parse', unusableVerdictText('pass2', reply.rawText));
   const verdict1 = out.pass1Verdict;
   out.pass1Gate = gate(candidate1, verdict1);
   if (out.pass1Gate.decision === 'needs_review') out.needsReview = true;
@@ -301,9 +320,9 @@ export async function runPersonalization(
   } catch (err) {
     return failFromError('pass2_retry', err);
   }
-  out.retryVerdict = reply.rawText ? parseVerdict(reply.rawText) : null;
+  out.retryVerdict = verdictOrNull(reply.rawText);
   if (!out.retryVerdict) {
-    return fail('fallback-pass2-retry-fail', `pass2-retry unparseable: ${reply.rawText.slice(0, 200)}`);
+    return fail('fallback-pass2-retry-fail', unusableVerdictText('pass2-retry', reply.rawText));
   }
   const verdict2 = out.retryVerdict;
   out.retryGate = gate(candidate2, verdict2);

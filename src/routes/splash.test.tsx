@@ -1,3 +1,4 @@
+import { StrictMode } from 'react';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -67,7 +68,23 @@ describe('Splash route', () => {
     );
 
     fireEvent.click(screen.getByRole('button', { name: /let.*s go/i }));
-    expect(screen.getByPlaceholderText('your email')).toBeInTheDocument();
+    const emailInput = screen.getByRole('textbox', { name: 'your email' });
+    expect(emailInput).toBeInTheDocument();
+    expect(emailInput).toHaveFocus();
+    expect(screen.getByRole('heading', { level: 1, name: /speak the room/i })).toBeInTheDocument();
+  });
+
+  it('labels the sign-in form when a returning visitor bypasses landing', () => {
+    window.localStorage.setItem('jargon-seen-landing', '1');
+
+    render(
+      <MemoryRouter>
+        <Splash />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByRole('heading', { level: 1, name: /speak the room/i })).toBeInTheDocument();
+    expect(screen.getByRole('textbox', { name: 'your email' })).toBeInTheDocument();
   });
 
   it('sends magic link and shows check email state', async () => {
@@ -133,6 +150,78 @@ describe('Splash route', () => {
     });
   });
 
+  it('restarts an authenticated check after StrictMode cleanup', async () => {
+    useUserStore.setState({ user: { id: 'strict-user' } as any, loading: false });
+    vi.mocked(checkAllowlist).mockResolvedValue({ allowed: true });
+
+    render(
+      <StrictMode>
+        <MemoryRouter><Splash /></MemoryRouter>
+      </StrictMode>,
+    );
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith('/home', { replace: true });
+    });
+    expect(checkAllowlist).toHaveBeenCalledTimes(2);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(supabase.auth.signOut).not.toHaveBeenCalled();
+  });
+
+  it('restarts a cancelled check when auth loading settles for the same account', async () => {
+    let resolveOld: ((result: { allowed: boolean }) => void) | undefined;
+    vi.mocked(checkAllowlist)
+      .mockImplementationOnce(() => new Promise<{ allowed: boolean }>((resolve) => { resolveOld = resolve; }))
+      .mockResolvedValueOnce({ allowed: true });
+    useUserStore.setState({ user: { id: 'loading-user' } as any, loading: false });
+
+    render(<MemoryRouter><Splash /></MemoryRouter>);
+    await waitFor(() => expect(checkAllowlist).toHaveBeenCalledTimes(1));
+    act(() => { useUserStore.setState({ loading: true }); });
+    act(() => { useUserStore.setState({ loading: false }); });
+
+    await waitFor(() => {
+      expect(checkAllowlist).toHaveBeenCalledTimes(2);
+      expect(mockNavigate).toHaveBeenCalledWith('/home', { replace: true });
+    });
+    await act(async () => { resolveOld?.({ allowed: false }); });
+    expect(supabase.auth.signOut).not.toHaveBeenCalled();
+  });
+
+  it('keeps a pending invite check active when auth refreshes the same user', async () => {
+    let resolveCheck: ((result: { allowed: boolean }) => void) | undefined;
+    vi.mocked(checkAllowlist).mockImplementationOnce(
+      () => new Promise<{ allowed: boolean }>((resolve) => { resolveCheck = resolve; }),
+    );
+    useUserStore.setState({
+      user: { id: 'same-user', email: 'member@example.com' } as any,
+      session: null,
+      loading: false,
+    });
+
+    render(
+      <MemoryRouter>
+        <Splash />
+      </MemoryRouter>,
+    );
+    await waitFor(() => expect(checkAllowlist).toHaveBeenCalledTimes(1));
+
+    // INITIAL_SESSION / TOKEN_REFRESHED can replace the user object even
+    // when its id did not change. The original check must still complete.
+    act(() => {
+      useUserStore.setState({
+        user: { id: 'same-user', email: 'member@example.com' } as any,
+      });
+    });
+    expect(checkAllowlist).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      resolveCheck?.({ allowed: true });
+    });
+    expect(mockNavigate).toHaveBeenCalledWith('/home', { replace: true });
+    expect(supabase.auth.signOut).not.toHaveBeenCalled();
+  });
+
   it('shows denied state when user is not allowlisted', async () => {
     useUserStore.setState({
       user: { id: 'curator' } as any,
@@ -150,6 +239,70 @@ describe('Splash route', () => {
     await waitFor(() => {
       expect(screen.getByRole('heading', { name: /invite-only/i })).toBeInTheDocument();
     });
+  });
+
+  it('distinguishes an allowlist network failure from a denied invite and retries without signing out', async () => {
+    useUserStore.setState({
+      user: { id: 'curator' } as any,
+      session: null,
+      loading: false,
+    });
+    vi.mocked(checkAllowlist)
+      .mockRejectedValueOnce(new Error('network offline'))
+      .mockResolvedValueOnce({ allowed: true });
+
+    render(
+      <MemoryRouter>
+        <Splash />
+      </MemoryRouter>,
+    );
+
+    expect(await screen.findByRole('heading', { name: /couldn't check your invite/i })).toBeInTheDocument();
+    expect(screen.getByRole('alert')).toHaveTextContent(/check your connection and try again/i);
+    expect(screen.queryByRole('heading', { name: /invite-only/i })).not.toBeInTheDocument();
+    expect(supabase.auth.signOut).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole('button', { name: /try again/i }));
+    await waitFor(() => {
+      expect(checkAllowlist).toHaveBeenCalledTimes(2);
+      expect(mockNavigate).toHaveBeenCalledWith('/home', { replace: true });
+    });
+    expect(supabase.auth.signOut).not.toHaveBeenCalled();
+  });
+
+  it('ignores a delayed denial from a previous user session', async () => {
+    let resolveOld: ((result: { allowed: boolean }) => void) | undefined;
+    vi.mocked(checkAllowlist)
+      .mockImplementationOnce(() => new Promise<{ allowed: boolean }>((resolve) => { resolveOld = resolve; }))
+      .mockResolvedValueOnce({ allowed: true });
+
+    useUserStore.setState({
+      user: { id: 'first-user' } as any,
+      session: null,
+      loading: false,
+    });
+    render(
+      <MemoryRouter>
+        <Splash />
+      </MemoryRouter>,
+    );
+    await waitFor(() => expect(checkAllowlist).toHaveBeenCalledTimes(1));
+
+    // An account switch invalidates the first check even if its response
+    // arrives after the new account has already been admitted.
+    act(() => {
+      useUserStore.setState({ user: { id: 'second-user' } as any });
+    });
+    await waitFor(() => {
+      expect(checkAllowlist).toHaveBeenCalledTimes(2);
+      expect(mockNavigate).toHaveBeenCalledWith('/home', { replace: true });
+    });
+
+    await act(async () => {
+      resolveOld?.({ allowed: false });
+    });
+    expect(supabase.auth.signOut).not.toHaveBeenCalled();
+    expect(screen.queryByRole('heading', { name: /invite-only/i })).not.toBeInTheDocument();
   });
 
   it('provides resend link with cooldown and use a different email button in sent state', async () => {

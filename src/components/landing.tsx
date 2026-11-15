@@ -30,12 +30,12 @@ export function Landing({ onContinue }: LandingProps) {
       {/* Hero — wordmark + tagline + bridging explainer that resolves the metaphor */}
       <main className="flex-1 flex flex-col items-center justify-center px-6 max-w-md mx-auto w-full py-8">
         <Wordmark size={56} className="mb-6 text-accent-jargon" />
-        <p className="text-2xl font-light italic text-text-primary text-center tracking-tight leading-tight">
+        <h1 className="text-2xl font-light italic text-text-primary text-center tracking-tight leading-tight">
           Speak the room.
-        </p>
+        </h1>
         {/* Bridges the tagline: "read the room" → comprehension. inverted →
             fluency. then names the rooms (terminal / family / slack). */}
-        <p className="text-sm text-text-secondary text-center mt-3 leading-relaxed">
+        <p className="text-sm text-text-secondary text-center mt-3 leading-relaxed text-pretty">
           you’ve nodded along when claude code, your dev family, or your work slack
           used a word you didn’t quite know. <span className="text-text-primary">jargon teaches those words</span> —
           so you stop reading the room and start speaking it.
@@ -105,7 +105,7 @@ function Pillar({ n, title, body }: PillarProps) {
         <p className="text-sm font-semibold text-text-primary leading-snug">{title}</p>
         {/* BUG FIX (B+1.10): bumped from text-xs (12px) → text-sm (14px) per
             the documented body-text minimum in CLAUDE.md. */}
-        <p className="text-sm text-text-secondary leading-relaxed mt-1">{body}</p>
+        <p className="text-sm text-text-secondary leading-relaxed mt-1 text-pretty">{body}</p>
       </div>
     </li>
   );

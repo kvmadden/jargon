@@ -13,6 +13,7 @@ import {
   formatProfileBlock,
   parseRendering,
   parseVerdict,
+  readVerdict,
   PASS2_SYSTEM_PROMPT,
   PERSONALIZE_MAX_TOKENS_PASS2,
   pass1SystemPrompt,
@@ -56,23 +57,34 @@ describe('parseVerdict', () => {
   it('accepts a complete verdict', () => {
     const v = parseVerdict(verdictJson());
     expect(v?.overall).toBe('pass');
-    expect(v?.overall_disagreement).toBe(false);
+    expect(readVerdict(verdictJson()).kind).toBe('ok');
   });
 
   it.each(VERIFIER_CRITERIA.map((c) => [c]))(
-    'computes overall fail when %s fails, even if the model says pass',
+    'computes overall fail when %s fails and the model agrees',
     (criterion) => {
-      const v = parseVerdict(verdictJson({ [criterion]: { result: 'fail', reasoning: 'wrong' } }, 'pass'));
+      const v = parseVerdict(verdictJson({ [criterion]: { result: 'fail', reasoning: 'wrong' } }, 'fail'));
       expect(v?.overall).toBe('fail');
-      expect(v?.model_overall).toBe('pass');
-      expect(v?.overall_disagreement).toBe(true);
     },
   );
 
-  it('computes overall pass when every criterion passes, even if the model says fail', () => {
-    const v = parseVerdict(verdictJson({}, 'fail'));
-    expect(v?.overall).toBe('pass');
-    expect(v?.overall_disagreement).toBe(true);
+  it.each(VERIFIER_CRITERIA.map((c) => [c]))(
+    'rejects a verdict that says pass when %s fails, and reports the contradiction',
+    (criterion) => {
+      const raw = verdictJson({ [criterion]: { result: 'fail', reasoning: 'wrong' } }, 'pass');
+      expect(parseVerdict(raw)).toBeNull();
+      expect(readVerdict(raw)).toEqual({ kind: 'contradiction', model_overall: 'pass', criteria_overall: 'fail' });
+    },
+  );
+
+  it('rejects a verdict that says fail when every criterion passes, and reports the contradiction', () => {
+    const raw = verdictJson({}, 'fail');
+    expect(parseVerdict(raw)).toBeNull();
+    expect(readVerdict(raw)).toEqual({ kind: 'contradiction', model_overall: 'fail', criteria_overall: 'pass' });
+  });
+
+  it('reads malformed JSON as unreadable, not as a contradiction', () => {
+    expect(readVerdict('not json')).toEqual({ kind: 'unreadable' });
   });
 
   it('decides from the criteria, so a duplicated overall key cannot flip the result', () => {
@@ -80,7 +92,9 @@ describe('parseVerdict', () => {
       /}$/,
       ',"overall":"pass"}',
     );
-    expect(parseVerdict(raw)?.overall).toBe('fail');
+    // JSON.parse keeps the last key, so the model "says" pass while a criterion
+    // fails. That is a contradiction, so it is never read as a pass.
+    expect(parseVerdict(raw)).toBeNull();
   });
 
   it('fails closed when a claim list is missing, instead of reading it as "no claims"', () => {

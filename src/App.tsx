@@ -24,6 +24,7 @@ import Review from './routes/review';
 import Profile from './routes/profile';
 import TermDetail from './routes/term-detail';
 import WhatsNew from './routes/whats-new';
+import NotFound from './routes/not-found';
 
 // Lazy imports — heavy wizards (~3k LOC combined) that fire at most a few
 // times per user lifetime. Splitting these drops the initial bundle by
@@ -457,7 +458,7 @@ export default function App() {
             {/* 2026-05-31: /atlas — standalone concept-atlas reference page.
                 Public (no AuthGate); links back to / (sign in). */}
             <Route path="/atlas" element={<Atlas />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
       </ErrorBoundary>

@@ -52,6 +52,31 @@ describe('App / NeedsOnboarding gate', () => {
   });
 });
 
+describe('unknown app routes', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    useUserStore.setState({
+      user: null,
+      loading: false,
+      init: vi.fn().mockResolvedValue(() => {}),
+    });
+    useSettingsStore.setState({ settings: null });
+  });
+
+  it('shows the Jargon 404 and a usable home link without signing in', async () => {
+    render(
+      <MemoryRouter initialEntries={['/not-a-jargon-page']}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    expect(await screen.findByRole('heading', { name: 'page not found' })).toBeInTheDocument();
+    expect(screen.getByText('404')).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'jargon' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'jargon home' })).toHaveAttribute('href', '/');
+  });
+});
+
 describe('checkAndRefillStreakFreezes', () => {
   beforeEach(() => {
     localStorage.clear();
