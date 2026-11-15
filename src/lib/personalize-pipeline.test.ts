@@ -92,13 +92,40 @@ describe('runPersonalization', () => {
     expect(m.requests.map((r) => r.pass)).toEqual(['pass1', 'pass2']);
   });
 
-  it('does not accept a verdict whose own criteria failed, whatever its overall string says', async () => {
+  it('holds a rewrite whose verdict says pass while one of its own criteria failed, and logs why', async () => {
     const lying = verdict({ technical_accuracy_preserved: { result: 'fail', reasoning: 'reversed' } }, 'pass');
-    const m = fakeModel([JSON.stringify(plainRls), lying, JSON.stringify(plainRls), verdict()]);
+    const m = fakeModel([JSON.stringify(plainRls), lying]);
+    const out = await runPersonalization(base, m.call);
+    expect(m.requests.map((r) => r.pass)).toEqual(['pass1', 'pass2']);
+    expect(out.status).toBe('fallback-pass2-parse');
+    expect(out.accepted).toBeNull();
+    expect(out.pass1Verdict).toBeNull();
+    expect(out.errorText).toBe('pass2 overall contradicts its criteria: model said pass, criteria give fail');
+  });
+
+  it('holds a rewrite whose verdict says fail while every criterion passed, and logs why', async () => {
+    const m = fakeModel([JSON.stringify(plainRls), verdict({}, 'fail')]);
+    const out = await runPersonalization(base, m.call);
+    expect(out.status).toBe('fallback-pass2-parse');
+    expect(out.accepted).toBeNull();
+    expect(out.errorText).toBe('pass2 overall contradicts its criteria: model said fail, criteria give pass');
+  });
+
+  it('holds a regenerated rewrite whose re-check contradicts itself, and logs why', async () => {
+    const failing = verdict({ technical_accuracy_preserved: { result: 'fail', reasoning: 'reversed' } }, 'fail');
+    const m = fakeModel([JSON.stringify(plainRls), failing, JSON.stringify(plainRls), verdict({}, 'fail')]);
     const out = await runPersonalization(base, m.call);
     expect(m.requests.map((r) => r.pass)).toEqual(['pass1', 'pass2', 'pass3', 'pass2_retry']);
-    expect(out.pass1Verdict?.overall_disagreement).toBe(true);
-    expect(out.status).toBe('cached');
+    expect(out.status).toBe('fallback-pass2-retry-fail');
+    expect(out.accepted).toBeNull();
+    expect(out.errorText).toBe('pass2-retry overall contradicts its criteria: model said fail, criteria give pass');
+  });
+
+  it('still logs the raw text when a verdict is simply unreadable', async () => {
+    const m = fakeModel([JSON.stringify(plainRls), 'not json']);
+    const out = await runPersonalization(base, m.call);
+    expect(out.status).toBe('fallback-pass2-parse');
+    expect(out.errorText).toBe('pass2 unparseable: not json');
   });
 
   it('holds the saved RLS analogy the old verifier accepted, then accepts a plain regeneration', async () => {

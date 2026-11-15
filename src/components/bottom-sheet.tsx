@@ -28,7 +28,7 @@ export function BottomSheet({ open, onClose, children, ariaLabel }: Props) {
       <div
         ref={ref}
         tabIndex={-1}
-        className="w-full max-w-md bg-surface-card-hi border-t border-border-default rounded-t-xl p-4 pb-8 safe-bottom animate-slide-up focus:outline-none"
+        className="w-full max-w-md max-h-[calc(100dvh-1rem)] overflow-y-auto overscroll-contain bg-surface-card-hi border-t border-border-default rounded-t-xl p-4 pb-8 safe-bottom animate-slide-up focus:outline-none"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"

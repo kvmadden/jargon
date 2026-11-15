@@ -246,13 +246,11 @@ export interface VerifierVerdict {
   /** v10: canonical statements the verifier believes are false or misleading. */
   canonical_concerns: string[];
   /**
-   * Computed in code: 'pass' only when all eight criteria pass. The model's
-   * own `overall` string is kept in `model_overall` and never decides.
+   * Computed in code: 'pass' only when all eight criteria pass. A reply whose
+   * own `overall` string disagrees is never turned into a verdict (see
+   * readVerdict).
    */
   overall: 'pass' | 'fail';
-  model_overall: 'pass' | 'fail';
-  /** True when the model's `overall` string disagreed with its own criteria. */
-  overall_disagreement: boolean;
 }
 
 /**
@@ -535,16 +533,24 @@ function isClaim(c: any): c is VerifierClaim {
   );
 }
 
+/** What reading a verifier reply found. */
+export type VerdictReading =
+  | { kind: 'ok'; verdict: VerifierVerdict }
+  | { kind: 'unreadable' }
+  /** Well formed, but the model's `overall` contradicts its own eight criteria. */
+  | { kind: 'contradiction'; model_overall: 'pass' | 'fail'; criteria_overall: 'pass' | 'fail' };
+
 /**
- * Parse a verifier verdict. Fails closed: a verdict missing any criterion,
- * the analogy flag, or either claim list returns null, which the pipeline
- * treats as an unparseable verdict (canonical fallback). A missing list is
+ * Read a verifier verdict. Fails closed: a verdict missing any criterion,
+ * the analogy flag, or either claim list is unreadable. A missing list is
  * never read as "no claims".
  *
- * `overall` is recomputed from the eight criteria. The model's own string is
- * kept for logging only.
+ * `overall` is computed from the eight criteria. When the model's own
+ * `overall` string disagrees, the verdict is a contradiction and is not used
+ * either way. The pipeline treats it like an unreadable verdict, so the
+ * rewrite is held, and logs which way the disagreement went.
  */
-export function parseVerdict(raw: string): VerifierVerdict | null {
+export function readVerdict(raw: string): VerdictReading {
   try {
     const parsed = JSON.parse(stripFencing(raw));
     if (
@@ -554,23 +560,28 @@ export function parseVerdict(raw: string): VerifierVerdict | null {
       (parsed.overall !== 'pass' && parsed.overall !== 'fail') ||
       typeof parsed.uses_analogy !== 'boolean'
     ) {
-      return null;
+      return { kind: 'unreadable' };
     }
     const isCriterion = (c: any): c is VerifierCriterion =>
       c !== null &&
       typeof c === 'object' &&
       (c.result === 'pass' || c.result === 'fail') &&
       typeof c.reasoning === 'string';
-    if (!VERIFIER_CRITERIA.every((name) => isCriterion(parsed[name]))) return null;
-    if (!Array.isArray(parsed.domain_claims) || !parsed.domain_claims.every(isClaim)) return null;
+    if (!VERIFIER_CRITERIA.every((name) => isCriterion(parsed[name]))) return { kind: 'unreadable' };
+    if (!Array.isArray(parsed.domain_claims) || !parsed.domain_claims.every(isClaim)) return { kind: 'unreadable' };
     if (
       !Array.isArray(parsed.canonical_concerns) ||
       !parsed.canonical_concerns.every((c: unknown) => typeof c === 'string')
     ) {
-      return null;
+      return { kind: 'unreadable' };
     }
     const allPass = VERIFIER_CRITERIA.every((name) => parsed[name].result === 'pass');
     const overall: 'pass' | 'fail' = allPass ? 'pass' : 'fail';
+    // A verdict whose own overall contradicts its criteria is not trusted
+    // either way: it reads as unparseable, so the rewrite is held.
+    if (parsed.overall !== overall) {
+      return { kind: 'contradiction', model_overall: parsed.overall, criteria_overall: overall };
+    }
     const verdict = {
       uses_analogy: parsed.uses_analogy,
       domain_claims: parsed.domain_claims.map((c: VerifierClaim) => ({
@@ -580,16 +591,23 @@ export function parseVerdict(raw: string): VerifierVerdict | null {
       })),
       canonical_concerns: parsed.canonical_concerns.filter((c: string) => c.trim().length > 0),
       overall,
-      model_overall: parsed.overall,
-      overall_disagreement: parsed.overall !== overall,
     } as VerifierVerdict;
     for (const name of VERIFIER_CRITERIA) {
       verdict[name] = { result: parsed[name].result, reasoning: parsed[name].reasoning };
     }
-    return verdict;
+    return { kind: 'ok', verdict };
   } catch {
-    return null;
+    return { kind: 'unreadable' };
   }
+}
+
+/**
+ * The verdict, or null when it is unreadable or contradicts itself. Both
+ * mean the pipeline falls back to the canonical text (the rewrite is held).
+ */
+export function parseVerdict(raw: string): VerifierVerdict | null {
+  const reading = readVerdict(raw);
+  return reading.kind === 'ok' ? reading.verdict : null;
 }
 
 /** List-price cost of one personalize-term call, cache tokens included. */
