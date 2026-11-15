@@ -1,0 +1,189 @@
+{
+  "status": "development data",
+  "run": "eval/results/2026-10-30.jsonl",
+  "written": "2026-11-03",
+  "provenance": [
+    "eval/results/2026-10-30-review.json: one AI read-through of all 79 outputs (Claude), which flagged 5 accepted outputs as wrong or probably wrong.",
+    "The author, a pharmacist, confirmed those 5 after seeing the flags (PR #1). That review was not blind, and it covered only the flagged items.",
+    "The inherited-error labels were added on 2026-11-03 from the canonical review (docs/canonical-review.md). No person has confirmed them."
+  ],
+  "label_meanings": {
+    "wrong": "contains a claim judged false",
+    "unsupported": "states as fact something the source has not published",
+    "debatable": "the read-through could not settle it",
+    "judged correct": "the AI read-through found no error. This is not an expert judgment."
+  },
+  "origin_meanings": {
+    "introduced": "the rewrite added the error. The canonical entry does not contain it.",
+    "inherited": "the error is in the canonical entry, and the rewrite copied it"
+  },
+  "unlabeled": "Accepted outputs not listed here have no label. Unlabeled is not correct: 73 of 78 accepted outputs never had an expert read.",
+  "labels": [
+    {
+      "run_id": "bi-rls::nurse",
+      "label": "wrong",
+      "origin": "introduced",
+      "confirmed_by": "Kevin Madden, PharmD (the author), after the AI read-through flagged it. Recorded in PR #1. Not blind.",
+      "claim": "The analogy says a nurse \"can only open charts for patients on your unit, not the whole hospital: the system knows who you are and hides the rest.\" In typical hospital EHRs, clinicians can open other patients' charts; access is controlled mainly by audit and break-the-glass policies, not by hiding rows. The verifier passed analogy_target_accurate with \"EHRs do restrict chart access by unit/assignment; the claim is factually true in nursing practice\", which is the error itself.",
+      "review_call": "verifier miss"
+    },
+    {
+      "run_id": "bi-rls::pharmacist",
+      "label": "wrong",
+      "origin": "introduced",
+      "confirmed_by": "Kevin Madden, PharmD (the author), after the AI read-through flagged it. Recorded in PR #1. Not blind.",
+      "claim": "\"your pharmacy system only shows a tech the patients and queues tied to their store, not every store in the chain.\" Work queues are store-scoped, but chain pharmacy systems usually share patient profiles across stores (that is how transfers and refills at another location work). The verifier accepted the claim as accurate.",
+      "review_call": "probable verifier miss"
+    },
+    {
+      "run_id": "sys-jwt::pharmacist",
+      "label": "wrong",
+      "origin": "introduced",
+      "confirmed_by": "Kevin Madden, PharmD (the author), after the AI read-through flagged it. Recorded in PR #1. Not blind.",
+      "claim": "\"a signed, tamper-evident script label\" is not a real pharmacy artifact. Tamper-resistance requirements apply to written prescription pads, not dispensing labels, and labels carry no signature that proves they were not altered. The verifier reasoned that labels \"can carry tamper-evident features\", which conflates the two.",
+      "review_call": "probable verifier miss"
+    },
+    {
+      "run_id": "sec-oauth::pharmacist",
+      "label": "wrong",
+      "origin": "introduced",
+      "confirmed_by": "Kevin Madden, PharmD (the author), after the AI read-through flagged it. Recorded in PR #1. Not blind.",
+      "claim": "The prescription-transfer analogy says the other pharmacy hands over records but \"never the patient's login to their chart\". Patients have no login to a pharmacy's dispensing record, so the contrast the analogy depends on does not exist, and a transfer is a pharmacist-to-pharmacist exchange, not a token issued by a third party after user consent. The mapping is loose on both sides.",
+      "review_call": "probable verifier miss"
+    },
+    {
+      "run_id": "cloud-environment::pharmacist",
+      "label": "wrong",
+      "origin": "inherited",
+      "confirmed_by": "Kevin Madden, PharmD (the author), after the AI read-through flagged it. Recorded in PR #1. Not blind.",
+      "claim": "The example sentence says the bug \"only shows up in the staging environment because that's the only place connected to the real insurance claim system.\" That is backwards: production is the environment connected to real external systems, and the output's own definition says so. technical_accuracy_preserved passed.",
+      "review_call": "verifier miss"
+    },
+    {
+      "run_id": "bi-calculated-column::teacher",
+      "label": "wrong",
+      "origin": "inherited",
+      "confirmed_by": "AI read-through only (Claude), not confirmed by a person.",
+      "claim": "Says totals built on a calculated column do not move or update when you slice. They do. Copied from the canonical why_it_matters."
+    },
+    {
+      "run_id": "bi-calculated-column::nurse",
+      "label": "wrong",
+      "origin": "inherited",
+      "confirmed_by": "AI read-through only (Claude), not confirmed by a person.",
+      "claim": "Says totals built on a calculated column do not move or update when you slice. They do. Copied from the canonical why_it_matters."
+    },
+    {
+      "run_id": "bi-calculated-column::pharmacist",
+      "label": "wrong",
+      "origin": "inherited",
+      "confirmed_by": "AI read-through only (Claude), not confirmed by a person.",
+      "claim": "Says totals built on a calculated column do not move or update when you slice. They do. Copied from the canonical why_it_matters."
+    },
+    {
+      "run_id": "aid-parameters::pharmacist",
+      "label": "wrong",
+      "origin": "inherited",
+      "confirmed_by": "AI read-through only (Claude), not confirmed by a person.",
+      "claim": "Says Llama 3 70B is smaller than Claude (unpublished) and light enough to run on a laptop (only high-memory machines, quantized). Copied from the canonical example. Its long definition also repeats the unpublished frontier model sizes."
+    },
+    {
+      "run_id": "aid-parameters::nurse",
+      "label": "unsupported",
+      "origin": "inherited",
+      "confirmed_by": "AI read-through only (Claude), not confirmed by a person.",
+      "claim": "States that Claude and GPT-5 are in the hundreds of billions of parameters, which their makers have not published. Copied from the canonical long definition."
+    },
+    {
+      "run_id": "aid-parameters::teacher",
+      "label": "unsupported",
+      "origin": "inherited",
+      "confirmed_by": "AI read-through only (Claude), not confirmed by a person.",
+      "claim": "States that Claude and GPT-5 are in the hundreds of billions of parameters, which their makers have not published. Copied from the canonical long definition."
+    },
+    {
+      "run_id": "ai-agent::nurse",
+      "label": "judged correct",
+      "origin": null,
+      "confirmed_by": "AI read-through only (Claude), not confirmed by a person.",
+      "claim": "Keeps goal, tool call, read result, loop. The vendor example is a plausible agent workflow."
+    },
+    {
+      "run_id": "aid-accuracy::pharmacist",
+      "label": "judged correct",
+      "origin": null,
+      "confirmed_by": "AI read-through only (Claude), not confirmed by a person.",
+      "claim": "The drug-interaction version of the always-\"no\" example is correct: most arbitrary drug pairs have no clinically significant interaction, so a constant \"no interaction\" answer scores well and misses the real ones."
+    },
+    {
+      "run_id": "cloud-alert::nurse",
+      "label": "judged correct",
+      "origin": null,
+      "confirmed_by": "AI read-through only (Claude), not confirmed by a person.",
+      "claim": "Pump alarms, nuisance alarms and alarm fatigue are real and correctly described."
+    },
+    {
+      "run_id": "cloud-cdn::teacher",
+      "label": "judged correct",
+      "origin": null,
+      "confirmed_by": "AI read-through only (Claude), not confirmed by a person.",
+      "claim": "Accurate; the stale-copy explanation matches how CDN caching behaves."
+    },
+    {
+      "run_id": "data-backfill::pharmacist",
+      "label": "judged correct",
+      "origin": null,
+      "confirmed_by": "AI read-through only (Claude), not confirmed by a person.",
+      "claim": "Accurate. The light comparison to correcting dispensed or billed records is fair."
+    },
+    {
+      "run_id": "fabric-data-pipeline::pharmacist",
+      "label": "judged correct",
+      "origin": null,
+      "confirmed_by": "AI read-through only (Claude), not confirmed by a person.",
+      "claim": "Accurate plain-English version; no analogy."
+    },
+    {
+      "run_id": "sec-mfa::nurse",
+      "label": "judged correct",
+      "origin": null,
+      "confirmed_by": "AI read-through only (Claude), not confirmed by a person.",
+      "claim": "Accurate; keeps \"two or more kinds of proof\"."
+    },
+    {
+      "run_id": "sec-rbac::teacher",
+      "label": "judged correct",
+      "origin": null,
+      "confirmed_by": "AI read-through only (Claude), not confirmed by a person.",
+      "claim": "Accurate; roles carry permissions, users inherit them."
+    },
+    {
+      "run_id": "sys-http-response::pharmacist",
+      "label": "judged correct",
+      "origin": null,
+      "confirmed_by": "AI read-through only (Claude), not confirmed by a person.",
+      "claim": "Status code, headers and body preserved. Minor: many pharmacy claims travel over the NCPDP telecommunication standard through a switch rather than a plain HTTP API, but the sentence is still plausible for a modern integration."
+    },
+    {
+      "run_id": "sec-mfa::pharmacist",
+      "label": "debatable",
+      "origin": null,
+      "confirmed_by": "AI read-through only (Claude), not confirmed by a person.",
+      "claim": "\"the same reason a C-II dispense needs more than one check\" maps MFA to multiple checks, but MFA's point is different kinds of proof; two passwords are not MFA. The verifier's own worked example (double-counting does not model idempotence) describes this failure mode."
+    },
+    {
+      "run_id": "sys-http-header::pharmacist",
+      "label": "debatable",
+      "origin": null,
+      "confirmed_by": "AI read-through only (Claude), not confirmed by a person.",
+      "claim": "The \"label stapled to a prescription bag\" carrying prescriber, fill date and warnings mixes up the bag label or receipt with the vial label and auxiliary warning labels. Structurally fine, but a pharmacist would notice the detail."
+    },
+    {
+      "run_id": "sys-payload::nurse",
+      "label": "debatable",
+      "origin": null,
+      "confirmed_by": "AI read-through only (Claude), not confirmed by a person.",
+      "claim": "Calls the shift, room number and sender the \"wrapper\" around SBAR content, but patient identification and location are part of SBAR's Situation, not packaging around it."
+    }
+  ]
+}

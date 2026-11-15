@@ -1,7 +1,7 @@
 // Shared CORS helpers for Jargon Edge Functions.
 //
 // Origin allowlist resolution:
-//   1) Allow the dev origins (Vite at 5173/5200, with 127.0.0.1 variants) ONLY
+//   1) Allow the dev origins (Vite at 5182, plus 5173/5200, with 127.0.0.1 variants) ONLY
 //      when this deploy has no production origin list — see devOriginsTrusted().
 //   2) Allow the comma-separated origins in env var
 //      `JARGON_SITE_ORIGINS` (production deploy + any preview URLs). Set this
@@ -22,6 +22,9 @@ const DEV_ORIGINS = new Set<string>([
   'http://127.0.0.1:5173',
   'http://localhost:5200',
   'http://127.0.0.1:5200',
+  // vite.config.ts serves the dev app on 5182, the port the README documents.
+  'http://localhost:5182',
+  'http://127.0.0.1:5182',
 ]);
 
 function prodOrigins(): string[] {

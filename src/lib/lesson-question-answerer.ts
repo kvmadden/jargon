@@ -5,7 +5,13 @@ import type {
   LessonQuestionInput,
 } from './lesson-question-service';
 
-/** The Edge Function allows 30 seconds for generation, with 5 seconds for transport and parsing. */
+/**
+ * How long the client waits for the answer-lesson-question function. The
+ * function gives the model up to 30 seconds (ANSWER_TIMEOUT_MS there), so the
+ * client allows that plus 5 seconds for transport and parsing. It was 300 ms,
+ * which no model answer could meet, so learners almost always got the
+ * dictionary fallback instead of an answer.
+ */
 export const LESSON_QUESTION_CLIENT_TIMEOUT_MS = 35_000;
 
 export function createLessonQuestionAnswerer(

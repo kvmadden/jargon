@@ -217,5 +217,12 @@ if (existsSync(reviewPath)) {
   }
 }
 
+const frozen = JSON.parse(readFileSync(join(RES, '..', 'frozen-artifacts.json'), 'utf8')).files;
+if (`eval/results/${date}-summary.md` in frozen) {
+  // The published summary is pinned as written. Its costs are at three times
+  // list price. eval/report.ts writes the corrected report.
+  console.error(`eval/results/${date}-summary.md is a frozen artifact. Use node eval/report.ts for the corrected report.`);
+  process.exit(2);
+}
 writeFileSync(join(RES, `${date}-summary.md`), out.join('\n'));
 console.log(`wrote eval/results/${date}-summary.md (${n} runs, ${accSample.length} accepted + ${rejSample.length} rejected in sample)`);

@@ -147,5 +147,7 @@ reset role;
   \echo 'ai spend ACL regression: ok'
 \else
   \echo 'ai spend ACL regression: service path returned the wrong aggregate'
-  \quit 1
+  -- psql ignores an exit code given to \quit and exits 0, so fail with an
+  -- error instead. ON_ERROR_STOP (set at the top) makes psql exit 3.
+  do $$ begin raise exception 'ai spend ACL regression failed'; end $$;
 \endif

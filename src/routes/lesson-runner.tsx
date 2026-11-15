@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useLessonStore } from '../stores/lesson-store';
+import { useLessonStore, type LessonOutcome } from '../stores/lesson-store';
 import { useUserStore } from '../stores/user-store';
-import { recordAnswer, fetchUserProgress, fetchPersonalizedRendering, fetchPathTerms, fetchAllTerms } from '../lib/data';
+import { recordAnswer, fetchUserProgress, fetchPersonalizedRendering, fetchPathTerms, fetchAllTerms, displayableRendering } from '../lib/data';
 import { pickQuizType, isFirstEncounter, RELEARN_CAP, selectDistractorTerms } from '../lib/lesson-engine';
 import { buildXWorldQuestion, type XWorldQuestion } from '../lib/xworld';
 import { XP } from '../lib/xp';
@@ -253,13 +253,15 @@ function LessonRunnerContent() {
       try {
         const result = await fetchPersonalizedRendering(termId);
         if (cancelled) return;
-        const personalized =
-          result.status === 'fresh' || result.status === 'stale'
-            ? {
-                long_definition: result.rendering.long_definition,
-                example_in_sentence: result.rendering.example_in_sentence,
-              }
-            : null;
+        // Quiz material comes only from a fresh rendering. A stale one was
+        // accepted by an older check or reported by the learner.
+        const shown = displayableRendering(result);
+        const personalized = shown
+          ? {
+              long_definition: shown.long_definition,
+              example_in_sentence: shown.example_in_sentence,
+            }
+          : null;
         const question = buildXWorldQuestion(currentTerm, personalized, lesson.terms);
         setXworldCache((prev) => ({ ...prev, [termId]: question }));
       } catch {
@@ -285,8 +287,21 @@ function LessonRunnerContent() {
     isFirstEncounter(currentTerm.id, progress) &&
     !lesson.learnCardSeenForTerm[currentTerm.id];
 
-  async function handleAnswer(outcome: 'correct' | 'wrong' | 'partial', graderXp?: number) {
+  async function handleAnswer(outcome: LessonOutcome, graderXp?: number) {
     if (!currentTerm || !user) return;
+
+    // A sentence the grader could not grade: the lesson moves on, but nothing
+    // is recorded as right or wrong. No progress write, no combo change, no
+    // relearn, no XP (XP.SENTENCE_UNGRADED is 0).
+    if (outcome === 'ungraded') {
+      lesson.recordResult({ termId: currentTerm.id, outcome, xpEarned: graderXp ?? 0, quizType });
+      if (lesson.currentIndex + 1 >= lesson.terms.length) {
+        navigate('/lesson/summary');
+      } else {
+        lesson.advance();
+      }
+      return;
+    }
 
     let xpEarned = 0;
     if (quizType === 'sentence') {

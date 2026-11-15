@@ -26,6 +26,7 @@ import {
   fetchAllTerms,
   fetchUserProgress,
   fetchPersonalizedRendering,
+  displayableRendering,
   logSpottedScan,
   fetchRecentSpottedScans,
 } from '../lib/data';
@@ -282,10 +283,8 @@ function SpottedContent() {
         // first sentence. Fall back to null when personalization is disabled
         // (no profile / off) or no cache row exists yet — the InspectedPanel
         // suppresses the "in your world" section in those cases.
-        const personalized =
-          r.status === 'fresh' || r.status === 'stale'
-            ? firstSentence(r.rendering.long_definition)
-            : null;
+        const shown = displayableRendering(r);
+        const personalized = shown ? firstSentence(shown.long_definition) : null;
         return {
           ...prev,
           personalizedOneLine: personalized,

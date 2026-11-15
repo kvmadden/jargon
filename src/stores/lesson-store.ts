@@ -2,7 +2,11 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import type { TermRow } from '../lib/database.types';
 
-export type LessonOutcome = 'correct' | 'wrong' | 'partial';
+/**
+ * 'ungraded' is a sentence the grader could not grade. It writes no progress,
+ * does not count as correct, and is left out of accuracy.
+ */
+export type LessonOutcome = 'correct' | 'wrong' | 'partial' | 'ungraded';
 
 export interface CardResult {
   termId: string;
@@ -100,7 +104,7 @@ interface LessonState {
   /** B+1.6 — record a term that just hit mastery this lesson. Idempotent. */
   recordMastery: (termId: string) => void;
   reset: () => void;
-  totals: () => { xp: number; correct: number; total: number; accuracy: number; avgTimeMs: number };
+  totals: () => { xp: number; correct: number; total: number; ungraded: number; accuracy: number; avgTimeMs: number };
 }
 
 /** Use Web Crypto when available, fall back to a Math.random hex blob for jsdom/tests. */
@@ -252,14 +256,18 @@ export const useLessonStore = create<LessonState>()(
         });
       },
 
-      totals: (): { xp: number; correct: number; total: number; accuracy: number; avgTimeMs: number } => {
+      totals: (): { xp: number; correct: number; total: number; ungraded: number; accuracy: number; avgTimeMs: number } => {
         const { results } = get();
         const total = results.length;
+        const ungraded = results.filter((r) => r.outcome === 'ungraded').length;
+        const graded = total - ungraded;
         const correct = results.filter((r) => r.outcome === 'correct' || r.outcome === 'partial').length;
         const xp = results.reduce((sum, r) => sum + r.xpEarned, 0);
-        const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
+        // Accuracy is over graded answers only. An answer nobody graded is
+        // neither right nor wrong.
+        const accuracy = graded > 0 ? Math.round((correct / graded) * 100) : 0;
         const avgTimeMs = total > 0 ? Math.round(results.reduce((s, r) => s + r.timeMs, 0) / total) : 0;
-        return { xp, correct, total, accuracy, avgTimeMs };
+        return { xp, correct, total, ungraded, accuracy, avgTimeMs };
       },
     }),
     {

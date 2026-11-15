@@ -1,4 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { FunctionsClient } from '@supabase/functions-js';
 import {
@@ -172,6 +174,13 @@ describe('createLessonQuestionAnswerer', () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  it('allows more time than the function gives the model', () => {
+    const src = readFileSync(resolve(__dirname, '../../supabase/functions/answer-lesson-question/index.ts'), 'utf8');
+    const m = src.match(/^const ANSWER_TIMEOUT_MS = ([\d_]+);/m);
+    expect(m).not.toBeNull();
+    expect(LESSON_QUESTION_CLIENT_TIMEOUT_MS).toBeGreaterThan(Number(m![1].replace(/_/g, '')));
   });
 
   it('aborts the transport at the application deadline', async () => {

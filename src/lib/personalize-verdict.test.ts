@@ -14,7 +14,14 @@ const criteria = {
 };
 
 function verdict(overrides: Record<string, unknown> = {}) {
-  return JSON.stringify({ uses_analogy: true, ...criteria, overall: 'pass', ...overrides });
+  return JSON.stringify({
+    uses_analogy: true,
+    domain_claims: [],
+    canonical_concerns: [],
+    ...criteria,
+    overall: 'pass',
+    ...overrides,
+  });
 }
 
 describe('parseVerdict', () => {

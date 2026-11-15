@@ -16,6 +16,7 @@
 import Anthropic from 'https://esm.sh/@anthropic-ai/sdk@0.32.1';
 import type { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
 import { sanitizeProfileShape, type ProfileShape } from './profile-shape.ts';
+import { estimateCostUsd, roundUsd, type TokenUsage } from './pricing.ts';
 
 // ─── Tunables ──────────────────────────────────────────────────────────────────
 
@@ -32,8 +33,7 @@ const PER_USER_DAILY_CAP = 10;
 const STORAGE_BUCKET = 'lived-icons';
 
 // Opus 4.7 unit costs (USD per 1M tokens).
-const PRICE_IN_PER_MTOK = 15;
-const PRICE_OUT_PER_MTOK = 75;
+// Text-model pricing lives in _shared/pricing.ts (list price, cache tokens included).
 // Gemini Flash Image — ~$0.04 per image as of 2026-05.
 const GEMINI_PRICE_PER_IMAGE_USD = 0.04;
 
@@ -74,12 +74,11 @@ interface LogPayload {
   error_text?: string | null;
 }
 
-function calcCost(tokensIn: number | null, tokensOut: number | null, includeImage: boolean): number | null {
-  if (tokensIn === null && tokensOut === null && !includeImage) return null;
-  const inUsd = ((tokensIn ?? 0) / 1_000_000) * PRICE_IN_PER_MTOK;
-  const outUsd = ((tokensOut ?? 0) / 1_000_000) * PRICE_OUT_PER_MTOK;
+function calcCost(usage: TokenUsage | null, includeImage: boolean): number | null {
+  if (usage === null && !includeImage) return null;
+  const textUsd = usage ? estimateCostUsd(PASS1_MODEL, usage) : 0;
   const imgUsd = includeImage ? GEMINI_PRICE_PER_IMAGE_USD : 0;
-  return Number((inUsd + outUsd + imgUsd).toFixed(5));
+  return roundUsd(textUsd + imgUsd);
 }
 
 async function writeLog(serviceClient: SupabaseClient, payload: LogPayload): Promise<void> {
@@ -372,6 +371,7 @@ export async function runLivedIconGeneration(ctx: GenerationContext): Promise<Ge
   let imagePrompt = '';
   let tokensIn: number | null = null;
   let tokensOut: number | null = null;
+  let pass1Usage: TokenUsage | null = null;
 
   const pass1Controller = new AbortController();
   const pass1TimeoutId = setTimeout(() => pass1Controller.abort(), PASS1_TIMEOUT_MS);
@@ -393,6 +393,7 @@ export async function runLivedIconGeneration(ctx: GenerationContext): Promise<Ge
     )) as any;
     tokensIn = response?.usage?.input_tokens ?? null;
     tokensOut = response?.usage?.output_tokens ?? null;
+    pass1Usage = response?.usage ?? null;
     const block = response?.content?.[0];
     const rawText = block && block.type === 'text' ? (block.text as string) : '';
     const parsed = rawText ? parsePass1(rawText) : null;
@@ -403,7 +404,7 @@ export async function runLivedIconGeneration(ctx: GenerationContext): Promise<Ge
         user_request: userRequest,
         tokens_in: tokensIn,
         tokens_out: tokensOut,
-        total_cost_usd: calcCost(tokensIn, tokensOut, false),
+        total_cost_usd: calcCost(pass1Usage, false),
         total_latency_ms: Date.now() - startMs,
         final_status: 'fallback-parse',
         error_text: rawText.slice(0, 500),
@@ -422,7 +423,7 @@ export async function runLivedIconGeneration(ctx: GenerationContext): Promise<Ge
       user_request: userRequest,
       tokens_in: tokensIn,
       tokens_out: tokensOut,
-      total_cost_usd: calcCost(tokensIn, tokensOut, false),
+      total_cost_usd: calcCost(pass1Usage, false),
       total_latency_ms: Date.now() - startMs,
       final_status: isTimeout ? 'fallback-timeout' : 'fallback-anthropic-error',
       error_text: safeErrText,
@@ -460,7 +461,7 @@ export async function runLivedIconGeneration(ctx: GenerationContext): Promise<Ge
         user_request: userRequest,
         tokens_in: tokensIn,
         tokens_out: tokensOut,
-        total_cost_usd: calcCost(tokensIn, tokensOut, false),
+        total_cost_usd: calcCost(pass1Usage, false),
         total_latency_ms: Date.now() - startMs,
         final_status: 'fallback-gemini-error',
         error_text: errText,
@@ -480,7 +481,7 @@ export async function runLivedIconGeneration(ctx: GenerationContext): Promise<Ge
         user_request: userRequest,
         tokens_in: tokensIn,
         tokens_out: tokensOut,
-        total_cost_usd: calcCost(tokensIn, tokensOut, false),
+        total_cost_usd: calcCost(pass1Usage, false),
         total_latency_ms: Date.now() - startMs,
         final_status: 'fallback-gemini-error',
         error_text: errText,
@@ -500,7 +501,7 @@ export async function runLivedIconGeneration(ctx: GenerationContext): Promise<Ge
       user_request: userRequest,
       tokens_in: tokensIn,
       tokens_out: tokensOut,
-      total_cost_usd: calcCost(tokensIn, tokensOut, false),
+      total_cost_usd: calcCost(pass1Usage, false),
       total_latency_ms: Date.now() - startMs,
       final_status: finalStatus,
       error_text: errText,
@@ -524,7 +525,7 @@ export async function runLivedIconGeneration(ctx: GenerationContext): Promise<Ge
       user_request: userRequest,
       tokens_in: tokensIn,
       tokens_out: tokensOut,
-      total_cost_usd: calcCost(tokensIn, tokensOut, true),
+      total_cost_usd: calcCost(pass1Usage, true),
       total_latency_ms: Date.now() - startMs,
       final_status: 'fallback-storage-error',
       error_text: errText,
@@ -548,7 +549,7 @@ export async function runLivedIconGeneration(ctx: GenerationContext): Promise<Ge
       user_request: userRequest,
       tokens_in: tokensIn,
       tokens_out: tokensOut,
-      total_cost_usd: calcCost(tokensIn, tokensOut, true),
+      total_cost_usd: calcCost(pass1Usage, true),
       total_latency_ms: Date.now() - startMs,
       final_status: 'fallback-storage-error',
       error_text: errText,
@@ -576,7 +577,7 @@ export async function runLivedIconGeneration(ctx: GenerationContext): Promise<Ge
     resulting_url: publicUrl,
     tokens_in: tokensIn,
     tokens_out: tokensOut,
-    total_cost_usd: calcCost(tokensIn, tokensOut, true),
+    total_cost_usd: calcCost(pass1Usage, true),
     total_latency_ms: Date.now() - startMs,
     final_status: 'success',
   });

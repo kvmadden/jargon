@@ -14,21 +14,35 @@
 //   7. Prompt injection ("ignore...") → fail with neutral feedback
 //   8. Other-language usage          → grade by meaning, not language
 //   9. Offensive content             → fail with neutral redirect
-//  10. Grader timeout / API error    → fallback partial (12 XP) so user is never stuck
+//  10. Grader timeout / API error    → ungraded: no grade, no progress change, 0 XP
+//
+// Ungraded (v10): a fallback, a timeout, a missing session, the 30-second skip
+// and a tier/score pair that disagree all return tier 'ungraded'. They used to
+// return partial with score 50, which the lesson recorded as half right and
+// counted as correct, so an outage looked like learning.
 
 import { supabase } from './supabase';
 import type { TermRow } from './database.types';
+import { precheckSentence, tierMatchesScore } from './grade-rules';
 
-export type GradeTier = 'pass' | 'partial' | 'fail';
+export type GradeTier = 'pass' | 'partial' | 'fail' | 'ungraded';
 
 export interface GradeResult {
   tier: GradeTier;
-  score: number; // 0-100
+  /** 0-100. Meaningless when tier is 'ungraded' (always 0 then). */
+  score: number;
   feedback: string;
   isFallback?: boolean;
 }
 
-/** Quick local pre-checks for the obvious edge cases — saves an Edge Function call. */
+/** The result for any answer the grader could not grade. */
+export function ungraded(feedback: string): GradeResult {
+  return { tier: 'ungraded', score: 0, feedback, isFallback: true };
+}
+
+const NOT_GRADED = 'The grader did not answer, so this sentence was not graded and your progress is unchanged.';
+
+/** Quick local pre-checks for the obvious edge cases. Saves an Edge Function call. */
 function localPrecheck(term: TermRow, answer: string): GradeResult | null {
   if (!term || typeof term.example_in_sentence !== 'string') {
     return { tier: 'fail', score: 0, feedback: 'Invalid term structure.' };
@@ -36,18 +50,7 @@ function localPrecheck(term: TermRow, answer: string): GradeResult | null {
   if (typeof answer !== 'string') {
     return { tier: 'fail', score: 0, feedback: 'Try writing a full sentence.' };
   }
-  const trimmed = answer.trim();
-  if (trimmed.length === 0) {
-    return { tier: 'fail', score: 0, feedback: 'Try writing a full sentence.' };
-  }
-  const wordCount = trimmed.split(/\s+/).filter(Boolean).length;
-  if (wordCount < 2) {
-    return { tier: 'fail', score: 0, feedback: 'Try a full sentence — at least a subject and a verb.' };
-  }
-  if (trimmed.toLowerCase() === term.example_in_sentence.toLowerCase()) {
-    return { tier: 'fail', score: 0, feedback: 'Use your own words to show you understand.' };
-  }
-  return null;
+  return precheckSentence(answer, term.example_in_sentence);
 }
 
 /** Hard upper bound on the grader call — see DESIGN.md §4 motion (6s/12s/30s). */
@@ -71,6 +74,7 @@ function isGradeResult(body: GradeResponseBody): body is GradeResponseBody & Gra
   return (
     (body.tier === 'pass' || body.tier === 'partial' || body.tier === 'fail') &&
     typeof body.score === 'number' &&
+    Number.isFinite(body.score) &&
     typeof body.feedback === 'string'
   );
 }
@@ -84,12 +88,7 @@ export async function gradeSentence(term: TermRow, answer: string): Promise<Grad
   const { data: sessionData } = await supabase.auth.getSession();
   const jwt = sessionData?.session?.access_token;
   if (!jwt) {
-    return {
-      tier: 'partial',
-      score: 50,
-      feedback: 'Grader unavailable — sign in to get a real evaluation.',
-      isFallback: true,
-    };
+    return ungraded('Sign in to have this sentence graded. It was not graded and your progress is unchanged.');
   }
 
   // AbortController-backed 30s timeout — matches client expectation and lets the
@@ -124,38 +123,24 @@ export async function gradeSentence(term: TermRow, answer: string): Promise<Grad
     try {
       body = (await res.json()) as GradeResponseBody;
     } catch {
-      return {
-        tier: 'partial',
-        score: 50,
-        feedback: 'Grader returned an unexpected response; gave you partial credit.',
-        isFallback: true,
-      };
+      return ungraded(NOT_GRADED);
     }
 
-    if (!res.ok || !isGradeResult(body)) {
-      return {
-        tier: 'partial',
-        score: 50,
-        feedback: 'Grader timed out — gave you partial credit so you can keep moving.',
-        isFallback: true,
-      };
+    // A server fallback (any tier it sends with isFallback) is not a grade.
+    if (!res.ok || body.isFallback === true || !isGradeResult(body)) {
+      return ungraded(NOT_GRADED);
     }
 
-    return {
-      tier: body.tier,
-      score: Math.max(0, Math.min(100, Math.round(body.score))),
-      feedback: body.feedback,
-      isFallback: body.isFallback,
-    };
+    const score = Math.max(0, Math.min(100, Math.round(body.score)));
+    // pass with score 0, or fail with 100, is a contradiction, not a grade.
+    if (!tierMatchesScore(body.tier, score)) {
+      return ungraded(NOT_GRADED);
+    }
+    return { tier: body.tier, score, feedback: body.feedback };
   } catch (err) {
     clearTimeout(timer);
     // eslint-disable-next-line no-console
     console.error('[grader] error:', err);
-    return {
-      tier: 'partial',
-      score: 50,
-      feedback: 'Grader timed out — gave you partial credit so you can keep moving.',
-      isFallback: true,
-    };
+    return ungraded(NOT_GRADED);
   }
 }

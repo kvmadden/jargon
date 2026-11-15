@@ -5,6 +5,7 @@ import { gradeSentence, type GradeResult } from '../lib/grader';
 import { ResultCardSentence } from './result-card-sentence';
 import { ReportButton } from './report-button';
 import { XP } from '../lib/xp';
+import type { LessonOutcome } from '../stores/lesson-store';
 
 // Note on `onUseInSentence` CTA (Task 3 / V4):
 // Recognition/choice cards (mc, fill, match, xworld, scenario, transcript) render the
@@ -14,7 +15,7 @@ import { XP } from '../lib/xp';
 
 interface Props {
   term: TermRow;
-  onAnswer: (outcome: 'correct' | 'wrong' | 'partial', graderXp: number) => void;
+  onAnswer: (outcome: LessonOutcome, graderXp: number) => void;
 }
 
 const MAX_CHARS = 280;
@@ -47,27 +48,32 @@ export function QuizCardSentence({ term, onAnswer }: Props) {
 
   function handleContinue() {
     if (!result) return;
+    if (result.tier === 'ungraded') {
+      onAnswer('ungraded', XP.SENTENCE_UNGRADED);
+      return;
+    }
     const xp = result.tier === 'pass'
       ? XP.SENTENCE_PASS
       : result.tier === 'partial'
       ? XP.SENTENCE_PARTIAL
       : 0;
-    const outcome: 'correct' | 'wrong' | 'partial' =
+    const outcome: LessonOutcome =
       result.tier === 'pass' ? 'correct' : result.tier === 'partial' ? 'partial' : 'wrong';
     onAnswer(outcome, xp);
   }
 
   /**
-   * 30s+ escape hatch. Matches DESIGN.md §4 motion: "30s retry+skip". We award the
-   * partial-credit XP (12) so the user is rewarded for their effort and the lesson
-   * keeps moving. Any in-flight grader response that arrives after this is ignored
-   * via `skippedRef`.
+   * 30s+ escape hatch. Matches DESIGN.md §4 motion: "30s retry+skip". The lesson
+   * keeps moving, but the sentence is recorded as ungraded: no progress write and
+   * no credit, because nothing graded it. (It used to count as partial, which
+   * the progress record read as half right.) Any in-flight grader response that
+   * arrives after this is ignored via `skippedRef`.
    */
   function handleSkip() {
     if (skippedRef.current) return;
     skippedRef.current = true;
     setGrading(false);
-    onAnswer('partial', XP.SENTENCE_PARTIAL);
+    onAnswer('ungraded', XP.SENTENCE_UNGRADED);
   }
 
   const showSkip = grading && graderElapsedSec >= 30;
@@ -138,7 +144,7 @@ export function QuizCardSentence({ term, onAnswer }: Props) {
           onClick={handleSkip}
           className="w-full bg-surface-card border border-border-default text-text-secondary font-medium rounded-lg py-3 min-h-[44px] active:bg-surface-card-hi focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-jargon transition-colors mt-2"
         >
-          skip — take partial credit (+{XP.SENTENCE_PARTIAL} xp)
+          skip, this sentence will not be graded
         </button>
       )}
 

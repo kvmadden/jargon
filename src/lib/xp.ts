@@ -4,6 +4,8 @@ export const XP = {
   CORRECT_ANSWER: 10,
   SENTENCE_PASS: 25,
   SENTENCE_PARTIAL: 12,
+  /** A sentence the grader could not grade (timeout, error, skip). Nothing was graded, so nothing is earned. */
+  SENTENCE_UNGRADED: 0,
   LESSON_COMPLETE: 20,
   FIRST_LESSON_OF_DAY_BONUS: 30,
   TERM_MASTERED: 50,
