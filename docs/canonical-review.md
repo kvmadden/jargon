@@ -10,9 +10,9 @@ This page records what was corrected, what still needs a person, and how the pip
 - `supabase/migrations/20261103000100_canonical_corrections.sql` corrects the three entries below. Each update only applies while the old text is still there, so a later curator edit is never overwritten. It also removes cached renderings of those three terms, since they were written from the old text.
 - `scripts/audit-canonical.mjs` lists the entries a person should read first (see the audit section).
 
-## Status: corrected, not yet reviewed by a person
+## Status: accepted by Kevin, shortened
 
-Claude made these corrections on 2026-11-03 from the evaluation findings. No person has reviewed them yet. Kevin's decision: accept, edit or reject each one before the migration runs in production.
+Claude made these corrections on 2026-11-03 from the evaluation findings. Kevin accepted them the same day and asked that they not overwhelm the learner. Each corrected field is now no longer than the 75th percentile of that field across the seed, and reads at or below the median grade level for that field (approximate Flesch-Kincaid, `scripts/lib/readability.mjs`). A test checks both. The shortened wording itself has not been reviewed by a person.
 
 Every one of the 646 seed rows says `reviewed_by = 'curator'`. Nothing in the repository records who reviewed what or when, so that label is not evidence of review. The corrections leave the label as it is rather than add a second unsupported claim.
 
@@ -30,7 +30,7 @@ the bug only shows up in the staging environment because that's the only place p
 After:
 
 ```text
-the bug shows up in the staging environment but not in production, because staging points at the payment provider's sandbox instead of the live account.
+The bug shows up in staging but not in production, since staging uses a test payment account.
 ```
 
 Why: Production is the environment pointed at the live payment provider. Staging normally points at the provider's sandbox, so 'the only place pointed at the real payment provider' is backwards. The 2026-10-30 rewrites inherited this claim and the verifier accepted it because it matched the canonical text.
@@ -46,7 +46,7 @@ the bug only shows up in the staging ___ because that's the only place pointed a
 After:
 
 ```text
-the bug shows up in the staging ___ but not in production, because staging points at the payment provider's sandbox instead of the live account.
+The bug shows up in the staging ___ but not in production, since staging uses a test payment account.
 ```
 
 Why: The quiz item repeated the same backwards claim, so the error was also being tested.
@@ -65,7 +65,7 @@ a calculated column is figured out once per row and frozen into the table, unlik
 After:
 
 ```text
-a calculated column is figured out once per row and stored in the table, unlike a measure that recalculates with filters. mixing them up is a classic Power BI mistake. a margin percentage stored as a column gets added up or averaged row by row in a visual, so its total comes out wrong, while a margin measure divides the filtered totals and stays right as you slice.
+A calculated column is worked out once per row and stored. A measure recalculates for the filters in use. Mixing them up causes wrong totals, such as a margin percentage that gets added up row by row.
 ```
 
 Why: Totals built on a calculated column do move when you slice, because slicing filters the rows being added up. The real mistake is a per-row ratio: summing or averaging stored percentages gives a wrong total. 'Frozen' also overstates it, since the column is recomputed on refresh.
@@ -84,7 +84,7 @@ When you see a model described as "70B" or "405B," that "B" means billion parame
 After:
 
 ```text
-When you see a model described as "70B" or "405B," that "B" means billion parameters. Parameters are the internal numbers a model learns during training, billions of tiny adjustments that together encode what it knows. More parameters generally mean better answers but slower responses and higher cost per request. Open-weight models publish their size (Llama 3.1 405B has 405 billion parameters), while Anthropic and OpenAI do not publish parameter counts for Claude or GPT-5.
+When a model is called "70B" or "405B," the "B" means billions of parameters. Parameters are the numbers a model learns in training. More parameters usually mean better answers but slower, costlier responses. Anthropic and OpenAI do not publish counts for Claude or GPT-5.
 ```
 
 Why: Parameters are learned in training, and fine-tuning is a later, separate step. Anthropic and OpenAI have not published parameter counts for Claude or GPT-5, so stating them as hundreds of billions is unsupported.
@@ -100,7 +100,7 @@ Llama 3 70B has 70 billion parameters — smaller than Claude but small enough t
 After:
 
 ```text
-Llama 3 70B has 70 billion parameters, so running it yourself takes a machine with a lot of memory, even after it is compressed (quantized).
+Llama 3 70B has 70 billion parameters, so it needs a machine with a lot of memory.
 ```
 
 Why: Claude's size is unpublished, so 'smaller than Claude' cannot be checked. A 70B model needs about 140 GB of memory at 16-bit precision and roughly 40 GB at 4-bit, which is a high-memory workstation or a top-end laptop, not a laptop in general.
@@ -116,7 +116,7 @@ Reading product names like "GPT-5", "Claude Opus 4.7", "Gemini 2.5 Pro", or "Lla
 After:
 
 ```text
-Open-weight model names like "Llama 3 70B" or "Llama 3.1 405B" make more sense once you know that the "B" is billions of parameters. Names like "GPT-5" or "Claude Opus 4.7" carry no size, because those companies do not publish it. Size is the simplest rough comparison of model heft, even though parameters alone do not tell you everything about quality.
+Names like "Llama 3 70B" make sense once you know the "B" means billions of parameters. Size gives a rough sense of a model's power and cost, but it does not tell you everything about quality.
 ```
 
 Why: Only one of the four names listed carries a 'B'. The old wording implied the others encode a parameter count.

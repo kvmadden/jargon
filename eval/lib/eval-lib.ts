@@ -4,6 +4,8 @@
 // src/lib/eval-lib.test.ts tests them offline.
 
 import { createHash } from 'node:crypto';
+import { ANALOGY_BANK, vettedAnalogyFor, type AnalogyEntry } from '../../supabase/functions/_shared/analogy-bank.ts';
+import { learnerFieldFor } from '../../supabase/functions/_shared/learner-fields.ts';
 import { join, relative, resolve } from 'node:path';
 import { checkRendering, type GateResult } from '../../supabase/functions/personalize-term/claim-gate.ts';
 import { worstCaseRequestUsd, type CallModel, type ModelReply } from '../../supabase/functions/personalize-term/pipeline.ts';
@@ -96,6 +98,8 @@ export const MANIFEST_SOURCES = [
   'supabase/functions/_shared/pricing.ts',
   'supabase/functions/_shared/cycle-budget.ts',
   'supabase/functions/_shared/domain-vocabulary.ts',
+  'supabase/functions/_shared/analogy-bank.ts',
+  'supabase/functions/_shared/learner-fields.ts',
   'eval/lib/eval-lib.ts',
 ] as const;
 
@@ -306,4 +310,28 @@ export function outputPaths(
     if (frozen.has(path)) throw new Error(`${relative(root, path)} is a frozen artifact. Use another --results-dir or EVAL_DATE.`);
   }
   return { results, meta };
+}
+
+// ─── Analogy for an eval item ──────────────────────────────────────────────────
+
+/**
+ * The comparison an eval item uses: the vetted one, as in production. With
+ * allowDrafts, a draft stands in, so the v11 prompts can be checked before any
+ * entry is vetted. Rows made that way are marked, and they say nothing about
+ * what learners get.
+ */
+export function analogyForItem(
+  termId: string,
+  profile: { job?: string | null; roles?: string[] | null; background_text?: string | null },
+  opts: { allowDrafts: boolean },
+  bank: readonly AnalogyEntry[] = ANALOGY_BANK,
+): { entry: AnalogyEntry | null; field: string | null; draft: boolean } {
+  const field = learnerFieldFor(profile);
+  const vetted = vettedAnalogyFor(termId, field, bank);
+  if (vetted) return { entry: vetted, field, draft: false };
+  if (opts.allowDrafts && field) {
+    const draft = bank.find((e) => e.termId === termId && e.field === field) ?? null;
+    return { entry: draft, field, draft: Boolean(draft) };
+  }
+  return { entry: null, field, draft: false };
 }

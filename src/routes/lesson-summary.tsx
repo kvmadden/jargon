@@ -339,7 +339,7 @@ function LessonSummaryContent() {
               streak length (day one vs week vs month vs year). Suppressed
               while streakDays is loading or null so we don't flash empty. */}
           {streakDays != null && (
-            <p className="text-xs text-text-muted text-center -mt-2">
+            <p className="text-sm text-text-muted text-center -mt-2">
               {streakVoice(streakDays)}
             </p>
           )}
@@ -382,7 +382,7 @@ function LessonSummaryContent() {
         {bonusXp > 0 && (
           <div className="flex items-center justify-center gap-2 mt-4 flex-wrap">
             <span
-              className="inline-flex items-center gap-1 text-xs font-mono uppercase tracking-wider text-accent-jargon-hi bg-accent-jargon/[0.12] border border-accent-jargon rounded-full px-3 py-1 leading-none animate-mastered-chip motion-reduce:animate-none"
+              className="inline-flex items-center gap-1 text-sm font-mono text-accent-jargon-hi bg-accent-jargon/[0.12] border border-accent-jargon rounded-full px-3 py-1 leading-none animate-mastered-chip motion-reduce:animate-none"
               style={{ animationDelay: '300ms' }}
             >
               <span className="tabular-nums">+{XP.LESSON_COMPLETE}</span>
@@ -390,7 +390,7 @@ function LessonSummaryContent() {
             </span>
             {bonusXp - XP.LESSON_COMPLETE > 0 && (
               <span
-                className="inline-flex items-center gap-1 text-xs font-mono uppercase tracking-wider text-accent-jargon-hi bg-accent-jargon/[0.12] border border-accent-jargon rounded-full px-3 py-1 leading-none animate-mastered-chip motion-reduce:animate-none"
+                className="inline-flex items-center gap-1 text-sm font-mono text-accent-jargon-hi bg-accent-jargon/[0.12] border border-accent-jargon rounded-full px-3 py-1 leading-none animate-mastered-chip motion-reduce:animate-none"
                 style={{ animationDelay: '450ms' }}
               >
                 <span className="tabular-nums">+{XP.FIRST_LESSON_OF_DAY_BONUS}</span>
@@ -416,7 +416,7 @@ function LessonSummaryContent() {
               perfect-lesson treatment (0 wrong). When perfect, drop the h2
               entirely — the celebration card is its own headline + body. */}
           {termsMissed.length > 0 && (
-            <h2 className="text-xs uppercase tracking-wider text-text-muted px-1 mb-2">
+            <h2 className="text-sm text-text-muted px-1 mb-2">
               missed terms
             </h2>
           )}
@@ -447,7 +447,7 @@ function LessonSummaryContent() {
                 <path d="M5 12.5l4.5 4.5L19 7" />
               </svg>
               <div className="flex flex-col min-w-0">
-                <span className="text-2xs uppercase tracking-wider text-accent-jargon-hi font-mono font-semibold leading-none">
+                <span className="text-sm text-accent-jargon-hi font-mono font-semibold leading-none">
                   perfect lesson
                 </span>
                 <span className="text-sm text-text-primary mt-1 leading-tight">
@@ -487,7 +487,7 @@ function LessonSummaryContent() {
                       {/* Term name renders as JargonTerm chip — v0.1 brand pattern. */}
                       <JargonTerm className="text-sm truncate">{t.term}</JargonTerm>
                     </div>
-                    <span className="text-xs text-accent-jargon-hi shrink-0">review →</span>
+                    <span className="text-sm text-accent-jargon-hi shrink-0">review →</span>
                   </button>
                 );
               })}
@@ -626,7 +626,7 @@ function SummaryStat({ label, countTo, prefix = '', suffix = '', value }: Summar
   );
   return (
     <div className="bg-surface-card border border-border-default rounded-lg p-4">
-      <p className="text-xs uppercase tracking-wider text-text-muted">{label}</p>
+      <p className="text-sm text-text-muted">{label}</p>
       {/* Per gradient-scarcity rule: NO gradient on summary stats — keep gradient
           unique to the profile triple-stat. Plain accent-jargon token. */}
       <p className="text-2xl font-mono font-semibold tabular-nums text-accent-jargon-hi mt-1 leading-none">
@@ -657,7 +657,7 @@ function MasteredChipStrip({
   if (termIds.length === 0) return null;
   return (
     <section className="mt-4">
-      <p className="text-xs uppercase tracking-wider text-text-muted px-1 mb-2">
+      <p className="text-sm text-text-muted px-1 mb-2">
         mastered this lesson
       </p>
       <div className="flex flex-wrap gap-2">

@@ -1,0 +1,66 @@
+{
+  "source": "supabase/seed.sql",
+  "note": "The 5 terms with draft comparisons in the analogy bank, for the v11 prompt check.",
+  "terms": [
+    {
+      "category": "bank",
+      "id": "bi-rls",
+      "term": "RLS",
+      "path": "data-analytics",
+      "domain": "coding",
+      "difficulty": 2,
+      "one_line_definition": "Row-level security that filters model data based on the viewer.",
+      "long_definition": "RLS stands for row-level security. In Power BI, row-level security applies roles and filters so different viewers can see different rows from the same semantic model.",
+      "why_it_matters": "RLS is how one report safely shows each person only their own rows — every regional manager opens the same report but sees just their region. when a stakeholder asks \"can they see everyone's numbers?\", this is the control that answers it.",
+      "example_in_sentence": "RLS means each regional manager opens the same report but only sees their own region's rows."
+    },
+    {
+      "category": "bank",
+      "id": "sys-jwt",
+      "term": "JWT",
+      "path": "web-api",
+      "domain": "coding",
+      "difficulty": 2,
+      "one_line_definition": "A signed token that carries identity or permission claims.",
+      "long_definition": "JWT stands for JSON Web Token. It is a compact signed string with claims inside, often used to prove who a user is when calling an API. The signature lets the server detect tampering. A JWT is not automatically safe just because it is encoded; it still needs correct expiry, storage, and verification.",
+      "why_it_matters": "JWTs turn up all over auth logs, edge functions, and Supabase docs. knowing the term makes that plumbing less mystical — and reminds you that being encoded isn't the same as being safe, so it still needs proper expiry and verification.",
+      "example_in_sentence": "the edge function decodes the JWT to pull out the signed-in user's id."
+    },
+    {
+      "category": "bank",
+      "id": "cloud-environment",
+      "term": "environment",
+      "path": "cloud-devops",
+      "domain": "coding",
+      "difficulty": 1,
+      "one_line_definition": "A separate runtime such as local, preview, staging, or production.",
+      "long_definition": "An environment is one place where the app runs with its own URL, configuration, database, secrets, and safety expectations. Local is for development, preview is for review, staging is production-like testing, and production is what real users see.",
+      "why_it_matters": "\"it works on my machine\" almost always means it works in one environment and not another. knowing the word lets you ask the useful question: which environment, with which config and which data, did it break in?",
+      "example_in_sentence": "The bug shows up in staging but not in production, since staging uses a test payment account."
+    },
+    {
+      "category": "bank",
+      "id": "sec-mfa",
+      "term": "MFA",
+      "path": "security",
+      "domain": "coding",
+      "difficulty": 1,
+      "one_line_definition": "Multi-factor authentication, where login requires more than one proof.",
+      "long_definition": "MFA stands for multi-factor authentication. It asks for two or more kinds of proof, such as a password plus an authenticator code, hardware key, device prompt, or biometric check. MFA reduces the damage if one credential is stolen.",
+      "why_it_matters": "this is why your bank texts you a code after you already typed the right password. knowing the term tells you a system is asking for a second kind of proof on purpose — so if one credential leaks, the account still doesn't fall over.",
+      "example_in_sentence": "i turned on MFA for my email, so now i need both my password and a code from my phone to get in."
+    },
+    {
+      "category": "bank",
+      "id": "data-join",
+      "term": "join",
+      "path": "databases",
+      "domain": "coding",
+      "difficulty": 2,
+      "one_line_definition": "A query operation that combines related tables.",
+      "long_definition": "A join lets a query combine rows from multiple tables using a relationship such as a foreign key. If progress rows store only term IDs, a join can pull in the term names and definitions at the same time.",
+      "why_it_matters": "this is how apps build rich screens out of slim, normalized rows. when a progress record only stores a term id, a join is what pulls in the name and definition so the screen actually has something to show.",
+      "example_in_sentence": "a dashboard runs a join to show each mastered term right next to your score."
+    }
+  ]
+}

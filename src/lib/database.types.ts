@@ -47,6 +47,8 @@ export interface TermRow {
   id: string;
   term: string;
   pronunciation: string | null;
+  /** What the term's abbreviation stands for, when it is one (2026-11-03). Null for ordinary words. */
+  expansion?: import('./term-expansion').TermExpansion | null;
   path: PathId;
   /**
    * Stage B+1.5 — top-level domain bucket. Defaults to 'coding' for every

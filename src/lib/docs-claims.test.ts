@@ -10,7 +10,7 @@ import { buildReport } from '../../eval/report.ts';
 const ROOT = resolve(__dirname, '../..');
 const read = (p: string) => readFileSync(resolve(ROOT, p), 'utf8');
 const report = buildReport();
-const docs = ['README.md', 'docs/evaluation.md', 'docs/verification.md', 'docs/canonical-review.md', 'eval/README.md'];
+const docs = ['README.md', 'docs/evaluation.md', 'docs/verification.md', 'docs/canonical-review.md', 'docs/migrations.md', 'eval/README.md'];
 
 describe('figures quoted in the docs come from the computed report', () => {
   it.each([

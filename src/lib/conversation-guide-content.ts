@@ -1,3 +1,5 @@
+import { plainPunctuation } from './lesson-text';
+
 export interface ConversationGuide {
   termId: string;
   plainExplanation: string;
@@ -458,8 +460,18 @@ export const CONVERSATION_GUIDES: ConversationGuide[] = [
   },
 ];
 
+// Shown without em dashes or semicolons (Kevin, 2026-11-03), see plainPunctuation.
 const CONVERSATION_GUIDE_BY_TERM_ID: Record<string, ConversationGuide> = Object.fromEntries(
-  CONVERSATION_GUIDES.map((guide) => [guide.termId, guide] as const),
+  CONVERSATION_GUIDES.map((guide) => [
+    guide.termId,
+    {
+      ...guide,
+      plainExplanation: plainPunctuation(guide.plainExplanation),
+      technicalExplanation: plainPunctuation(guide.technicalExplanation),
+      sayBack: plainPunctuation(guide.sayBack),
+      commonConfusion: plainPunctuation(guide.commonConfusion),
+    },
+  ] as const),
 );
 
 export const CONVERSATION_GUIDE_IDS: ReadonlySet<string> = new Set(

@@ -23,6 +23,12 @@
 //   --profiles <file>      profiles file (default eval/data/profiles.json)
 //   --results-dir <dir>    where to write <EVAL_DATE>.jsonl and its meta file
 //                          (default eval/results). Frozen files are refused.
+//   --use-draft-analogies  let a draft comparison stand in when none is vetted,
+//                          to check the prompts before vetting. Rows say so.
+//
+// As in production (prompt version 11), an item runs only for a supported
+// learner field with a comparison for its term. Otherwise it is recorded as
+// skipped-unsupported-field or skipped-no-analogy, with no model call.
 //
 // Each row records the manifest hash: prompts, pipeline, gate, model, prompt
 // version, terms and profiles. Resuming a results file written under a
@@ -37,7 +43,7 @@ import { runPersonalization } from '../supabase/functions/personalize-term/pipel
 import { APPROVED_ANALOGIES } from '../supabase/functions/personalize-term/approved-analogies.ts';
 import { PERSONALIZE_MODEL } from '../supabase/functions/personalize-term/prompts.ts';
 import { MODEL_PRICES, PRICES_CHECKED_ON } from '../supabase/functions/_shared/pricing.ts';
-import { MANIFEST_SOURCES, canStartItem, checkResume, httpCallModel, manifestHash, outputPaths, worstCaseItemUsd } from './lib/eval-lib.ts';
+import { MANIFEST_SOURCES, analogyForItem, canStartItem, checkResume, httpCallModel, manifestHash, outputPaths, worstCaseItemUsd } from './lib/eval-lib.ts';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p: string) => readFileSync(resolve(ROOT, p), 'utf8');
@@ -57,6 +63,7 @@ const CONCURRENCY = Math.min(3, Math.max(1, Number(process.env.EVAL_CONCURRENCY 
 const LIMIT = process.env.EVAL_LIMIT ? Number(process.env.EVAL_LIMIT) : Infinity;
 const TERMS_PATH = flag('--terms') ?? 'eval/data/terms.json';
 const PROFILES_PATH = flag('--profiles') ?? 'eval/data/profiles.json';
+const ALLOW_DRAFTS = process.argv.includes('--use-draft-analogies');
 
 const PROMPT_VERSION = Number(read('supabase/functions/personalize-term/index.ts').match(/^const\s+PROMPT_VERSION\s*=\s*(\d+)\s*;/m)![1]);
 const termsSrc = read(TERMS_PATH);
@@ -138,6 +145,15 @@ async function main() {
     for (;;) {
       if (stoppedForBudget || next >= todo.length) return;
       const it = todo[next];
+      const analogy = analogyForItem(it.term.id, it.profile, { allowDrafts: ALLOW_DRAFTS });
+      if (!analogy.entry) {
+        next++;
+        const status = analogy.field ? 'skipped-no-analogy' : 'skipped-unsupported-field';
+        appendFileSync(RESULTS_PATH, JSON.stringify({ run_id: it.runId, eval_date: EVAL_DATE, manifest_sha256: MANIFEST, status, learner_field: analogy.field, cost_usd: 0, calls: [] }) + '\n');
+        done.add(it.runId);
+        console.log(`[${done.size}] ${it.runId.padEnd(40)} ${status}`);
+        continue;
+      }
       const worst = worstCaseItemUsd(it.term, it.profile, knownVocabulary);
       if (!canStartItem(spent, reserved, worst, BUDGET_USD)) {
         stoppedForBudget = true;
@@ -149,7 +165,7 @@ async function main() {
       let outcome;
       try {
         outcome = await runPersonalization(
-          { term: it.term, profile: it.profile, knownVocabulary, approvedAnalogies: APPROVED_ANALOGIES },
+          { term: it.term, profile: it.profile, knownVocabulary, approvedAnalogies: APPROVED_ANALOGIES, vettedAnalogy: analogy.entry.comparison },
           callModel,
         );
       } finally {
@@ -166,6 +182,9 @@ async function main() {
         category: it.term.category,
         difficulty: it.term.difficulty,
         profile_id: it.profile.id,
+        learner_field: analogy.field,
+        comparison: analogy.entry.comparison,
+        comparison_is_draft: analogy.draft,
         status: outcome.status,
         needs_review: outcome.needsReview,
         final_text: outcome.accepted,
@@ -206,6 +225,7 @@ async function main() {
         unknown_billing_usd: unknownBillingUsd,
         pricing_per_mtok: MODEL_PRICES[PERSONALIZE_MODEL],
         prices_checked_on: PRICES_CHECKED_ON,
+        draft_analogies_used: ALLOW_DRAFTS,
         finished_at: new Date().toISOString(),
       },
       null,

@@ -84,6 +84,8 @@ const COMPARISON_PATTERNS: RegExp[] = [
   /\bthe equivalent of\b/i,
   /\bthe [\p{L}-]+ version of\b/iu,
   /\b(?:it|this|that)(?:'s| is) (?:basically |essentially |a bit )?like\b/i,
+  // "RLS is like cutting one sheet into strips": a comparison with any subject.
+  /\b(?:is|are|was|were) (?:basically |essentially |a bit |kind of |sort of )?like\b/i,
   /\b(?:works|acts|behaves|operates|functions) (?:the same way as|the way)\b/i,
 ];
 

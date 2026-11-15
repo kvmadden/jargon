@@ -693,7 +693,6 @@
         "decision": "needs_review",
         "kinds": [
           "analogy_about_learner_field",
-          "restrictive_claim_about_learner_field",
           "unvouched_field_claim"
         ],
         "verifier_said_analogy": true,
@@ -1411,8 +1410,7 @@
         "run_id": "sec-rbac::nurse",
         "decision": "needs_review",
         "kinds": [
-          "analogy_about_learner_field",
-          "restrictive_claim_about_learner_field"
+          "analogy_about_learner_field"
         ],
         "verifier_said_analogy": true,
         "label": null,

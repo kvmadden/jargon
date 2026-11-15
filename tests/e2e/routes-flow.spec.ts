@@ -137,6 +137,13 @@ async function setupAuthenticatedRoutes(page: Page, options: {
     });
   });
 
+  // /spotted waits for the recent scans before it shows the page. Without
+  // this mock the request goes to the unreachable local Supabase host and the
+  // page stays on "loading your dictionary…" (the phone heading failure, #58).
+  await page.route('**/rest/v1/spotted_scan_log**', (route) => {
+    route.fulfill({ status: 200, contentType: 'application/json', body: '[]' });
+  });
+
   await page.addInitScript(() => {
     const session = {
       access_token: 'fake-token',
@@ -200,8 +207,9 @@ test.describe('vocabulary deep links and detail views', () => {
     await page.goto('/term/term-git-1');
 
     await expect(page.getByRole('heading', { name: 'commit' })).toBeVisible();
-    await expect(page.getByText('a commit records changes to the repository with a message.')).toBeVisible();
-    await expect(page.getByText('git commit -m "fix bug"')).toBeVisible();
+    // Lesson sentences display in sentence case (Kevin's ruling, 2026-11-03).
+    await expect(page.getByText('A commit records changes to the repository with a message.')).toBeVisible();
+    await expect(page.getByText('git commit -m "fix bug".')).toBeVisible();
   });
 
   test('deep link to non-existent term renders "term not found" with back button', async ({ page }) => {
@@ -211,7 +219,7 @@ test.describe('vocabulary deep links and detail views', () => {
 
     await expect(page.getByText('term not found')).toBeVisible();
     await expect(page.getByText('it may have been removed in a recent ingestion cycle.')).toBeVisible();
-    const backBtn = page.getByRole('button', { name: 'back' });
+    const backBtn = page.getByRole('button', { name: 'back', exact: true });
     await expect(backBtn).toBeVisible();
     await backBtn.click();
     await expect(page).toHaveURL('/home');
@@ -222,7 +230,7 @@ test.describe('vocabulary deep links and detail views', () => {
     await page.goto('/path/invalid-path-xyz');
 
     await expect(page.getByText('unknown path')).toBeVisible();
-    const backBtn = page.getByRole('button', { name: 'back' });
+    const backBtn = page.getByRole('button', { name: 'back', exact: true });
     await expect(backBtn).toBeVisible();
     await backBtn.click();
     await expect(page).toHaveURL('/home');
@@ -268,7 +276,7 @@ test.describe('route group navigation', () => {
     await expect(page).toHaveURL('/settings');
     await expect(page.getByRole('heading', { name: 'settings' })).toBeVisible();
 
-    const backBtn = page.getByRole('button', { name: 'back' });
+    const backBtn = page.getByRole('button', { name: 'back', exact: true });
     await expect(backBtn).toBeVisible();
     await backBtn.click();
     await expect(page).toHaveURL('/home');

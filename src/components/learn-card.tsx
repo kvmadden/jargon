@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import type { TermRow } from '../lib/database.types';
 import { PATH_META } from '../lib/database.types';
+import { LessonBody } from './lesson-body';
+import { ExpansionLine } from './expansion-line';
+import { ConceptIllustration } from './concept-illustration';
+import { illustrationFor } from '../lib/lesson-illustrations';
+import { toSentenceCase } from '../lib/lesson-text';
 
 interface Props {
   term: TermRow;
@@ -60,19 +65,20 @@ export function LearnCard({ term, onReady }: Props) {
           "Pharmacy → Engineering" depending on the user's room). For v1 it stays
           single-domain — see CLAUDE.md voice section. */}
       <div className="sticky top-0 z-10 bg-bg-base px-4 pt-6 pb-3">
-        <p className="font-mono text-2xs uppercase tracking-[0.08em] text-text-muted">
+        <p className="font-mono text-sm lowercase text-text-muted">
           <span>meet</span>
           <span className="text-text-muted" aria-hidden="true"> · </span>
           <span className="text-text-secondary">{meta.label}</span>
           <span className="text-text-muted" aria-hidden="true"> · </span>
-          <span className="text-accent-jargon-hi">{difficulty}</span>
+          <span className="text-text-secondary">{difficulty}</span>
         </p>
-        <h2 className="text-text-primary font-sans text-display font-semibold mt-3">
+        <h2 className="text-text-primary font-mono text-display lg:text-5xl font-medium tracking-tight lowercase mt-3">
           {term.term}
         </h2>
         {term.pronunciation && (
-          <p className="text-sm font-mono text-text-secondary mt-1">/ {term.pronunciation} /</p>
+          <p className="text-base font-mono text-text-secondary mt-1">/ {term.pronunciation} /</p>
         )}
+        <ExpansionLine term={term.term} expansion={term.expansion} />
       </div>
 
       {/* Scrollable middle — full context, never truncated. pb-6 keeps a little
@@ -80,33 +86,35 @@ export function LearnCard({ term, onReady }: Props) {
       <div className="flex-1 overflow-y-auto px-4 pb-6">
         <div className="border-t border-border-default mt-3 mb-6" />
 
-        <p className="text-text-primary font-sans text-lg leading-relaxed">
-          {term.one_line_definition}
+        <p className="text-text-primary font-sans text-lg lg:text-xl leading-relaxed">
+          {toSentenceCase(term.one_line_definition)}
         </p>
 
-        <p className="text-text-muted font-mono text-2xs uppercase tracking-[0.08em] mt-6 mb-2">
-          ▸ what it really means
-        </p>
-        <p className="text-text-secondary font-sans text-body leading-relaxed">
-          {term.long_definition}
-        </p>
+        {/* Sections with clear sentence-case headings and a soft hairline
+            between them (Kevin, 2026-11-03). */}
+        <section className="mt-6 border-t border-border-default pt-6">
+          <h3 className="mb-3 text-base font-semibold text-text-primary">What it really means</h3>
+          {/* A lead sentence plus bullets, in sentence case (Kevin's ruling, 2026-11-03). */}
+          <LessonBody text={term.long_definition} leadClassName="text-text-secondary font-sans text-body lg:text-lg leading-relaxed" />
+          {illustrationFor(term.id) && (
+            <div className="mt-4">
+              <ConceptIllustration illustration={illustrationFor(term.id)!} />
+            </div>
+          )}
+        </section>
 
-        <p className="text-text-muted font-mono text-2xs uppercase tracking-[0.08em] mt-6 mb-2">
-          ▸ in the wild
-        </p>
-        <p className="italic text-text-secondary font-sans text-body leading-relaxed">
-          "{term.example_in_sentence}"
-        </p>
+        <section className="mt-6 border-t border-border-default pt-6">
+          <h3 className="mb-3 text-base font-semibold text-text-primary">In the wild</h3>
+          <p className="italic text-text-secondary font-sans text-body lg:text-lg leading-relaxed">
+            "{toSentenceCase(term.example_in_sentence)}"
+          </p>
+        </section>
 
         {hasWhyItMatters && (
-          <>
-            <p className="text-text-muted font-mono text-2xs uppercase tracking-[0.08em] mt-6 mb-2">
-              ▸ why it matters
-            </p>
-            <p className="text-text-secondary font-sans text-body leading-relaxed">
-              {term.why_it_matters}
-            </p>
-          </>
+          <section className="mt-6 border-t border-border-default pt-6">
+            <h3 className="mb-3 text-base font-semibold text-text-primary">Why it matters</h3>
+            <LessonBody text={term.why_it_matters} leadClassName="text-text-secondary font-sans text-body lg:text-lg leading-relaxed" />
+          </section>
         )}
       </div>
 

@@ -1,0 +1,23 @@
+{
+  "eval_date": "2026-11-03",
+  "status": "development data",
+  "manifest_sha256": "d21cdcad56a50242562c86fec4a1547c153baf15ac5cec7fec69c63791e7bc78",
+  "model": "claude-opus-4-7",
+  "prompt_version": 11,
+  "terms_file": "eval/data/terms-bank-2026-11-03.json",
+  "profiles_file": "eval/data/profiles-2026-11-03.json",
+  "planned_items": 6,
+  "completed_items": 6,
+  "stopped_for_budget": false,
+  "budget_usd": 2,
+  "spent_usd": 0.4154425,
+  "transport_retries": 0,
+  "unknown_billing_usd": 0,
+  "pricing_per_mtok": {
+    "inputPerMTok": 5,
+    "outputPerMTok": 25
+  },
+  "prices_checked_on": "2026-11-03",
+  "draft_analogies_used": true,
+  "finished_at": "2026-11-03T16:37:56.898Z"
+}

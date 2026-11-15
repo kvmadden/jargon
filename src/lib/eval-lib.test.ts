@@ -14,6 +14,7 @@ import {
   wilson95,
   worstCaseItemUsd,
   MANIFEST_SOURCES,
+  analogyForItem,
   outputPaths,
   type FetchLike,
 } from '../../eval/lib/eval-lib.ts';
@@ -188,6 +189,23 @@ describe('httpCallModel', () => {
     );
     expect(out.status).toBe('cached');
     expect(out.accepted).toEqual(rendering);
+  });
+});
+
+describe('analogyForItem', () => {
+  it('uses a vetted comparison only, unless drafts are allowed for a prompt check', () => {
+    // Kevin vetted the nurse comparisons on 2026-11-03. The teacher ones are drafts.
+    const nurse = { job: 'registered nurse' };
+    const vetted = analogyForItem('bi-rls', nurse, { allowDrafts: false });
+    expect(vetted.draft).toBe(false);
+    expect(vetted.entry?.status).toBe('vetted');
+    const teacher = { job: 'high-school biology teacher' };
+    expect(analogyForItem('bi-rls', teacher, { allowDrafts: false }).entry).toBeNull();
+    const draft = analogyForItem('bi-rls', teacher, { allowDrafts: true });
+    expect(draft.draft).toBe(true);
+    expect(draft.entry?.field).toBe('teacher');
+    expect(analogyForItem('bi-rls', { job: 'accountant' }, { allowDrafts: true }).entry).toBeNull();
+    expect(analogyForItem('no-such-term', nurse, { allowDrafts: true }).entry).toBeNull();
   });
 });
 

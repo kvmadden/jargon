@@ -69,6 +69,7 @@ export type GateFindingKind =
   | 'restrictive_claim_about_learner_field'
   | 'verifier_unsupported_claim'
   | 'canonical_concern'
+  | 'missing_vetted_analogy'
   | 'length_out_of_range';
 
 export interface GateFinding {
@@ -134,6 +135,14 @@ export interface GateInput {
   profile: DomainProfile;
   verdict?: GateVerdictView | null;
   approvedAnalogies?: readonly ApprovedAnalogy[];
+  /**
+   * Comparisons a person vetted for this term and learner field. A rendering
+   * sentence that is exactly one of them skips the field rules: it is reviewed
+   * text. A sentence that adds anything to it is checked like any other.
+   */
+  vettedSentences?: readonly string[];
+  /** When true, the rendering must contain at least one vetted sentence (one comparison per lesson page). */
+  requireVetted?: boolean;
 }
 
 export const LENGTH_RATIO_MIN = 0.4;
@@ -194,7 +203,13 @@ export function checkRendering(input: GateInput): GateResult {
     splitSentences(rendering[field]).map((sentence) => ({ field, sentence })),
   );
 
+  const vetted = new Set((input.vettedSentences ?? []).map(normalizeSentence).filter((v) => v.length > 0));
+  let usedVetted = false;
   for (const { field, sentence } of sentences) {
+    if (vetted.has(normalizeSentence(sentence))) {
+      usedVetted = true;
+      continue;
+    }
     const mentions = learnerFieldMentions(sentence, lexicon);
     if (mentions.length === 0) continue;
     const words = contentWords(sentence);
@@ -249,6 +264,14 @@ export function checkRendering(input: GateInput): GateResult {
         detail: `the verifier marked this claim ${claim.assessment}`,
       });
     }
+  }
+
+  if (input.requireVetted && !usedVetted) {
+    findings.push({
+      kind: 'missing_vetted_analogy',
+      blocking: true,
+      detail: 'the lesson must use the reviewed comparison word for word, as one sentence of long_definition',
+    });
   }
 
   const canonicalReview = (verdict?.canonical_concerns ?? []).filter((c) => typeof c === 'string' && c.trim().length > 0);

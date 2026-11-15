@@ -32,11 +32,11 @@ begin
   foreach s in array array['cached','held-needs-review','fallback-format','fallback-no-profile',
     'fallback-pass1-parse','fallback-pass2-parse','fallback-pass2-fail','fallback-pass3-parse',
     'fallback-pass2-retry-fail','fallback-anthropic-error','fallback-timeout','skipped-over-cap',
-    'cache-hit','skipped-recent-fallback'] loop
+    'cache-hit','skipped-recent-fallback','skipped-unsupported-field','skipped-no-analogy'] loop
     insert into personalize_log (user_id, term_id, request_started_at, final_status)
     values ('11111111-1111-1111-1111-111111111111', 'bi-rls', now(), s);
   end loop;
-  insert into results values ('all 14 statuses accepted', true);
+  insert into results values ('all 16 statuses accepted', true);
 end $$;
 
 -- An unknown status is still rejected.
@@ -50,7 +50,7 @@ exception when check_violation then
 end $$;
 
 insert into results
-select 'needs_review defaults to false', bool_and(needs_review = false) and count(*) = 14
+select 'needs_review defaults to false', bool_and(needs_review = false) and count(*) = 16
 from personalize_log;
 
 insert into results
@@ -89,7 +89,7 @@ exception when insufficient_privilege then
 end $$;
 
 set role service_role;
-insert into results select 'service role reads every row', count(*) = 14 from personalize_log;
+insert into results select 'service role reads every row', count(*) = 16 from personalize_log;
 reset role;
 
 select name, ok from results order by name;

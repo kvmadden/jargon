@@ -14,8 +14,14 @@ import { PathGlyph } from '../components/path-glyph';
 import { ReportButton } from '../components/report-button';
 import { PronounceButton } from '../components/pronounce-button';
 import { ReportAnalogyButton } from '../components/report-analogy-button';
-import { JargonTerm } from '../components/jargon-term';
 import { GlossaryText } from '../components/glossary-text';
+import { LessonBody } from '../components/lesson-body';
+import { ExpansionLine } from '../components/expansion-line';
+import { ConceptIllustration } from '../components/concept-illustration';
+import { illustrationFor } from '../lib/lesson-illustrations';
+import { toSentenceCase } from '../lib/lesson-text';
+import { learnerFieldPlural, supportedFieldsSentence } from '../lib/learner-fields';
+import { plainLessonFields } from '../lib/lesson-text';
 import { TermQuickPeek } from '../components/term-quick-peek';
 import { conversationGuideForTermId } from '../lib/conversation-guide-content';
 import { useUserStore } from '../stores/user-store';
@@ -149,6 +155,8 @@ function TermDetailContent() {
   // `personalized` holds the three rewritten fields when available. `null` =
   // canonical mode (no personalization OR profile disabled). `showOriginal`
   // is the per-open toggle (resets on every fresh /term/:id open by design).
+  // Why no personalized lesson was offered, when the server says so (v11).
+  const [unavailable, setUnavailable] = useState<{ reason: 'unsupported_field' | 'no_vetted_analogy'; field: string | null } | null>(null);
   const [personalized, setPersonalized] = useState<{
     long_definition: string;
     why_it_matters: string;
@@ -241,7 +249,7 @@ function TermDetailContent() {
           setNotFound(true);
           return;
         }
-        setTerm(data as TermRow);
+        setTerm(plainLessonFields(data as TermRow));
 
         // Fetch related + stretch in one round-trip
         const ids = [...(data.related_terms ?? []), ...(data.stretch_term ? [data.stretch_term] : [])];
@@ -314,9 +322,13 @@ function TermDetailContent() {
       try {
         const fresh = await dedupedRequestPersonalization(termId, user?.id ?? '');
         if (cancelled) return;
+        if (fresh.unavailableReason) {
+          setUnavailable({ reason: fresh.unavailableReason, field: fresh.learnerField ?? null });
+        }
         if (fresh.isFallback) {
           // Server returned the canonical entry (held for review, error, cap, parse
-          // miss). The canonical text is already on screen, so nothing changes.
+          // miss, or no vetted comparison). The canonical text is already on
+          // screen, so nothing changes.
           return;
         }
         // Crossfade in the new rendering (200ms opacity per spec §5.1).
@@ -437,6 +449,12 @@ function TermDetailContent() {
   // by definition. When showOriginal is true OR there's no personalized
   // rendering, we render the canonical fields directly off the term.
   const usingPersonalized = personalized !== null && !showOriginal;
+  // Why this is the standard lesson, when the server said so (v11).
+  const unavailableNote = unavailable
+    ? unavailable.reason === 'unsupported_field'
+      ? `Personalized lessons are offered for ${supportedFieldsSentence()}. Your profile does not match one of these yet, so this is the standard lesson.`
+      : `This lesson is not personalized for ${learnerFieldPlural(unavailable.field) ?? 'your field'} yet, because no comparison for this term has been reviewed. This is the standard lesson.`
+    : null;
   const longDef = usingPersonalized ? personalized!.long_definition : term?.long_definition ?? '';
   const whyMatters = usingPersonalized ? personalized!.why_it_matters : term?.why_it_matters ?? '';
   // 2026-05-31: curated "say it back" conversation guide for this term (null when none).
@@ -469,7 +487,7 @@ function TermDetailContent() {
         <main className="flex-1 flex items-center justify-center px-4 text-center">
           <div>
             <p className="text-base text-text-primary">term not found</p>
-            <p className="text-xs text-text-muted mt-2">
+            <p className="text-sm text-text-muted mt-2">
               it may have been removed in a recent ingestion cycle.
             </p>
           </div>
@@ -480,21 +498,21 @@ function TermDetailContent() {
 
   return (
     <div className="min-h-screen flex flex-col bg-bg-base safe-top safe-bottom pb-12">
-      <header className="sticky top-0 z-20 bg-bg-base/95 backdrop-blur px-4 py-3">
+      <header className="sticky top-0 z-20 bg-bg-base/95 backdrop-blur px-4 py-3 lg:px-0">
         {/* Inner wrapper matches main's max-w so back chevron + path eyebrow
             + report button align with the term body below on tablet/desktop. */}
-        <div className="max-w-md mx-auto flex items-center gap-3">
+        <div className="max-w-md lg:max-w-6xl mx-auto flex items-center gap-3 lg:px-8">
           <button
             type="button"
             onClick={() => handleBack(navigate, location, '/home')}
-            className="w-12 h-12 min-w-[44px] min-h-[44px] rounded-md flex items-center justify-center text-text-secondary text-lg active:bg-surface-card transition-colors"
+            className="w-12 h-12 min-w-[44px] min-h-[44px] rounded-md flex items-center justify-center lg:justify-start text-text-secondary text-lg active:bg-surface-card transition-colors"
             aria-label="back"
           >
             ‹
           </button>
           <div className="flex-1 flex items-center gap-2 min-w-0">
-            <PathGlyph path={term.path} active={false} size="sm" className="w-4 h-4 shrink-0" />
-            <span className="text-xs uppercase tracking-wider text-text-muted truncate">
+            <PathGlyph path={term.path} active={false} size="sm" className="w-6 h-6 shrink-0" />
+            <span className="text-base text-text-secondary truncate">
               {pathMeta.label}
             </span>
           </div>
@@ -502,7 +520,12 @@ function TermDetailContent() {
         </div>
       </header>
 
-      <main className="flex-1 px-4 py-6 max-w-md mx-auto w-full flex flex-col gap-6">
+      <main className="flex-1 px-4 py-6 lg:px-8 lg:py-12 max-w-md lg:max-w-6xl mx-auto w-full lg:grid lg:grid-cols-[minmax(0,1fr)_20rem] xl:grid-cols-[minmax(0,1fr)_22rem] lg:gap-x-12 lg:items-start">
+        {/* Desktop (lg and up): the lesson in a readable column of about 65
+            characters, beside a side panel with the diagram, the field note,
+            related terms and the next step. Phones keep one column, with the
+            panel after the lesson. */}
+        <div className="flex flex-col gap-6 min-w-0 lg:max-w-[65ch]">
         {/* Hero block — always canonical (term name, pronunciation, one-liner) */}
         <section>
           {/* B+1.18 — per-term translator-state badge. Renders ONLY when:
@@ -518,26 +541,35 @@ function TermDetailContent() {
               for canonical-only mode (no badge tease for users without
               a profile). */}
           {personalized && personalizationStatus && (
-            <p className="text-2xs lowercase tracking-wider font-mono text-accent-jargon-hi mb-2">
+            <p className="text-sm font-mono text-accent-jargon-hi mb-2">
               {personalizationStatus.uses_analogy
                 ? '// grounded in your world'
-                : "// plain english — this term didn't need an analogy"}
+                : "// plain english: this term didn't need an analogy"}
             </p>
           )}
-          <h1 className="text-3xl font-semibold text-text-primary leading-tight lowercase">
-            {term.term}
-          </h1>
-          <div className="mt-2 flex items-center gap-2">
-            {term.pronunciation && (
-              <p className="text-sm font-mono italic text-text-secondary">
-                / {term.pronunciation} /
-              </p>
-            )}
-            <PronounceButton text={term.term} />
+          {/* The speaker sits on the title's line, to its right (Kevin,
+              2026-11-03). */}
+          <div className="flex items-center gap-2">
+            <h1 className="min-w-0 break-words font-mono text-4xl lg:text-6xl font-medium tracking-tight text-text-primary leading-tight lowercase">
+              {term.term}
+            </h1>
+            <PronounceButton text={term.term} className="shrink-0" />
           </div>
-          <p className="text-base text-text-primary mt-4 leading-relaxed">
-            {term.one_line_definition}
+          {term.pronunciation && (
+            <p className="mt-1 text-base font-mono italic text-text-secondary">
+              / {term.pronunciation} /
+            </p>
+          )}
+          <ExpansionLine term={term.term} expansion={term.expansion} />
+          <p className="text-lg lg:text-xl text-text-primary mt-4 leading-relaxed">
+            {toSentenceCase(term.one_line_definition)}
           </p>
+          {unavailableNote && (
+            // Phones read it here. On a laptop it moves to the side panel.
+            <p role="note" className="text-sm text-text-secondary leading-relaxed mt-3 lg:hidden">
+              {unavailableNote}
+            </p>
+          )}
         </section>
 
         {/* B+1.18 — first-time "translator working" reveal card. Surfaces
@@ -559,26 +591,23 @@ function TermDetailContent() {
             aria-label="translator working"
             className="bg-surface-card border border-border-default rounded-lg p-4"
           >
-            <p className="text-2xs uppercase tracking-wider font-mono text-accent-jargon-hi">
+            <p className="text-sm font-mono text-accent-jargon-hi">
               // your translator
             </p>
-            <p className="text-sm text-text-secondary leading-relaxed mt-3">
-              this one was explained in your world. each term gets a
-              different lens — sometimes pharmacy, sometimes ecology,
-              sometimes plain english when an analogy would just get in
-              the way. tap "show original" any time to compare.
+            <p className="text-base text-text-secondary leading-relaxed mt-3">
+              This one was explained with a comparison from your field.
+              Some terms get one, and some read better in plain English.
+              Tap "show original" any time to compare.
             </p>
             <button
               type="button"
               onClick={handleRevealDismiss}
-              className="mt-3 min-h-[44px] inline-flex items-center text-2xs lowercase font-mono text-accent-jargon-hi underline underline-offset-2 active:opacity-70 transition-opacity"
+              className="mt-3 min-h-[44px] inline-flex items-center text-sm lowercase font-mono text-accent-jargon-hi underline underline-offset-2 active:opacity-70 transition-opacity"
             >
               // got it →
             </button>
           </div>
         )}
-
-        <Divider />
 
         {/* Personalizable body wrapped in a single opacity transition so the
             crossfade hits all three sections together. */}
@@ -587,23 +616,31 @@ function TermDetailContent() {
             bodyVisible ? 'opacity-100' : 'opacity-0'
           }`}
         >
-          <Section label="what it means">
-            <p className="text-sm text-text-secondary leading-relaxed">
-              {/* B+1.16 — body renders through GlossaryText so any reference
-                  to ANOTHER known term turns into a tappable chip the user
-                  can drill into. Self-rescue from unfamiliar vocabulary
-                  without leaving the reading flow for long. */}
-              <GlossaryText glossary={glossary} currentTermId={term.id} onChipTap={setPeekTermId}>
-                {longDef}
-              </GlossaryText>
-            </p>
+          <Section label="What it means">
+            {/* A lead sentence plus bullets, in sentence case (Kevin's ruling,
+                2026-11-03). Each piece still renders through GlossaryText, so
+                a reference to another known term is a tappable chip. */}
+            <LessonBody
+              text={longDef}
+              render={(t) => (
+                <GlossaryText glossary={glossary} currentTermId={term.id} onChipTap={setPeekTermId}>
+                  {t}
+                </GlossaryText>
+              )}
+            />
           </Section>
 
-          <Section label="in the wild">
-            <p className="text-sm italic text-text-secondary leading-relaxed">
+          {illustrationFor(term.id) && (
+            <div className="lg:hidden">
+              <ConceptIllustration illustration={illustrationFor(term.id)!} />
+            </div>
+          )}
+
+          <Section label="In the wild">
+            <p className="text-base italic text-text-secondary leading-relaxed">
               “
               <GlossaryText glossary={glossary} currentTermId={term.id} onChipTap={setPeekTermId}>
-                {exampleSentence}
+                {toSentenceCase(exampleSentence)}
               </GlossaryText>
               ”
             </p>
@@ -616,20 +653,21 @@ function TermDetailContent() {
               distinction; the body matches the other sections' typography
               for consistency. Hidden entirely when null — no placeholder. */}
           {term.etymology && (
-            <section>
-              <h2 className="text-xs uppercase tracking-wider font-mono text-accent-jargon-hi mb-2">
-                why it's called that
-              </h2>
-              <p className="text-sm text-text-secondary leading-relaxed">{term.etymology}</p>
-            </section>
+            <Section label="Why it's called that">
+              <p className="text-base text-text-secondary leading-relaxed">{term.etymology}</p>
+            </Section>
           )}
 
-          <Section label="why it matters">
-            <p className="text-sm text-text-secondary leading-relaxed">
-              <GlossaryText glossary={glossary} currentTermId={term.id} onChipTap={setPeekTermId}>
-                {whyMatters}
-              </GlossaryText>
-            </p>
+          <Section label="Why it matters">
+            <LessonBody
+              text={whyMatters}
+              leadClassName="text-base text-text-secondary leading-relaxed"
+              render={(t) => (
+                <GlossaryText glossary={glossary} currentTermId={term.id} onChipTap={setPeekTermId}>
+                  {t}
+                </GlossaryText>
+              )}
+            />
           </Section>
 
           {/* "show original" / "show your version" toggle.
@@ -641,7 +679,7 @@ function TermDetailContent() {
               <button
                 type="button"
                 onClick={() => setShowOriginal((v) => !v)}
-                className="text-xs text-accent-jargon-hi underline underline-offset-2 min-h-[44px] px-2 active:opacity-70 transition-opacity"
+                className="text-sm text-accent-jargon-hi underline underline-offset-2 min-h-[44px] px-2 active:opacity-70 transition-opacity"
               >
                 {showOriginal ? 'show your version' : 'show original'}
               </button>
@@ -668,22 +706,22 @@ function TermDetailContent() {
             don't-mix-up). Renders only when a guide exists; chip-links via the
             same glossary + quick-peek as the body. */}
         {conversationGuide && (
-          <Section label="say it back">
-            <p className="text-sm font-semibold text-text-primary leading-relaxed">
+          <Section label="Say it back">
+            <p className="text-base font-semibold text-text-primary leading-relaxed">
               <GlossaryText glossary={glossary} currentTermId={term.id} onChipTap={setPeekTermId}>
                 {conversationGuide.sayBack}
               </GlossaryText>
             </p>
-            <p className="mt-3 text-sm text-text-secondary leading-relaxed">
+            <p className="mt-3 text-base text-text-secondary leading-relaxed">
               <GlossaryText glossary={glossary} currentTermId={term.id} onChipTap={setPeekTermId}>
                 {conversationGuide.plainExplanation}
               </GlossaryText>
             </p>
             <div className="mt-3 pt-3 border-t border-border-default">
-              <p className="text-2xs uppercase tracking-wider font-mono text-text-muted mb-1">
-                don't mix up
+              <p className="text-sm font-semibold text-text-secondary mb-1">
+                Don't mix up
               </p>
-              <p className="text-sm text-text-secondary leading-relaxed">
+              <p className="text-base text-text-secondary leading-relaxed">
                 <GlossaryText glossary={glossary} currentTermId={term.id} onChipTap={setPeekTermId}>
                   {conversationGuide.commonConfusion}
                 </GlossaryText>
@@ -692,44 +730,70 @@ function TermDetailContent() {
           </Section>
         )}
 
-        {related.length > 0 && (
-          <Section label="related">
-            <div className="flex flex-wrap gap-2">
-              {related.map((r) => (
-                // v0.1 brand: related term names render as JargonTerm chips so they
-                // read as code. Wrapper button preserves the 44pt touch target.
-                <button
-                  key={r.id}
-                  type="button"
-                  onClick={() => navigate(`/term/${r.id}`)}
-                  // B+1.16: chip lift + brightness on hover. The chip is a
-                  // term-as-code mark; lifting it 1pt + nudging opacity to
-                  // 100 reads as "this is a portal." Smooth 180ms ease-out.
-                  className="rounded-md min-h-[44px] inline-flex items-center px-2 transition-all duration-200 hover:-translate-y-[2px] hover:opacity-100 opacity-90 active:opacity-70 active:translate-y-0"
-                  aria-label={`open ${r.term}`}
-                >
-                  <JargonTerm className="text-sm">{r.term}</JargonTerm>
-                </button>
-              ))}
+        </div>
+
+        <aside aria-label="about this term" className="mt-8 flex flex-col gap-8 lg:mt-0 lg:sticky lg:top-24 lg:border-l lg:border-border-default lg:pl-8">
+          {illustrationFor(term.id) && (
+            <div className="hidden lg:block">
+              <ConceptIllustration illustration={illustrationFor(term.id)!} />
             </div>
+          )}
+          {unavailableNote && (
+            <section aria-label="your field" className="hidden lg:block border-t border-border-default pt-6">
+              <h2 className="text-base font-semibold text-text-primary">Your field</h2>
+              <p role="note" className="mt-2 text-sm text-text-secondary leading-relaxed">
+                {unavailableNote}
+              </p>
+            </section>
+          )}
+          <section className="border-t border-border-default pt-6">
+            <h2 className="text-base font-semibold text-text-primary">Next step</h2>
+            <p className="mt-2 text-sm text-text-secondary leading-relaxed">
+              Practice {term.term} with the other {pathMeta.label.toLowerCase()} terms.
+            </p>
+            <button
+              type="button"
+              onClick={() => navigate(`/path/${term.path}`)}
+              className="mt-3 inline-flex min-h-[44px] items-center rounded-md border border-border-default px-4 text-sm font-medium text-text-primary transition-colors hover:border-accent-jargon active:bg-surface-card focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-jargon-hi"
+            >
+              start a lesson
+            </button>
+          </section>
+        {related.length > 0 && (
+          <Section label="Related">
+            {/* A quiet list of names (Kevin, 2026-11-03: calm, few boxes). Each
+                row keeps a 44pt touch target. */}
+            <ul className="flex flex-col">
+              {related.map((r) => (
+                <li key={r.id}>
+                  <button
+                    type="button"
+                    onClick={() => navigate(`/term/${r.id}`)}
+                    className="min-h-[44px] inline-flex items-center font-mono text-sm text-text-secondary transition-colors hover:text-accent-jargon-hi active:opacity-70"
+                    aria-label={`open ${r.term}`}
+                  >
+                    {r.term}
+                  </button>
+                </li>
+              ))}
+            </ul>
           </Section>
         )}
 
         {stretch && (
-          <Section label="stretch">
-            {/* Stretch term: JargonTerm chip + arrow affordance, all inside a 44pt
-                touch target. The chip itself uses the brand-locked code styling. */}
+          <Section label="Stretch">
             <button
               type="button"
               onClick={() => navigate(`/term/${stretch.id}`)}
-              className="rounded-md min-h-[44px] inline-flex items-center gap-2 px-2 active:opacity-70 transition-opacity"
+              className="min-h-[44px] inline-flex items-center gap-2 font-mono text-sm text-text-secondary transition-colors hover:text-accent-jargon-hi active:opacity-70"
               aria-label={`open stretch term ${stretch.term}`}
             >
-              <JargonTerm className="text-sm">{stretch.term}</JargonTerm>
-              <span aria-hidden="true" className="text-accent-jargon-hi text-sm">→</span>
+              {stretch.term}
+              <span aria-hidden="true">→</span>
             </button>
           </Section>
         )}
+        </aside>
       </main>
 
       {/* B+1.16: glossary chip → quick-peek bottom sheet. Lives at the
@@ -748,28 +812,17 @@ function TermDetailContent() {
   );
 }
 
-function Divider() {
-  return (
-    <div
-      className="h-px"
-      style={{
-        backgroundImage:
-          'linear-gradient(90deg, transparent, var(--accent-jargon-hi-20), transparent)',
-      }}
-      aria-hidden="true"
-    />
-  );
-}
-
 interface SectionProps {
   label: string;
   children: React.ReactNode;
 }
 
+// A lesson section: a clear sentence-case heading with a soft hairline above
+// it, so the sections read apart (Kevin, 2026-11-03).
 function Section({ label, children }: SectionProps) {
   return (
-    <section>
-      <h2 className="text-xs uppercase tracking-wider text-text-muted mb-2">{label}</h2>
+    <section className="border-t border-border-default pt-6">
+      <h2 className="text-base font-semibold text-text-primary mb-3">{label}</h2>
       {children}
     </section>
   );

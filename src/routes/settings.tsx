@@ -1,3 +1,4 @@
+import { VersionPill } from '../components/version-pill';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../stores/user-store';
@@ -725,6 +726,10 @@ function SettingsContent() {
           >
             delete account & data
           </button>
+        </section>
+        {/* The build version lives here, not floating over every page (Kevin, 2026-11-03). */}
+        <section aria-label="about this build" className="mt-6">
+          <VersionPill inline />
         </section>
       </main>
     </div>

@@ -79,9 +79,9 @@ export function QuizCardSentence({ term, onAnswer }: Props) {
   const showSkip = grading && graderElapsedSec >= 30;
   const graderMessage =
     graderElapsedSec >= 30
-      ? 'almost there — tap skip to keep moving.'
+      ? 'almost there. tap skip to keep moving.'
       : graderElapsedSec >= 12
-      ? 'still grading — opus is being thorough.'
+      ? 'still grading. opus is being thorough.'
       : graderElapsedSec >= 6
       ? 'opus is thinking…'
       : 'grading…';
@@ -94,8 +94,8 @@ export function QuizCardSentence({ term, onAnswer }: Props) {
         <ReportButton termId={term.id} quizMode="sentence" />
       </div>
       <div className="pr-12">
-        <p className="text-xs uppercase tracking-wider text-text-muted">{PATH_META[term.path].label}</p>
-        <h2 className="text-3xl font-semibold text-text-primary mt-2">{term.term}</h2>
+        <p className="text-sm lowercase text-text-muted">{PATH_META[term.path].label}</p>
+        <h2 className="font-mono text-3xl lg:text-4xl font-medium tracking-tight lowercase text-text-primary mt-2">{term.term}</h2>
         {term.pronunciation && (
           <p className="text-sm font-mono text-text-secondary mt-1">/ {term.pronunciation} /</p>
         )}
@@ -111,7 +111,7 @@ export function QuizCardSentence({ term, onAnswer }: Props) {
           placeholder="type your sentence…"
           className="w-full flex-1 min-h-[120px] bg-transparent text-text-primary placeholder:text-text-muted text-base resize-none focus:outline-none"
         />
-        <div className="flex items-center justify-between text-xs text-text-muted tabular-nums mt-2">
+        <div className="flex items-center justify-between text-sm text-text-muted tabular-nums mt-2">
           <span>tip: use your own words</span>
           <span>
             {text.length}/{MAX_CHARS}

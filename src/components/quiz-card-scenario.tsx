@@ -116,7 +116,7 @@ export function QuizCardScenario({ term, scenario, onAnswer, onUseInSentence }: 
             the question shifted from "what is X?" to "should you use X
             here?". Mono / accent-jargon-hi matches the xworld eyebrow
             convention so app-wide eyebrows feel consistent. */}
-        <p className="text-2xs uppercase tracking-wider font-mono text-accent-jargon-hi">
+        <p className="text-sm font-mono text-accent-jargon-hi">
           ▸ scenario
         </p>
         <h2 className="text-2xl font-semibold text-text-primary mt-2 leading-snug">
@@ -170,7 +170,7 @@ export function QuizCardScenario({ term, scenario, onAnswer, onUseInSentence }: 
         <button
           type="button"
           onClick={onUseInSentence}
-          className="now-use-it self-end mt-2 text-xs font-medium text-accent-jargon-hi bg-surface-card border border-accent-jargon rounded-md min-h-[44px] px-4 inline-flex items-center gap-2 active:bg-accent-jargon/[0.12] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-jargon transition-colors cursor-pointer"
+          className="now-use-it self-end mt-2 text-sm font-medium text-accent-jargon-hi bg-surface-card border border-accent-jargon rounded-md min-h-[44px] px-4 inline-flex items-center gap-2 active:bg-accent-jargon/[0.12] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-jargon transition-colors cursor-pointer"
         >
           now use it
           <span aria-hidden="true">→</span>

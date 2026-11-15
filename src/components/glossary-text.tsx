@@ -144,14 +144,20 @@ export function GlossaryText({
     <span className={className}>
       {chunks.map((c, i) => {
         if (c.kind === 'text') {
-          return <Fragment key={i}>{c.value}</Fragment>;
+          // Punctuation right after a chip is drawn with the chip (below), so
+          // a period never wraps onto a line of its own.
+          const prev = chunks[i - 1];
+          const glued = prev && prev.kind !== 'text' ? c.value.match(/^[.,:;!?)\]”’"']+/)?.[0] ?? '' : '';
+          return <Fragment key={i}>{c.value.slice(glued.length)}</Fragment>;
         }
+        const next = chunks[i + 1];
+        const trailing = next && next.kind === 'text' ? next.value.match(/^[.,:;!?)\]”’"']+/)?.[0] ?? '' : '';
         // Chip: clickable JargonTerm. Default behavior navigates; with
         // `onChipTap` provided, parent handles the tap (typically to open
         // a quick-peek sheet so the user doesn't lose their reading flow).
         return (
+          <span key={i} className="whitespace-nowrap">
           <button
-            key={i}
             type="button"
             // stopPropagation so a chip nested inside a clickable parent
             // (e.g. a /whats-new term card whose container <button> handles
@@ -170,6 +176,8 @@ export function GlossaryText({
           >
             <JargonTerm className="text-sm">{c.value}</JargonTerm>
           </button>
+          {trailing}
+          </span>
         );
       })}
     </span>

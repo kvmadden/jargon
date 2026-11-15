@@ -493,7 +493,10 @@ function LessonRunnerContent() {
   return (
     <div className="min-h-screen flex flex-col bg-bg-base safe-top relative">
       {/* v2: drop bottom border on header — the progress bar IS the divider. */}
-      <header className="px-4 py-3 flex items-center gap-3 bg-bg-base/95 backdrop-blur">
+      <header className="px-4 py-3 bg-bg-base/95 backdrop-blur lg:px-0">
+        {/* On desktop the controls line up with the app bar above, which
+            uses the same max-w-6xl column with px-8 inside it. */}
+        <div className="mx-auto flex max-w-6xl items-center gap-3 lg:px-8">
         <button
           type="button"
           onClick={() => setConfirmExit(true)}
@@ -509,13 +512,13 @@ function LessonRunnerContent() {
               knows whether they're learning or refreshing. */}
           {isReview && (
             <span
-              className="text-2xs font-mono uppercase tracking-wider text-accent-jargon-hi"
+              className="text-sm font-mono text-accent-jargon-hi"
               aria-label="review session"
             >
               // review
             </span>
           )}
-          <span className="text-xs font-mono text-text-secondary tabular-nums">
+          <span className="text-sm font-mono text-text-secondary tabular-nums">
             {cardNumber} / {totalCards}
           </span>
         </div>
@@ -527,14 +530,14 @@ function LessonRunnerContent() {
           {comboCount >= 3 && (
             <span
               key={comboFlashId}
-              className="text-2xs font-mono uppercase tracking-wider text-accent-jargon-hi bg-accent-jargon/[0.18] border border-accent-jargon rounded-full px-2 py-1 leading-none animate-combo-flash motion-reduce:animate-none"
+              className="text-sm font-mono text-accent-jargon-hi bg-accent-jargon/[0.18] border border-accent-jargon rounded-full px-2 py-1 leading-none animate-combo-flash motion-reduce:animate-none"
               aria-label={`${comboCount} correct in a row`}
             >
               <span className="tabular-nums">{comboCount}</span>
               <span className="ml-1">in a row</span>
             </span>
           )}
-          <div className="relative text-xs font-mono text-text-secondary tabular-nums w-10 text-right">
+          <div className="relative text-sm font-mono text-text-secondary tabular-nums min-w-[40px] text-right">
             +{xpSoFar}
             {xpFloater.value > 0 && (
               <XpFloater
@@ -561,13 +564,16 @@ function LessonRunnerContent() {
             answerer={answerer}
           />
         </div>
+        </div>
       </header>
 
       {/* Progress bar sits flush below the header and acts as the divider.
           Gradient fill (Layer 4) animates 300ms ease-out on width changes.
           P5: bumped from h-1 (4pt) to h-4 (16pt) to match v2 spec — barely-visible
-          hairline becomes a clear progress strip and proper visual divider. */}
-      <div className="h-4 w-full bg-border-default overflow-hidden">
+          hairline becomes a clear progress strip and proper visual divider.
+          On desktop it is a thin 4pt line again, so the wide screen stays calm
+          (Kevin, 2026-11-03). */}
+      <div className="h-4 lg:h-1 w-full bg-border-default overflow-hidden">
         <div
           className="h-full transition-all duration-300 ease-out"
           style={{

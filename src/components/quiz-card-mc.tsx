@@ -70,16 +70,16 @@ export function QuizTeachPanel({ term, onContinue }: QuizTeachPanelProps) {
         wrong answer. here's what it actually means: {longDef}{' '}
         {hasWhyItMatters ? `why it matters: ${whyItMatters}` : ''}
       </div>
-      <p className="text-text-muted font-mono text-2xs uppercase tracking-[0.08em] mb-1">
-        ▸ here's what it actually means
+      <p className="text-sm font-semibold text-text-secondary mb-1">
+        Here's what it actually means
       </p>
       <p className="text-text-primary text-sm font-medium leading-relaxed">
         {longDef}
       </p>
       {hasWhyItMatters && (
         <>
-          <p className="text-text-muted font-mono text-2xs uppercase tracking-[0.08em] mt-3 mb-1">
-            ▸ why it matters
+          <p className="text-sm font-semibold text-text-secondary mt-3 mb-1">
+            Why it matters
           </p>
           <p className="text-text-secondary text-sm leading-relaxed">
             {whyItMatters}
@@ -152,8 +152,8 @@ export function QuizCardMc({ term, onAnswer, onUseInSentence }: Props) {
         <ReportButton termId={term.id} quizMode="mc" />
       </div>
       <div className="pr-12">
-        <p className="text-xs uppercase tracking-wider text-text-muted">{PATH_META[term.path].label}</p>
-        <h2 className="text-3xl font-semibold text-text-primary mt-2">{term.term}</h2>
+        <p className="text-sm lowercase text-text-muted">{PATH_META[term.path].label}</p>
+        <h2 className="font-mono text-3xl lg:text-4xl font-medium tracking-tight lowercase text-text-primary mt-2">{term.term}</h2>
         {term.pronunciation && (
           <p className="text-sm font-mono text-text-secondary mt-1">/ {term.pronunciation} /</p>
         )}
@@ -200,7 +200,7 @@ export function QuizCardMc({ term, onAnswer, onUseInSentence }: Props) {
         <button
           type="button"
           onClick={onUseInSentence}
-          className="now-use-it self-end mt-4 text-xs font-medium text-accent-jargon-hi bg-surface-card border border-accent-jargon rounded-md min-h-[44px] px-4 inline-flex items-center gap-2 active:bg-accent-jargon/[0.12] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-jargon transition-colors cursor-pointer"
+          className="now-use-it self-end mt-4 text-sm font-medium text-accent-jargon-hi bg-surface-card border border-accent-jargon rounded-md min-h-[44px] px-4 inline-flex items-center gap-2 active:bg-accent-jargon/[0.12] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-jargon transition-colors cursor-pointer"
         >
           now use it
           <span aria-hidden="true">→</span>

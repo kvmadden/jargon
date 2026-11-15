@@ -105,7 +105,7 @@ export function PathIntroCard({ pathId, termCount, onReady }: Props) {
         <p className="text-text-secondary font-sans text-sm mt-2 leading-relaxed">
           you'll see each term explained first, then quizzed a few different
           ways. answer correctly a few times across sessions and the term
-          tips to "mastered" — you'll feel it.
+          tips to "mastered". you'll feel it.
         </p>
       </div>
 

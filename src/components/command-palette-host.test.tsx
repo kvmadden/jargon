@@ -65,19 +65,18 @@ describe('CommandPaletteHost', () => {
     expect(await screen.findByText('concept atlas')).toBeInTheDocument();
   });
 
-  it('opens palette via touch-accessible trigger button', async () => {
+  it('opens the palette from the app bar search button, with nothing floating over the page', async () => {
     render(
       <MemoryRouter>
         <CommandPaletteHost />
       </MemoryRouter>,
     );
 
-    const trigger = screen.getByRole('button', { name: /open command palette/i });
-    expect(trigger).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /open command palette/i })).not.toBeInTheDocument();
     expect(screen.queryByRole('dialog', { name: /command palette/i })).not.toBeInTheDocument();
 
     act(() => {
-      trigger.click();
+      window.dispatchEvent(new Event('jargon:open-search'));
     });
 
     expect(await screen.findByRole('dialog', { name: /command palette/i })).toBeInTheDocument();

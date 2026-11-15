@@ -18,6 +18,8 @@
 // content. The shape here is the wire shape — when the table lands, the
 // payload structure stays the same so the card component doesn't change.
 
+import { plainPunctuation } from './lesson-text';
+
 export interface Transcript {
   termId: string;
   /**
@@ -823,9 +825,16 @@ const TRANSCRIPTS: Transcript[] = [
 // Index built once at module load. Mirrors the `xworld.ts` / `spotted-matcher`
 // pattern — pure module-level state, no React, callable from anywhere.
 
+// Shown without em dashes or semicolons (Kevin, 2026-11-03). Chat snippets
+// keep their lowercase voice, so nothing is capitalized.
 const TRANSCRIPTS_BY_TERM_ID: Record<string, Transcript> = TRANSCRIPTS.reduce(
   (acc, t) => {
-    acc[t.termId] = t;
+    acc[t.termId] = {
+      ...t,
+      contextLabel: plainPunctuation(t.contextLabel, { capitalize: false }),
+      snippet: plainPunctuation(t.snippet, { capitalize: false }),
+      options: t.options.map((o) => plainPunctuation(o, { capitalize: false })) as Transcript['options'],
+    };
     return acc;
   },
   {} as Record<string, Transcript>,

@@ -26,7 +26,7 @@ const RECENT_CHANGES = [
   },
 ] as const;
 
-export function VersionPill() {
+export function VersionPill({ inline = false }: { inline?: boolean } = {}) {
   const user = useUserStore((s) => s.user);
   const [open, setOpen] = useState(false);
   const ref = useModalA11y(open, () => setOpen(false));
@@ -46,7 +46,7 @@ export function VersionPill() {
           className="fixed inset-0 z-40 bg-bg-base/70 backdrop-blur-[2px] sm:hidden"
         />
       )}
-      <div className="fixed right-4 z-50 flex flex-col-reverse items-end gap-2 [top:calc(env(safe-area-inset-top,0px)+1rem)]">
+      <div className={inline ? "relative flex flex-col-reverse items-start gap-2" : "fixed right-4 z-50 flex flex-col-reverse items-end gap-2 [top:calc(env(safe-area-inset-top,0px)+1rem)]"}>
         {open && (
           <section
             ref={ref}
