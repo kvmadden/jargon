@@ -1,0 +1,42 @@
+[
+  {
+    "label": "control",
+    "command": [
+      "npm",
+      "run",
+      "pre-deploy"
+    ],
+    "cwd": "<tmp>/jargon-control-yvy4toto",
+    "exit": 1
+  },
+  {
+    "label": "control",
+    "command": [
+      "npm",
+      "run",
+      "test:ai-spend-acl"
+    ],
+    "cwd": "<tmp>/jargon-control-yvy4toto",
+    "exit": 1
+  },
+  {
+    "label": "candidate",
+    "command": [
+      "npm",
+      "run",
+      "pre-deploy"
+    ],
+    "cwd": "<repo>",
+    "exit": 1
+  },
+  {
+    "label": "candidate",
+    "command": [
+      "npm",
+      "run",
+      "test:ai-spend-acl"
+    ],
+    "cwd": "<repo>",
+    "exit": 1
+  }
+]

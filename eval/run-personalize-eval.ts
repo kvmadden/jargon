@@ -39,6 +39,7 @@
 //     (1.25x input rate) and read (0.1x input rate) tokens, which the
 //     function's formula omits. The budget guard uses the larger of the two.
 
+import { claimCheckedParser } from '../supabase/functions/personalize-term/claim-check.ts'
 import { readFileSync, writeFileSync, appendFileSync, existsSync, mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -318,7 +319,7 @@ async function runOne(term: EvalTerm, profile: EvalProfile, runId: string) {
   try {
     calls.pass2 = await callOpus(
       { system: PASS2_SYSTEM_PROMPT, user: buildPass2UserMessage(term, pass1Candidate, profile, knownVocabulary), maxTokens: PERSONALIZE_MAX_TOKENS_PASS2 },
-      parseVerdict,
+      claimCheckedParser(pass1Candidate, parseVerdict),
     );
   } catch (e: any) {
     rec.error_text = `pass2: ${e?.message}`;
@@ -364,7 +365,7 @@ async function runOne(term: EvalTerm, profile: EvalProfile, runId: string) {
   try {
     calls.pass2_retry = await callOpus(
       { system: PASS2_SYSTEM_PROMPT, user: buildPass2UserMessage(term, pass3Candidate, profile, knownVocabulary), maxTokens: PERSONALIZE_MAX_TOKENS_PASS2 },
-      parseVerdict,
+      claimCheckedParser(pass3Candidate, parseVerdict),
     );
   } catch (e: any) {
     rec.error_text = `pass2-retry: ${e?.message}`;

@@ -1,0 +1,155 @@
+{
+  "purpose": "Fixed canonical term and fictional learner profile for each frozen synthetic challenge item, so a model verifier can be run on it. Written on 2026-11-01 before any model run. Labels and candidate text in heldout-v1.json are not changed.",
+  "rule": "Term chosen by the concept the sentence states. Profile chosen by the setting it names: hospital or nurse to nurse, pharmacy, prescription, dispensing, insurance or patient portal to pharmacist, otherwise teacher.",
+  "fit_meaning": {
+    "direct": "the sentence is about this term",
+    "nearest": "closest available term, the sentence is adjacent to it",
+    "none": "no term in the set covers the concept, verdicts on this item are confounded by the mismatch"
+  },
+  "items": [
+    {
+      "id": "heldout-01",
+      "term_id": "bi-rls",
+      "profile_id": "nurse",
+      "fit": "direct"
+    },
+    {
+      "id": "heldout-02",
+      "term_id": "bi-rls",
+      "profile_id": "pharmacist",
+      "fit": "direct"
+    },
+    {
+      "id": "heldout-03",
+      "term_id": "sys-jwt",
+      "profile_id": "pharmacist",
+      "fit": "direct"
+    },
+    {
+      "id": "heldout-04",
+      "term_id": "sec-oauth",
+      "profile_id": "pharmacist",
+      "fit": "direct"
+    },
+    {
+      "id": "heldout-05",
+      "term_id": "cloud-environment",
+      "profile_id": "pharmacist",
+      "fit": "direct"
+    },
+    {
+      "id": "heldout-06",
+      "term_id": "bi-rls",
+      "profile_id": "nurse",
+      "fit": "direct"
+    },
+    {
+      "id": "heldout-07",
+      "term_id": "sys-jwt",
+      "profile_id": "pharmacist",
+      "fit": "direct"
+    },
+    {
+      "id": "heldout-08",
+      "term_id": "sec-oauth",
+      "profile_id": "pharmacist",
+      "fit": "nearest"
+    },
+    {
+      "id": "heldout-09",
+      "term_id": "sec-mfa",
+      "profile_id": "teacher",
+      "fit": "direct"
+    },
+    {
+      "id": "heldout-10",
+      "term_id": "sys-jwt",
+      "profile_id": "teacher",
+      "fit": "direct"
+    },
+    {
+      "id": "heldout-11",
+      "term_id": "sys-http-response",
+      "profile_id": "teacher",
+      "fit": "none"
+    },
+    {
+      "id": "heldout-12",
+      "term_id": "aid-accuracy",
+      "profile_id": "pharmacist",
+      "fit": "none"
+    },
+    {
+      "id": "heldout-13",
+      "term_id": "bi-rls",
+      "profile_id": "teacher",
+      "fit": "direct"
+    },
+    {
+      "id": "heldout-14",
+      "term_id": "sys-jwt",
+      "profile_id": "teacher",
+      "fit": "direct"
+    },
+    {
+      "id": "heldout-15",
+      "term_id": "sec-oauth",
+      "profile_id": "teacher",
+      "fit": "direct"
+    },
+    {
+      "id": "heldout-16",
+      "term_id": "cloud-environment",
+      "profile_id": "teacher",
+      "fit": "direct"
+    },
+    {
+      "id": "heldout-17",
+      "term_id": "web-status-code",
+      "profile_id": "pharmacist",
+      "fit": "nearest"
+    },
+    {
+      "id": "heldout-18",
+      "term_id": "cloud-alert",
+      "profile_id": "nurse",
+      "fit": "direct"
+    },
+    {
+      "id": "heldout-19",
+      "term_id": "bi-rls",
+      "profile_id": "nurse",
+      "fit": "direct"
+    },
+    {
+      "id": "heldout-20",
+      "term_id": "sys-jwt",
+      "profile_id": "pharmacist",
+      "fit": "direct"
+    },
+    {
+      "id": "heldout-21",
+      "term_id": "bi-rls",
+      "profile_id": "nurse",
+      "fit": "direct"
+    },
+    {
+      "id": "heldout-22",
+      "term_id": "sec-oauth",
+      "profile_id": "pharmacist",
+      "fit": "nearest"
+    },
+    {
+      "id": "heldout-23",
+      "term_id": "cloud-environment",
+      "profile_id": "pharmacist",
+      "fit": "direct"
+    },
+    {
+      "id": "heldout-24",
+      "term_id": "sec-secret",
+      "profile_id": "pharmacist",
+      "fit": "nearest"
+    }
+  ]
+}

@@ -18,44 +18,17 @@ Software and AI vocabulary moves faster than anyone can look it up. People in ad
 - **Guided programs.** A multi-module course (currently an eight-module agentic-era track) layered on the same term engine.
 - **Feedback loop.** Learners can report a bad analogy or ask a question inside a lesson; reports are stored for review.
 
-## How the AI parts work
+![Synthetic learner flow in a light presentation palette](docs/media/learner-flow-light-1440x900.png)
 
-All model calls run server-side in Supabase Edge Functions (`supabase/functions/`). The browser never holds an API key. Every function checks the caller's Supabase JWT and an `allowed_users` table before it spends anything. Monthly per-user and global spend ceilings are enforced from logged costs, and when a cap is hit or a call fails, the app returns a canonical (non-personalized) answer instead of an error.
+Synthetic fixture, with capture-only light tokens. The app currently ships a dark palette. [Capture method and mobile views](docs/media/README.md).
 
-- **`personalize-term`** writes a personalized version of a term for one user. Pass 1 generates a candidate with Claude from the canonical entry plus the user's profile. Pass 2 is a separate verifier call that checks the candidate against pass/fail criteria, including that the technical fact is preserved and that any analogy is accurate on both sides. On failure it regenerates once with the verifier's objection, re-verifies, and otherwise falls back to the canonical text. Passing results are cached per user and term.
-- **`grade-sentence`** grades a learner's sentence as pass, partial, or fail with feedback. It has a defined fallback if the model call fails.
-- **`ingest-terms`** is a weekly cron-triggered pipeline that proposes new terms. Claude Sonnet drafts candidates weighted toward under-covered paths. Claude Opus verifies accuracy, then relevance to the domain goals. Claude Haiku independently rewrites the one-line definition with no context, and an OpenAI embedding comparison (cosine similarity at or above 0.85) confirms it agrees with the drafted definition before a term is accepted.
-- **`generate-term-etymology`** writes the "why it's called that" note with the same generate, verify, retry-once pattern.
-- **`compose-gift-profile`** turns a free-text description of a person into a draft profile with a self-check pass. The sender reviews and edits everything.
-- **`generate-job-followup`** asks one clarifying question with a few chip options after a user types their job.
-- **`answer-lesson-question`** answers questions asked during a lesson.
-- **`pick-lived-icons`** and **`generate-lived-icon-image`** choose motifs from a profile and generate a badge image (Claude for motifs, Gemini for the image), capped per user per day.
-- **`report-analogy-issue`** stores a learner's complaint about an analogy and clears the cached rendering.
+## Verifier follow-up
 
-Two design rules recur: bounded retries (at most one regeneration, each call wrapped in an `AbortController` timeout), and degrade-to-canonical on any failure. Prompts and pricing constants live in the function files, so the behavior is auditable in one place. For `personalize-term` they are in `supabase/functions/personalize-term/prompts.ts`, which the offline eval imports directly.
+The original verifier accepted five explanations that Kevin Madden, PharmD, confirmed were wrong. A new deterministic check holds unsupported clinical access and credential claims and a staging contradiction for rewriting. Replaying the 78 saved acceptances holds all five known errors and seven additional outputs. Kevin reviewed those seven on November 1, 2026 and judged all seven correct. So the check held seven correct explanations for every five errors it caught, and that lost personalization is the price of the rule.
 
-The `personalize-term` pipeline:
+On a new frozen 24-item synthetic challenge, the added rule misses four of twelve incorrect examples and rejects four of twelve correct ones. That comparison tests the rule alone. No fresh LLM before/after run was performed because this job prohibits paid API calls. The historical result is unchanged, and these numbers are not an overall accuracy claim.
 
-```mermaid
-flowchart TD
-    A["POST termId"] --> B{"JWT valid and<br/>user allowlisted?"}
-    B -- no --> X["401 / 403"]
-    B -- yes --> C["Load canonical term, profile,<br/>learned vocabulary"]
-    C --> D{"Profile on and<br/>under spend cap?"}
-    D -- no --> F["Return canonical text"]
-    D -- yes --> P1["Pass 1: generate candidate"]
-    P1 --> V1{"Pass 2: verifier,<br/>8 pass/fail criteria"}
-    V1 -- all pass --> S["Cache per user and term,<br/>return personalized text"]
-    V1 -- any fail --> P3["Pass 3: regenerate with<br/>the failed criteria"]
-    P3 --> V2{"Pass 2 again"}
-    V2 -- all pass --> S
-    V2 -- any fail --> F
-    P1 -. "error, timeout,<br/>unparseable" .-> F
-    V1 -.-> F
-    P3 -.-> F
-    S --> L[("personalize_log row")]
-    F --> L
-```
+Read the [method, all misses, false rejections and clinical-summary implications](docs/evaluation/verifier-upgrade.md). Expert review is complete. The implementation is still pending a model comparison before release. A [free local-model comparison](docs/evaluation/local-model-comparison.md) is ready to run but has not been run, and its results will be indicative only.
 
 ## Evaluation
 
@@ -101,6 +74,45 @@ node eval/build-dataset.mjs                      # rebuilds eval/data/terms.json
 export ANTHROPIC_API_KEY=...                     # read from your secret store; never written to disk
 EVAL_DATE=2026-10-30 node eval/run-personalize-eval.ts   # Node 23.6+; resumes from an existing results file
 node eval/summarize.mjs 2026-10-30               # writes eval/results/2026-10-30-summary.md
+```
+
+## How the AI parts work
+
+All model calls run server-side in Supabase Edge Functions (`supabase/functions/`). The browser never holds an API key. Every function checks the caller's Supabase JWT and an `allowed_users` table before it spends anything. Monthly per-user and global spend ceilings are enforced from logged costs, and when a cap is hit or a call fails, the app returns a canonical (non-personalized) answer instead of an error.
+
+- **`personalize-term`** writes a personalized version of a term for one user. Pass 1 generates a candidate with Claude from the canonical entry plus the user's profile. Pass 2 is a separate verifier call that checks the candidate against pass/fail criteria, including that the technical fact is preserved and that any analogy is accurate on both sides. A deterministic claim check can also reject a candidate regardless of the model verdict. On failure it regenerates once with the verifier's objection, re-verifies, and otherwise falls back to the canonical text. Passing results are cached per user and term.
+- **`grade-sentence`** grades a learner's sentence as pass, partial, or fail with feedback. It has a defined fallback if the model call fails.
+- **`ingest-terms`** is a weekly cron-triggered pipeline that proposes new terms. Claude Sonnet drafts candidates weighted toward under-covered paths. Claude Opus verifies accuracy, then relevance to the domain goals. Claude Haiku independently rewrites the one-line definition with no context, and an OpenAI embedding comparison (cosine similarity at or above 0.85) confirms it agrees with the drafted definition before a term is accepted.
+- **`generate-term-etymology`** writes the "why it's called that" note with the same generate, verify, retry-once pattern.
+- **`compose-gift-profile`** turns a free-text description of a person into a draft profile with a self-check pass. The sender reviews and edits everything.
+- **`generate-job-followup`** asks one clarifying question with a few chip options after a user types their job.
+- **`answer-lesson-question`** answers questions asked during a lesson.
+- **`pick-lived-icons`** and **`generate-lived-icon-image`** choose motifs from a profile and generate a badge image (Claude for motifs, Gemini for the image), capped per user per day.
+- **`report-analogy-issue`** stores a learner's complaint about an analogy and clears the cached rendering.
+
+Two design rules recur: bounded retries (at most one regeneration, each call wrapped in an `AbortController` timeout), and degrade-to-canonical on any failure. Prompts and pricing constants live in the function files, so the behavior is auditable in one place. For `personalize-term` they are in `supabase/functions/personalize-term/prompts.ts`, which the offline eval imports directly.
+
+The `personalize-term` pipeline:
+
+```mermaid
+flowchart TD
+    A["POST termId"] --> B{"JWT valid and<br/>user allowlisted?"}
+    B -- no --> X["401 / 403"]
+    B -- yes --> C["Load canonical term, profile,<br/>learned vocabulary"]
+    C --> D{"Profile on and<br/>under spend cap?"}
+    D -- no --> F["Return canonical text"]
+    D -- yes --> P1["Pass 1: generate candidate"]
+    P1 --> V1{"Pass 2: model verifier<br/>plus claim check"}
+    V1 -- all pass --> S["Cache per user and term,<br/>return personalized text"]
+    V1 -- any fail --> P3["Pass 3: regenerate with<br/>the failed criteria"]
+    P3 --> V2{"Pass 2 again"}
+    V2 -- all pass --> S
+    V2 -- any fail --> F
+    P1 -. "error, timeout,<br/>unparseable" .-> F
+    V1 -.-> F
+    P3 -.-> F
+    S --> L[("personalize_log row")]
+    F --> L
 ```
 
 ## Stack

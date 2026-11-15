@@ -1,0 +1,654 @@
+{
+  "method": "Expert labels joined to the unchanged deterministic policy replay. No new model verdicts or regeneration. Expert labels and policy decisions are separate fields.",
+  "replay_source": "eval/results/claim-check-replay-v1.json",
+  "replay_historical_sha256": "04bab18eddd9f57d8594f6d482661a31521b1f3c84ae6194601fbde63e5a92a3",
+  "label_sources": [
+    "eval/data/expert-confirmed-misses.json",
+    "eval/data/expert-adjudication-2026-11-01.json"
+  ],
+  "limits": [
+    "Expert labels cover only the 12 held outputs. The 66 unchanged acceptances are not expert adjudicated, so errors among them are unknown.",
+    "A hold triggers one regeneration and then canonical fallback. Whether regeneration would have kept useful personalization for the seven false holds is not measured.",
+    "One historical run of 79 items. Counts, not rates, are the evidence."
+  ],
+  "summary": {
+    "accepted_outputs": 78,
+    "expert_labeled": 12,
+    "expert_incorrect": 5,
+    "expert_correct": 7,
+    "policy_holds": 12,
+    "holds_unlabeled": 0,
+    "original_false_acceptances": 5,
+    "original_false_holds": 0,
+    "policy_errors_caught": 5,
+    "policy_false_acceptances": 0,
+    "policy_false_holds": 7,
+    "accepted_unlabeled": 66
+  },
+  "rows": [
+    {
+      "id": "aid-ai::teacher",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "aid-ai::pharmacist",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "aid-ai::nurse",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "bi-calculated-column::teacher",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "bi-calculated-column::nurse",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "bi-calculated-column::pharmacist",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "sec-attack-surface::nurse",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "sec-attack-surface::pharmacist",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "sec-attack-surface::teacher",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "sys-cookie::nurse",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "sys-cookie::teacher",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "sys-cookie::pharmacist",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "cloud-alert::nurse",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "cloud-alert::pharmacist",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "cloud-alert::teacher",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "aid-parameters::pharmacist",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "aid-parameters::nurse",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "aid-parameters::teacher",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "bi-rls::pharmacist",
+      "expert_label": "incorrect",
+      "expert_reviewer": "Kevin Madden, PharmD",
+      "expert_date": null,
+      "policy_decision": "hold",
+      "outcome": "error caught"
+    },
+    {
+      "id": "bi-rls::teacher",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "bi-rls::nurse",
+      "expert_label": "incorrect",
+      "expert_reviewer": "Kevin Madden, PharmD",
+      "expert_date": null,
+      "policy_decision": "hold",
+      "outcome": "error caught"
+    },
+    {
+      "id": "sec-encryption::nurse",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "sec-encryption::pharmacist",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "sec-encryption::teacher",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "sys-http-header::pharmacist",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "sys-http-header::teacher",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "sys-http-header::nurse",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "cloud-autoscaling::pharmacist",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "cloud-autoscaling::nurse",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "cloud-autoscaling::teacher",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "ai-agent::pharmacist",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "ai-agent::nurse",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "ai-agent::teacher",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "excel-pivot-table::pharmacist",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "excel-pivot-table::nurse",
+      "expert_label": "correct",
+      "expert_reviewer": "Kevin Madden, PharmD",
+      "expert_date": "2026-11-01",
+      "policy_decision": "hold",
+      "outcome": "false hold"
+    },
+    {
+      "id": "sec-mfa::pharmacist",
+      "expert_label": "correct",
+      "expert_reviewer": "Kevin Madden, PharmD",
+      "expert_date": "2026-11-01",
+      "policy_decision": "hold",
+      "outcome": "false hold"
+    },
+    {
+      "id": "excel-pivot-table::teacher",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "sec-mfa::nurse",
+      "expert_label": "correct",
+      "expert_reviewer": "Kevin Madden, PharmD",
+      "expert_date": "2026-11-01",
+      "policy_decision": "hold",
+      "outcome": "false hold"
+    },
+    {
+      "id": "sec-mfa::teacher",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "sys-http-response::nurse",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "sys-http-response::pharmacist",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "cloud-cdn::pharmacist",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "cloud-cdn::nurse",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "sys-http-response::teacher",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "cloud-cdn::teacher",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "ai-llm::nurse",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "ai-llm::pharmacist",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "ai-llm::teacher",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "fabric-data-pipeline::nurse",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "fabric-data-pipeline::pharmacist",
+      "expert_label": "correct",
+      "expert_reviewer": "Kevin Madden, PharmD",
+      "expert_date": "2026-11-01",
+      "policy_decision": "hold",
+      "outcome": "false hold"
+    },
+    {
+      "id": "fabric-data-pipeline::teacher",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "sec-oauth::nurse",
+      "expert_label": "correct",
+      "expert_reviewer": "Kevin Madden, PharmD",
+      "expert_date": "2026-11-01",
+      "policy_decision": "hold",
+      "outcome": "false hold"
+    },
+    {
+      "id": "sec-oauth::pharmacist",
+      "expert_label": "incorrect",
+      "expert_reviewer": "Kevin Madden, PharmD",
+      "expert_date": null,
+      "policy_decision": "hold",
+      "outcome": "error caught"
+    },
+    {
+      "id": "sec-oauth::teacher",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "sys-jwt::nurse",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "sys-jwt::pharmacist",
+      "expert_label": "incorrect",
+      "expert_reviewer": "Kevin Madden, PharmD",
+      "expert_date": null,
+      "policy_decision": "hold",
+      "outcome": "error caught"
+    },
+    {
+      "id": "cloud-deploy::nurse",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "cloud-deploy::pharmacist",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "sys-jwt::teacher",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "cloud-deploy::teacher",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "aid-accuracy::nurse",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "aid-accuracy::pharmacist",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "data-backfill::nurse",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "data-backfill::teacher",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "data-backfill::pharmacist",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "sec-rbac::nurse",
+      "expert_label": "correct",
+      "expert_reviewer": "Kevin Madden, PharmD",
+      "expert_date": "2026-11-01",
+      "policy_decision": "hold",
+      "outcome": "false hold"
+    },
+    {
+      "id": "sec-rbac::pharmacist",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "sec-rbac::teacher",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "sys-payload::nurse",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "sys-payload::pharmacist",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "sys-payload::teacher",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "cloud-environment::nurse",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "cloud-environment::pharmacist",
+      "expert_label": "incorrect",
+      "expert_reviewer": "Kevin Madden, PharmD",
+      "expert_date": null,
+      "policy_decision": "hold",
+      "outcome": "error caught"
+    },
+    {
+      "id": "cloud-environment::teacher",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "aid-hallucination::nurse",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "aid-hallucination::pharmacist",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "aid-hallucination::teacher",
+      "expert_label": "not expert adjudicated",
+      "expert_reviewer": null,
+      "expert_date": null,
+      "policy_decision": "unchanged acceptance",
+      "outcome": "accepted, unlabeled"
+    },
+    {
+      "id": "data-join::nurse",
+      "expert_label": "correct",
+      "expert_reviewer": "Kevin Madden, PharmD",
+      "expert_date": "2026-11-01",
+      "policy_decision": "hold",
+      "outcome": "false hold"
+    }
+  ]
+}

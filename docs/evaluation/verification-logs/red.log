@@ -1,0 +1,109 @@
+
+> jargon@0.5.3 test
+> vitest run src/lib/personalize-claim-check.test.ts
+
+
+ RUN  v4.1.12 <repo>
+
+ ❯ src/lib/personalize-claim-check.test.ts (7 tests | 6 failed) 14ms
+     × rejects the saved expert-confirmed miss bi-rls::nurse even when the model passes 6ms
+     × rejects the saved expert-confirmed miss cloud-environment::pharmacist even when the model passes 1ms
+     × rejects the saved expert-confirmed miss bi-rls::pharmacist even when the model passes 1ms
+     × rejects the saved expert-confirmed miss sys-jwt::pharmacist even when the model passes 1ms
+     × rejects the saved expert-confirmed miss sec-oauth::pharmacist even when the model passes 1ms
+     × checks all fields so a risky example cannot hide behind a correct definition 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/lib/personalize-claim-check.test.ts > supplemental candidate claim check > rejects the saved expert-confirmed miss bi-rls::nurse even when the model passes
+AssertionError: bi-rls::nurse: expected 'pass' to be 'fail' // Object.is equality
+
+Expected: "fail"
+Received: "pass"
+
+ ❯ src/lib/personalize-claim-check.test.ts:20:32
+     18|     expect(original.overall).toBe('pass')
+     19|     const result = applyClaimCheck(candidate, original)
+     20|     expect(result.overall, id).toBe('fail')
+       |                                ^
+     21|     expect(buildFailedCriteriaBlock(result)).toContain('claim check')
+     22|     expect(original.overall, 'does not mutate historical model verdict…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  src/lib/personalize-claim-check.test.ts > supplemental candidate claim check > rejects the saved expert-confirmed miss cloud-environment::pharmacist even when the model passes
+AssertionError: cloud-environment::pharmacist: expected 'pass' to be 'fail' // Object.is equality
+
+Expected: "fail"
+Received: "pass"
+
+ ❯ src/lib/personalize-claim-check.test.ts:20:32
+     18|     expect(original.overall).toBe('pass')
+     19|     const result = applyClaimCheck(candidate, original)
+     20|     expect(result.overall, id).toBe('fail')
+       |                                ^
+     21|     expect(buildFailedCriteriaBlock(result)).toContain('claim check')
+     22|     expect(original.overall, 'does not mutate historical model verdict…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  src/lib/personalize-claim-check.test.ts > supplemental candidate claim check > rejects the saved expert-confirmed miss bi-rls::pharmacist even when the model passes
+AssertionError: bi-rls::pharmacist: expected 'pass' to be 'fail' // Object.is equality
+
+Expected: "fail"
+Received: "pass"
+
+ ❯ src/lib/personalize-claim-check.test.ts:20:32
+     18|     expect(original.overall).toBe('pass')
+     19|     const result = applyClaimCheck(candidate, original)
+     20|     expect(result.overall, id).toBe('fail')
+       |                                ^
+     21|     expect(buildFailedCriteriaBlock(result)).toContain('claim check')
+     22|     expect(original.overall, 'does not mutate historical model verdict…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  src/lib/personalize-claim-check.test.ts > supplemental candidate claim check > rejects the saved expert-confirmed miss sys-jwt::pharmacist even when the model passes
+AssertionError: sys-jwt::pharmacist: expected 'pass' to be 'fail' // Object.is equality
+
+Expected: "fail"
+Received: "pass"
+
+ ❯ src/lib/personalize-claim-check.test.ts:20:32
+     18|     expect(original.overall).toBe('pass')
+     19|     const result = applyClaimCheck(candidate, original)
+     20|     expect(result.overall, id).toBe('fail')
+       |                                ^
+     21|     expect(buildFailedCriteriaBlock(result)).toContain('claim check')
+     22|     expect(original.overall, 'does not mutate historical model verdict…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  src/lib/personalize-claim-check.test.ts > supplemental candidate claim check > rejects the saved expert-confirmed miss sec-oauth::pharmacist even when the model passes
+AssertionError: sec-oauth::pharmacist: expected 'pass' to be 'fail' // Object.is equality
+
+Expected: "fail"
+Received: "pass"
+
+ ❯ src/lib/personalize-claim-check.test.ts:20:32
+     18|     expect(original.overall).toBe('pass')
+     19|     const result = applyClaimCheck(candidate, original)
+     20|     expect(result.overall, id).toBe('fail')
+       |                                ^
+     21|     expect(buildFailedCriteriaBlock(result)).toContain('claim check')
+     22|     expect(original.overall, 'does not mutate historical model verdict…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  src/lib/personalize-claim-check.test.ts > supplemental candidate claim check > checks all fields so a risky example cannot hide behind a correct definition
+AssertionError: expected 0 to be greater than 0
+ ❯ src/lib/personalize-claim-check.test.ts:35:52
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 1 passed (7)
+   Start at  18:53:25
+   Duration  431ms (transform 49ms, setup 43ms, import 49ms, tests 14ms, environment 215ms)
