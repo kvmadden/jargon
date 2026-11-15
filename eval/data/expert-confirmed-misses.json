@@ -1,0 +1,13 @@
+{
+  "label": "incorrect",
+  "reviewer": "Kevin Madden, PharmD",
+  "provenance": "The dispatcher brief dated 2026-10-31 states that Kevin reviewed and confirmed the five errors flagged after the original run. This records that supplied confirmation, not a new review session.",
+  "scope": "Only these five final accepted outputs. No correctness label is assigned to the other 73 acceptances.",
+  "run_ids": [
+    "bi-rls::nurse",
+    "cloud-environment::pharmacist",
+    "bi-rls::pharmacist",
+    "sys-jwt::pharmacist",
+    "sec-oauth::pharmacist"
+  ]
+}

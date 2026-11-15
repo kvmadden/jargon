@@ -25,6 +25,7 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
+      input: { app: path.resolve(__dirname, 'index.html'), evaluation: path.resolve(__dirname, 'evaluation.html') },
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {

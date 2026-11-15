@@ -1,0 +1,49 @@
+
+> jargon@0.5.3 pre-deploy
+> npm run test:pre-deploy-auth-gate && node scripts/pre-deploy.mjs
+
+
+> jargon@0.5.3 test:pre-deploy-auth-gate
+> node --test scripts/pre-deploy-auth-gate.test.mjs
+
+✔ delete-account is allowlist-exempt but remains JWT-gated (13.689542ms)
+✔ the delete-account exemption never excuses a missing JWT check (1.445792ms)
+✔ ordinary user-facing functions still require both JWT and allowlist checks (0.479083ms)
+✔ JWT-exempt functions must retain service-role bearer authentication (4.4055ms)
+✔ the real ingest function has a fail-closed exact service-role guard (36.412417ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 883.613
+
+→ build (tsc + vite)
+  ✓ build clean
+
+→ vitest
+  ✓ 1118/1118 tests passed
+
+→ PROMPT_VERSION sync (client ↔ Edge Function)
+  ✓ both at 10
+
+→ cloud-migration numbering (no gaps)
+  ✓ 2…87 (86 migrations, no gaps)
+
+→ banned patterns (Promise.race in Anthropic call paths, hardcoded email)
+  ✓ Edge Functions scanned
+
+→ auth gate (JWT + isAllowlisted) in every Edge Function
+  ✓ 16 Edge Functions checked
+
+→ domain registry sync (TS ↔ Deno: vocabulary, goals, paths)
+  ✓ 2 domain(s) keyed in all 4 Deno lookups (vocab + goals + paths + groups)
+  ✓ content drift gated upstream by gate-2 (vitest)
+
+→ console.log scan (production src/ + Edge Functions)
+  ✓ no console.log in src/ or supabase/functions/
+
+
+✓ ready to deploy.

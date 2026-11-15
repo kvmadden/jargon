@@ -1,0 +1,12 @@
+
+> jargon@0.5.3 test
+> vitest run src/lib/streak-freeze.test.ts src/App.test.tsx src/lib/personalize-claim-check.test.ts src/lib/prompt-version-sync.test.ts src/lib/evaluation-review.test.ts src/evaluation/review.test.tsx
+
+
+ RUN  v4.1.12 <repo>
+
+
+ Test Files  6 passed (6)
+      Tests  20 passed (20)
+   Start at  02:49:06
+   Duration  5.64s (transform 3.28s, setup 1.03s, import 4.31s, tests 852ms, environment 12.82s)

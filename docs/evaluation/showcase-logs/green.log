@@ -1,0 +1,12 @@
+
+> jargon@0.5.3 test
+> vitest run src/lib/evaluation-review.test.ts src/evaluation/review.test.tsx
+
+
+ RUN  v4.1.12 <repo>
+
+
+ Test Files  2 passed (2)
+      Tests  4 passed (4)
+   Start at  19:26:56
+   Duration  485ms (transform 122ms, setup 85ms, import 81ms, tests 108ms, environment 413ms)

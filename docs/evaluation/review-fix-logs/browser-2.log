@@ -1,0 +1,1212 @@
+
+> jargon@0.5.3 test:e2e
+> playwright test --reporter=line
+
+[WebServer] (node:31169) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Running 98 tests using 1 worker
+
+(node:31229) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/98] [iphone-14] › tests/e2e/auth.spec.ts:45:3 › splash screen › renders wordmark and tagline
+[WebServer] 2:49:24 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[2/98] [iphone-14] › tests/e2e/auth.spec.ts:52:3 › splash screen › send button is enabled by default (no disabling before email entered)
+[WebServer] 2:49:25 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[3/98] [iphone-14] › tests/e2e/auth.spec.ts:64:3 › allowlist enforcement › signed-in non-allowlisted user shows invite-only screen
+[WebServer] 2:49:26 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[4/98] [iphone-14] › tests/e2e/auth.spec.ts:134:3 › allowlist enforcement › invite-only screen has a "go back" link that resets to idle
+[WebServer] 2:49:27 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[5/98] [iphone-14] › tests/e2e/auth.spec.ts:217:3 › magic link send flow › Owner email → button shows "sending…" then "check your email"
+[WebServer] 2:49:28 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[6/98] [iphone-14] › tests/e2e/auth.spec.ts:231:3 › magic link send flow › email input is cleared / hidden after successful send
+[WebServer] 2:49:29 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[7/98] [iphone-14] › tests/e2e/auth.spec.ts:246:3 › auth error handling › Supabase OTP error shows error message on the form
+[WebServer] 2:49:30 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[8/98] [iphone-14] › tests/e2e/auth.spec.ts:268:3 › authenticated user redirect › user with valid session is redirected to home on splash visit
+[WebServer] 2:49:31 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[9/98] [iphone-14] › tests/e2e/feedback-loop.spec.ts:159:1 › participant reads a reply and saves a check-in answer
+[WebServer] 2:49:32 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[10/98] [iphone-14] › tests/e2e/feedback-loop.spec.ts:183:1 › global composer submits a categorized field note
+[WebServer] 2:49:34 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[11/98] [iphone-14] › tests/e2e/font-fixture.spec.ts:9:1 › the vendored IBM Plex faces resolve without touching the network
+[WebServer] 2:49:35 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[12/98] [iphone-14] › tests/e2e/guided-program.spec.ts:143:1 › accepted learner sees the complete, responsive course map
+[WebServer] 2:49:36 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[13/98] [iphone-14] › tests/e2e/guided-program.spec.ts:184:1 › course continuation opens a lesson from the first module
+[WebServer] 2:49:38 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[14/98] [iphone-14] › tests/e2e/lesson-loop.spec.ts:310:3 › home → path detail navigation › renders active path cards on home screen
+[iphone-14] › tests/e2e/lesson-loop.spec.ts:310:3 › home → path detail navigation › renders active path cards on home screen
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[WebServer] 2:49:39 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[15/98] [iphone-14] › tests/e2e/lesson-loop.spec.ts:322:3 › home → path detail navigation › tapping a path card navigates to path detail
+[iphone-14] › tests/e2e/lesson-loop.spec.ts:322:3 › home → path detail navigation › tapping a path card navigates to path detail
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[WebServer] 2:49:41 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[16/98] [iphone-14] › tests/e2e/lesson-loop.spec.ts:330:3 › home → path detail navigation › AI learners can open the seventh agentic-era path without overflow
+[iphone-14] › tests/e2e/lesson-loop.spec.ts:330:3 › home → path detail navigation › AI learners can open the seventh agentic-era path without overflow
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[WebServer] 2:49:42 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[17/98] [iphone-14] › tests/e2e/lesson-loop.spec.ts:376:3 › lesson runner: direct navigation guard › navigating to /lesson without an active lesson redirects to home
+[iphone-14] › tests/e2e/lesson-loop.spec.ts:376:3 › lesson runner: direct navigation guard › navigating to /lesson without an active lesson redirects to home
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[WebServer] 2:49:44 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[18/98] [iphone-14] › tests/e2e/lesson-loop.spec.ts:383:3 › lesson runner: full loop execution › can start a lesson and complete all cards correctly
+[iphone-14] › tests/e2e/lesson-loop.spec.ts:383:3 › lesson runner: full loop execution › can start a lesson and complete all cards correctly
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[WebServer] 2:49:44 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[19/98] [iphone-14] › tests/e2e/lesson-loop.spec.ts:462:3 › lesson runner: full loop execution › wrong answer feedback works correctly
+[iphone-14] › tests/e2e/lesson-loop.spec.ts:462:3 › lesson runner: full loop execution › wrong answer feedback works correctly
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[WebServer] 2:49:52 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[20/98] [iphone-14] › tests/e2e/lesson-loop.spec.ts:491:3 › lesson runner: full loop execution › now-use-it detour then reload resumes on the same card (no skip)
+[iphone-14] › tests/e2e/lesson-loop.spec.ts:491:3 › lesson runner: full loop execution › now-use-it detour then reload resumes on the same card (no skip)
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[WebServer] 2:49:54 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[WebServer] 2:49:55 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[21/98] [iphone-14] › tests/e2e/lesson-loop.spec.ts:532:3 › lesson runner: full loop execution › now-use-it on the final card is not pre-empted by a premature summary
+[iphone-14] › tests/e2e/lesson-loop.spec.ts:532:3 › lesson runner: full loop execution › now-use-it on the final card is not pre-empted by a premature summary
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[WebServer] 2:49:56 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[22/98] [iphone-14] › tests/e2e/quiz-cards.spec.ts:249:3 › quiz-card-mc › renders term name, pronunciation, and multiple choice options
+[iphone-14] › tests/e2e/quiz-cards.spec.ts:249:3 › quiz-card-mc › renders term name, pronunciation, and multiple choice options
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[WebServer] 2:50:03 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[23/98] [iphone-14] › tests/e2e/quiz-cards.spec.ts:268:3 › quiz-card-mc › correct option gets accent-jargon class when clicked
+[iphone-14] › tests/e2e/quiz-cards.spec.ts:268:3 › quiz-card-mc › correct option gets accent-jargon class when clicked
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[WebServer] 2:50:04 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[24/98] [iphone-14] › tests/e2e/quiz-cards.spec.ts:281:3 › quiz-card-mc › wrong option gets accent-triage class when clicked
+[iphone-14] › tests/e2e/quiz-cards.spec.ts:281:3 › quiz-card-mc › wrong option gets accent-triage class when clicked
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[WebServer] 2:50:06 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[25/98] [iphone-14] › tests/e2e/quiz-cards.spec.ts:298:3 › quiz-card-fill › renders blank sentence and options chips correctly
+[iphone-14] › tests/e2e/quiz-cards.spec.ts:298:3 › quiz-card-fill › renders blank sentence and options chips correctly
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[WebServer] 2:50:07 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[26/98] [iphone-14] › tests/e2e/quiz-cards.spec.ts:324:3 › quiz-card-fill › tapping correct chip fills the blank and highlights correct styling
+[iphone-14] › tests/e2e/quiz-cards.spec.ts:324:3 › quiz-card-fill › tapping correct chip fills the blank and highlights correct styling
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[WebServer] 2:50:09 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[27/98] [iphone-14] › tests/e2e/quiz-cards.spec.ts:348:3 › quiz-card-match › correct pairs highlighted with accent-jargon
+[iphone-14] › tests/e2e/quiz-cards.spec.ts:348:3 › quiz-card-match › correct pairs highlighted with accent-jargon
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[WebServer] 2:50:12 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[28/98] [iphone-14] › tests/e2e/quiz-cards.spec.ts:380:3 › quiz-card-sentence › textarea validation and character counters update as user types
+[iphone-14] › tests/e2e/quiz-cards.spec.ts:380:3 › quiz-card-sentence › textarea validation and character counters update as user types
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[WebServer] 2:50:14 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[29/98] [iphone-14] › tests/e2e/quiz-cards.spec.ts:419:3 › quiz-card-sentence › grader workflow: submit, grading spinner and result card display
+[iphone-14] › tests/e2e/quiz-cards.spec.ts:419:3 › quiz-card-sentence › grader workflow: submit, grading spinner and result card display
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[WebServer] 2:50:17 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[30/98] [iphone-14] › tests/e2e/quiz-cards.spec.ts:456:3 › quiz-card-sentence › navigating directly to /lesson renders nothing harmful without active lesson
+[iphone-14] › tests/e2e/quiz-cards.spec.ts:456:3 › quiz-card-sentence › navigating directly to /lesson renders nothing harmful without active lesson
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[WebServer] 2:50:20 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[31/98] [iphone-14] › tests/e2e/routes-flow.spec.ts:173:3 › auth-gated routes › unauthenticated user attempting to access /home is redirected to /
+[WebServer] 2:50:21 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[32/98] [iphone-14] › tests/e2e/routes-flow.spec.ts:178:3 › auth-gated routes › unauthenticated user attempting to access /settings is redirected to /
+[WebServer] 2:50:22 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[33/98] [iphone-14] › tests/e2e/routes-flow.spec.ts:183:3 › auth-gated routes › unauthenticated user attempting to access /review is redirected to /
+[WebServer] 2:50:23 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[34/98] [iphone-14] › tests/e2e/routes-flow.spec.ts:188:3 › auth-gated routes › public route /atlas is accessible without auth
+[WebServer] 2:50:24 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[35/98] [iphone-14] › tests/e2e/routes-flow.spec.ts:198:3 › vocabulary deep links and detail views › deep link to valid term /term/term-git-1 renders term details
+[WebServer] 2:50:25 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[36/98] [iphone-14] › tests/e2e/routes-flow.spec.ts:207:3 › vocabulary deep links and detail views › deep link to non-existent term renders "term not found" with back button
+[WebServer] 2:50:26 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[WebServer] 2:50:26 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[37/98] [iphone-14] › tests/e2e/routes-flow.spec.ts:220:3 › vocabulary deep links and detail views › deep link to invalid path /path/invalid-path renders "unknown path" fallback with back button
+[WebServer] 2:50:33 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[38/98] [iphone-14] › tests/e2e/routes-flow.spec.ts:235:3 › route empty and fallback states › /review displays honest empty state when 0 terms are due for review
+[WebServer] 2:50:34 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[39/98] [iphone-14] › tests/e2e/routes-flow.spec.ts:243:3 › route empty and fallback states › /mastered displays empty state when 0 terms are mastered
+[WebServer] 2:50:36 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[40/98] [iphone-14] › tests/e2e/routes-flow.spec.ts:251:3 › route empty and fallback states › /questions displays empty state when no lesson questions have been saved
+[WebServer] 2:50:36 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[41/98] [iphone-14] › tests/e2e/routes-flow.spec.ts:263:3 › route group navigation › navigation from /home to /settings and back
+[WebServer] 2:50:37 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[WebServer] 2:50:37 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[42/98] [iphone-14] › tests/e2e/routes-flow.spec.ts:277:3 › route group navigation › navigation from /home to /spotted paste mode
+[WebServer] 2:50:43 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+  1) [iphone-14] › tests/e2e/routes-flow.spec.ts:277:3 › route group navigation › navigation from /home to /spotted paste mode
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'spotted in the wild' })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('heading', { name: 'spotted in the wild' }) with timeout 5000ms
+      - waiting for getByRole('heading', { name: 'spotted in the wild' })
+
+
+      279 |     await page.goto('/spotted');
+      280 |
+    > 281 |     await expect(page.getByRole('heading', { name: 'spotted in the wild' })).toBeVisible();
+          |                                                                              ^
+      282 |     await expect(page.getByPlaceholder(/paste a claude code transcript/i)).toBeVisible();
+      283 |   });
+      284 | });
+        at <repo>/tests/e2e/routes-flow.spec.ts:281:78
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/routes-flow-route-group-na-7412a--home-to-spotted-paste-mode-iphone-14/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/routes-flow-route-group-na-7412a--home-to-spotted-paste-mode-iphone-14/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/routes-flow-route-group-na-7412a--home-to-spotted-paste-mode-iphone-14/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/routes-flow-route-group-na-7412a--home-to-spotted-paste-mode-iphone-14/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:32858) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[43/98] [iphone-14] › tests/e2e/streak.spec.ts:167:3 › profile: route guard › unauthenticated user visiting /profile is redirected to splash
+[iphone-14] › tests/e2e/streak.spec.ts:167:3 › profile: route guard › unauthenticated user visiting /profile is redirected to splash
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[WebServer] 2:50:51 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[44/98] [iphone-14] › tests/e2e/streak.spec.ts:178:3 › profile: streak counter › shows current streak count from streak_log
+[iphone-14] › tests/e2e/streak.spec.ts:178:3 › profile: streak counter › shows current streak count from streak_log
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[WebServer] 2:50:52 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[45/98] [iphone-14] › tests/e2e/streak.spec.ts:196:3 › profile: streak counter › shows 0 streak when no lessons logged
+[iphone-14] › tests/e2e/streak.spec.ts:196:3 › profile: streak counter › shows 0 streak when no lessons logged
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[WebServer] 2:50:53 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[46/98] [iphone-14] › tests/e2e/streak.spec.ts:209:3 › streak freeze sheet › sheet appears on home when gap >= 2 and freezes are sufficient
+[iphone-14] › tests/e2e/streak.spec.ts:209:3 › streak freeze sheet › sheet appears on home when gap >= 2 and freezes are sufficient
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[WebServer] 2:50:54 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[47/98] [iphone-14] › tests/e2e/streak.spec.ts:233:3 › streak freeze sheet › plural singular check: "day" copy when gap = 2
+[iphone-14] › tests/e2e/streak.spec.ts:233:3 › streak freeze sheet › plural singular check: "day" copy when gap = 2
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[WebServer] 2:50:55 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+(node:33093) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[48/98] [iphone-16-pro-max] › tests/e2e/auth.spec.ts:45:3 › splash screen › renders wordmark and tagline
+[WebServer] 2:50:58 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[49/98] [iphone-16-pro-max] › tests/e2e/auth.spec.ts:52:3 › splash screen › send button is enabled by default (no disabling before email entered)
+[WebServer] 2:50:59 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[50/98] [iphone-16-pro-max] › tests/e2e/auth.spec.ts:64:3 › allowlist enforcement › signed-in non-allowlisted user shows invite-only screen
+[WebServer] 2:50:59 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[51/98] [iphone-16-pro-max] › tests/e2e/auth.spec.ts:134:3 › allowlist enforcement › invite-only screen has a "go back" link that resets to idle
+[WebServer] 2:51:00 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[52/98] [iphone-16-pro-max] › tests/e2e/auth.spec.ts:217:3 › magic link send flow › Owner email → button shows "sending…" then "check your email"
+[WebServer] 2:51:01 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[53/98] [iphone-16-pro-max] › tests/e2e/auth.spec.ts:231:3 › magic link send flow › email input is cleared / hidden after successful send
+[WebServer] 2:51:02 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[54/98] [iphone-16-pro-max] › tests/e2e/auth.spec.ts:246:3 › auth error handling › Supabase OTP error shows error message on the form
+[WebServer] 2:51:03 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[55/98] [iphone-16-pro-max] › tests/e2e/auth.spec.ts:268:3 › authenticated user redirect › user with valid session is redirected to home on splash visit
+[WebServer] 2:51:04 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[56/98] [iphone-16-pro-max] › tests/e2e/feedback-loop.spec.ts:159:1 › participant reads a reply and saves a check-in answer
+[WebServer] 2:51:04 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[57/98] [iphone-16-pro-max] › tests/e2e/feedback-loop.spec.ts:183:1 › global composer submits a categorized field note
+[WebServer] 2:51:05 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[58/98] [iphone-16-pro-max] › tests/e2e/font-fixture.spec.ts:9:1 › the vendored IBM Plex faces resolve without touching the network
+[WebServer] 2:51:07 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[59/98] [iphone-16-pro-max] › tests/e2e/guided-program.spec.ts:143:1 › accepted learner sees the complete, responsive course map
+[WebServer] 2:51:08 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[60/98] [iphone-16-pro-max] › tests/e2e/guided-program.spec.ts:184:1 › course continuation opens a lesson from the first module
+[WebServer] 2:51:10 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[61/98] [iphone-16-pro-max] › tests/e2e/lesson-loop.spec.ts:310:3 › home → path detail navigation › renders active path cards on home screen
+[iphone-16-pro-max] › tests/e2e/lesson-loop.spec.ts:310:3 › home → path detail navigation › renders active path cards on home screen
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[WebServer] 2:51:11 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[62/98] [iphone-16-pro-max] › tests/e2e/lesson-loop.spec.ts:322:3 › home → path detail navigation › tapping a path card navigates to path detail
+[iphone-16-pro-max] › tests/e2e/lesson-loop.spec.ts:322:3 › home → path detail navigation › tapping a path card navigates to path detail
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[WebServer] 2:51:12 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[63/98] [iphone-16-pro-max] › tests/e2e/lesson-loop.spec.ts:330:3 › home → path detail navigation › AI learners can open the seventh agentic-era path without overflow
+[iphone-16-pro-max] › tests/e2e/lesson-loop.spec.ts:330:3 › home → path detail navigation › AI learners can open the seventh agentic-era path without overflow
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[WebServer] 2:51:14 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[64/98] [iphone-16-pro-max] › tests/e2e/lesson-loop.spec.ts:376:3 › lesson runner: direct navigation guard › navigating to /lesson without an active lesson redirects to home
+[iphone-16-pro-max] › tests/e2e/lesson-loop.spec.ts:376:3 › lesson runner: direct navigation guard › navigating to /lesson without an active lesson redirects to home
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[WebServer] 2:51:16 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[65/98] [iphone-16-pro-max] › tests/e2e/lesson-loop.spec.ts:383:3 › lesson runner: full loop execution › can start a lesson and complete all cards correctly
+[iphone-16-pro-max] › tests/e2e/lesson-loop.spec.ts:383:3 › lesson runner: full loop execution › can start a lesson and complete all cards correctly
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[WebServer] 2:51:17 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[66/98] [iphone-16-pro-max] › tests/e2e/lesson-loop.spec.ts:462:3 › lesson runner: full loop execution › wrong answer feedback works correctly
+[iphone-16-pro-max] › tests/e2e/lesson-loop.spec.ts:462:3 › lesson runner: full loop execution › wrong answer feedback works correctly
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[WebServer] 2:51:24 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[67/98] [iphone-16-pro-max] › tests/e2e/lesson-loop.spec.ts:491:3 › lesson runner: full loop execution › now-use-it detour then reload resumes on the same card (no skip)
+[iphone-16-pro-max] › tests/e2e/lesson-loop.spec.ts:491:3 › lesson runner: full loop execution › now-use-it detour then reload resumes on the same card (no skip)
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[WebServer] 2:51:25 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[WebServer] 2:51:26 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[68/98] [iphone-16-pro-max] › tests/e2e/lesson-loop.spec.ts:532:3 › lesson runner: full loop execution › now-use-it on the final card is not pre-empted by a premature summary
+[iphone-16-pro-max] › tests/e2e/lesson-loop.spec.ts:532:3 › lesson runner: full loop execution › now-use-it on the final card is not pre-empted by a premature summary
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[WebServer] 2:51:26 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[69/98] [iphone-16-pro-max] › tests/e2e/quiz-cards.spec.ts:249:3 › quiz-card-mc › renders term name, pronunciation, and multiple choice options
+[iphone-16-pro-max] › tests/e2e/quiz-cards.spec.ts:249:3 › quiz-card-mc › renders term name, pronunciation, and multiple choice options
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[WebServer] 2:51:33 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[70/98] [iphone-16-pro-max] › tests/e2e/quiz-cards.spec.ts:268:3 › quiz-card-mc › correct option gets accent-jargon class when clicked
+[iphone-16-pro-max] › tests/e2e/quiz-cards.spec.ts:268:3 › quiz-card-mc › correct option gets accent-jargon class when clicked
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[WebServer] 2:51:35 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[71/98] [iphone-16-pro-max] › tests/e2e/quiz-cards.spec.ts:281:3 › quiz-card-mc › wrong option gets accent-triage class when clicked
+[iphone-16-pro-max] › tests/e2e/quiz-cards.spec.ts:281:3 › quiz-card-mc › wrong option gets accent-triage class when clicked
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[WebServer] 2:51:36 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[72/98] [iphone-16-pro-max] › tests/e2e/quiz-cards.spec.ts:298:3 › quiz-card-fill › renders blank sentence and options chips correctly
+[iphone-16-pro-max] › tests/e2e/quiz-cards.spec.ts:298:3 › quiz-card-fill › renders blank sentence and options chips correctly
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[WebServer] 2:51:39 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[73/98] [iphone-16-pro-max] › tests/e2e/quiz-cards.spec.ts:324:3 › quiz-card-fill › tapping correct chip fills the blank and highlights correct styling
+[iphone-16-pro-max] › tests/e2e/quiz-cards.spec.ts:324:3 › quiz-card-fill › tapping correct chip fills the blank and highlights correct styling
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[WebServer] 2:51:42 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[74/98] [iphone-16-pro-max] › tests/e2e/quiz-cards.spec.ts:348:3 › quiz-card-match › correct pairs highlighted with accent-jargon
+[iphone-16-pro-max] › tests/e2e/quiz-cards.spec.ts:348:3 › quiz-card-match › correct pairs highlighted with accent-jargon
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[WebServer] 2:51:45 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[75/98] [iphone-16-pro-max] › tests/e2e/quiz-cards.spec.ts:380:3 › quiz-card-sentence › textarea validation and character counters update as user types
+[iphone-16-pro-max] › tests/e2e/quiz-cards.spec.ts:380:3 › quiz-card-sentence › textarea validation and character counters update as user types
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[WebServer] 2:51:48 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[76/98] [iphone-16-pro-max] › tests/e2e/quiz-cards.spec.ts:419:3 › quiz-card-sentence › grader workflow: submit, grading spinner and result card display
+[iphone-16-pro-max] › tests/e2e/quiz-cards.spec.ts:419:3 › quiz-card-sentence › grader workflow: submit, grading spinner and result card display
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[WebServer] 2:51:51 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[77/98] [iphone-16-pro-max] › tests/e2e/quiz-cards.spec.ts:456:3 › quiz-card-sentence › navigating directly to /lesson renders nothing harmful without active lesson
+[iphone-16-pro-max] › tests/e2e/quiz-cards.spec.ts:456:3 › quiz-card-sentence › navigating directly to /lesson renders nothing harmful without active lesson
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[WebServer] 2:51:55 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[78/98] [iphone-16-pro-max] › tests/e2e/routes-flow.spec.ts:173:3 › auth-gated routes › unauthenticated user attempting to access /home is redirected to /
+[WebServer] 2:51:57 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[79/98] [iphone-16-pro-max] › tests/e2e/routes-flow.spec.ts:178:3 › auth-gated routes › unauthenticated user attempting to access /settings is redirected to /
+[WebServer] 2:51:58 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[80/98] [iphone-16-pro-max] › tests/e2e/routes-flow.spec.ts:183:3 › auth-gated routes › unauthenticated user attempting to access /review is redirected to /
+[WebServer] 2:52:00 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[81/98] [iphone-16-pro-max] › tests/e2e/routes-flow.spec.ts:188:3 › auth-gated routes › public route /atlas is accessible without auth
+[WebServer] 2:52:01 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[82/98] [iphone-16-pro-max] › tests/e2e/routes-flow.spec.ts:198:3 › vocabulary deep links and detail views › deep link to valid term /term/term-git-1 renders term details
+[WebServer] 2:52:03 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[83/98] [iphone-16-pro-max] › tests/e2e/routes-flow.spec.ts:207:3 › vocabulary deep links and detail views › deep link to non-existent term renders "term not found" with back button
+[WebServer] 2:52:04 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[WebServer] 2:52:04 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[84/98] [iphone-16-pro-max] › tests/e2e/routes-flow.spec.ts:220:3 › vocabulary deep links and detail views › deep link to invalid path /path/invalid-path renders "unknown path" fallback with back button
+[WebServer] 2:52:10 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[85/98] [iphone-16-pro-max] › tests/e2e/routes-flow.spec.ts:235:3 › route empty and fallback states › /review displays honest empty state when 0 terms are due for review
+[WebServer] 2:52:13 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[86/98] [iphone-16-pro-max] › tests/e2e/routes-flow.spec.ts:243:3 › route empty and fallback states › /mastered displays empty state when 0 terms are mastered
+[WebServer] 2:52:15 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[87/98] [iphone-16-pro-max] › tests/e2e/routes-flow.spec.ts:251:3 › route empty and fallback states › /questions displays empty state when no lesson questions have been saved
+[WebServer] 2:52:16 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[88/98] [iphone-16-pro-max] › tests/e2e/routes-flow.spec.ts:263:3 › route group navigation › navigation from /home to /settings and back
+[WebServer] 2:52:18 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[WebServer] 2:52:18 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[89/98] [iphone-16-pro-max] › tests/e2e/routes-flow.spec.ts:277:3 › route group navigation › navigation from /home to /spotted paste mode
+[WebServer] 2:52:25 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+  2) [iphone-16-pro-max] › tests/e2e/routes-flow.spec.ts:277:3 › route group navigation › navigation from /home to /spotted paste mode
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'spotted in the wild' })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('heading', { name: 'spotted in the wild' }) with timeout 5000ms
+      - waiting for getByRole('heading', { name: 'spotted in the wild' })
+
+
+      279 |     await page.goto('/spotted');
+      280 |
+    > 281 |     await expect(page.getByRole('heading', { name: 'spotted in the wild' })).toBeVisible();
+          |                                                                              ^
+      282 |     await expect(page.getByPlaceholder(/paste a claude code transcript/i)).toBeVisible();
+      283 |   });
+      284 | });
+        at <repo>/tests/e2e/routes-flow.spec.ts:281:78
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/routes-flow-route-group-na-7412a--home-to-spotted-paste-mode-iphone-16-pro-max/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/routes-flow-route-group-na-7412a--home-to-spotted-paste-mode-iphone-16-pro-max/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/routes-flow-route-group-na-7412a--home-to-spotted-paste-mode-iphone-16-pro-max/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/routes-flow-route-group-na-7412a--home-to-spotted-paste-mode-iphone-16-pro-max/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:34574) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[90/98] [iphone-16-pro-max] › tests/e2e/streak.spec.ts:167:3 › profile: route guard › unauthenticated user visiting /profile is redirected to splash
+[iphone-16-pro-max] › tests/e2e/streak.spec.ts:167:3 › profile: route guard › unauthenticated user visiting /profile is redirected to splash
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[WebServer] 2:52:37 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[91/98] [iphone-16-pro-max] › tests/e2e/streak.spec.ts:178:3 › profile: streak counter › shows current streak count from streak_log
+[iphone-16-pro-max] › tests/e2e/streak.spec.ts:178:3 › profile: streak counter › shows current streak count from streak_log
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[WebServer] 2:52:39 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[92/98] [iphone-16-pro-max] › tests/e2e/streak.spec.ts:196:3 › profile: streak counter › shows 0 streak when no lessons logged
+[iphone-16-pro-max] › tests/e2e/streak.spec.ts:196:3 › profile: streak counter › shows 0 streak when no lessons logged
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[WebServer] 2:52:41 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[93/98] [iphone-16-pro-max] › tests/e2e/streak.spec.ts:209:3 › streak freeze sheet › sheet appears on home when gap >= 2 and freezes are sufficient
+[iphone-16-pro-max] › tests/e2e/streak.spec.ts:209:3 › streak freeze sheet › sheet appears on home when gap >= 2 and freezes are sufficient
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[WebServer] 2:52:43 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[94/98] [iphone-16-pro-max] › tests/e2e/streak.spec.ts:233:3 › streak freeze sheet › plural singular check: "day" copy when gap = 2
+[iphone-16-pro-max] › tests/e2e/streak.spec.ts:233:3 › streak freeze sheet › plural singular check: "day" copy when gap = 2
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.gstatic.com/
+
+[BROWSER CONSOLE] info: Successfully preconnected to https://fonts.googleapis.com/
+
+[BROWSER CONSOLE] debug: [vite] connecting...
+
+[BROWSER CONSOLE] debug: [vite] connected.
+
+[WebServer] 2:52:45 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] warning: Service Worker registration blocked by Playwright
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+[BROWSER CONSOLE] error: Failed to load resource: the server responded with a status of 429 ()
+
+(node:34767) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[95/98] [desktop-pilot] › tests/e2e/feedback-loop.spec.ts:159:1 › participant reads a reply and saves a check-in answer
+[WebServer] 2:52:50 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[96/98] [desktop-pilot] › tests/e2e/feedback-loop.spec.ts:183:1 › global composer submits a categorized field note
+[WebServer] 2:52:52 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[97/98] [desktop-pilot] › tests/e2e/guided-program.spec.ts:143:1 › accepted learner sees the complete, responsive course map
+[WebServer] 2:52:55 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+[98/98] [desktop-pilot] › tests/e2e/guided-program.spec.ts:184:1 › course continuation opens a lesson from the first module
+[WebServer] 2:52:57 AM [vite] (client) [console.warn] Service Worker registration blocked by Playwright
+
+  2 failed
+    [iphone-14] › tests/e2e/routes-flow.spec.ts:277:3 › route group navigation › navigation from /home to /spotted paste mode
+    [iphone-16-pro-max] › tests/e2e/routes-flow.spec.ts:277:3 › route group navigation › navigation from /home to /spotted paste mode
+  96 passed (3.9m)

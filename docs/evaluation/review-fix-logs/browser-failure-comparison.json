@@ -1,0 +1,22 @@
+{
+  "exit_codes": {
+    "control-browser": 1,
+    "browser-1": 1,
+    "browser-2": 1
+  },
+  "failures": {
+    "control-browser": [
+      "[iphone-14] \u203a tests/e2e/routes-flow.spec.ts:277:3 \u203a route group navigation \u203a navigation from /home to /spotted paste mode",
+      "[iphone-16-pro-max] \u203a tests/e2e/routes-flow.spec.ts:277:3 \u203a route group navigation \u203a navigation from /home to /spotted paste mode"
+    ],
+    "browser-1": [
+      "[iphone-14] \u203a tests/e2e/routes-flow.spec.ts:277:3 \u203a route group navigation \u203a navigation from /home to /spotted paste mode",
+      "[iphone-16-pro-max] \u203a tests/e2e/routes-flow.spec.ts:277:3 \u203a route group navigation \u203a navigation from /home to /spotted paste mode"
+    ],
+    "browser-2": [
+      "[iphone-14] \u203a tests/e2e/routes-flow.spec.ts:277:3 \u203a route group navigation \u203a navigation from /home to /spotted paste mode",
+      "[iphone-16-pro-max] \u203a tests/e2e/routes-flow.spec.ts:277:3 \u203a route group navigation \u203a navigation from /home to /spotted paste mode"
+    ]
+  },
+  "candidate_only": []
+}

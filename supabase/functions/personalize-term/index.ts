@@ -27,6 +27,7 @@
 // §7. If they drift, spec wins — update code to match.
 
 // deno-lint-ignore-file no-explicit-any
+import { claimCheckedParser } from './claim-check.ts'
 import Anthropic from 'https://esm.sh/@anthropic-ai/sdk@0.32.1';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
 import { getUserFromJWT } from '../_shared/auth.ts';
@@ -99,7 +100,9 @@ import type {
 //   - Pass 2 verifier gains an 8th criterion `vocabulary_within_reach` that
 //     pass/fails the candidate against this rule.
 // Cached B+1.6 v7 renderings re-render lazily under v8.
-const PROMPT_VERSION = 9;
+// v10 adds a deterministic claim check to both verifier passes.
+// Prior cached renderings are rechecked lazily through the existing version gate.
+const PROMPT_VERSION = 10;
 
 // ─── Shape contracts ────────────────────────────────────────────────────────────
 
@@ -507,7 +510,7 @@ Deno.serve(async (req) => {
         user: buildPass2UserMessage(typedTerm, pass1Candidate, typedProfile, knownVocabulary),
         maxTokens: PERSONALIZE_MAX_TOKENS_PASS2,
       },
-      parseVerdict,
+      claimCheckedParser(pass1Candidate, parseVerdict),
     );
   } catch (err: any) {
     const isAbort = err?.name === 'AbortError' || /abort/i.test(String(err?.message ?? ''));
@@ -618,7 +621,7 @@ Deno.serve(async (req) => {
         user: buildPass2UserMessage(typedTerm, pass3Candidate, typedProfile, knownVocabulary),
         maxTokens: PERSONALIZE_MAX_TOKENS_PASS2,
       },
-      parseVerdict,
+      claimCheckedParser(pass3Candidate, parseVerdict),
     );
   } catch (err: any) {
     const isAbort = err?.name === 'AbortError' || /abort/i.test(String(err?.message ?? ''));
