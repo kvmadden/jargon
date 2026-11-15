@@ -100,17 +100,17 @@ export function TermQuickPeek({ termId, onClose, onSeeFull }: Props) {
         role="dialog"
         aria-modal="true"
         aria-label={term ? `quick peek: ${term.term}` : 'term quick peek'}
-        className="w-full max-w-md bg-surface-card-hi border-t border-border-default rounded-t-xl p-6 pb-8 safe-bottom animate-slide-up focus:outline-none"
+        className="w-full max-w-md bg-surface-card-hi border-t border-border-default rounded-t-xl px-6 pt-1 pb-8 safe-bottom animate-slide-up focus:outline-none"
         // Stop bubbling so taps INSIDE the sheet don't trigger the
         // background's onClick (which dismisses).
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Keep the slim visual handle, but make its touch target 48 × 44px.
-            Pull the hit area into the sheet padding so the term stays in place. */}
+        {/* 4px top padding + a 44px hit area leaves the term content at the same
+            48px offset as before, without a negative margin or hidden spacing dependency. */}
         <button
           type="button"
           onClick={onClose}
-          className="group mx-auto -mt-[20px] flex min-h-[44px] w-12 items-center justify-center rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-jargon"
+          className="group mx-auto flex min-h-[44px] w-12 items-center justify-center rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-jargon"
           aria-label="close quick peek"
         >
           <span
