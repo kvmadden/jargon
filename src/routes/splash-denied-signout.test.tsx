@@ -97,8 +97,11 @@ describe('Splash — denied users lose their session', () => {
     renderSplash();
 
     await waitFor(() => {
-      expect(screen.getByText('invite-only')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: "couldn't check your invite" })).toBeInTheDocument();
     });
+    expect(screen.getByRole('alert')).toHaveTextContent('check your connection and try again');
+    expect(screen.queryByRole('heading', { name: 'invite-only' })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'try again' })).toBeInTheDocument();
     expect(supabase.auth.signOut).not.toHaveBeenCalled();
   });
 });

@@ -179,7 +179,7 @@ function PathSection({ pathId, terms, onStartLesson, onTapTerm }: PathSectionPro
     <section>
       <div className="flex items-center justify-between mb-3 px-1">
         <div className="flex items-center gap-3 min-w-0">
-          <PathGlyph path={pathId} active size="md" className="w-5 h-5 shrink-0" />
+          <PathGlyph path={pathId} active size="md" className="w-6 h-6 shrink-0" />
           <h2 className="text-xs uppercase tracking-wider text-text-muted">
             {meta.label}
           </h2>
