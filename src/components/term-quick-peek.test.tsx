@@ -20,8 +20,13 @@ describe('TermQuickPeek close handle', () => {
     const onClose = vi.fn();
     render(<TermQuickPeek termId="example" onClose={onClose} onSeeFull={vi.fn()} />);
 
+    const sheet = screen.getByRole('dialog');
     const close = screen.getByRole('button', { name: 'close quick peek' });
+    // Explicit sheet padding plus the handle's hit area leave 48px before content.
+    // Avoid a negative top margin that only works with an unrelated padding rule.
+    expect(sheet).toHaveClass('px-6', 'pt-1', 'pb-8');
     expect(close).toHaveClass('min-h-[44px]', 'w-12');
+    expect(close).not.toHaveClass('-mt-[20px]');
 
     const mark = close.querySelector('[aria-hidden="true"]');
     expect(mark).toHaveClass('h-1', 'w-12');
