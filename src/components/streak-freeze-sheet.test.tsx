@@ -49,6 +49,28 @@ describe('StreakFreezeSheet', () => {
     expect(onDecline).toHaveBeenCalledTimes(1);
   });
 
+  it('keeps both choices accessible when a short screen needs the sheet to scroll', () => {
+    render(
+      <StreakFreezeSheet
+        open={true}
+        gap={3}
+        freezesAvailable={5}
+        onUseFreeze={vi.fn()}
+        onDecline={vi.fn()}
+      />
+    );
+
+    // JSDOM does not calculate viewport geometry. Match the same viewport
+    // and overflow contract as the shared BottomSheet; M1 must verify pixels.
+    expect(screen.getByRole('dialog', { name: /use a streak freeze\?/i })).toHaveClass(
+      'max-h-[calc(100dvh-1rem)]',
+      'overflow-y-auto',
+      'overscroll-contain',
+    );
+    expect(screen.getByRole('button', { name: 'use freeze' })).toHaveClass('min-h-[44px]');
+    expect(screen.getByRole('button', { name: 'no, start fresh' })).toHaveClass('min-h-[44px]');
+  });
+
   it('closes sheet and fires decline when escape key is pressed', () => {
     const onUseFreeze = vi.fn();
     const onDecline = vi.fn();
