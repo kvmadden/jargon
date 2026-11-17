@@ -95,7 +95,7 @@ export function LevelUpModal({ open, level, xpAwarded, onClose }: Props) {
           role="dialog"
           aria-modal="true"
           aria-label={`level ${level} reached`}
-          className="w-full max-w-md bg-surface-card-hi border-t border-border-default rounded-t-xl p-6 pb-8 safe-bottom animate-slide-up focus:outline-none"
+          className="w-full max-w-md max-h-[calc(100dvh-1rem)] overflow-y-auto overscroll-contain bg-surface-card-hi border-t border-border-default rounded-t-xl p-6 pb-8 safe-bottom animate-slide-up focus:outline-none"
         >
           <div className="w-12 h-1 rounded-full bg-border-default mx-auto mb-6" aria-hidden="true" />
 
