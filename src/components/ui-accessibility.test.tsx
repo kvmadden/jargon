@@ -72,6 +72,7 @@ describe('Presentational UI Components Accessibility', () => {
 
       const dialog = screen.getByRole('dialog', { name: 'use a streak freeze?' });
       expect(dialog).toBeInTheDocument();
+      expect(dialog).toHaveClass('max-h-[calc(100dvh-1rem)]', 'overflow-y-auto', 'overscroll-contain');
 
       const useBtn = screen.getByRole('button', { name: 'use freeze' });
       const declineBtn = screen.getByRole('button', { name: 'no, start fresh' });
@@ -89,6 +90,7 @@ describe('Presentational UI Components Accessibility', () => {
 
       const dialog = screen.getByRole('dialog', { name: 'level 3 reached' });
       expect(dialog).toBeInTheDocument();
+      expect(dialog).toHaveClass('max-h-[calc(100dvh-1rem)]', 'overflow-y-auto', 'overscroll-contain');
 
       const btn = screen.getByRole('button', { name: 'keep going' });
       expect(btn).toBeInTheDocument();
@@ -103,6 +105,7 @@ describe('Presentational UI Components Accessibility', () => {
 
       const dialog = screen.getByRole('dialog', { name: 'git + cli mastered' });
       expect(dialog).toBeInTheDocument();
+      expect(dialog).toHaveClass('max-h-[calc(100dvh-1rem)]', 'overflow-y-auto', 'overscroll-contain');
 
       const btn = screen.getByRole('button', { name: 'back to home' });
       expect(btn).toBeInTheDocument();
