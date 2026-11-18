@@ -52,6 +52,17 @@ describe('<ReportAnalogyButton>', () => {
     expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument();
   });
 
+  it('restores focus to the report link when the learner cancels', () => {
+    render(<ReportAnalogyButton termId="rebase" rendering={SAMPLE_RENDERING} />);
+
+    fireEvent.click(screen.getByRole('button', { name: /report this analogy/i }));
+    expect(screen.getByRole('textbox')).toHaveFocus();
+
+    fireEvent.click(screen.getByRole('button', { name: /cancel/i }));
+    expect(screen.getByRole('button', { name: /report this analogy/i })).toHaveFocus();
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+  });
+
   it('disables submit while complaint is empty', () => {
     render(<ReportAnalogyButton termId="rebase" rendering={SAMPLE_RENDERING} />);
     fireEvent.click(screen.getByRole('button', { name: /report this analogy/i }));
@@ -81,7 +92,9 @@ describe('<ReportAnalogyButton>', () => {
         rendering: SAMPLE_RENDERING,
         complaint: 'tides do not evaporate the water — they renew it.',
       });
+      expect(screen.getByRole('button', { name: /report this analogy/i })).toHaveFocus();
     });
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
   });
 
   it('caps the complaint at 500 chars at the input layer', () => {
