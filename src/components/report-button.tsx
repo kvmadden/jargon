@@ -30,20 +30,23 @@ export function ReportButton({ termId, quizMode, className = '' }: Props) {
   const pushToast = useToastStore((s) => s.push);
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(false);
 
   async function handlePick(reason: ReportReason) {
     if (!user || submitting) return;
+    setSubmitError(false);
     setSubmitting(true);
     try {
       await submitReport({ userId: user.id, termId, reason, quizMode });
       pushToast('flagged, thanks', 'success');
+      setOpen(false);
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('[report] submit failed', err);
-      pushToast('couldn’t flag. try again', 'error');
+      // Keep the reason choices available for a retry when the save fails.
+      setSubmitError(true);
     } finally {
       setSubmitting(false);
-      setOpen(false);
     }
   }
 
@@ -51,7 +54,10 @@ export function ReportButton({ termId, quizMode, className = '' }: Props) {
     <>
       <button
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          setSubmitError(false);
+          setOpen(true);
+        }}
         className={`w-12 h-12 min-w-[44px] min-h-[44px] rounded-md flex items-center justify-center text-text-secondary active:bg-surface-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-jargon transition-colors ${className}`}
         aria-label="report this term"
       >
@@ -92,6 +98,11 @@ export function ReportButton({ termId, quizMode, className = '' }: Props) {
             </button>
           ))}
         </div>
+        {submitError && (
+          <p role="alert" className="mt-3 text-center text-sm text-text-secondary">
+            couldn’t flag. try again
+          </p>
+        )}
         <button
           type="button"
           onClick={() => setOpen(false)}
