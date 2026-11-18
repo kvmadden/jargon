@@ -1,6 +1,10 @@
 # jargon: speak the room
 
-jargon is a spaced-repetition game that teaches the technical vocabulary people nod along to in meetings and never quite own. Each term is explained in plain English and re-explained through the learner's own background, so "idempotent" lands differently for a nurse, a teacher, and a plumber.
+Jargon is a spaced-repetition app for people who want to learn the technical vocabulary they hear at work.
+
+Browse the [public Concept Atlas](https://jargon.kvmadden.com/atlas) or [try the verifier exhibit](https://kvmadden.com/projects/jargon/#try) without an account. The learning app requires an invite.
+
+To run the app locally, use Node 24 and follow the [Supabase setup](#run-it-locally), then run `npm ci` and `npm run dev`.
 
 ## The problem
 
