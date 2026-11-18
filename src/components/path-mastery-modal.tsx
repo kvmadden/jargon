@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { PATH_META, type PathId } from '../lib/database.types';
 import { PathGlyph } from './path-glyph';
 import { Confetti } from './confetti';
@@ -24,6 +24,7 @@ export function PathMasteryModal({ open, pathId, xpAwarded = 500, onClose }: Pro
   // re-render doesn't refire the animation.
   const [confettiActive, setConfettiActive] = useState(false);
   const ref = useModalA11y(open, onClose);
+  const descriptionId = useId();
 
   useEffect(() => {
     if (open) {
@@ -46,6 +47,7 @@ export function PathMasteryModal({ open, pathId, xpAwarded = 500, onClose }: Pro
           role="dialog"
           aria-modal="true"
           aria-label={`${meta.label} mastered`}
+          aria-describedby={descriptionId}
           className="w-full max-w-md max-h-[calc(100dvh-1rem)] overflow-y-auto overscroll-contain bg-surface-card-hi border-t border-border-default rounded-t-xl p-6 pb-8 safe-bottom animate-slide-up focus:outline-none"
         >
           <div className="w-12 h-1 rounded-full bg-border-default mx-auto mb-6" aria-hidden="true" />
@@ -71,7 +73,7 @@ export function PathMasteryModal({ open, pathId, xpAwarded = 500, onClose }: Pro
               {meta.label}
             </h2>
 
-            <div className="flex items-baseline gap-2 mt-4">
+            <div id={descriptionId} className="flex items-baseline gap-2 mt-4">
               <span
                 className="text-3xl font-mono font-semibold tabular-nums bg-clip-text text-transparent leading-none"
                 style={{

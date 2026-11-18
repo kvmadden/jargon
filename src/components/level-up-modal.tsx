@@ -20,7 +20,7 @@
 // levels 6+ get a cleaner "another level" treatment so high-level users
 // don't get spammed with effusive copy.
 
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { Confetti } from './confetti';
 import { CountUp } from './count-up';
 
@@ -74,6 +74,7 @@ function levelLine(level: number): string {
 export function LevelUpModal({ open, level, xpAwarded, onClose }: Props) {
   const [confettiActive, setConfettiActive] = useState(false);
   const ref = useModalA11y(open, onClose);
+  const descriptionId = useId();
 
   useEffect(() => {
     if (open) {
@@ -95,6 +96,7 @@ export function LevelUpModal({ open, level, xpAwarded, onClose }: Props) {
           role="dialog"
           aria-modal="true"
           aria-label={`level ${level} reached`}
+          aria-describedby={descriptionId}
           className="w-full max-w-md max-h-[calc(100dvh-1rem)] overflow-y-auto overscroll-contain bg-surface-card-hi border-t border-border-default rounded-t-xl p-6 pb-8 safe-bottom animate-slide-up focus:outline-none"
         >
           <div className="w-12 h-1 rounded-full bg-border-default mx-auto mb-6" aria-hidden="true" />
@@ -129,7 +131,7 @@ export function LevelUpModal({ open, level, xpAwarded, onClose }: Props) {
             <h2 className="text-2xl font-semibold text-text-primary lowercase text-center mt-2">
               level {level}
             </h2>
-            <p className="text-sm text-text-secondary text-center mt-3 max-w-xs leading-relaxed">
+            <p id={descriptionId} className="text-sm text-text-secondary text-center mt-3 max-w-xs leading-relaxed">
               {levelLine(level)}
             </p>
 
