@@ -137,7 +137,7 @@ A new run makes paid model calls and needs an explicit budget. See `eval/README.
 Requirements: Node 24, which CI uses (the eval and audit scripts run `.ts` files directly, which needs Node 23.6 or later), and the Supabase CLI plus Docker if you want a local backend. The SQL tests need PostgreSQL 17 (`PG_BIN` points at its `bin` directory).
 
 ```sh
-npm install
+npm ci
 cp .env.example .env.local      # then fill in values
 npm run dev                     # prints a local address, which the dev CORS origins allow
 npm test                        # unit and component tests
@@ -147,7 +147,7 @@ npm run test:sql                # SQL tests against the real migrations
 npm run lint                    # both type checks (no ESLint is configured)
 ```
 
-CI (`.github/workflows/ci.yml`) runs all of these on every pull request. No step calls a model or needs a secret.
+CI (`.github/workflows/ci.yml`) uses a locked install and runs the unit and component tests, the production build, the Edge Function type check, and the SQL tests. It also checks the pre-deploy auth gate, the committed evaluation reports, and the canonical vocabulary offline. No step calls a model or needs a secret.
 
 Local backend:
 
