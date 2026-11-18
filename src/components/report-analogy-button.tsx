@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { reportAnalogyIssue } from '../lib/data';
 import { useToastStore } from './toast';
 
@@ -37,6 +37,19 @@ export function ReportAnalogyButton({ termId, rendering }: Props) {
   const [expanded, setExpanded] = useState(false);
   const [complaint, setComplaint] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const wasExpanded = useRef(false);
+
+  // The trigger unmounts while the form is open. Restore focus once it
+  // remounts, whether the learner cancels or successfully sends feedback.
+  useEffect(() => {
+    if (expanded) {
+      wasExpanded.current = true;
+    } else if (wasExpanded.current) {
+      triggerRef.current?.focus();
+      wasExpanded.current = false;
+    }
+  }, [expanded]);
 
   function handleCancel() {
     setExpanded(false);
@@ -70,6 +83,7 @@ export function ReportAnalogyButton({ termId, rendering }: Props) {
     return (
       <div className="flex justify-end mt-4">
         <button
+          ref={triggerRef}
           type="button"
           onClick={() => setExpanded(true)}
           className="text-xs text-text-muted underline underline-offset-2 min-h-[44px] px-2 active:text-text-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-jargon transition-colors"
