@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { submitReport } from '../lib/reports';
 import { ReportButton } from './report-button';
@@ -20,6 +20,29 @@ beforeEach(() => {
 });
 
 describe('ReportButton', () => {
+  it('announces a pending report and keeps the choices open until the save finishes', async () => {
+    let finishSave: (() => void) | undefined;
+    vi.mocked(submitReport).mockImplementationOnce(() =>
+      new Promise<void>((resolve) => { finishSave = resolve; })
+    );
+
+    render(<ReportButton termId="term-pending" quizMode="match" />);
+    fireEvent.click(screen.getByRole('button', { name: 'report this term' }));
+    fireEvent.click(screen.getByRole('button', { name: 'wrong' }));
+
+    expect(screen.getByRole('status')).toHaveTextContent('sending report…');
+    expect(screen.getByRole('button', { name: 'wrong' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'skip' })).toBeDisabled();
+
+    fireEvent.click(screen.getByRole('presentation'));
+    fireEvent.keyDown(window, { key: 'Escape' });
+    expect(screen.getByRole('dialog', { name: 'report this term' })).toBeInTheDocument();
+
+    await act(async () => { finishSave?.(); });
+    expect(screen.queryByRole('dialog', { name: 'report this term' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+  });
+
   it('keeps the reason choices open after a failed save, then lets the learner retry', async () => {
     vi.mocked(submitReport)
       .mockRejectedValueOnce(new Error('offline'))

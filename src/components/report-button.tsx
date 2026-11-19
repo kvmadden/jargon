@@ -78,7 +78,7 @@ export function ReportButton({ termId, quizMode, className = '' }: Props) {
         </svg>
       </button>
 
-      <BottomSheet open={open} onClose={() => setOpen(false)} ariaLabel="report this term">
+      <BottomSheet open={open} onClose={() => { if (!submitting) setOpen(false); }} ariaLabel="report this term">
         <h3 className="text-base font-semibold text-text-primary text-center">
           report this term
         </h3>
@@ -98,6 +98,11 @@ export function ReportButton({ termId, quizMode, className = '' }: Props) {
             </button>
           ))}
         </div>
+        {submitting && (
+          <p role="status" className="mt-3 text-center text-sm text-text-secondary">
+            sending report…
+          </p>
+        )}
         {submitError && (
           <p role="alert" className="mt-3 text-center text-sm text-text-secondary">
             couldn’t flag. try again
@@ -106,7 +111,8 @@ export function ReportButton({ termId, quizMode, className = '' }: Props) {
         <button
           type="button"
           onClick={() => setOpen(false)}
-          className="w-full text-text-muted text-xs mt-4 min-h-[44px] active:text-text-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-jargon transition-colors"
+          disabled={submitting}
+          className="w-full text-text-muted text-xs mt-4 min-h-[44px] active:text-text-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-jargon transition-colors disabled:opacity-60"
         >
           skip
         </button>
