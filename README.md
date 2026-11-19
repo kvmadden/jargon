@@ -1,10 +1,35 @@
 # jargon: speak the room
 
-Jargon is a spaced-repetition app for people who want to learn the technical vocabulary they hear at work.
+Jargon is a spaced-repetition app for people who want to understand the technical vocabulary they hear at work.
+
+It combines plain-language lessons, quizzes and scheduled review. The experimental personalization pipeline checks generated explanations and falls back to the standard lesson when a rewrite is held or fails. Learning benefit has not been measured.
+
+## Try it
 
 Browse the [public Concept Atlas](https://jargon.kvmadden.com/atlas) or [try the verifier exhibit](https://kvmadden.com/projects/jargon/#try) without an account. The learning app requires an invite.
 
-To run the app locally, use Node 24 and follow the [Supabase setup](#run-it-locally), then run `npm ci` and `npm run dev`.
+To run locally, use Node 24, copy `.env.example` to `.env.local` and configure the public Supabase URL and anon key. See the [backend setup](#run-it-locally) for a local database.
+
+```sh
+npm ci
+npm run dev
+```
+
+Open the address Vite prints. AI features require separately configured backend secrets and can incur model costs. They are not needed for the offline checks below.
+
+## How it was tested
+
+Unit and component tests cover learning behavior and failure handling. CI also checks the build, backend types, database migrations and access rules. The saved personalization evaluation exposed errors the verifier accepted. Replaying those outputs tests later safeguards on development data, not unseen examples. There is no measured learning benefit or new blind accuracy result.
+
+```sh
+npm test
+npm run build
+```
+
+See the [evaluation method](docs/evaluation.md) for the limitations and the evidence still needed.
+
+<details>
+<summary>Features, technical guide and historical evaluation</summary>
 
 ## The problem
 
@@ -180,3 +205,5 @@ Built May to October 2026 over 296 commits in a private repository. The full his
 ## Author
 
 Built by Kevin Madden as a side project. MIT licensed, see `LICENSE`.
+
+</details>
