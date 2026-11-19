@@ -96,7 +96,7 @@ export function ReportAnalogyButton({ termId, rendering }: Props) {
   }
 
   const remaining = MAX_COMPLAINT_CHARS - complaint.length;
-  const submitDisabled = submitting || complaint.trim().length === 0;
+  const noComplaint = complaint.trim().length === 0;
 
   return (
     <div className="mt-4 bg-surface-card border border-border-default rounded-xl p-4 flex flex-col gap-3">
@@ -138,13 +138,17 @@ export function ReportAnalogyButton({ termId, rendering }: Props) {
           <button
             type="button"
             onClick={handleSubmit}
-            disabled={submitDisabled}
-            className="bg-accent-jargon text-text-primary text-sm font-medium rounded-md min-h-[44px] px-4 active:bg-accent-jargon-lo focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-jargon transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={noComplaint}
+            aria-disabled={submitting || undefined}
+            className="bg-accent-jargon text-text-primary text-sm font-medium rounded-md min-h-[44px] px-4 active:bg-accent-jargon-lo focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-jargon transition-colors disabled:opacity-50 disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:cursor-not-allowed"
           >
             {submitting ? 'sending…' : 'submit'}
           </button>
         </div>
       </div>
+      <span className="sr-only" role="status">
+        {submitting ? 'sending report…' : ''}
+      </span>
     </div>
   );
 }

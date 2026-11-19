@@ -6,7 +6,7 @@
 // react-builder smoke set.
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { act, render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ReportAnalogyButton } from './report-analogy-button';
 
 // Mock the data-layer wrapper. The component should call it but never
@@ -95,6 +95,40 @@ describe('<ReportAnalogyButton>', () => {
       expect(screen.getByRole('button', { name: /report this analogy/i })).toHaveFocus();
     });
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+  });
+
+  it('keeps submit focused and announces progress without allowing duplicate reports', async () => {
+    const mod = await import('../lib/data');
+    let finishSave: ((ok: boolean) => void) | undefined;
+    vi.mocked(mod.reportAnalogyIssue).mockImplementationOnce(() =>
+      new Promise<boolean>((resolve) => { finishSave = resolve; })
+    );
+
+    render(<ReportAnalogyButton termId="rebase" rendering={SAMPLE_RENDERING} />);
+    fireEvent.click(screen.getByRole('button', { name: /report this analogy/i }));
+    fireEvent.change(screen.getByRole('textbox'), {
+      target: { value: 'the explanation needs a different example' },
+    });
+
+    const submit = screen.getByRole('button', { name: 'submit' });
+    submit.focus();
+    fireEvent.click(submit);
+
+    const pending = screen.getByRole('button', { name: 'sending…' });
+    expect(pending).toHaveFocus();
+    expect(pending).toHaveAttribute('aria-disabled', 'true');
+    expect(screen.getByRole('status')).toHaveTextContent('sending report…');
+    expect(screen.getByRole('textbox')).toBeDisabled();
+
+    fireEvent.click(pending);
+    expect(mod.reportAnalogyIssue).toHaveBeenCalledTimes(1);
+
+    // An unsuccessful request leaves the form open and the focused button usable.
+    await act(async () => { finishSave?.(false); });
+    expect(screen.getByRole('button', { name: 'submit' })).toHaveFocus();
+    expect(screen.getByRole('button', { name: 'submit' })).not.toHaveAttribute('aria-disabled');
+    expect(screen.getByRole('status')).toBeEmptyDOMElement();
+    expect(screen.getByRole('textbox')).toHaveValue('the explanation needs a different example');
   });
 
   it('caps the complaint at 500 chars at the input layer', () => {
