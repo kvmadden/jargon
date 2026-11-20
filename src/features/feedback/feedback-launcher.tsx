@@ -159,12 +159,16 @@ export function FeedbackLauncher() {
   beginFeedbackRef.current = beginFeedback;
 
   function close() {
+    // Keep the draft and dialog intact while a send or offline-queue save is in flight.
+    if (submitting) return;
     speech.stop();
     setOpen(false);
     setError('');
   }
 
   async function submit() {
+    // An aria-disabled Send button retains keyboard focus; reject repeat clicks here.
+    if (submitting) return;
     const message = draft.message.trim();
     if (!message) {
       setError('write or dictate a note first.');
@@ -220,10 +224,12 @@ export function FeedbackLauncher() {
             <button
               type="button"
               onClick={() => {
+                if (submitting) return;
                 close();
                 navigate('/feedback');
               }}
-              className="min-h-[44px] shrink-0 rounded-md border border-border-default px-3 text-xs font-semibold text-text-primary"
+              disabled={submitting}
+              className="min-h-[44px] shrink-0 rounded-md border border-border-default px-3 text-xs font-semibold text-text-primary disabled:opacity-50"
             >
               my loop
             </button>
@@ -339,19 +345,23 @@ export function FeedbackLauncher() {
             <button
               type="button"
               onClick={close}
-              className="min-h-[48px] flex-1 rounded-lg border border-border-default bg-surface-card text-sm font-semibold text-text-secondary"
+              disabled={submitting}
+              className="min-h-[48px] flex-1 rounded-lg border border-border-default bg-surface-card text-sm font-semibold text-text-secondary disabled:opacity-50"
             >
               keep draft
             </button>
             <button
               type="button"
               onClick={() => void submit()}
-              disabled={submitting}
-              className="min-h-[48px] flex-[1.4] rounded-lg bg-accent-jargon px-4 text-sm font-semibold text-text-primary active:bg-accent-jargon-lo disabled:opacity-50"
+              aria-disabled={submitting || undefined}
+              className="min-h-[48px] flex-[1.4] rounded-lg bg-accent-jargon px-4 text-sm font-semibold text-text-primary active:bg-accent-jargon-lo aria-disabled:opacity-50 aria-disabled:cursor-wait"
             >
               {submitting ? 'sending…' : 'send note'}
             </button>
           </div>
+          <span role="status" className="sr-only">
+            {submitting ? 'sending note…' : ''}
+          </span>
         </div>
       </BottomSheet>
     </>
