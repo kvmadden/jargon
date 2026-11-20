@@ -87,9 +87,8 @@ export function ReportAnalogyButton({ termId, rendering }: Props) {
           type="button"
           onClick={() => setExpanded(true)}
           className="text-xs text-text-muted underline underline-offset-2 min-h-[44px] px-2 active:text-text-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-jargon transition-colors"
-          aria-label="report this analogy"
         >
-          this analogy doesn't land →
+          this analogy doesn't land <span aria-hidden="true">→</span>
         </button>
       </div>
     );
