@@ -4,6 +4,10 @@ Jargon is a spaced-repetition app for people who want to understand the technica
 
 It combines plain-language lessons, quizzes and scheduled review. The experimental personalization pipeline checks generated explanations and falls back to the standard lesson when a rewrite is held or fails. Learning benefit has not been measured.
 
+![Jargon desktop lesson showing a term, its explanation and learning controls](docs/media/lesson-2026-11-03/after-term-1440x900.png)
+
+*An actual browser capture of the lesson layout using demonstration content (November 3, 2026). Lessons and quizzes are invite-only; the public Concept Atlas below can be explored without signing in.*
+
 ## Try it
 
 Browse the [public Concept Atlas](https://jargon.kvmadden.com/atlas) or [try the verifier exhibit](https://kvmadden.com/projects/jargon/#try) without an account. The learning app requires an invite.
