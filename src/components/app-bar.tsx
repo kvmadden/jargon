@@ -21,7 +21,7 @@ export function AppBar() {
     <div data-app-bar="" className="border-b border-border-default bg-bg-base">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-2 px-4 lg:px-8">
         {appBarShowsWordmark(pathname) ? (
-          <Link to="/home" aria-label="jargon home" className="inline-flex min-h-[44px] items-center text-text-primary">
+          <Link to="/home" aria-label="jargon home" className="inline-flex min-h-[44px] items-center rounded-md text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-jargon-hi focus-visible:ring-offset-2 focus-visible:ring-offset-bg-base">
             <Wordmark size={18} showDot />
           </Link>
         ) : (
