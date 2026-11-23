@@ -1,0 +1,332 @@
+{
+  "bar": "planted catch rate >= 0.90 and false alarm rate on labeled-correct <= 0.10",
+  "frozen_consensus": {
+    "planted": [
+      18,
+      18
+    ],
+    "natural_flawed": [
+      5,
+      6
+    ],
+    "correct_false_alarm": [
+      8,
+      15
+    ],
+    "abstain_or_missing": 1,
+    "planted_catch_rate": 1,
+    "false_alarm_rate": 0.5333333333333333,
+    "meets_bar": false
+  },
+  "frozen_consensus_on_items_both_labelers_agree": {
+    "planted": [
+      14,
+      14
+    ],
+    "natural_flawed": [
+      0,
+      0
+    ],
+    "correct_false_alarm": [
+      8,
+      15
+    ],
+    "abstain_or_missing": 1,
+    "planted_catch_rate": 1,
+    "false_alarm_rate": 0.5333333333333333,
+    "meets_bar": false
+  },
+  "baseline_v1": {
+    "planted": [
+      10,
+      18
+    ],
+    "natural_flawed": [
+      0,
+      6
+    ],
+    "correct_false_alarm": [
+      0,
+      15
+    ],
+    "abstain_or_missing": 0,
+    "planted_catch_rate": 0.5555555555555556,
+    "false_alarm_rate": 0,
+    "meets_bar": false
+  },
+  "per_item": [
+    {
+      "id": "aid-chain-of-thought::nurse",
+      "origin": "planted",
+      "label": "wrong",
+      "consensus": "fail",
+      "v1": "fail"
+    },
+    {
+      "id": "aid-chain-of-thought::pharmacist",
+      "origin": "planted",
+      "label": "wrong",
+      "consensus": "fail",
+      "v1": "pass"
+    },
+    {
+      "id": "aid-chain-of-thought::hospital-pharmacist",
+      "origin": "generated",
+      "label": "correct",
+      "consensus": "pass",
+      "v1": "pass"
+    },
+    {
+      "id": "aid-prompt-template::nurse",
+      "origin": "planted",
+      "label": "wrong",
+      "consensus": "fail",
+      "v1": "fail"
+    },
+    {
+      "id": "aid-prompt-template::pharmacist",
+      "origin": "generated",
+      "label": "correct",
+      "consensus": "pass",
+      "v1": "pass"
+    },
+    {
+      "id": "aid-prompt-template::hospital-pharmacist",
+      "origin": "planted",
+      "label": "wrong",
+      "consensus": "fail",
+      "v1": "fail"
+    },
+    {
+      "id": "data-row::nurse",
+      "origin": "planted",
+      "label": "wrong",
+      "consensus": "fail",
+      "v1": "pass"
+    },
+    {
+      "id": "data-row::pharmacist",
+      "origin": "generated",
+      "label": "correct",
+      "consensus": "fail",
+      "v1": "pass"
+    },
+    {
+      "id": "data-row::hospital-pharmacist",
+      "origin": "planted",
+      "label": "wrong",
+      "consensus": "fail",
+      "v1": "pass"
+    },
+    {
+      "id": "sys-enum::nurse",
+      "origin": "planted",
+      "label": "wrong",
+      "consensus": "fail",
+      "v1": "fail"
+    },
+    {
+      "id": "sys-enum::pharmacist",
+      "origin": "planted",
+      "label": "wrong",
+      "consensus": "fail",
+      "v1": "fail"
+    },
+    {
+      "id": "sys-enum::hospital-pharmacist",
+      "origin": "generated",
+      "label": "misleading",
+      "consensus": "fail",
+      "v1": "pass"
+    },
+    {
+      "id": "sec-secret::nurse",
+      "origin": "planted",
+      "label": "wrong",
+      "consensus": "fail",
+      "v1": "pass"
+    },
+    {
+      "id": "sec-secret::pharmacist",
+      "origin": "generated",
+      "label": "wrong",
+      "consensus": "fail",
+      "v1": "pass"
+    },
+    {
+      "id": "sec-secret::hospital-pharmacist",
+      "origin": "generated",
+      "label": "misleading",
+      "consensus": "fail",
+      "v1": "pass"
+    },
+    {
+      "id": "sec-sso::nurse",
+      "origin": "planted",
+      "label": "wrong",
+      "consensus": "fail",
+      "v1": "pass"
+    },
+    {
+      "id": "sec-sso::pharmacist",
+      "origin": "planted",
+      "label": "wrong",
+      "consensus": "fail",
+      "v1": "fail"
+    },
+    {
+      "id": "sec-sso::hospital-pharmacist",
+      "origin": "generated",
+      "label": "correct",
+      "consensus": "abstain",
+      "v1": "pass"
+    },
+    {
+      "id": "sec-vulnerability::nurse",
+      "origin": "planted",
+      "label": "wrong",
+      "consensus": "fail",
+      "v1": "pass"
+    },
+    {
+      "id": "sec-vulnerability::pharmacist",
+      "origin": "generated",
+      "label": "correct",
+      "consensus": "pass",
+      "v1": "pass"
+    },
+    {
+      "id": "sec-vulnerability::hospital-pharmacist",
+      "origin": "generated",
+      "label": "correct",
+      "consensus": "fail",
+      "v1": "pass"
+    },
+    {
+      "id": "sys-route::nurse",
+      "origin": "planted",
+      "label": "wrong",
+      "consensus": "fail",
+      "v1": "pass"
+    },
+    {
+      "id": "sys-route::pharmacist",
+      "origin": "generated",
+      "label": "correct",
+      "consensus": "fail",
+      "v1": "pass"
+    },
+    {
+      "id": "sys-route::hospital-pharmacist",
+      "origin": "generated",
+      "label": "correct",
+      "consensus": "fail",
+      "v1": "pass"
+    },
+    {
+      "id": "web-domain::nurse",
+      "origin": "planted",
+      "label": "wrong",
+      "consensus": "fail",
+      "v1": "pass"
+    },
+    {
+      "id": "web-domain::pharmacist",
+      "origin": "generated",
+      "label": "correct",
+      "consensus": "fail",
+      "v1": "pass"
+    },
+    {
+      "id": "web-domain::hospital-pharmacist",
+      "origin": "generated",
+      "label": "correct",
+      "consensus": "fail",
+      "v1": "pass"
+    },
+    {
+      "id": "web-status-code::nurse",
+      "origin": "planted",
+      "label": "wrong",
+      "consensus": "fail",
+      "v1": "fail"
+    },
+    {
+      "id": "web-status-code::pharmacist",
+      "origin": "generated",
+      "label": "misleading",
+      "consensus": "fail",
+      "v1": "pass"
+    },
+    {
+      "id": "web-status-code::hospital-pharmacist",
+      "origin": "generated",
+      "label": "correct",
+      "consensus": "fail",
+      "v1": "pass"
+    },
+    {
+      "id": "cloud-kubernetes::nurse",
+      "origin": "planted",
+      "label": "wrong",
+      "consensus": "fail",
+      "v1": "fail"
+    },
+    {
+      "id": "cloud-kubernetes::pharmacist",
+      "origin": "generated",
+      "label": "correct",
+      "consensus": "pass",
+      "v1": "pass"
+    },
+    {
+      "id": "cloud-kubernetes::hospital-pharmacist",
+      "origin": "generated",
+      "label": "correct",
+      "consensus": "pass",
+      "v1": "pass"
+    },
+    {
+      "id": "cloud-log::nurse",
+      "origin": "generated",
+      "label": "misleading",
+      "consensus": "pass",
+      "v1": "pass"
+    },
+    {
+      "id": "cloud-log::pharmacist",
+      "origin": "planted",
+      "label": "wrong",
+      "consensus": "fail",
+      "v1": "fail"
+    },
+    {
+      "id": "cloud-log::hospital-pharmacist",
+      "origin": "generated",
+      "label": "misleading",
+      "consensus": "fail",
+      "v1": "pass"
+    },
+    {
+      "id": "cloud-observability::nurse",
+      "origin": "generated",
+      "label": "correct",
+      "consensus": "pass",
+      "v1": "pass"
+    },
+    {
+      "id": "cloud-observability::pharmacist",
+      "origin": "planted",
+      "label": "wrong",
+      "consensus": "fail",
+      "v1": "fail"
+    },
+    {
+      "id": "cloud-observability::hospital-pharmacist",
+      "origin": "generated",
+      "label": "correct",
+      "consensus": "pass",
+      "v1": "pass"
+    }
+  ]
+}
