@@ -21,7 +21,7 @@ export function StreakFreezeSheet({ open, gap, freezesAvailable, onUseFreeze, on
         role="dialog"
         aria-modal="true"
         aria-label="use a streak freeze?"
-        className="w-full max-w-md bg-surface-card-hi border-t border-border-default rounded-t-xl p-4 pb-8 safe-bottom animate-slide-up focus:outline-none"
+        className="w-full max-w-md max-h-[calc(100dvh-1rem)] overflow-y-auto overscroll-contain bg-surface-card-hi border-t border-border-default rounded-t-xl p-4 pb-8 safe-bottom animate-slide-up focus:outline-none"
       >
         <div className="w-12 h-1 rounded-full bg-border-default mx-auto mb-4" />
         <h3 className="text-lg font-semibold text-text-primary text-center">use a streak freeze?</h3>
