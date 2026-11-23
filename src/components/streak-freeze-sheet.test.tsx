@@ -67,4 +67,26 @@ describe('StreakFreezeSheet', () => {
     fireEvent.keyDown(dialog, { key: 'Escape' });
     expect(onDecline).toHaveBeenCalledTimes(1);
   });
+  it('keeps both choices inside a scrollable sheet on short screens', () => {
+    render(
+      <StreakFreezeSheet
+        open={true}
+        gap={3}
+        freezesAvailable={5}
+        onUseFreeze={vi.fn()}
+        onDecline={vi.fn()}
+      />
+    );
+
+    // JSDOM has no viewport geometry; assert the same viewport/scroll
+    // contract as BottomSheet. Real device visual review is still required.
+    expect(screen.getByRole('dialog', { name: /use a streak freeze\?/i })).toHaveClass(
+      'max-h-[calc(100dvh-1rem)]',
+      'overflow-y-auto',
+      'overscroll-contain',
+    );
+    expect(screen.getByRole('button', { name: /use freeze/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /no, start fresh/i })).toBeInTheDocument();
+  });
+
 });
